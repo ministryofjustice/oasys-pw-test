@@ -125,12 +125,13 @@ export class Queries {
      *  - expectedSpVersion: version number that should be returned by SAN for the Sentence Plan
      */
     async checkSanCreateAssessmentCall(pk: number, previousSanPk: number, previousSpPk: number,
-        expectedUser: User, expectedProvider: string, expectedPlanType: 'INITIAL' | 'REVIEW') {
+        expectedUser: User, expectedProvider: string, expectedPlanType: 'INITIAL' | 'REVIEW' | 'UPW' | 'PSR_OUTLINE', spOnly = false, newPeriodOfSupervision: 'Y' | 'N' = null) {
 
         log('', `Check CreateAssessment API call for ${pk}, previous SAN: ${previousSanPk}, previous SP: ${previousSpPk}`)
         const query = `select log_text from eor.clog where log_source like '%${pk}%SAN_CREATE%' order by time_stamp desc`
         const clogData = await this.oasysDb.getData(query)
         let failed = false
+        const type = spOnly ? 'SP' : 'SAN_SP'
 
         if (clogData.length != 2) {
             log(`Expected 2 rows in CLog, found ${clogData.length}`)
@@ -164,6 +165,14 @@ export class Queries {
             }
             if (callData['planType'] != expectedPlanType) {
                 log(`Expected sentence plan type: ${expectedPlanType}, found ${callData['planType']}`)
+                failed = true
+            }
+            if (callData['assessmentType'] != type) {
+                log(`Expected assessment type: ${expectedPlanType}, found ${callData['assessmentType']}`)
+                failed = true
+            }
+            if (newPeriodOfSupervision && callData['newPeriodOfSupervision'] != newPeriodOfSupervision) {
+                log(`Expected new period of supervision: ${newPeriodOfSupervision}, found ${callData['newPeriodOfSupervision']}`)
                 failed = true
             }
 

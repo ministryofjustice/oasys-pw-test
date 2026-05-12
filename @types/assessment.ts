@@ -55,7 +55,7 @@ declare type CreateAssessmentDetails = {
     otherPleaseSpecify?: string
     assessmentLayer?: AssessmentLayer
     sentencePlanType?: SpSelectionType
-    includeCourtReportTemplate?: string
+    includeCourtReportTemplate?: 'SDR' | 'FDR' | 'No'
     includeSanSections?: YesNoAnswer
     selectTeam?: string
     selectAssessor?: string
@@ -65,6 +65,7 @@ declare type Layer = 'Layer 1' | 'Layer 1V2' | 'Layer 3' | 'Layer 3V2'
 declare type RiskLevel = 'Low' | 'Medium' | 'High' | 'Very High' | ''
 declare type FrameworkRole = 'Legacy - Unapproved PSO & unapproved PQiP' | 'Legacy - Approved PSO, approved PQiP, NQO or unapproved PO' | 'Legacy - Approved PO' | 'Legacy - SPO' | 'Legacy - Head of PDU' |
     'Unapproved Prison POM & unapproved PQiP' | 'Approved Prison POM, approved PQiP, NQO or unapproved Probation POM' | 'Approved Probation POM' | 'HOMDs'
+declare type PsrSigningLevel = 'Countersign All' | 'RoSH Screening Only' | 'Low' | 'Medium' | 'High' | 'Very High' | ''
 
 declare type MenuStatus = { container: boolean, level1: string, level2: string, complete: boolean }
 

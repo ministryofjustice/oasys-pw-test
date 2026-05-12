@@ -99,7 +99,7 @@ export const probPso: User = new User(
  */
 export const probSpHeadPdu: User = new User(
     { username: 'AUTOSPHEADPDU', forename1: 'Autotest', surname: 'HEADSPPDU' },
-    { provider: probationNonSan, frameworkRole: 'Legacy - Head of PDU', defaultCountersigner: null, roles: ['NPS Assessor', 'Trainer', 'SARA', 'SP Service'] }
+    { provider: probationNonSan, frameworkRole: 'Legacy - Head of PDU', defaultCountersigner: null, roles: ['NPS Assessor', 'Trainer', 'SARA', 'SP Service'], psrSigningLevel: 'Very High' }
 )
 
 /**

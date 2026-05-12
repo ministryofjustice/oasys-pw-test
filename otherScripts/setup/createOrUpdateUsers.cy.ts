@@ -53,6 +53,10 @@ async function createOrUpdateUser(user: User, oasys: Oasys, maintenance: Mainten
         }
         await maintenance.maintainFullUserProfile.defaultCountersigner.setValue(user.profile.defaultCountersigner?.lovLookup ?? '%')
 
+        if (user.profile.psrSigningLevel) {
+            await maintenance.maintainFullUserProfile.psrSigningLevel.setValue(user.profile.psrSigningLevel)
+        }
+
         await maintenance.maintainFullUserProfile.roles.clickButton('removeall')
         await maintenance.maintainFullUserProfile.roles.addItems(user.profile.roles)
 

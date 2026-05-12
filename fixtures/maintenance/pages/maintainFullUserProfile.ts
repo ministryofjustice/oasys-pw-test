@@ -22,6 +22,7 @@ export class MaintainFullUserProfile extends OasysPage {
     mainTeam = new Element.Select(this.page, '#P9_DEFAULT_TEAM')
     defaultCountersigner = new Element.Lov(this.page, '#P9_DEFAULT_COUNTERSIGNER_LABEL')
     signingRole = new Element.Select(this.page, '#P9_SIGNING_ROLE')
+    psrSigningLevel = new Element.Select<PsrSigningLevel>(this.page, '#P9_PSR_SIGNING_LEVEL')
     teams = new Element.Shuttle(this.page, 'PRO060_TEAMS')
     roles = new Element.Shuttle(this.page, 'PRO060_ROLES')
     frameworkRole = new Element.Select(this.page, '#P9_FRAMEWORK_ROLE')

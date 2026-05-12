@@ -13,11 +13,11 @@ export class User {
     lovLookup: string
     surnameForename: string
     forenameSurname: string
-    profile?: { provider: string, frameworkRole: FrameworkRole, defaultCountersigner: User, roles: string[] }
+    profile?: { provider: string, frameworkRole: FrameworkRole, defaultCountersigner: User, roles: string[], psrSigningLevel?: PsrSigningLevel }
 
     constructor(
         userDetails: { username: string, forename1?: string, surname?: string },
-        profile?: { provider: string, frameworkRole: FrameworkRole, defaultCountersigner: User, roles: string[] }
+        profile?: { provider: string, frameworkRole: FrameworkRole, defaultCountersigner: User, roles: string[], psrSigningLevel?: PsrSigningLevel }
     ) {
 
         const testProcess = Number.parseInt(process.env.TEST_PARALLEL_INDEX)
@@ -30,7 +30,7 @@ export class User {
         this.surnameForename = `${this.surname} ${this.forename1}`
         this.forenameSurname = `${this.forename1} ${this.surname}`
         this.profile = profile
-
     }
 
 }
+

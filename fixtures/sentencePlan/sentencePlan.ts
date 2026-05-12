@@ -1,8 +1,9 @@
-import { Page, TestInfo } from '@playwright/test'
+import { Page } from '@playwright/test'
 
 import { Oasys } from 'fixtures'
 import * as pages from './pages'
 import { SpService } from './spService/spService'
+import { Psr } from './psr/psr'
 
 
 export class SentencePlan {
@@ -14,6 +15,7 @@ export class SentencePlan {
     readonly ispSection52to8 = new pages.IspSection52to8(this.page)
     readonly rspSection72to10 = new pages.RspSection72to10(this.page)
     readonly spService = new SpService(this.page, this.oasys)
+    readonly psr = new Psr(this.page)
 
     /**
      * Navigate to the sentence plan and populate the sentence plan with the minimum required to allow sign and lock.

@@ -132,7 +132,7 @@ function calculateLifer(tieringCase: TieringCase): Tier {
     }
 
     const diffYears = oasysDateTime.dateDiffString(tieringCase.communityDate, tieringCase.dateCompleted, 'year') // Assessment date minus community date
-    return diffYears >= 1 ? 'F' : 'B'
+    return diffYears == 0 ? 'B' : diffYears < 5 ? 'D' : 'E'
 }
 
 function calculateDaStalkingCp(tieringCase: TieringCase): Tier {

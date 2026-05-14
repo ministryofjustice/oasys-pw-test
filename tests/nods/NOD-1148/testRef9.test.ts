@@ -52,7 +52,7 @@ test('OGRS regression test ref 9', async ({ oasys, offender, assessment, section
         Sign & Lock the RoSHA - no errors occur, ensure you don't get a warning for The OGRS score cannot be calculated when the Gender selected for the offender is not 'Male' or 'Female'.`, 'Test step')
 
     await assessment.populateMinimal({ layer: 'Layer 1V2' })
-    await signing.signAndLock()
+    await signing.signAndLock({ page: 'riskScreening' })
 
     log(`Check that no SNS messages have been sent.
         Check that there is a record in the new table 'PREDICTOR_FEATURE_LINES' for this OASYS_SET_PK and it has stored ALL the fields coming back from the new Predictor calculator as at the last time it run								

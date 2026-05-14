@@ -15,20 +15,17 @@ export function testTieringCase(tieringCase: TieringCase, includeStatic: boolean
         arpScore = tieringCase.arpCsrp.ogrs4gPercentage2yr
     }
 
-    // OSP percentage and band - use DC if available, otherwise the old C version
-    const oldOsp = tieringCase.srp.ncOspDcPercentageScore == null
-    const ospContactRisk = oldOsp ? tieringCase.oldOsp.ospCPercentageScore : tieringCase.srp.ncOspDcPercentageScore
-    const ospContactBand = oldOsp ? tieringCase.oldOsp.ospCRiskReconElm : tieringCase.srp.ncOspDcRiskReconElm
-
     // RoSH flag - use Delius flag if available, otherwise take the one from oasys_set
     const rosh = (tieringCase.rosh == null) ? tieringCase.roshLevelElm : tieringCase.rosh
 
-    // Initial tier calculations - dynamic ARP, dynamic CSRP
+    // Initial tier calculations - ARP/CSRP, DC, IIC
     const arpCsrp = calculateArpCsrp(arpScore, csrpScore)
-    const dc = calculateDc(ospContactRisk, ospContactBand, oldOsp)
+    const dc = calculateDc(tieringCase.srp.ncOspDcPercentageScore, tieringCase.srp.ncOspDcRiskReconElm)
+    const ic = calculateIic(tieringCase.srp.ncOspIicRiskReconElm)
 
     // Determine the initial result
     let initialResult = getHigherTier(arpCsrp, dc)
+    initialResult = getHigherTier(initialResult, ic)
 
     // Final result calculations
     const roshMappa = calculateRoshMappa(rosh, tieringCase.mappa)
@@ -42,9 +39,12 @@ export function testTieringCase(tieringCase: TieringCase, includeStatic: boolean
     finalResult = getHigherTier(finalResult, daStalkingCp)
     finalResult = getHigherTier(finalResult, pCoSos)
 
-    // If no CSRP, only accept the final result if it's A
+    // If no CSRP, only accept the final result if it's A.  Check first if the SRP predictors could combine as a partial CSRP score to generate A anyway.
     if (arpCsrp == null && finalResult != 'A') {
-        finalResult = null
+
+        const minCsrp = calculateMinCsrp(tieringCase)
+        const overrideTier = calculateArpCsrp(arpScore, minCsrp)
+        finalResult = overrideTier == 'A' ? 'A' : null
     }
 
     logText.push(`        ARP/CSRP   - ${arpCsrp}`)
@@ -52,6 +52,7 @@ export function testTieringCase(tieringCase: TieringCase, includeStatic: boolean
     logText.push(`        RoSH/MAPPA - ${roshMappa}`)
     logText.push(`        Lifer      - ${lifer}`)
     logText.push(`        DA, st, CP - ${daStalkingCp}`)
+    logText.push(`        PCoSo      - ${pCoSos}`)
 
     return finalResult ?? 'M'
 }
@@ -80,15 +81,15 @@ function calculateArpCsrp(arp: number, csrp: number): Tier {
 
 }
 
-function calculateDc(ospRisk: number, ospContactBand: string, oldOsp: boolean): Tier {
+function calculateDc(ospRisk: number, ospContactBand: string): Tier {
 
     if (ospRisk == null || ospContactBand == null) {
         return null
     }
 
-    const topMediumReduced = oldOsp ? 2 : 3.36
-    const bottomMediumReduced = oldOsp ? 1.37 : 2.11
-    const topMediumStd = oldOsp ? 0.82 : 1.12
+    const topMediumReduced = 3.36
+    const bottomMediumReduced = 2.11
+    const topMediumStd = 1.12
 
     switch (ospContactBand.substring(0, 1)) {
         case 'V':
@@ -110,6 +111,11 @@ function calculateDc(ospRisk: number, ospContactBand: string, oldOsp: boolean): 
             return 'E'
     }
     return null
+}
+
+function calculateIic(iicBand: string): Tier {
+
+    return iicBand == 'H' ? 'C' : iicBand == 'M' ? 'D' : null
 }
 
 function calculateRoshMappa(rosh: string, mappa: string): Tier {
@@ -149,6 +155,15 @@ function calculateDaStalkingCp(tieringCase: TieringCase): Tier {
 function calculatePCoSos(tieringCase: TieringCase): Tier {
 
     return tieringCase.o1_30 == 'Y' ? 'E' : null
+}
+
+function calculateMinCsrp(tieringCase: TieringCase): number {
+
+    let result = tieringCase.srp.ncOspDcPercentageScore ?? 0
+    if (tieringCase.srp.ncOspIicPercentageScore) {
+        result += tieringCase.srp.ncOspIicPercentageScore
+    }
+    return result
 }
 
 function getHigherTier(t1: Tier, t2: Tier): Tier {

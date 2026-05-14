@@ -66,25 +66,25 @@ export class TieringCase {
         this.dateCompleted = tieringData[i++]
         this.o1_30 = tieringData[i++]
         this.arpCsrp = {
-            ncRsrPercentageScore: getDbFloat(tieringData[i++]),
+            ncRsrPercentageScore: utils.stringToFloat(tieringData[i++]),
             rsrStaticOrDynamic: tieringData[i++],
-            snsvStaticPercentage: getDbFloat(tieringData[i++]),
-            snsvDynamicPercentage: getDbFloat(tieringData[i++]),
-            ogrs4gPercentage2yr: getDbFloat(tieringData[i++]),
-            ogp2Percentage2yr: getDbFloat(tieringData[i++]),
+            snsvStaticPercentage: utils.stringToFloat(tieringData[i++]),
+            snsvDynamicPercentage: utils.stringToFloat(tieringData[i++]),
+            ogrs4gPercentage2yr: utils.stringToFloat(tieringData[i++]),
+            ogp2Percentage2yr: utils.stringToFloat(tieringData[i++]),
         }
         this.srp = {
             ncOspDcRiskReconElm: tieringData[i++],
-            ncOspDcPercentageScore: getDbFloat(tieringData[i++]),
+            ncOspDcPercentageScore: utils.stringToFloat(tieringData[i++]),
             ncOspIicRiskReconElm: tieringData[i++],
-            ncOspIicPercentageScore: getDbFloat(tieringData[i++]),
+            ncOspIicPercentageScore: utils.stringToFloat(tieringData[i++]),
             dcSrpRiskReduction: tieringData[i++],
         }
         this.oldOsp = {
             ospCRiskReconElm: tieringData[i++],
-            ospCPercentageScore: getDbFloat(tieringData[i++]),
+            ospCPercentageScore: utils.stringToFloat(tieringData[i++]),
             ospIRiskReconElm: tieringData[i++],
-            ospIPercentageScore: getDbFloat(tieringData[i++]),
+            ospIPercentageScore: utils.stringToFloat(tieringData[i++]),
         }
         this.rosh = tieringData[i++]
         this.roshLevelElm = tieringData[i++]
@@ -136,9 +136,4 @@ export class TieringCase {
                     ${where}
                     fetch first ${rows} rows only`
     }
-}
-
-
-function getDbFloat(dbValue: string): number {
-    return Number.isNaN(Number.parseFloat(dbValue)) ? null : Number.parseFloat(dbValue)
 }

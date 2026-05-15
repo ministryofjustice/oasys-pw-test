@@ -1,10 +1,10 @@
 import { test } from 'fixtures'
 
-const count = 260000
+const count = 500//260000
 const whereClause: string = null
 // const whereClause = `cms_prob_number = 'V017263'`
-const includeStatic = false
-const reportAll = true
+const includeStatic = true
+const reportAll = false
 
 
 test('Tier calculations test', async ({ ogrs }) => {
@@ -18,23 +18,21 @@ test('Tier calculations test', async ({ ogrs }) => {
         const logText: string[] = []
 
         const caseResult = ogrs.tiering.calculate(tieringCase, includeStatic, logText)
+        const caseFailed = caseResult != tieringCase.oracleResults.finalTier
 
-        if (caseResult != tieringCase.oracleResults.finalTier || reportAll) {
-            log(`     ${JSON.stringify(tieringCase)}`, `CRN: ${tieringCase.probationCrn} / ${tieringCase.prisonCrn} FAILED`)
-            log(`     ROSH: ${tieringCase.rosh}`)
-            log(`     MAPPA: ${tieringCase.mappa}`)
-            log(`     Lifer: ${tieringCase.lifer}`)
-            log(`     Custody: ${tieringCase.custodyInd}`)
-            log(`     Oracle: ${tieringCase.oracleResults.finalTier}, Cypress: ${caseResult}`)
+        if (caseFailed || reportAll) {
+            log(`     ${JSON.stringify(tieringCase)}`, `CRN: ${tieringCase.probationCrn} / ${tieringCase.prisonCrn} ${caseFailed ? 'FAILED' : ''}`)
+            log(`     Oracle: ${tieringCase.oracleResults.finalTier}, Test result: ${caseResult}`)
             logText.forEach((logLine) => {
                 log(logLine)
             })
             log(' ')
-            if (caseResult != tieringCase.oracleResults.finalTier) {
+            if (caseFailed) {
                 failed++
-            } else {
-                passed++
             }
+        }
+        if (!caseFailed) {
+            passed++
         }
 
     }

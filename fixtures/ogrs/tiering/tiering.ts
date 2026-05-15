@@ -33,15 +33,15 @@ export class Tiering {
 
         // RoSH flag - use Delius flag if available, otherwise take the one from oasys_set
         const rosh = (tieringCase.rosh == null) ? tieringCase.roshLevelElm : tieringCase.rosh
-        
+
         // Initial tier calculations - ARP/CSRP, DC, IIC
         const arpCsrp = calculateArpCsrp(arpScore, csrpScore)
         const dc = calculateDc(tieringCase.srp.ncOspDcPercentageScore, tieringCase.srp.ncOspDcRiskReconElm)
-        const ic = calculateIic(tieringCase.srp.ncOspIicRiskReconElm)
+        const iic = calculateIic(tieringCase.srp.ncOspIicRiskReconElm)
 
         // Determine the initial result
         let initialResult = getHigherTier(arpCsrp, dc)
-        initialResult = getHigherTier(initialResult, ic)
+        initialResult = getHigherTier(initialResult, iic)
 
         // Final result calculations
         const roshMappa = calculateRoshMappa(rosh, tieringCase.mappa)
@@ -57,7 +57,7 @@ export class Tiering {
 
         // If no CSRP, only accept the final result if it's A.  Check first if the SRP predictors could combine as a partial CSRP score to generate A anyway.
         if (arpCsrp == null && finalResult != 'A') {
-    
+
             const minCsrp = calculateMinCsrp(tieringCase)
             const overrideTier = calculateArpCsrp(arpScore, minCsrp)
             finalResult = overrideTier == 'A' ? 'A' : null
@@ -65,6 +65,7 @@ export class Tiering {
 
         logText.push(`        ARP/CSRP   - ${arpCsrp}`)
         logText.push(`        DC-SRP     - ${dc}`)
+        logText.push(`        IIC-SRP    - ${iic}`)
         logText.push(`        RoSH/MAPPA - ${roshMappa}`)
         logText.push(`        Lifer      - ${lifer}`)
         logText.push(`        DA, st, CP - ${daStalkingCp}`)

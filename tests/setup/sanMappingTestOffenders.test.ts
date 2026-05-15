@@ -21,7 +21,7 @@ test('Create offender for SAN mapping tests', async ({ oasys, offender }) => {
     await oasys.login(oasys.users.probSanHeadPdu)
 
     for (let i = 0; i < userSuffixes.length; i++) {
-        const mappingTestOffender = await offender.createProb(initialOffenderDetails)
+        const mappingTestOffender = await offender.createProbFromStandardOffender({ type: 'noEvent' })
         await fs.writeFile(`${mappingTestOffenderFile}${i}`, JSON.stringify(mappingTestOffender))
     }
 

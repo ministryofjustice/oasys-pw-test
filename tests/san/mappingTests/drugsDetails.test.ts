@@ -67,7 +67,7 @@ const expectedAnswersTemplate: OasysAnswer[] = [
 let expectedAnswers: OasysAnswer[]  // variable to hold a new copy of the template for each iteration of the test with the different drug types
 const otherDrugName = 'Other drug name'
 
-test.describe.serial('Mapping test for drugs - individual drugs details', () => {
+test.describe('Mapping test for drugs - individual drugs details', () => {
 
     test('amphetamines', async ({ page, oasys, offender, assessment, san }) => { await drugTest('amphetamines', page, oasys, offender, assessment, san) })
     test('benzodiazepines', async ({ page, oasys, offender, assessment, san }) => { await drugTest('benzodiazepines', page, oasys, offender, assessment, san) })

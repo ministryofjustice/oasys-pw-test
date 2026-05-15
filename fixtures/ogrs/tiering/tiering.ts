@@ -78,6 +78,7 @@ export class Tiering {
                     maxArpCsrpTier = calculateArpCsrp(arpScore, 100)
                 }
 
+                // Provisional unless a moderator has taken it to the maximum available or higher
                 if (finalResult > maxArpCsrpTier || finalResult != maxModerator) { // Reverse alphabetical, final result is less than max possible
                     provisionalFlag = 'Y'
                 }

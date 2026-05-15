@@ -12,7 +12,7 @@ export class Data {
 
         // Offender data
         const offenderData = await this.oasysDb.getData(`select custody_ind, remand_ind from eor.offender where cms_prob_number = '${probationCrn}'`)
-        const community = offenderData[0][0] == 'Y' || offenderData[0][1] == 'Y'
+        const community = offenderData[0][0] != 'Y' && offenderData[0][1] != 'Y'
 
         // oasys_Set
         const oasysSetData = await this.oasysDb.getData(oasysSetQuery(pk))
@@ -150,7 +150,7 @@ async function getSaraParameters(probationCrn: string, assessmentPk: number, age
     const saraPk = await oasysDb.getSingleNumericValue(`select oasys_set_pk from eor.oasys_set where parent_oasys_set_pk = ${assessmentPk} order by initiation_date desc`)
 
     // Rule 2 - SARA has been created on this assessment and has not been rejected
-    if (saraPk){// && !noSaraDate) { // latest SARA is assocated with the assessment  // TODO clarify this rule
+    if (saraPk && !noSaraDate) { // latest SARA is assocated with the assessment  // TODO Workaround for defect 1265 (fails the tests for 1201 and 1225).  Remove the !noSaraDate
         return getSaraRiskLevels(saraPk, oasysDb)
     }
 

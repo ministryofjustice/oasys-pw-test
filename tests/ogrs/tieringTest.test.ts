@@ -1,9 +1,8 @@
 import { test } from 'fixtures'
 
-const count = 500//260000
+const count = 260000
 const whereClause: string = null
 // const whereClause = `cms_prob_number = 'V017263'`
-const includeStatic = true
 const reportAll = false
 
 
@@ -17,12 +16,13 @@ test('Tier calculations test', async ({ ogrs }) => {
     for (const tieringCase of tieringData) {
         const logText: string[] = []
 
-        const caseResult = ogrs.tiering.calculate(tieringCase, includeStatic, logText)
-        const caseFailed = caseResult != tieringCase.oracleResults.finalTier
+        const caseResult = ogrs.tiering.calculate(tieringCase, logText)
+        const caseFailed = caseResult.tier != tieringCase.oracleResults.finalTier || caseResult.provisional != tieringCase.oracleResults.provisional
 
         if (caseFailed || reportAll) {
             log(`     ${JSON.stringify(tieringCase)}`, `CRN: ${tieringCase.probationCrn} / ${tieringCase.prisonCrn} ${caseFailed ? 'FAILED' : ''}`)
-            log(`     Oracle: ${tieringCase.oracleResults.finalTier}, Test result: ${caseResult}`)
+            log(`     Oracle tier: ${tieringCase.oracleResults.finalTier}, Test result: ${caseResult.tier}`)
+            log(`     Oracle provisional: ${tieringCase.oracleResults.provisional}, Test result: ${caseResult.provisional}`)
             logText.forEach((logLine) => {
                 log(logLine)
             })

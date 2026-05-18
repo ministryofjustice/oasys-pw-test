@@ -17,45 +17,41 @@ export class Tiering {
         return result
     }
 
-    calculate(tieringCase: TieringCase, includeStatic: boolean, logText: string[]): Tier {
+    calculate(tieringCase: TieringCase, logText: string[]): { tier: Tier, provisional: string } {
 
-        // Get CSRP score depending on static parameter
-        let csrpScore = tieringCase.arpCsrp.ncRsrPercentageScore
-        if (!includeStatic && tieringCase.arpCsrp.rsrStaticOrDynamic != 'DYNAMIC') {
-            csrpScore = null
-        }
+        // CSRP score
+        const csrpScore = tieringCase.arpCsrp.ncRsrPercentageScore
+        const staticCsrp = tieringCase.arpCsrp.rsrStaticOrDynamic != 'DYNAMIC'
 
-        // Get ARP score depending on static parameter
-        let arpScore = tieringCase.arpCsrp.ogp2Percentage2yr
-        if (arpScore == null && includeStatic) {
-            arpScore = tieringCase.arpCsrp.ogrs4gPercentage2yr
-        }
+        // ARP score
+        const arpScore = tieringCase.arpCsrp.ogp2Percentage2yr ?? tieringCase.arpCsrp.ogrs4gPercentage2yr
+        const staticArp = tieringCase.arpCsrp.ogp2Percentage2yr == null
 
         // RoSH flag - use Delius flag if available, otherwise take the one from oasys_set
-        const rosh = (tieringCase.rosh == null) ? tieringCase.roshLevelElm : tieringCase.rosh
+        const rosh = tieringCase.rosh ?? tieringCase.roshLevelElm
 
-        // Initial tier calculations - ARP/CSRP, DC, IIC
+        // Initial tier calculation - ARP/CSRP
         const arpCsrp = calculateArpCsrp(arpScore, csrpScore)
+
+        // Moderator calculations
         const dc = calculateDc(tieringCase.srp.ncOspDcPercentageScore, tieringCase.srp.ncOspDcRiskReconElm)
         const iic = calculateIic(tieringCase.srp.ncOspIicRiskReconElm)
-
-        // Determine the initial result
-        let initialResult = getHigherTier(arpCsrp, dc)
-        initialResult = getHigherTier(initialResult, iic)
-
-        // Final result calculations
         const roshMappa = calculateRoshMappa(rosh, tieringCase.mappa)
         const lifer = calculateLifer(tieringCase)
         const daStalkingCp = calculateDaStalkingCp(tieringCase)
         const pCoSos = calculatePCoSos(tieringCase)
 
-        // Determine the final result
-        let finalResult = getHigherTier(initialResult, roshMappa)
-        finalResult = getHigherTier(finalResult, lifer)
-        finalResult = getHigherTier(finalResult, daStalkingCp)
-        finalResult = getHigherTier(finalResult, pCoSos)
+        // Find the highest moderator
+        let maxModerator = getHigherTier(dc, iic)
+        maxModerator = getHigherTier(maxModerator, roshMappa)
+        maxModerator = getHigherTier(maxModerator, lifer)
+        maxModerator = getHigherTier(maxModerator, daStalkingCp)
+        maxModerator = getHigherTier(maxModerator, pCoSos)
 
-        // If no CSRP, only accept the final result if it's A.  Check first if the SRP predictors could combine as a partial CSRP score to generate A anyway.
+        // Determine the final result
+        let finalResult = getHigherTier(arpCsrp, maxModerator)
+
+        // If no ARP/CSRP, only accept the final result if it's A.  Check first if the SRP predictors could combine as a partial CSRP score to generate A anyway.
         if (arpCsrp == null && finalResult != 'A') {
 
             const minCsrp = calculateMinCsrp(tieringCase)
@@ -63,15 +59,44 @@ export class Tiering {
             finalResult = overrideTier == 'A' ? 'A' : null
         }
 
+        // Provisional flag for static ARP and CSRP
+        let provisionalFlag = 'N'
+        let maxArpCsrpTier: Tier
+
+        if (finalResult && (staticArp || staticCsrp)) {
+
+            // If both static, result is always provisional unless moderators make it A
+            if (staticArp && staticCsrp) {
+                if (maxModerator != 'A') {
+                    provisionalFlag = 'Y'
+                }
+            } else {
+                // Otherwise, depends on the possible maximum if one predictor went from static to dynamic
+                if (staticArp) {
+                    maxArpCsrpTier = calculateArpCsrp(100, csrpScore)
+                } else {
+                    maxArpCsrpTier = calculateArpCsrp(arpScore, 100)
+                }
+
+                // Provisional unless a moderator has taken it to the maximum available or higher
+                if (finalResult > maxArpCsrpTier || finalResult != maxModerator) { // Reverse alphabetical, final result is less than max possible
+                    provisionalFlag = 'Y'
+                }
+            }
+
+        }
+
         logText.push(`        ARP/CSRP   - ${arpCsrp}`)
+        logText.push(`        [Max ARP/CSRP - ${maxArpCsrpTier}]`)
         logText.push(`        DC-SRP     - ${dc}`)
         logText.push(`        IIC-SRP    - ${iic}`)
         logText.push(`        RoSH/MAPPA - ${roshMappa}`)
         logText.push(`        Lifer      - ${lifer}`)
         logText.push(`        DA, st, CP - ${daStalkingCp}`)
         logText.push(`        PCoSo      - ${pCoSos}`)
+        logText.push(`        [Max moderator - ${maxModerator}]`)
 
-        return finalResult ?? 'M'
+        return { tier: finalResult ?? 'M', provisional: provisionalFlag }
     }
 }
 
@@ -160,10 +185,10 @@ function calculateLifer(tieringCase: TieringCase): Tier {
 
 function calculateDaStalkingCp(tieringCase: TieringCase): Tier {
 
-    if (tieringCase.daStalking.da == 'Y' || tieringCase.daStalking.daHistory == 'Y') {
+    if (tieringCase.daStalkingCp.da == 'Y' || tieringCase.daStalkingCp.daHistory == 'Y') {
         return 'E'
     }
-    if (tieringCase.daStalking.stalking == 'Y' || tieringCase.cp.childProtection == 'Y') {
+    if (tieringCase.daStalkingCp.stalking == 'Y' || tieringCase.daStalkingCp.childProtection == 'Y') {
         return 'F'
     }
     return null

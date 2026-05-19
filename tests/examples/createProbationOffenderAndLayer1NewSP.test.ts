@@ -1,7 +1,7 @@
 import { test } from 'fixtures'
 
 
-test('Example test - create a probation offender and a layer 1 assessment using new SP service', async ({ oasys, offender, assessment, signing, api, sns, ogrs }) => {
+test('Example test - create a probation offender and a layer 1 assessment using new SP service', async ({ cms, oasys, offender, assessment, signing, api, sns, ogrs }) => {
 
     await oasys.login(oasys.users.probSpHeadPdu)
 
@@ -18,6 +18,10 @@ test('Example test - create a probation offender and a layer 1 assessment using 
     await api.testOneOffender(offender1.probationCrn, 'prob', false, false)
     await ogrs.checkOgrsInOasysSet(pk1)
 
+    await oasys.logout()
+
+    await oasys.login(oasys.users.prisSpHomds)
+    await cms.createReceptionEvent(offender1)
     await oasys.logout()
 
 })

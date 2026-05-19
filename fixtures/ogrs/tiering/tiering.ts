@@ -87,13 +87,13 @@ export class Tiering {
         }
 
         logText.push(`        ARP/CSRP   - ${arpCsrp}`)
-        logText.push(`        [Max ARP/CSRP - ${maxArpCsrpTier}]`)
         logText.push(`        DC-SRP     - ${dc}`)
         logText.push(`        IIC-SRP    - ${iic}`)
         logText.push(`        RoSH/MAPPA - ${roshMappa}`)
         logText.push(`        Lifer      - ${lifer}`)
         logText.push(`        DA, st, CP - ${daStalkingCp}`)
         logText.push(`        PCoSo      - ${pCoSos}`)
+        logText.push(`        [Max ARP/CSRP - ${maxArpCsrpTier}]`)
         logText.push(`        [Max moderator - ${maxModerator}]`)
 
         return { tier: finalResult ?? 'M', provisional: provisionalFlag }

@@ -35,15 +35,13 @@ export class Tiering {
 
         // Moderator calculations
         const dc = calculateDc(tieringCase.srp.ncOspDcPercentageScore, tieringCase.srp.ncOspDcRiskReconElm)
-        const iic = calculateIic(tieringCase.srp.ncOspIicRiskReconElm)
         const roshMappa = calculateRoshMappa(rosh, tieringCase.mappa)
         const lifer = calculateLifer(tieringCase)
         const daStalkingCp = calculateDaStalkingCp(tieringCase)
         const pCoSos = calculatePCoSos(tieringCase)
 
         // Find the highest moderator
-        let maxModerator = getHigherTier(dc, iic)
-        maxModerator = getHigherTier(maxModerator, roshMappa)
+        let maxModerator = getHigherTier(dc, roshMappa)
         maxModerator = getHigherTier(maxModerator, lifer)
         maxModerator = getHigherTier(maxModerator, daStalkingCp)
         maxModerator = getHigherTier(maxModerator, pCoSos)
@@ -88,7 +86,6 @@ export class Tiering {
 
         logText.push(`        ARP/CSRP   - ${arpCsrp}`)
         logText.push(`        DC-SRP     - ${dc}`)
-        logText.push(`        IIC-SRP    - ${iic}`)
         logText.push(`        RoSH/MAPPA - ${roshMappa}`)
         logText.push(`        Lifer      - ${lifer}`)
         logText.push(`        DA, st, CP - ${daStalkingCp}`)
@@ -153,11 +150,6 @@ function calculateDc(ospRisk: number, ospContactBand: string): Tier {
             return 'E'
     }
     return null
-}
-
-function calculateIic(iicBand: string): Tier {
-
-    return iicBand == 'H' ? 'C' : iicBand == 'M' ? 'D' : null
 }
 
 function calculateRoshMappa(rosh: string, mappa: string): Tier {

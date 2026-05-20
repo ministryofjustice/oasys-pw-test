@@ -16,6 +16,8 @@ export class SentencePlan {
     readonly rspSection72to10 = new pages.RspSection72to10(this.page)
     readonly spService = new SpService(this.page, this.oasys)
     readonly psr = new Psr(this.page)
+    readonly changeSentencePlan = new pages.ChangeSentencePlan(this.page)
+    
 
     /**
      * Navigate to the sentence plan and populate the sentence plan with the minimum required to allow sign and lock.

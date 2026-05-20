@@ -400,8 +400,8 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         const sanColumnsQuery2 = await oasysDb.getData(sanColumnsQuery)
         expect(JSON.stringify(sanColumnsQuery2)).toBe(JSON.stringify(sanColumnsQuery1))
 
-        await san.queries.checkCountOfQuestionsInSection(pk2, '13', 0)
-        await san.queries.checkCountOfQuestionsInSection(pk2, 'SAN', 12)
+        await assessment.queries.checkCountOfQuestionsInSection(pk2, '13', 0)
+        await assessment.queries.checkCountOfQuestionsInSection(pk2, 'SAN', 12)
 
         log(`Open up the completed OASys-SAN asessment - now shows all READ ONLY.  
         Click on the <Print> button - check that the initial print screen does NOT show options for sections 2 to 13 and the SAQ`, 'Test step')

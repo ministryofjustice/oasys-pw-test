@@ -111,7 +111,7 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, cms, offender, asse
         'Evidence of binge drinking or excessive alcohol use')
     await san.returnToOASys()
 
-    await sentencePlan.spService.checkGoalCount(2, 0, 'assessment', true)
+    await sentencePlan.spService.checkGoalCount(2, 0, 0, 'assessment', true)
 
     await oasys.clickButton('Close')
 

@@ -13,7 +13,7 @@ export class SpService {
     readonly sentencePlan = new pages.SentencePlan(this.page)
     readonly steps = new pages.Steps(this.page)
     readonly agreePlan = new pages.AgreePlan(this.page)
-
+    readonly updateGoalAndSteps = new pages.UpdateGoalAndSteps(this.page)
 
     async gotoSpService(from: 'offender' | 'assessment', readonly: boolean = false) {
 
@@ -104,9 +104,9 @@ export class SpService {
         await this.returnToOasys()
     }
 
-    async checkGoalCount(expectedCurrent: number, expectedFuture: number, from: 'assessment' | 'offender' = 'assessment', readonly: boolean = false) {
+    async checkGoalCount(expectedCurrent: number, expectedFuture: number, expectedAchieved: number, from: 'assessment' | 'offender' = 'assessment', readonly: boolean = false) {
 
-        log(`Checking SP goal count: ${expectedCurrent}, ${expectedFuture}`)
+        log(`Checking SP goal count - current: ${expectedCurrent}, future: ${expectedFuture}, achieved: ${expectedAchieved}`)
         await this.gotoSpService(from, readonly)
         const currentText = await this.sentencePlan.currentGoalCount.getFullText()
         const futureText = await this.sentencePlan.futureGoalCount.getFullText()
@@ -116,6 +116,13 @@ export class SpService {
 
         expect(actualCurrent).toBe(expectedCurrent)
         expect(actualFuture).toBe(expectedFuture)
+
+        if (expectedAchieved > 0) {
+            const achievedText = await this.sentencePlan.achievedGoalCount.getFullText()
+            const actualAchieved = this.findGoalCount(achievedText)
+            expect(actualAchieved).toBe(expectedAchieved)
+        }
+
         await this.returnToOasys()
     }
 
@@ -131,7 +138,7 @@ export class SpService {
 
     }
 
-    async addGoal(from: 'assessment' | 'offender' = 'assessment') {
+    async addGoal(from: 'assessment' | 'offender' = 'assessment', planAgreed = false) {
 
         log('Adding a goal')
         await this.gotoSpService(from)
@@ -143,11 +150,28 @@ export class SpService {
         await createGoal.related.setValue('no')
         await createGoal.startNow.setValue('yes')
         await createGoal.targetDate.setValue('3months')
-        await createGoal.addSteps.click()
+        if (planAgreed) {
+            await createGoal.saveAndContinue.click()
+        } else {
+            await createGoal.addSteps.click()
+        }
 
         await this.page.getByLabel('Who will do the step?').selectOption('probation_practitioner')
         await this.page.getByRole('textbox', { name: 'What should they do to' }).fill('Do some additional stuff')
         await this.page.getByRole('button', { name: 'Save and continue' }).click()
+
+        await this.returnToOasys()
+    }
+
+
+    async completeFirstGoal(from: 'assessment' | 'offender' = 'assessment') {
+
+        log('Completing the first goal')
+        await this.gotoSpService(from)
+
+        await this.sentencePlan.update.click()
+        await this.updateGoalAndSteps.markAsAchieved.click()
+        await this.page.getByRole('button', { name: 'Confirm' }).click()
 
         await this.returnToOasys()
     }

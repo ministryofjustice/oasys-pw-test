@@ -7,4 +7,7 @@ export class SentencePlan extends OasysPage {
     agreePlan = new Element.Button(this.page,'Agree plan')
     currentGoalCount = new Element.Link(this.page,'Goals to work on now (')
     futureGoalCount = new Element.Link(this.page,'Future goals (')
+    achievedGoalCount = new Element.Link(this.page,'Achieved goals (')
+
+    update = new Element.Link(this.page, 'Update')
 }

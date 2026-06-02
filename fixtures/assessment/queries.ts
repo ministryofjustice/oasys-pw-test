@@ -295,6 +295,21 @@ export class Queries {
         return failed
     }
 
+    /**
+     * Checks that the expected number of questions has a non-null answer for the given pk and OASys section.  Fails the test if there is a mismatch.
+     */
+    async checkCountOfQuestionsInSection(pk: number, section: string, expectedCount: number) {
+
+        const sanSectionQuery = `select count(*) from eor.oasys_set st, eor.oasys_section s, eor.oasys_question q, eor.oasys_answer a
+                                where st.oasys_set_pk = s.oasys_set_pk
+                                and s.oasys_section_pk = q.oasys_section_pk
+                                and q.oasys_question_pk = a.oasys_question_pk(+)
+                                and s.ref_section_code = '${section}' 
+                                and (a.ref_answer_code is not null or q.free_format_answer is not null or q.additional_note is not null)
+                                and st.oasys_set_pk = ${pk}`
+        const count = await this.oasysDb.selectCount(sanSectionQuery)
+        expect(count).toBe(expectedCount)
+    }
 
     /**
      * Checks that the given OASYS_SET pk is deleted (i.e. deleted_date is not null)

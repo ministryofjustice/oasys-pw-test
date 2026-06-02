@@ -167,8 +167,6 @@ export class Assessment {
         log(`Deleted latest assessment`)
     }
 
-
-
     /**
      * Reverses the deletion of an assessment or subassessment.  Optional comment (otherwise generic text is used)
      */
@@ -234,34 +232,11 @@ export class Assessment {
     async lockIncomplete(message = 'Do you wish to lock the assessment as incomplete?') {
 
         await this.oasys.handleAlert('Lock Incomplete', message)
+        // Check it's worked in case of SAN failure
+        const lockIncompleteColumn = await this.assessmentsTab.assessments.lockAssessment.getValues()
+        expect(lockIncompleteColumn).not.toContain('Lock Incomplete')
         log('Locked assessment incomplete')
     }
-
-    // /**
-    //  * Finds the latest non-deleted oasys_set record for a given offender
-    //  * Uses the PNC stored in oasys_set, so doesn't account for merges etc.
-    //  * 
-    //  * Returns the pk using the resultAlias.
-    //  */
-    // async getLatestSetPk(offenderAlias: string, resultAlias: string) {
-
-    //     cy.get<OffenderDef>(offenderAlias).then((offender) => {
-
-    //         const query = `select oasys_set_pk from eor.oasys_set where pnc = '${offender.pnc}' and deleted_date is null order by initiation_date desc`
-    //         getPk(query, resultAlias)
-    //     })
-    // }
-
-    // /**
-    //  * Finds the latest non-deleted oasys_set record for a given offender surname and forename.
-    //  * 
-    //  * Returns the pk using the resultAlias.
-    //  */
-    // async getLatestSetPkByName(surname: string, forename: string, resultAlias: string) {
-
-    //     const query = `select oasys_set_pk from eor.oasys_set where family_name = '${surname}' and forename_1 = '${forename}' and deleted_date is null order by initiation_date desc`
-    //     getPk(query, resultAlias)
-    // }
 
     /**
      * Finds the latest non-deleted oasys_set record for a given offender PNC
@@ -271,21 +246,6 @@ export class Assessment {
         const query = `select oasys_set_pk from eor.oasys_set where pnc = '${pnc}' and deleted_date is null order by create_date desc`
         return await this.getPk(query) as number
     }
-
-    // /**
-    //  * Finds all oasys_set records for a given offender PNC (including deleted, unless optional parameter is true).
-    //  * 
-    //  * Returns the pks as a number[] (most recent first) using the resultAlias.
-    //  */
-    // async getAllSetPksByPnc(pnc: string, resultAlias: string, ignoreDeleted: boolean = false) {
-
-    //     const query = ignoreDeleted ?
-    //         `select oasys_set_pk from eor.oasys_set where pnc = '${pnc}' and deleted_date is null order by initiation_date desc`
-    //         : `select oasys_set_pk from eor.oasys_set where pnc = '${pnc}' order by initiation_date desc`
-    //     getPk(query, resultAlias, true)
-    // }
-
-    /**/
 
     async getPk(query: string, returnAll: boolean = false): Promise<number | number[]> {
 

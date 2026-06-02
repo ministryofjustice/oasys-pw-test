@@ -112,7 +112,7 @@ test('SAN integration - test ref 14', async ({ oasys, offender, assessment, sect
     await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', null)
 
     await risk.rmp.checkMenuVisibility(false)
-    await sentencePlan.spService.checkGoalCount(0, 0)
+    await sentencePlan.spService.checkGoalCount(0, 0, 0)
 
     await oasys.logout()
 

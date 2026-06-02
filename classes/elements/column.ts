@@ -22,7 +22,7 @@ export class Column {
     async clickRowContaining(text: string) {
 
         const id = await this.getColumnHeaderId()
-        await this.page.locator(`[headers="${id}"]`).filter({hasText: text}).click()
+        await this.page.locator(`[headers="${id}"]`).filter({ hasText: text }).click()
     }
 
     /**
@@ -121,6 +121,13 @@ export class Column {
                         } else {
                             result.push(score.toString())
                         }
+                    }
+                } else if (this.type == ColumnType.ButtonColumn) {
+                    const count = await rows[r].locator('input').count()
+                    if (count == 0) {
+                        result.push('')
+                    } else {
+                        result.push(await rows[r].locator('input').getAttribute('value'))
                     }
                 } else {
                     result.push(await rows[r].textContent())

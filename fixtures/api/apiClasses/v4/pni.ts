@@ -163,7 +163,7 @@ class PniCalc {
             const associatedSaraRiskToOther = associatedSara?.qaData.getRiskAsNumber('SR77.1.1')
 
             // Rule 2
-            if (associatedSara?.status == 'COMPLETE') {
+            if (associatedSara?.status == 'COMPLETE' && !dbAssessment.noSaraDate) {
                 this.saraRiskLevelToPartner = associatedSaraRiskToPartner
                 this.saraRiskLevelToOther = associatedSaraRiskToOther
 
@@ -180,7 +180,8 @@ class PniCalc {
 
                     // Rule 4
                 } else if (associatedSara?.status == 'LOCKED_INCOMPLETE' || dbAssessment.noSaraDate != null) {  // SARA was part complete or rejected
-                    if ((associatedSaraRiskToPartner != null && associatedSaraRiskToOther != null) || associatedSaraRiskToPartner > 1 || associatedSaraRiskToOther > 1) {
+                    if (((q2_3 || q6_7) && associatedSaraRiskToPartner != null && associatedSaraRiskToOther != null)
+                        && (associatedSaraRiskToPartner > 1 || associatedSaraRiskToOther > 1)) {
                         this.saraRiskLevelToPartner = associatedSaraRiskToPartner
                         this.saraRiskLevelToOther = associatedSaraRiskToOther
                     } else {

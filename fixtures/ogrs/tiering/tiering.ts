@@ -46,16 +46,8 @@ export class Tiering {
         maxModerator = getHigherTier(maxModerator, daStalkingCp)
         maxModerator = getHigherTier(maxModerator, pCoSos)
 
-        // Determine the final result
-        let finalResult = getHigherTier(arpCsrp, maxModerator)
-
-        // If no ARP/CSRP, only accept the final result if it's A.  Check first if the SRP predictors could combine as a partial CSRP score to generate A anyway.
-        if (arpCsrp == null && finalResult != 'A') {
-
-            const minCsrp = calculateMinCsrp(tieringCase)
-            const overrideTier = calculateArpCsrp(arpScore, minCsrp)
-            finalResult = overrideTier == 'A' ? 'A' : null
-        }
+        // Determine the final result - null if no ARP/CSRP
+        let finalResult = arpCsrp == null ? null : getHigherTier(arpCsrp, maxModerator)
 
         // Provisional flag for static ARP and CSRP
         let provisionalFlag = 'N'

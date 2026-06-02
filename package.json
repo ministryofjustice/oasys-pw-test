@@ -12,7 +12,7 @@
     "@types/oracledb": "^6.10.0",
     "decimal.js": "^10.6.0",
     "fs-extra": "^11.3.4",
-    "oracledb": "^6.10.0",
+    "oracledb": "^7.0.0",
     "typescript": "^6.0.3"
   },
   "dependencies": {

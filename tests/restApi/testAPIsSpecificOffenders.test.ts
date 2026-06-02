@@ -11,10 +11,26 @@ const testCases = [
     ['ZLHECUL', null],       // OASys-SP layer 1
     ['ZUHJFAA', null],      // SAN assessments
     ['X743137', null],
+
+    // Pre-prod cases for PNI
+    // ['V217229', ''],
+    // ['A9029EY', ''],
+    // ['E591983', ''],
+    // ['E445066', ''],
+    // ['E475550', ''],
+    // ['T027274', ''],
+    // ['E496953', ''],
+    // ['E050428', ''],
+    // ['E506857', ''],
+    // ['E599091', ''],
+    // ['E716844', ''],
+    // ['E679100', ''],  // This one is still an issue in release 7.9
+    // ['S016052', ''],
+    // ['A2144FH', ''],
 ]
 
 const limitEndpoints: Endpoint[] = []
-// const limitEndpoints: Endpoint[] = ['apAsslist']
+// const limitEndpoints: Endpoint[] = ['pni']
 
 const excludeEndpoints: Endpoint[] = []
 // const excludeEndpoints: Endpoint[] = ['pni']
@@ -28,7 +44,7 @@ test('All endpoint regression tests - extra test for specific cases', async ({ a
         console.log(`Offender ${count++}: ${offender[0]} / ${offender[1]}`)
 
         if (offender[0] != null) {  // call with probation CRN
-            const offenderFailed = await api.testOneOffender(offender[0], 'prob', false, true,  null, limitEndpoints, excludeEndpoints)
+            const offenderFailed = await api.testOneOffender(offender[0], 'prob', false, true, null, limitEndpoints, excludeEndpoints)
             if (offenderFailed) {
                 console.log('Failed')
                 failed = true

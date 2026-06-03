@@ -80,6 +80,9 @@ export async function checkApiResponse(expectedValues: EndpointResponse | RestEr
                     expectedValue = expectedElements[key]?.substring(0, 3500)
                     const receivedString = actualElements[key]?.toString()
                     receivedValue = receivedString ? receivedString.replaceAll('\x02', '').substring(0, 3500) : receivedString
+                } else if (typeof expectedElements[key] == 'object') {
+                    expectedValue = JSON.stringify(expectedElements[key])
+                    receivedValue = JSON.stringify(actualElements[key])
                 } else {
                     expectedValue = expectedElements[key]
                     receivedValue = actualElements[key]

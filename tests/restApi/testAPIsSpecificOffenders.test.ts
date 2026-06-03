@@ -11,6 +11,7 @@ const testCases = [
     ['ZLHECUL', null],       // OASys-SP layer 1
     ['ZUHJFAA', null],      // SAN assessments
     ['X743137', null],
+    ['ZWMCLZB', null],      // Obscure PNI defect (NOD-1284)
 
     // Pre-prod cases for PNI
     // ['V217229', ''],

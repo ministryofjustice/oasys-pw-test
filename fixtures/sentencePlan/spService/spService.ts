@@ -138,7 +138,7 @@ export class SpService {
 
     }
 
-    async addGoal(from: 'assessment' | 'offender' = 'assessment', planAgreed = false) {
+    async addGoal(from: 'assessment' | 'offender' = 'assessment') {
 
         log('Adding a goal')
         await this.gotoSpService(from)
@@ -150,11 +150,7 @@ export class SpService {
         await createGoal.related.setValue('no')
         await createGoal.startNow.setValue('yes')
         await createGoal.targetDate.setValue('3months')
-        if (planAgreed) {
-            await createGoal.saveAndContinue.click()
-        } else {
-            await createGoal.addSteps.click()
-        }
+        await createGoal.addSteps.click()
 
         await this.page.getByLabel('Who will do the step?').selectOption('probation_practitioner')
         await this.page.getByRole('textbox', { name: 'What should they do to' }).fill('Do some additional stuff')

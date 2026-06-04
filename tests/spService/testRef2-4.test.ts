@@ -167,7 +167,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, offender, 
         },
         'sp', 'assessment'
     )
-    await sentencePlan.spService.addGoal('assessment', true)
+    await sentencePlan.spService.addGoal('assessment')
 
     log(`S&L the assessment, the 'incomplete' screen should NOT show the Initial Sentence Plan or Sentence Plan Service screens in the list and the assessment should not require countersigning
         Check the SIGN API clog for the correct parameters`, 'Test step')

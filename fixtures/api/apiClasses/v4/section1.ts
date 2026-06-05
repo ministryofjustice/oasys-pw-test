@@ -39,6 +39,7 @@ export class Section1EndpointResponse extends v4Common.V4EndpointResponse {
 
 export class Section1Assessment extends v4Common.V4AssessmentCommon {
 
+    countersigner: { name: string } = { name: '' }
     numberOfPreviousCautionsEtc: number
     numberPrevConvictionsViolentOffences: number
     numSanctionsViolentOffences: number
@@ -77,6 +78,7 @@ export class Section1Assessment extends v4Common.V4AssessmentCommon {
 
     addDetails(dbAssessment: dbClasses.DbAssessment) {
 
+        this.countersigner.name = dbAssessment.countersignerName
         this.numberOfPreviousCautionsEtc = dbAssessment.qaData.getNumber('1.24')
         this.numberPrevConvictionsViolentOffences = dbAssessment.qaData.getNumber('1.26')
         this.numSanctionsViolentOffences = dbAssessment.qaData.getNumber('1.40')

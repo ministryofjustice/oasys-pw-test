@@ -86,6 +86,7 @@ const assessmentColumns: Columns = {
 
     dateOfBirth: { name: 'date_of_birth', type: 'date' },
     assessorName: { name: 'assessor_name', type: 'string' },
+    countersignerName: { name: 'countersigner_name', type: 'string' },
     pOAssessment: { name: 'purpose_assessment_elm', type: 'string' },
     pOAssessmentDesc: { name: 'purpose_assmt_other_ftxt', type: 'string' },
     parentAssessmentPk: { name: 'parent_oasys_set_pk', type: 'integer' },
@@ -107,6 +108,7 @@ export class DbAssessment extends DbAssessmentOrRsr {
     pOAssessment: string
     pOAssessmentDesc: string
     assessorName: string
+    countersignerName: string
     courtCode: string
     courtType: string
     courtName: string

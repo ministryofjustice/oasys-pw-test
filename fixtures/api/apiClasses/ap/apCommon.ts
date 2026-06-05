@@ -3,11 +3,7 @@ import * as dbClasses from 'fixtures/api/data/dbClasses'
 
 export function assessmentFilter(dbAssessment: dbClasses.DbAssessmentOrRsr): boolean {
 
-    if (dbAssessment.assessmentType != 'LAYER3') return false
-    if (!['COMPLETE', 'LOCKED_INCOMPLETE'].includes(dbAssessment.status)) return true
-
-    const dateLimit = oasysDateTime.oasysDateAsPlainDate({ months: -6 }).toString()
-    return dbAssessment.completedDate.substring(0, 10) >= dateLimit  // 6-month limit based on date only
+    return dbAssessment.assessmentType == 'LAYER3'
 }
 
 export class APEndpointResponse extends common.EndpointResponse {
@@ -106,6 +102,7 @@ export class APTimelineAssessment {
 
     assessmentPk: number
     assessmentType: string
+    assessmentVersion: string
     initiationDate: string
     status: string
     partcompStatus?: string
@@ -115,6 +112,7 @@ export class APTimelineAssessment {
 
         this.assessmentPk = dbAssessment.assessmentPk
         this.assessmentType = dbAssessment.assessmentType
+        this.assessmentVersion = dbAssessment.assessmentVersion.toString()
         this.initiationDate = dbAssessment.initiationDate
         this.status = dbAssessment.status
         if (this.status == 'LOCKED_INCOMPLETE') {

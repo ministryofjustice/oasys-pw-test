@@ -5,12 +5,17 @@ import * as env from '../../restApiUrls'
 export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {
 
     const relevantAssessments = offenderData.assessments.filter(apCommon.assessmentFilter)
-    if (relevantAssessments.length == 0) {
+    const assessmentsOnly = offenderData.assessments.filter((a) => a.assessmentType != 'STANDALONE')
+    if (assessmentsOnly.length == 0) {
         return env.restErrorResults.noAssessments
     } else {
         const result = new APAsslistEndpointResponse(offenderData, parameters)
 
-        result.addTimeline(relevantAssessments)
+        if (relevantAssessments.length == 0) {
+            delete result.timeline
+        } else {
+            result.addTimeline(relevantAssessments)
+        }
         delete result.assessments
         delete result.warnings
 

@@ -96,7 +96,7 @@ declare type Victim = { age: string, gender: string, ethnicCat: string, relation
 declare type CheckDbSectionResponse = { failed: boolean, report: string[] }
 
 declare type Table = 'oasys_set' | 'oasys_assessment_group' | 'oasys_set_change' | 'offender' | 'offender_rsr_scores' | 'ref_element' |
-    'ssp_intervention_in_set' | 'ssp_obj_intervene_pivot' | 'ssp_intervention_measure'
+    'ssp_intervention_in_set' | 'ssp_obj_intervene_pivot' | 'ssp_intervention_measure' | 'df453_new_prediction' | 'df453_new_prediction_lic'
 declare type ColumnType = 'date' | 'integer' | 'float' | 'string' | 'ynToBool'
 declare type ColumnDef = { table?: Table; name: string; type: ColumnType }
 declare type Columns = { [keys: string]: ColumnDef }

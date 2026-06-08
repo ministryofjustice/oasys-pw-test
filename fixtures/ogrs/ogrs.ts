@@ -13,6 +13,7 @@ import { createCsrpInputParams } from 'fixtures/ogrs/data/createCsrpTestCase'
 import { ogrsFunctionCall } from './data/ogrsFunctionCall'
 import { loadParameterSet } from './data/loadTestData'
 import { Text } from 'classes/elements'
+import { RescoringLic } from './rescoringLic/rescoringLic'
 
 const tolerance = new Decimal('1E-37')
 const precision = 40
@@ -25,6 +26,7 @@ export class Ogrs {
     private readonly data = new Data(this.oasysDb)
     readonly rescoring = new Rescoring(this.oasysDb)
     readonly tiering = new Tiering(this.oasysDb)
+    readonly rescoringLic = new RescoringLic(this.oasysDb)
 
     /**
      * Calculate OGRS results from a set of input parameters

@@ -9,7 +9,7 @@
     "@playwright/test": "^1.59.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.6.0",
-    "@types/oracledb": "^6.10.0",
+    "@types/oracledb": "^7.0.0",
     "decimal.js": "^10.6.0",
     "fs-extra": "^11.3.4",
     "oracledb": "^6.10.0",

@@ -1,12 +1,10 @@
-import { Dialog, expect, Page, TestInfo } from '@playwright/test'
+import { expect, Page, TestInfo } from '@playwright/test'
 import { Temporal } from '@js-temporal/polyfill'
 
 import * as pages from './pages'
 import { testEnvironment } from 'localSettings'
 import { User } from 'classes'
 import * as users from './users'
-import { ScreeningSection5, Rmp } from 'fixtures/risk/pages'
-import { BasicSentencePlan, IspSection1to4, RspSection1to2, SentencePlanService } from 'fixtures/sentencePlan/pages'
 
 
 export class Oasys {
@@ -131,31 +129,6 @@ export class Oasys {
         return null
     }
 
-    async gotoSigningPage(signingPage: SigningPage) {
-
-        switch (signingPage) {
-            case 'basic':
-                await new BasicSentencePlan(this.page).goto(true)
-                break
-            case 'isp':
-                await new IspSection1to4(this.page).goto(true)
-                break
-            case 'rsp':
-                await new RspSection1to2(this.page).goto(true)
-                break
-            case 'spService':
-                await new SentencePlanService(this.page).goto(true)
-                break
-            case 'riskScreening':
-                await new ScreeningSection5(this.page).goto(true)
-                break
-            case 'rmp':
-                await new Rmp(this.page).goto(true)
-                break
-        }
-
-
-    }
 
     /**
      * Check for errors on screen in the standard OASys format

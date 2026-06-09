@@ -1,7 +1,7 @@
 import { test } from 'fixtures'
 
 
-test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, assessment, sections, risk, signing, sentencePlan, san, sns }) => {
+test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, assessment, sections, signing, sentencePlan, san }) => {
 
     /*
         New Probation Offender 

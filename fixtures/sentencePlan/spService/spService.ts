@@ -159,7 +159,6 @@ export class SpService {
         await this.returnToOasys()
     }
 
-
     async completeFirstGoal(from: 'assessment' | 'offender' = 'assessment') {
 
         log('Completing the first goal')
@@ -171,5 +170,16 @@ export class SpService {
 
         await this.returnToOasys()
     }
+    
+    async completeSecondGoal(from: 'assessment' | 'offender' = 'assessment') {
 
+        log('Completing the second goal')
+        await this.gotoSpService(from)
+
+        await this.sentencePlan.update.click()
+        await this.updateGoalAndSteps.markAsAchieved.click()
+        await this.page.getByRole('button', { name: 'Confirm' }).click()
+
+        await this.returnToOasys()
+    }
 }

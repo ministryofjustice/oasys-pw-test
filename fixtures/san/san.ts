@@ -26,6 +26,7 @@ export class San {
     readonly landingPage = new pages.LandingPage(this.page)
     readonly accommodation1 = new pages.Accommodation1(this.page)
     readonly accommodation2 = new pages.Accommodation2(this.page)
+    readonly accommodationPractitionerAnalysis = new pages.PractitionerAnalysis(this.page, 'Accommodation', 'accommodation')
     readonly drugs1 = new pages.Drugs1(this.page)
     readonly drugs2 = new pages.Drugs2(this.page)
     readonly drugs3 = new pages.Drugs3(this.page)

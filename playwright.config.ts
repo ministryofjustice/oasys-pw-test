@@ -8,7 +8,7 @@ export default defineConfig({
   workers: userSuffixes.length,
   timeout: 600_000,
 
-  reporter: [['html', { open: 'never', noSnippets: false }]],
+  reporter: [['html', { open: 'never', noSnippets: true }]],
 
   use: {
     trace: 'on-first-retry',

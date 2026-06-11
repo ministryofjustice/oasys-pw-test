@@ -1,7 +1,7 @@
 import { test } from 'fixtures'
 
 
-test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, assessment, sections, signing, sentencePlan, san }) => {
+test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender, assessment, sections, signing, sentencePlan, san }) => {
 
     /*
         New Probation Offender 
@@ -15,7 +15,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, asses
     log(`Create a new Probation offender
         1st assessent - Create a L3 V2 SAN assessment. Fully complete it, add one goal and step and agree plan. Check version numbers`, 'Test step')
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
     const offender1 = await offender.createProbFromStandardOffender()
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
     await assessment.populateMinimal({ layer: 'Layer 3V2' })
@@ -27,7 +27,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, asses
 
     await oasys.history(offender1)
     const pk2 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'No' })
-    await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, oasys.users.probSanHeadPdu, oasys.users.probationSanCode, 'REVIEW', true, 'N')
+    await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, user.prob.probSanHeadPdu, providers.prob.sanCode, 'REVIEW', true, 'N')
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk2}`, {
         SSP_TYPE_ELM: 'REVIEW',
         ARNS_SP_ONLY_LINKED_IND: 'Y',
@@ -48,7 +48,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, asses
 
     await oasys.history(offender1)
     const pk3 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
-    await san.queries.checkSanCreateAssessmentCall(pk3, pk1, pk2, oasys.users.probSanHeadPdu, oasys.users.probationSanCode, 'REVIEW', false, 'N')
+    await san.queries.checkSanCreateAssessmentCall(pk3, pk1, pk2, user.prob.probSanHeadPdu, providers.prob.sanCode, 'REVIEW', false, 'N')
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk3}`, {
         SSP_TYPE_ELM: 'REVIEW',
         ARNS_SP_ONLY_LINKED_IND: 'N',
@@ -68,7 +68,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, asses
 
     await oasys.history(offender1)
     const pk4 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
-    await san.queries.checkSanCreateAssessmentCall(pk4, pk3, pk3, oasys.users.probSanHeadPdu, oasys.users.probationSanCode, 'REVIEW', false, 'N')
+    await san.queries.checkSanCreateAssessmentCall(pk4, pk3, pk3, user.prob.probSanHeadPdu, providers.prob.sanCode, 'REVIEW', false, 'N')
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk4}`, {
         SSP_TYPE_ELM: 'REVIEW',
         ARNS_SP_ONLY_LINKED_IND: 'N',
@@ -107,7 +107,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, asses
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': null,
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'accessMode': 'READ_WRITE',
     },
         'san', 'offender'
@@ -127,7 +127,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, asses
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': null,
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'planAccessMode': 'READ_WRITE',
     },
         'sp', 'offender'
@@ -153,7 +153,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, asses
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': null,
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'planAccessMode': 'READ_ONLY',
     },
         'sp', 'assessment'
@@ -173,7 +173,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, asses
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': null,
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'planAccessMode': 'READ_ONLY',
     },
         'sp', 'assessment'
@@ -196,7 +196,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, asses
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': null,
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'planAccessMode': 'READ_ONLY',
     },
         'sp', 'assessment'
@@ -220,12 +220,12 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, offender, asses
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': null,
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'planAccessMode': 'READ_ONLY',
     },
         'sp', 'assessment'
     )
     await oasys.clickButton('Close')
 
-    await oasys.logout()
+    await user.logout()
 })

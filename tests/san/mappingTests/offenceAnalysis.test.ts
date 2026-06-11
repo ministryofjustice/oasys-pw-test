@@ -4,7 +4,7 @@ import * as data from '../data/mapping'
 
 // Ensure tests/data/local/mappingTestsOffender.txt has been updated by running aaSanMappingTestOffender first.
 
-test('Mapping test: offence analysis part 1', async ({ oasys, offender, assessment, sections, san }) => {
+test('Mapping test: offence analysis part 1', async ({ oasys, user, offender, assessment, sections, san }) => {
 
-    await mappingTest(oasys, offender, assessment, sections, san, data.OffenceAnalysis.script)
+    await mappingTest(user, offender, assessment, sections, san, data.OffenceAnalysis.script)
 })

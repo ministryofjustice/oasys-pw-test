@@ -4,9 +4,9 @@ import * as testData from '../../data/mergeTest'
 
 export function mergeAndCreateAssessment(mergeTestData: MergeTestData) {
 
-    test('Merge tests part 3 - merge offenders', async ({ page, oasys, offender, assessment, tasks, san }) => {
+    test('Merge tests part 3 - merge offenders', async({ page, oasys, user, offender, assessment, tasks, san }) => {
 
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.prob.probSanHeadPdu.login()
         await offender.searchAndSelect(mergeTestData.offender1)
 
         // Set the PNC to trigger a merge
@@ -24,14 +24,14 @@ export function mergeAndCreateAssessment(mergeTestData: MergeTestData) {
         // Get new assessment PKs
         mergeTestData.crn1AfterMergePks = await assessment.queries.getAllSetPksByProbationCrn(mergeTestData.offender1.probationCrn)
         mergeTestData.crn2AfterMergePks = await assessment.queries.getAllSetPksByProbationCrn(mergeTestData.offender2.probationCrn)
-        await san.queries.checkSanMergeCall(oasys.users.probSanHeadPdu, 3)  // TODO fix this
-        await oasys.logout()
+        await san.queries.checkSanMergeCall(user.prob.probSanHeadPdu, 3)  // TODO fix this
+        await user.logout()
     })
 
 
-    test('Merge tests part 4 - create and complete another 3.2 assessment on the merged offender', async ({ oasys, offender, assessment, signing, san }) => {
+    test('Merge tests part 4 - create and complete another 3.2 assessment on the merged offender', async ({ oasys, user, offender, assessment, signing, san }) => {
 
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.prob.probSanHeadPdu.login()
         await offender.searchAndSelectByPnc(mergeTestData.offender2.pnc)
 
         // Create assessment
@@ -44,6 +44,6 @@ export function mergeAndCreateAssessment(mergeTestData: MergeTestData) {
 
         // Sign and lock
         await signing.signAndLock({ page: 'spService' })
-        await oasys.logout()
+        await user.logout()
     })
 }

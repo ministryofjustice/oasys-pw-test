@@ -1,8 +1,8 @@
 import { test } from 'fixtures'
 
-test('Cloning test - standalone CSRP', async ({ oasys, offender, assessment, sections, risk, signing }) => {
+test('Cloning test - standalone CSRP', async ({ oasys, user, offender, assessment, sections, risk, signing }) => {
 
-    await oasys.login(oasys.users.probSpHeadPdu)
+    await user.prob.probSpHeadPdu.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
 
@@ -50,5 +50,5 @@ test('Cloning test - standalone CSRP', async ({ oasys, offender, assessment, sec
     await sections.section3.goto()
     await sections.section3.o3_4.checkValue('1-Some problems')
 
-    await oasys.logout()
+    await user.logout()
 })

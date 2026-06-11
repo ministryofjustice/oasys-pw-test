@@ -3,7 +3,7 @@ import * as testData from '../../data/testRef21'
 
 export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, offender2Pks: number[]) {
 
-    test('SAN integration - test ref 21 merge assessments', async ({ page, oasys, oasysDb, offender, assessment, signing, san, risk, sentencePlan, tasks }) => {
+    test('SAN integration - test ref 21 merge assessments', async ({ page, oasys, user, oasysDb, offender, assessment, signing, san, risk, sentencePlan, tasks }) => {
 
         log('Check original cloning details', 'Test step')
         const oasysSetQuery = `select os.cloned_from_prev_oasys_san_pk from eor.offender o, eor.oasys_assessment_group oag, eor.oasys_set os 
@@ -22,17 +22,17 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
 
         log('Change offender 1 PNC to trigger the merge', 'Test step')
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         await oasys.history(offender1)
         await offender.offenderDetails.pnc.setValue(offender2.pnc)
         page.once('dialog', async (dialog) => {
             await dialog.accept()
         })
         await offender.offenderDetails.save.click()
-        await oasys.logout()
+        await user.logout()
 
         log('Login to pilot area to grant the merge and retain ownership', 'Test step')
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.prob.probSanHeadPdu.login()
         await tasks.grantMerge(offender2.surname)
 
         log('Get new assessment PKs and oasys_set data', 'Test step')
@@ -48,7 +48,7 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
         expect(mergedOasysSetData[5][0]).toBe(null) // Assessment 1
         expect(mergedOasysSetData[6][0]).toBe(null) // Assessment on offender 1
 
-        await san.queries.checkSanMergeCall(oasys.users.probSanHeadPdu, 5)
+        await san.queries.checkSanMergeCall(user.prob.probSanHeadPdu, 5)
 
         /**
          * Merged offender has 7 assessments (latest on top)
@@ -68,17 +68,17 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
 
         // 4th assessment (3rd from offender 2)
         await assessment.assessmentsTab.assessments.clickNthRow(4)
-        await checkAssessment(oasys.users.probSanHeadPdu.forenameSurname, offender2, mergedPks[3], san, sentencePlan)
+        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, mergedPks[3], san, sentencePlan)
         await oasys.clickButton('Close')
 
         // 6th assessment (5rd from offender 2)
         await assessment.assessmentsTab.assessments.clickNthRow(2)
-        await checkAssessment(oasys.users.probSanHeadPdu.forenameSurname, offender2, mergedPks[5], san, sentencePlan)
+        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, mergedPks[5], san, sentencePlan)
         await oasys.clickButton('Close')
 
         // 7th assessment (6th from offender 2)
         await assessment.assessmentsTab.assessments.clickNthRow(1)
-        await checkAssessment(oasys.users.probSanHeadPdu.forenameSurname, offender2, mergedPks[6], san, sentencePlan)
+        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, mergedPks[6], san, sentencePlan)
         await oasys.clickButton('Close')
 
         log('Test ref 21 part 5 - create assessment on merged offender', 'Test step')
@@ -92,7 +92,7 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
         await risk.setRationaleText()
         await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
 
-        await oasys.logout()
+        await user.logout()
     })
 }
 

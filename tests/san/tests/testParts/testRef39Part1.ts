@@ -4,11 +4,11 @@ import * as testData from '../../data/mergeTest'
 
 export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
 
-    test('Merge tests part 1 - create and complete 3.2 assessment on offender 1', async ({ oasys, offender, assessment, signing, sections, san, risk, sentencePlan }) => {
+    test('Merge tests part 1 - create and complete 3.2 assessment on offender 1', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan }) => {
 
         log('Merge tests part 1 - create and complete 3.2 assessment on offender 1', 'Test step')
 
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.prob.probSanHeadPdu.login()
         await offender.createProb(mergeTestData.offender1)
 
         // Create assessment
@@ -82,12 +82,12 @@ export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
         await oasys.history(mergeTestData.offender2)
         const pk3 = await assessment.createProb({ purposeOfAssessment: 'Review' })
         mergeTestData.offender2Pks.push(pk3)
-        await oasys.logout()
+        await user.logout()
 
-        await oasys.login(oasys.users.admin, oasys.users.probationSan)
+        await user.admin.login(providers.prob.san)
         await offender.searchAndSelectByPnc(mergeTestData.offender2.pnc)
         await assessment.deleteLatest()
 
-        await oasys.logout()
+        await user.logout()
     })
 }

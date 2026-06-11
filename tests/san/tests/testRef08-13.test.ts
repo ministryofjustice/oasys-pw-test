@@ -16,15 +16,15 @@ const pks: number[] = []
 
 test.describe.serial('Test refs 8 to 13', async () => {
 
-    test('Create offender', async ({ oasys, cms, offender }) => {
+    test('Create offender', async ({ oasys, user, cms, offender }) => {
 
-        await oasys.login(oasys.users.probSanUnappr)
+        await user.prob.probSanUnappr.login()
         await offender.createProb(offender1)
-        await oasys.logout()
+        await user.logout()
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         await cms.addProbationOffenderToStub(offender1)
-        await oasys.logout()
+        await user.logout()
     })
 
     testRef8(offender1, pks)

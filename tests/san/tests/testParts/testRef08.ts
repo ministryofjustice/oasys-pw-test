@@ -4,12 +4,12 @@ import * as testData from '../../data/testRef8'
 
 export function testRef8(offender1: OffenderDef, pks: number[]) {
 
-    test('SAN integration - test ref 8', async ({ oasys, offender, assessment, signing, sections, san, risk, sentencePlan, sns, tasks, oasysDb }) => {
+    test('SAN integration - test ref 8', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, sns, tasks, oasysDb }) => {
 
         log(`Create a new assessment - defaults to PSR-SDR, Layer 3, PSR Outline Plan with SDR court report
             Ensure the new SAN question is not showing on the screen (cannot do SAN with a PSR type assessment)`, 'Test step')
 
-        await oasys.login(oasys.users.probSanUnappr)
+        await user.prob.probSanUnappr.login()
         await offender.searchAndSelect(offender1)
 
         await assessment.getToCreateAssessmentPage()
@@ -72,11 +72,11 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await risk.screeningNoRisks(true)
 
         await sentencePlan.populateMinimal()
-        await signing.signAndLock({ expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu })
+        await signing.signAndLock({ expectCountersigner: true, countersigner: user.prob.probSanHeadPdu })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
 
-        await oasys.logout()
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.logout()
+        await user.prob.probSanHeadPdu.login()
         await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
         await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, { SAN_ASSESSMENT_LINKED_IND: 'N' })
@@ -84,10 +84,10 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         const sectionCount1 = await san.queries.getSanSectionsCount(pk1)
         expect(sectionCount1).toBe(1)   // expect SSP but not SAN
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
-        await oasys.logout()
+        await user.logout()
 
         // Test 8 part 2
-        await oasys.login(oasys.users.probSanUnappr)
+        await user.prob.probSanUnappr.login()
         await offender.searchAndSelect(offender1)
         log(`Create another assessment - defaults to Review
         The new SAN question is NOT shown on the screen due to the default of PSR with 'PSR Outline' plan
@@ -134,7 +134,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         None of the navigation menu options have ticks against them`, 'Test step')
 
         await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', null)
-        await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, oasys.users.probSanUnappr, oasys.users.probationSanCode, 'INITIAL')
+        await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'INITIAL')
 
         await san.queries.checkNoQuestionsCreated(pk2)
         await san.queries.checkNoIspQuestions1Or2(pk2)
@@ -216,7 +216,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
             'location': 'COMMUNITY',
             'sexuallyMotivatedOffenceHistory': 'YES',
         }, {
-            'displayName': oasys.users.probSanUnappr.forenameSurname,
+            'displayName': user.prob.probSanUnappr.forenameSurname,
             'accessMode': 'READ_WRITE',
         },
             'san', 'assessment'
@@ -334,7 +334,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
 
         await signing.signAndLock({
             page: 'spService',
-            expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu, countersignComment: '3.2 assessment needs countersigning'
+            expectCountersigner: true, countersigner: user.prob.probSanHeadPdu, countersignComment: '3.2 assessment needs countersigning'
         })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
         await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk2}`, {
@@ -342,7 +342,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
             CLONED_FROM_PREV_OASYS_SAN_PK: null,
             SAN_ASSESSMENT_VERSION_NO: '0'
         })
-        await oasys.logout()
+        await user.logout()
 
         // Test ref 8 part 4
         log(`Log out and log back in as the countersigner to the probation area
@@ -351,7 +351,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         Countersigner shown the correct 'Countersigning Overview' screen
         Return back to the assessment - now on the first Initial Sentence Plan screen`, 'Test step')
 
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.prob.probSanHeadPdu.login()
         const sanColumnsQuery = `select LASTUPD_FROM_SAN, SAN_ASSESSMENT_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk2}`
         const sanColumnsQuery1 = await oasysDb.getData(sanColumnsQuery)
 
@@ -360,7 +360,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await signing.countersigningOverview.details.checkValue('3.2 assessment needs countersigning', true)
         await signing.countersigningOverview.details.checkValue(`Countersigning required, Assessor's role at time of signing the assessment was 'Unapproved'`, true)
         const today = oasysDateTime.testStartDate.toLocaleString()
-        await signing.countersigningOverview.details.checkValue(`The previous assessment was countersigned for the same risk attributes by ${oasys.users.probSanHeadPdu.forenameSurname} on the ${today}`, true)
+        await signing.countersigningOverview.details.checkValue(`The previous assessment was countersigned for the same risk attributes by ${user.prob.probSanHeadPdu.forenameSurname} on the ${today}`, true)
 
         await signing.countersigningOverview.returnToAssessment.click()
         await sentencePlan.spService.sentencePlanService.checkCurrent()
@@ -381,7 +381,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])  // Note AssSumm only at this stage, as others were sent on signing
         await tasks.taskManager.checkCurrent()
 
-        await san.queries.checkSanCountersigningCall(pk2, oasys.users.probSanHeadPdu, 'COUNTERSIGNED')
+        await san.queries.checkSanCountersigningCall(pk2, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
 
         log(`Open up the Offender record
         Ensure the latest completed assessment shows an 'S&N' icon next to it
@@ -426,7 +426,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await assessment.printAssessment.selfAssessmentForm.checkStatus('notVisible')
         await assessment.printAssessment.allSections.setValue(true)
 
-        await oasys.logout()
+        await user.logout()
     })
 
     return { offender: offender1 }

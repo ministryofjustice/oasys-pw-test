@@ -1,8 +1,8 @@
 import { test } from 'fixtures'
 
-test('Cloning test - historic period of supervision', async ({ oasys, offender, assessment, sections, signing, sentencePlan }) => {
+test('Cloning test - historic period of supervision', async ({ oasys, user, offender, assessment, sections, signing, sentencePlan }) => {
 
-    await oasys.login(oasys.users.probSpHeadPdu)
+    await user.prob.probSpHeadPdu.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
@@ -21,13 +21,13 @@ test('Cloning test - historic period of supervision', async ({ oasys, offender, 
     await sections.section4.identifyIssues.setValue('Third assessment section 4 issues')
     await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
 
-    await oasys.logout()
-    await oasys.login(oasys.users.admin, oasys.users.probationNonSan)
+    await user.logout()
+    await user.admin.login(providers.prob.nonSan)
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
     await assessment.markHistoric()
-    await oasys.logout()
-    await oasys.login(oasys.users.probSpHeadPdu)
+    await user.logout()
+    await user.prob.probSpHeadPdu.login()
 
     await oasys.history(offender1)
     await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Basic (Layer 1)' }, 'Yes')
@@ -52,5 +52,5 @@ test('Cloning test - historic period of supervision', async ({ oasys, offender, 
     await sections.section4.goto()
     await sections.section4.identifyIssues.checkValue('Third assessment section 4 issues')
 
-    await oasys.logout()
+    await user.logout()
 })

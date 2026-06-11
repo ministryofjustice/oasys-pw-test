@@ -7,9 +7,9 @@ const offender1: OffenderDef = {
 
 }
 
-test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ oasys, offender, assessment, sns, signing, sections, risk }) => {
+test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ oasys, user, offender, assessment, sns, signing, sections, risk }) => {
 
-    await oasys.login(oasys.users.probHeadPdu)
+    await user.prob.probHeadPdu.login()
     await offender.createProb(offender1)
 
 

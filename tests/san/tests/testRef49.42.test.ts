@@ -4,9 +4,9 @@ import { test } from 'fixtures'
     New FEMALE Probation Offender in SAN Area - check functionality when say 'No' to cloning from an Historic OASys-SAN assessment.
  */
 
-test('SAN integration - test refs 49 and 42', async ({ oasys, offender, assessment, sections, san, risk, sentencePlan, signing }) => {
+test('SAN integration - test refs 49 and 42', async ({ oasys, user, offender, assessment, sections, san, risk, sentencePlan, signing }) => {
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
     const offender1 = await offender.createProbFromStandardOffender({ forename1: 'TestRefFortyNine' })
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
 
@@ -52,7 +52,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, offender, assessme
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     },
-        { 'displayName': oasys.users.probSanHeadPdu.forenameSurname, 'accessMode': 'READ_ONLY', },
+        { 'displayName': user.prob.probSanHeadPdu.forenameSurname, 'accessMode': 'READ_ONLY', },
         'san', 'offender'
     )
     await san.returnToOASys()
@@ -79,7 +79,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, offender, assessme
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     },
-        { 'displayName': oasys.users.probSanHeadPdu.forenameSurname, 'accessMode': 'READ_ONLY', },
+        { 'displayName': user.prob.probSanHeadPdu.forenameSurname, 'accessMode': 'READ_ONLY', },
         'san', 'assessment'
     )
 
@@ -97,7 +97,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, offender, assessme
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     },
-        { 'displayName': oasys.users.probSanHeadPdu.forenameSurname, 'planAccessMode': 'READ_ONLY', },
+        { 'displayName': user.prob.probSanHeadPdu.forenameSurname, 'planAccessMode': 'READ_ONLY', },
         'sp', 'assessment'
     )
 
@@ -164,7 +164,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, offender, assessme
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     },
-        { 'displayName': oasys.users.probSanHeadPdu.forenameSurname, 'accessMode': 'READ_ONLY', },
+        { 'displayName': user.prob.probSanHeadPdu.forenameSurname, 'accessMode': 'READ_ONLY', },
         'san', 'offender'
     )
 
@@ -187,7 +187,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, offender, assessme
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': null,
     },
-        { 'displayName': oasys.users.probSanHeadPdu.forenameSurname, 'planAccessMode': 'READ_WRITE', },
+        { 'displayName': user.prob.probSanHeadPdu.forenameSurname, 'planAccessMode': 'READ_WRITE', },
         'san', 'offender'
     )
 
@@ -213,7 +213,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, offender, assessme
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'accessMode': 'READ_ONLY',
     },
         'san', 'assessment'
@@ -235,7 +235,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, offender, assessme
             'sexuallyMotivatedOffenceHistory': 'NO',
         },
         {
-            'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+            'displayName': user.prob.probSanHeadPdu.forenameSurname,
             'planAccessMode': 'READ_ONLY',
         },
 
@@ -304,6 +304,6 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, offender, assessme
     await assessment.getToCreateAssessmentPage()
     await assessment.createAssessmentPage.purposeOfAssessment.checkOptionNotAvailable('Fast Review')
 
-    await oasys.logout()
+    await user.logout()
 
 })

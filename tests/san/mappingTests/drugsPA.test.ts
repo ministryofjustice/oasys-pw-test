@@ -1,4 +1,4 @@
-import { test, Oasys, Offender, Assessment, San } from 'fixtures'
+import { test, Oasys, User, Offender, Assessment, San } from 'fixtures'
 import { getMappingTestOffender } from './xMappingTest'
 
 type TextType = 'normal' | 'max' | 'empty'
@@ -10,25 +10,25 @@ type TestCase = {
 }
 
 
-test('Mapping test for drugs practitioner analysis', async ({ oasys, offender, assessment, san }) => {
+test('Mapping test for drugs practitioner analysis', async ({ oasys, user, offender, assessment, san }) => {
 
-    await paTest(oasys, offender, assessment, san)
+    await paTest(oasys, user, offender, assessment, san)
 })
 
-async function paTest(oasys: Oasys, offender: Offender, assessment: Assessment, san: San) {
+async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: Assessment, san: San) {
 
     // Get offender details (run aaSanMappingTestOffender if required to create the offender)
 
     const mappingTestOffender = await getMappingTestOffender()
 
     // Delete previous assessments so no data gets cloned
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
     await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await oasys.logout()
+    await user.logout()
 
     // Create a new SAN assessment
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
     const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 

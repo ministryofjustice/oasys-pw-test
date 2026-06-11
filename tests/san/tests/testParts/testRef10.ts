@@ -4,7 +4,7 @@ import * as testData from '../../data/testRef10'
 
 export function testRef10(offender1: OffenderDef, pks: number[]) {
 
-    test('SAN integration - test ref 10 - second SAN assessment', async ({ oasysDb, oasys, assessment, sections, san, risk, sentencePlan, signing }) => {
+    test('SAN integration - test ref 10 - second SAN assessment', async ({ oasysDb, oasys, user, assessment, sections, san, risk, sentencePlan, signing }) => {
 
         log(`Log in as the same assessor as that in Test Ref 9
             Open up the offender record from Test Ref 9
@@ -14,12 +14,12 @@ export function testRef10(offender1: OffenderDef, pks: number[]) {
             Check the cloning from 3.2 to 3.2 assessment.  Case ID, Section 1 (sexual offence), RoSH Screening cloned through.
             Sections 2 to 13 and SAN exist in the background and have been updated with the data from the Updated SAN Assessment carried out in Test Ref 9.`, 'Test step')
 
-        await oasys.login(oasys.users.probSanUnappr)
+        await user.prob.probSanUnappr.login()
         await oasys.history(offender1)
         const pk = await assessment.createProb({ purposeOfAssessment: 'Review' })  // Assume SAN defaults to 'Yes'
         pks.push(pk)
         const prevPk = pks[1]
-        await san.queries.checkSanCreateAssessmentCall(pk, prevPk, prevPk, oasys.users.probSanUnappr, oasys.users.probationSanCode, 'REVIEW')
+        await san.queries.checkSanCreateAssessmentCall(pk, prevPk, prevPk, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
 
         await assessment.queries.checkCloning(pk, prevPk, [
             '2', '7', '8', '9', '10', '11', '12', '13',
@@ -98,13 +98,13 @@ export function testRef10(offender1: OffenderDef, pks: number[]) {
         await risk.rmp.markCompleteAndCheck()
 
         await sentencePlan.spService.sentencePlanService.checkCompletionStatus(true)
-        await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu })
+        await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu })
 
-        await oasys.logout()
+        await user.logout()
 
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.prob.probSanHeadPdu.login()
         await signing.countersign({ offender: offender1 })
-        await oasys.logout()
+        await user.logout()
 
         // Check that the correct number of sections have been completed
         const sectionQuery = `select count(*) from eor.oasys_section 

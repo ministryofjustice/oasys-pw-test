@@ -1,9 +1,9 @@
 import { test } from 'fixtures'
 
 
-test('Example test - create a probation offender and RoSHA assessment', async ({ oasys, offender, assessment, signing }) => {
+test('Example test - create a probation offender and RoSHA assessment', async ({ oasys, user, offender, assessment, signing }) => {
 
-    await oasys.login(oasys.users.probHeadPdu)
+    await user.prob.probHeadPdu.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
     await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' })
@@ -14,6 +14,6 @@ test('Example test - create a probation offender and RoSHA assessment', async ({
 
     await signing.signAndLock({ expectCsrpScore: true })
 
-    await oasys.logout()
+    await user.logout()
 
 })

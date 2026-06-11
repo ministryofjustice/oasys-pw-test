@@ -1,12 +1,12 @@
 import { test } from 'fixtures'
 import * as testData from '../data/testRef27'
 
-test('SAN integration - test ref 27 part 1', async ({ oasys, offender, assessment, san, sns, sentencePlan }) => {
+test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, assessment, san, sns, sentencePlan }) => {
 
     log(`Create an offender whose latest assessment is a WIP OASys-SAN assessment without a SARA.
         ALL the SAN data has been validated, sentence plan has been agreed.`, 'Test step')
 
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     const offender1 = await offender.createProbFromStandardOffender({ forename1: 'TestRefTwentySeven' })
 
     // Check 'Lock Incomplete' - using the OASys application, different ways sends a notification to the SAN Service
@@ -32,7 +32,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, offender, assessmen
         Ensure the SAN section and the SSP section have both been set to 'COMPLETE_LOCKED'
         Ensure an 'AssSumm' SNS Message has been created containing a URL link for 'asssummsan'`, 'Test step')
 
-    await san.queries.checkSanLockIncompleteCall(pk1, oasys.users.probSanUnappr)
+    await san.queries.checkSanLockIncompleteCall(pk1, user.prob.probSanUnappr)
 
     const part1InitialData = await san.queries.getOasysSetUpdateTimes(pk1)
     const part1LastUpdFromSan = oasysDateTime.stringToTimestamp(part1InitialData[0])
@@ -81,26 +81,26 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, offender, assessmen
         Ensure the SAN service respond with a 200
         Lock incomplete the assessment again without any changes - ensure the SAN Service respond accordingly with a 200`, 'Test step')
 
-    await oasys.logout()
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.logout()
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
     await assessment.rollBack('Test 27 part 1')
-    await san.queries.checkSanRollbackCall(pk1, oasys.users.admin)
+    await san.queries.checkSanRollbackCall(pk1, user.admin)
     await oasys.clickButton('Close')
     await assessment.lockIncomplete()
-    await san.queries.checkSanLockIncompleteCall(pk1, oasys.users.admin)
+    await san.queries.checkSanLockIncompleteCall(pk1, user.admin)
 
     // Delete assessment in preparation for the next part
     await assessment.deleteLatest()
-    await oasys.logout()
+    await user.logout()
 
     log(`Lock Incomplete OASys-SAN assessment (no SARA) from the Offender's Assessments Tab - SAN Data Unvalidated, Sentence Plan NOT agreed`, 'Test step')
 
     log(`Create an offender whose latest assessment is a WIP OASys-SAN assessment without a SARA.  
         The SAN data is unvalidated and the sentence plan is NOT agreed`)
 
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     await offender.searchAndSelect(offender1)
 
     const pk2 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
@@ -134,7 +134,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, offender, assessmen
         Ensure the SAN section and the SSP section have both been set to 'COMPLETE_LOCKED'
         Ensure an 'AssSumm' SNS Message has been created containing a ULR link for 'asssummsan'`, 'Test step')
 
-    await san.queries.checkSanLockIncompleteCall(pk2, oasys.users.probSanUnappr)
+    await san.queries.checkSanLockIncompleteCall(pk2, user.prob.probSanUnappr)
 
     const part2InitialData = await san.queries.getOasysSetUpdateTimes(pk2)
     const part2Questions1 = await san.queries.getLatestQuestionUpdateTime(pk2)
@@ -188,7 +188,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, offender, assessmen
     await san.gotoSan()
     await san.populateSanSections('Test 27 part 3 Complete SAN', testData.part3CompleteSan, true)
     await san.returnToOASys()
-    await oasys.logout()
+    await user.logout()
 
     await san.queries.getSanApiTimeAndCheckDbValues(pk3, 'Y', pk2)
     log(`Log in as a user in a different NON SAN PILOT probation area.  
@@ -199,8 +199,8 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, offender, assessmen
         The user still has boilerplate access as they haven't yet created an assessment - just wanted to use this way for guilloting
         Make a note of the date and time in the OASYS_SET field 'LASTUPD_DATE'`, 'Test step')
 
-    await oasys.login(oasys.users.probHeadPdu)
-    await offender.searchAndSelectByPnc(offender1.pnc, oasys.users.probationSan)
+    await user.prob.probHeadPdu.login()
+    await offender.searchAndSelectByPnc(offender1.pnc, providers.prob.san)
     await oasys.clickButton('Create Assessment')
     await oasys.clickButton('Yes')
     await oasys.clickButton('Yes - Guillotine WIP Immediately')
@@ -210,7 +210,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, offender, assessmen
         Ensure the SAN section and the SSP section have both been set to 'COMPLETE_LOCKED'
         Ensure an 'AssSumm' SNS Message has been created containing a ULR link for 'asssummsan'`, 'Test step')
 
-    await san.queries.checkSanLockIncompleteCall(pk3, oasys.users.probHeadPdu)
+    await san.queries.checkSanLockIncompleteCall(pk3, user.prob.probHeadPdu)
 
     const part3InitialData = await san.queries.getOasysSetUpdateTimes(pk3)
     const part3Questions1 = await san.queries.getLatestQuestionUpdateTime(pk3)
@@ -223,7 +223,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, offender, assessmen
     expect(part3Sections).toBe(2)
 
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
-    await oasys.logout()
+    await user.logout()
 
     log(`Log back in as a user from the probation area of the offender
             Open up the now read only assessment, navigate to the 'Strengths and Needs' screen
@@ -234,7 +234,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, offender, assessmen
             Return back to the OASys Assessment - goes back to the 'Sentence Plan Service' screen
             Close the assessment - back to the offender record`, 'Test step')
 
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     await oasys.history(offender1)
     await assessment.openLatest()
     await san.gotoSanReadOnly()
@@ -259,5 +259,5 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, offender, assessmen
     expect(oasysDateTime.timestampDiff(part3LastUpdFromSan1, part3LastUpdFromSan2)).toBeLessThanOrEqual(0)
     expect(oasysDateTime.timestampDiff(part3LastUpdDate1, part3LastUpdDate2)).toBeLessThanOrEqual(0)
 
-    await oasys.logout()
+    await user.logout()
 })

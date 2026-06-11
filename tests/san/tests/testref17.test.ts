@@ -1,9 +1,9 @@
 import { test } from 'fixtures'
 import * as testData from '../data/testRef17'
 
-test('SAN integration - test ref 17', async ({ page, oasys, offender, assessment, sections, san, signing, sentencePlan, risk, sns, tasks, oasysDb }) => {
+test('SAN integration - test ref 17', async ({ page, oasys, user, offender, assessment, sections, san, signing, sentencePlan, risk, sns, tasks, oasysDb }) => {
 
-    await oasys.login(oasys.users.probSanPso)
+    await user.prob.probSanPso.login()
     const offender1 = await offender.createProbFromStandardOffender({ forename1: 'TestRefSeventeen', gender: 'Female' })
 
     // TODO implement IOM stub and remove elog workaround
@@ -22,7 +22,7 @@ test('SAN integration - test ref 17', async ({ page, oasys, offender, assessment
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order' })
     await san.checkLayer3Menu(true, sections)
 
-    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, oasys.users.probSanPso, oasys.users.probationSanCode, 'INITIAL')
+    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probSanPso, providers.prob.sanCode, 'INITIAL')
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
@@ -165,7 +165,7 @@ test('SAN integration - test ref 17', async ({ page, oasys, offender, assessment
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.probSanPso.forenameSurname,
+        'displayName': user.prob.probSanPso.forenameSurname,
         'planAccessMode': 'READ_WRITE',
     }, 'sp', 'assessment',
         {
@@ -245,7 +245,7 @@ test('SAN integration - test ref 17', async ({ page, oasys, offender, assessment
     await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersignComment: 'Signing test 17' })
 
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
-    await san.queries.checkSanSigningCall(pk1, oasys.users.probSanPso, 'COUNTERSIGN')
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanPso, 'COUNTERSIGN')
 
 
     log(`Log out and log back in as the countersigner to the probation area	
@@ -261,8 +261,8 @@ test('SAN integration - test ref 17', async ({ page, oasys, offender, assessment
             • Integrated Offender Management (IOM)
         Return back to the assessment - now on the last screen for the Initial Sentence Plan`, 'Test step')
 
-    await oasys.logout()
-    await oasys.login(oasys.users.probSanPo)
+    await user.logout()
+    await user.prob.probSanPo.login()
     await tasks.openAssessmentFromCountersigningTaskByName(offender1.surname)
 
     await signing.countersigningOverview.details.checkValue('Signing test 17', true)
@@ -297,7 +297,7 @@ test('SAN integration - test ref 17', async ({ page, oasys, offender, assessment
     // await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OPD'])    // Others checked at signing
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
 
-    await san.queries.checkSanCountersigningCall(pk1, oasys.users.probSanPo, 'COUNTERSIGNED')
+    await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanPo, 'COUNTERSIGNED')
 
     log(`Open up the Offender record
         Ensure the latest completed assessment shows an 'S&N/SSP' icon next to it
@@ -337,5 +337,5 @@ test('SAN integration - test ref 17', async ({ page, oasys, offender, assessment
     await assessment.printAssessment.selfAssessmentForm.checkStatus('notVisible')
     await assessment.printAssessment.allSections.setValue(true)
 
-    await oasys.logout()
+    await user.logout()
 })

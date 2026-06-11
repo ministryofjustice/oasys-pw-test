@@ -1,10 +1,11 @@
 import { Page } from '@playwright/test'
 import * as fs from 'fs-extra'
 
-import { Oasys, Assessment, Tasks } from 'fixtures'
+import { Oasys, Tasks } from 'fixtures'
 import * as pages from './pages'
-import { User } from 'classes/user'
-import { BaseAssessmentPage } from 'classes'
+import { TestUser } from 'fixtures/user/testUsers'
+import { ScreeningSection5, Rmp } from 'fixtures/risk/pages'
+import { BasicSentencePlan, IspSection1to4, RspSection1to2, SentencePlanService } from 'fixtures/sentencePlan/pages'
 
 export class Signing {
 
@@ -40,7 +41,7 @@ export class Signing {
         }) {
 
         log(`Sign & lock assessment`)
-        await this.oasys.gotoSigningPage(params?.page)
+        await this.gotoSigningPage(params?.page)
 
         await this.oasys.clickButton('Sign & Lock', true)
 
@@ -64,8 +65,8 @@ export class Signing {
                 await this.cPage.cancel.click()
             }
             else {
-                if (params.countersigner?.constructor?.name == 'User') {
-                    await this.cPage.countersigner.setValue((params.countersigner as User).lovLookup)
+                if (params.countersigner?.constructor?.name == TestUser.name) {
+                    await this.cPage.countersigner.setValue((params.countersigner as TestUser).lovLookup)
                 } else if (params.countersigner != null) {
                     await this.cPage.countersigner.setValue(params.countersigner as string)
                 }
@@ -100,7 +101,7 @@ export class Signing {
             await this.oasys.clickButton('Return to Assessment', true)
         }
 
-        await this.oasys.gotoSigningPage(params?.page)
+        await this.gotoSigningPage(params?.page)
 
         await this.oasys.clickButton('Countersign', true)
         await this.countersigning.selectAction.setValue('Countersign')
@@ -137,7 +138,7 @@ export class Signing {
             await this.oasys.clickButton('Return to Assessment')
         }
 
-        await this.oasys.gotoSigningPage(params?.page)
+        await this.gotoSigningPage(params?.page)
 
         await this.oasys.clickButton('Countersign')
         await this.countersigning.selectAction.setValue('Reject for Rework')
@@ -150,7 +151,7 @@ export class Signing {
 
     async gotoCountersignOverview(page: SigningPage) {
 
-        await this.oasys.gotoSigningPage(page)
+        await this.gotoSigningPage(page)
         await this.countersigningOverview.goto()
     }
 
@@ -207,6 +208,32 @@ export class Signing {
         } else {
             expect(count).toBe(0)
         }
+    }
+
+
+    async gotoSigningPage(signingPage: SigningPage) {
+
+        switch (signingPage) {
+            case 'basic':
+                await new BasicSentencePlan(this.page).goto(true)
+                break
+            case 'isp':
+                await new IspSection1to4(this.page).goto(true)
+                break
+            case 'rsp':
+                await new RspSection1to2(this.page).goto(true)
+                break
+            case 'spService':
+                await new SentencePlanService(this.page).goto(true)
+                break
+            case 'riskScreening':
+                await new ScreeningSection5(this.page).goto(true)
+                break
+            case 'rmp':
+                await new Rmp(this.page).goto(true)
+                break
+        }
+
     }
 
 }

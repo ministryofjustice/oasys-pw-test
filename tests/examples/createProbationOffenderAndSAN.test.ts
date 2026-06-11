@@ -1,9 +1,9 @@
 import { test } from 'fixtures'
 
 
-test('Example test - create a prison offender and a SAN 3.2 assessment', async ({ oasys, offender, assessment, signing }) => {
+test('Example test - create a prison offender and a SAN 3.2 assessment', async ({ oasys, user, offender, assessment, signing }) => {
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
@@ -14,6 +14,6 @@ test('Example test - create a prison offender and a SAN 3.2 assessment', async (
 
     await signing.signAndLock({ expectRsrWarning: true })
 
-    await oasys.logout()
+    await user.logout()
 
 })

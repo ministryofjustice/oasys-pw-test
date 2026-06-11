@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill'
 
-import { User } from 'classes'
+import { TestUser } from 'fixtures/user/testUsers'
 import { OasysDb } from 'fixtures'
 import { Queries as AssessmentQueries } from 'fixtures/assessment/queries'
 
@@ -125,7 +125,7 @@ export class Queries {
      *  - expectedSpVersion: version number that should be returned by SAN for the Sentence Plan
      */
     async checkSanCreateAssessmentCall(pk: number, previousSanPk: number, previousSpPk: number,
-        expectedUser: User, expectedProvider: string, expectedPlanType: 'INITIAL' | 'REVIEW' | 'UPW' | 'PSR_OUTLINE', spOnly = false, newPeriodOfSupervision: 'Y' | 'N' = null) {
+        expectedUser: TestUser, expectedProvider: string, expectedPlanType: 'INITIAL' | 'REVIEW' | 'UPW' | 'PSR_OUTLINE', spOnly = false, newPeriodOfSupervision: 'Y' | 'N' = null) {
 
         log('', `Check CreateAssessment API call for ${pk}, previous SAN: ${previousSanPk}, previous SP: ${previousSpPk}`)
         const query = `select log_text from eor.clog where log_source like '%${pk}%SAN_CREATE%' order by time_stamp desc`
@@ -195,7 +195,7 @@ export class Queries {
      *  - expectedVersion: version number that should be returned by SAN
      *  - expectedSpVersion: version number for the sentence plan that should be returned by SAN
      */
-    async checkSanCountersigningCall(pk: number, expectedUser: User, outcome: 'COUNTERSIGNED' | 'AWAITING_DOUBLE_COUNTERSIGN' | 'DOUBLE_COUNTERSIGNED' | 'REJECTED') {
+    async checkSanCountersigningCall(pk: number, expectedUser: TestUser, outcome: 'COUNTERSIGNED' | 'AWAITING_DOUBLE_COUNTERSIGN' | 'DOUBLE_COUNTERSIGNED' | 'REJECTED') {
 
         await this.checkSanCall('Countersigning', 'COUNTERSIGN', 'counter-sign', pk, expectedUser, { outcome: outcome })
     }
@@ -209,7 +209,7 @@ export class Queries {
      *  - expectedVersion: version number that should be returned by SAN
      *  - expectedSpVersion: version number for the sentence plan that should be returned by SAN
      */
-    async checkSanSigningCall(pk: number, expectedUser: User, signingType: 'SELF' | 'COUNTERSIGN') {
+    async checkSanSigningCall(pk: number, expectedUser: TestUser, signingType: 'SELF' | 'COUNTERSIGN') {
 
         await this.checkSanCall('Signing', 'SIGN', 'sign', pk, expectedUser, { signingType: signingType })
     }
@@ -222,7 +222,7 @@ export class Queries {
      *  - expectedVersion: version number that should be returned by SAN
      *  - expectedSpVersion: version number for the sentence plan that should be returned by SAN
      */
-    async checkSanLockIncompleteCall(pk: number, expectedUser: User) {
+    async checkSanLockIncompleteCall(pk: number, expectedUser: TestUser) {
 
         await this.checkSanCall('Lock Incomplete', 'LOCK_INCOMPLETE', 'lock', pk, expectedUser)
     }
@@ -233,7 +233,7 @@ export class Queries {
      *  - pk
      *  - expectedUser: OASys User Id for the user deleting the assessment
      */
-    async checkSanDeleteCall(pk: number, expectedUser: User) {
+    async checkSanDeleteCall(pk: number, expectedUser: TestUser) {
 
         await this.checkSanCall('Delete', 'SOFT_DELETE', 'soft-delete', pk, expectedUser)
     }
@@ -244,7 +244,7 @@ export class Queries {
      *  - pk
      *  - expectedUser: OASys User Id for the user undeleting the assessment
      */
-    async checkSanUndeleteCall(pk: number, expectedUser: User) {
+    async checkSanUndeleteCall(pk: number, expectedUser: TestUser) {
 
         await this.checkSanCall('Undelete', 'UNDELETE', 'undelete', pk, expectedUser)
     }
@@ -257,7 +257,7 @@ export class Queries {
      *  - expectedVersion: version number that should be returned by SAN
      *  - expectedSpVersion: version number for the sentence plan that should be returned by SAN
      */
-    async checkSanRollbackCall(pk: number, expectedUser: User) {
+    async checkSanRollbackCall(pk: number, expectedUser: TestUser) {
 
         await this.checkSanCall('Rollback', 'ROLLBACK', 'rollback', pk, expectedUser)
     }
@@ -351,7 +351,7 @@ export class Queries {
      *  - expectedUser: OASys User Id for the user merging the offenders
      *  - pkPairs: an array of \{ old: number, new: number \}, each pair contains expected values for the old and new assessment PKs.
      */
-    async checkSanMergeCall(expectedUser: User, pkPairs: number) {  // TODO fix/finish this
+    async checkSanMergeCall(expectedUser: TestUser, pkPairs: number) {  // TODO fix/finish this
 
         log(`Checking Merge call for ${JSON.stringify(pkPairs)}`)
         const query = `select log_text from eor.clog where log_source like '%${expectedUser.username}%SAN_MERGE_DEMERGE_URL%' order by time_stamp desc fetch first 2 rows only`
@@ -438,7 +438,7 @@ export class Queries {
     //     })
     // }
 
-    async checkSanCall(name: string, sourceFilter: string, url: string, pk: number, expectedUser: User,
+    async checkSanCall(name: string, sourceFilter: string, url: string, pk: number, expectedUser: TestUser,
         otherChecks?: { signingType?: 'SELF' | 'COUNTERSIGN', outcome?: string }) {
 
         log(`Checking ${name} call for ${pk}`)

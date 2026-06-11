@@ -3,13 +3,13 @@ import * as testData from '../../data/testRef21'
 
 export function testRef21CreateAssessments(offender1: OffenderDef, offender2: OffenderDef, offender1Pks: number[], offender2Pks: number[]) {
 
-    test('SAN integration - test ref 21 create assessments', async ({ oasys, offender, assessment, signing, sections, san, risk, sentencePlan, tasks }) => {
+    test('SAN integration - test ref 21 create assessments', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, tasks }) => {
 
         log(`SET UP OFFENDER 1 - is in a NON SAN pilot probation area - PNC is set to UNKNOWN PNC
             Offender has just one assessment
             FIRST - LAYER 3 v1 - oasys_set.cloned_from_previous_san_pk is NULL`, 'Test step')
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         await oasys.history(offender1)
         // new oasys.Pages.Offender.OffenderDetails().pnc.setValue('UNKNOWN PNC')
 
@@ -18,7 +18,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         offender1Pks.push(offender1Pk1)
         await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No', sentencePlan: 'isp' })
         await signing.signAndLock({ page: 'isp', expectRsrWarning: true })
-        await oasys.logout()
+        await user.logout()
 
         await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${offender1Pk1}`, {
             SAN_ASSESSMENT_LINKED_IND: null,
@@ -38,7 +38,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
             FIFTH - LAYER 3 v2 - oasys_set.cloned_from_previous_san_pk is SET to the PK of the THIRD assessment	
             SIXTH - LAYER3 v2 - LAYER 3 v2 - oasys_set.cloned_from_previous_san_pk is SET to the PK of the FIFTH assessment`, 'Test step')
 
-        await oasys.login(oasys.users.probSanHeadPdu)  // No countersigning for this test
+        await user.prob.probSanHeadPdu.login()  // No countersigning for this test
 
         // Create and complete assessment 1 (layer 1 v1)
         await oasys.history(offender2)
@@ -67,20 +67,20 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         await risk.setRationaleText()
         await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
-        await oasys.logout()
+        await user.logout()
 
         // Transfer to Bedfordshire
-        await oasys.login(oasys.users.probHeadPdu)
-        await offender.searchAndSelectByPnc(offender2.pnc, oasys.users.probationSan)
+        await user.prob.probHeadPdu.login()
+        await offender.searchAndSelectByPnc(offender2.pnc, providers.prob.san)
         await offender.requestTransfer()
-        await oasys.logout()
+        await user.logout()
 
-        await oasys.login(oasys.users.probSanUnappr)
+        await user.prob.probSanUnappr.login()
         await tasks.grantTransfer(offender2.surname)
-        await oasys.logout()
+        await user.logout()
 
         // Create and complete assessment 4 (layer 3 v1)
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         await oasys.history(offender2)
         const offender2Pk4 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)' })
         offender2Pks.push(offender2Pk4)
@@ -89,20 +89,20 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await sections.selfAssessmentForm.populateMinimal()
         await sentencePlan.populateMinimal('rsp')
         await signing.signAndLock({ expectRsrWarning: true })
-        await oasys.logout()
+        await user.logout()
 
         // Transfer back to Durham
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.prob.probSanHeadPdu.login()
         await oasys.history(offender2)
         await offender.requestTransfer()
-        await oasys.logout()
+        await user.logout()
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         await tasks.grantTransfer(offender2.surname)
-        await oasys.logout()
+        await user.logout()
 
         // Create and complete assessment 5 (layer 3 v2)
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.prob.probSanHeadPdu.login()
         await oasys.history(offender2)
         const offender2Pk5 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
         offender2Pks.push(offender2Pk5)
@@ -123,7 +123,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await risk.setRationaleText()
         await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
 
-        await oasys.logout()
+        await user.logout()
 
 
     })

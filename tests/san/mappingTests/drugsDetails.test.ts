@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 
-import { test, Oasys, Offender, Assessment, San } from 'fixtures'
+import { test, Oasys, User, Offender, Assessment, San } from 'fixtures'
 import { getMappingTestOffender } from './xMappingTest'
 
 type TestCase = { ref: number, lastSix: boolean, frequency: DrugsFrequency, injectedLastSix: boolean, injectedMoreThanSix: boolean }
@@ -69,36 +69,36 @@ const otherDrugName = 'Other drug name'
 
 test.describe('Mapping test for drugs - individual drugs details', () => {
 
-    test('amphetamines', async ({ page, oasys, offender, assessment, san }) => { await drugTest('amphetamines', page, oasys, offender, assessment, san) })
-    test('benzodiazepines', async ({ page, oasys, offender, assessment, san }) => { await drugTest('benzodiazepines', page, oasys, offender, assessment, san) })
-    test('cannabis', async ({ page, oasys, offender, assessment, san }) => { await drugTest('cannabis', page, oasys, offender, assessment, san) })
-    test('cocaine', async ({ page, oasys, offender, assessment, san }) => { await drugTest('cocaine', page, oasys, offender, assessment, san) })
-    test('crack', async ({ page, oasys, offender, assessment, san }) => { await drugTest('crack', page, oasys, offender, assessment, san) })
-    test('ecstasy', async ({ page, oasys, offender, assessment, san }) => { await drugTest('ecstasy', page, oasys, offender, assessment, san) })
-    test('hallucinogenics', async ({ page, oasys, offender, assessment, san }) => { await drugTest('hallucinogenics', page, oasys, offender, assessment, san) })
-    test('heroin', async ({ page, oasys, offender, assessment, san }) => { await drugTest('heroin', page, oasys, offender, assessment, san) })
-    test('methadone', async ({ page, oasys, offender, assessment, san }) => { await drugTest('methadone', page, oasys, offender, assessment, san) })
-    test('prescribed', async ({ page, oasys, offender, assessment, san }) => { await drugTest('prescribed', page, oasys, offender, assessment, san) })
-    test('opiates', async ({ page, oasys, offender, assessment, san }) => { await drugTest('opiates', page, oasys, offender, assessment, san) })
-    test('solvents', async ({ page, oasys, offender, assessment, san }) => { await drugTest('solvents', page, oasys, offender, assessment, san) })
-    test('spice', async ({ page, oasys, offender, assessment, san }) => { await drugTest('spice', page, oasys, offender, assessment, san) })
-    test('steroids', async ({ page, oasys, offender, assessment, san }) => { await drugTest('steroids', page, oasys, offender, assessment, san) })
-    test('other', async ({ page, oasys, offender, assessment, san }) => { await drugTest('other', page, oasys, offender, assessment, san) })
-// TODO add ketamine (16)
+    test('amphetamines', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('amphetamines', page, oasys, user, offender, assessment, san) })
+    test('benzodiazepines', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('benzodiazepines', page, oasys, user, offender, assessment, san) })
+    test('cannabis', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('cannabis', page, oasys, user, offender, assessment, san) })
+    test('cocaine', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('cocaine', page, oasys, user, offender, assessment, san) })
+    test('crack', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('crack', page, oasys, user, offender, assessment, san) })
+    test('ecstasy', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('ecstasy', page, oasys, user, offender, assessment, san) })
+    test('hallucinogenics', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('hallucinogenics', page, oasys, user, offender, assessment, san) })
+    test('heroin', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('heroin', page, oasys, user, offender, assessment, san) })
+    test('methadone', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('methadone', page, oasys, user, offender, assessment, san) })
+    test('prescribed', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('prescribed', page, oasys, user, offender, assessment, san) })
+    test('opiates', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('opiates', page, oasys, user, offender, assessment, san) })
+    test('solvents', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('solvents', page, oasys, user, offender, assessment, san) })
+    test('spice', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('spice', page, oasys, user, offender, assessment, san) })
+    test('steroids', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('steroids', page, oasys, user, offender, assessment, san) })
+    test('other', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('other', page, oasys, user, offender, assessment, san) })
+    // TODO add ketamine (16)
 })
 
-async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, offender: Offender, assessment: Assessment, san: San) {
+async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User, offender: Offender, assessment: Assessment, san: San) {
 
     const mappingTestOffender = await getMappingTestOffender()
 
     // Delete previous assessments so no data gets cloned
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
     await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await oasys.logout()
+    await user.logout()
 
     // Create a new SAN assessment
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
     const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 

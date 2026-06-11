@@ -4,9 +4,9 @@ import { test } from 'fixtures'
 // Offender has a completed assessment with 2.3 Physical Violence and not 6.7DA, complete SARA with high/medium
 // Second assessment with SARA rejected, WIP, check the PNI calculation
 
-test('NOD-1243', async ({ oasys, offender, assessment, sections, risk, sara, sentencePlan, signing, api, pni }) => {
+test('NOD-1243', async ({ oasys, user, offender, assessment, sections, risk, sara, sentencePlan, signing, api, pni }) => {
 
-    await oasys.login(oasys.users.probSpHeadPdu)
+    await user.prob.probSpHeadPdu.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
@@ -102,5 +102,5 @@ test('NOD-1243', async ({ oasys, offender, assessment, sections, risk, sara, sen
 
     await sections.summarySheet.close.click()
     await assessment.lockIncomplete()
-    await oasys.logout()
+    await user.logout()
 })

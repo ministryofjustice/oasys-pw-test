@@ -4,7 +4,7 @@ import * as testData from '../../data/testRef9'
 
 export function testRef9(offender1: OffenderDef, pks: number[]) {
 
-    test('SAN integration - test ref 9', async ({ page, oasys, assessment, san }) => {
+    test('SAN integration - test ref 9', async ({ page, oasys, user, assessment, san }) => {
 
         log(`Log in as the same assessor as that in Test Ref 8
                 Open up the offender record from Test Ref 8
@@ -14,7 +14,7 @@ export function testRef9(offender1: OffenderDef, pks: number[]) {
                 DO NOT answer 'Yes' to any of the sections 'linked to risk' questions.  Ensure all sections are marked as complete.
                 Return back to OASys.`, 'Test step')
 
-        await oasys.login(oasys.users.probSanUnappr)
+        await user.prob.probSanUnappr.login()
         await oasys.history(offender1)
 
         await san.gotoSanFromOffender()
@@ -29,7 +29,7 @@ export function testRef9(offender1: OffenderDef, pks: number[]) {
             'location': 'COMMUNITY',
             'sexuallyMotivatedOffenceHistory': 'YES',
         }, {
-            'displayName': oasys.users.probSanUnappr.forenameSurname,
+            'displayName': user.prob.probSanUnappr.forenameSurname,
             'accessMode': 'READ_WRITE',
         }, 'san', 'offender'
         )
@@ -53,7 +53,7 @@ export function testRef9(offender1: OffenderDef, pks: number[]) {
         await san.returnToOASys()
         await oasys.clickButton('Next')
         await assessment.queries.checkSingleAnswer(pks[1], '5', '5.4', 'refAnswer', '2')  // Should be 2 in the assessment (source of income = offending only).  Change in offender record would return 1 if it impacted the assessment.
-        await oasys.logout()
+        await user.logout()
 
     })
 }

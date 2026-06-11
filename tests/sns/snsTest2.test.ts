@@ -8,9 +8,9 @@ const offender1: OffenderDef = {
 
 test.describe('Create assessments and check SNS messages - layer 1', () => {
 
-    test('No countersigning required', async ({ oasys, offender, assessment, sns, signing, sections, sentencePlan }) => {
+    test('No countersigning required', async ({ oasys, user, offender, assessment, sns, signing, sections, sentencePlan }) => {
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         await offender.createProb(offender1)
 
         // First RoSHA
@@ -68,10 +68,10 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
 
 })
 
-test('Countersigning required', async ({ oasys, offender, assessment, sns, signing, sections, sentencePlan, risk }) => {
+test('Countersigning required', async ({ oasys, user, offender, assessment, sns, signing, sections, sentencePlan, risk }) => {
 
     // Create an offender with minimally complete layer 1 to get OGRS and RSR
-    await oasys.login(oasys.users.probPso)
+    await user.prob.probPso.login()
     const offender1 = await offender.createProbFromStandardOffender()
 
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Basic (Layer 1)' })
@@ -81,18 +81,18 @@ test('Countersigning required', async ({ oasys, offender, assessment, sns, signi
     await risk.populateWithSpecificRiskLevel('High')
 
     // Sign assessment and send for countersigning, then check SNS messages
-    await signing.signAndLock({ page: 'basic', expectCountersigner: true, countersigner: oasys.users.probHeadPdu })
+    await signing.signAndLock({ page: 'basic', expectCountersigner: true, countersigner: user.prob.probHeadPdu })
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
-    await oasys.logout()
+    await user.logout()
 
     // Countersign assessment then check SNS messages again
-    await oasys.login(oasys.users.probHeadPdu)
+    await user.prob.probHeadPdu.login()
     await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
-    await oasys.logout()
+    await user.logout()
 
-    await oasys.login(oasys.users.probPso)
+    await user.prob.probPso.login()
     await oasys.history(offender1)
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Basic (Layer 1)' })
     await sections.offendingInformation.populateMinimal()
@@ -100,15 +100,15 @@ test('Countersigning required', async ({ oasys, offender, assessment, sns, signi
     await sections.selfAssessmentForm.populateMinimal()
 
     // Sign assessment, then check SNS messages
-    await signing.signAndLock({ page: 'basic', expectCountersigner: true, countersigner: oasys.users.probHeadPdu })
+    await signing.signAndLock({ page: 'basic', expectCountersigner: true, countersigner: user.prob.probHeadPdu })
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
 
-    await oasys.logout()
+    await user.logout()
 
     // Countersign assessment then check SNS messages again
-    await oasys.login(oasys.users.probHeadPdu)
+    await user.prob.probHeadPdu.login()
     await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
-    await oasys.logout()
+    await user.logout()
 })

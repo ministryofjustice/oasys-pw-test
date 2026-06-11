@@ -3,7 +3,7 @@ import * as fs from 'fs-extra'
 
 import { Oasys, Tasks } from 'fixtures'
 import * as pages from './pages'
-import { User } from 'classes/user'
+import { TestUser } from 'fixtures/user/testUsers'
 import { ScreeningSection5, Rmp } from 'fixtures/risk/pages'
 import { BasicSentencePlan, IspSection1to4, RspSection1to2, SentencePlanService } from 'fixtures/sentencePlan/pages'
 
@@ -65,8 +65,8 @@ export class Signing {
                 await this.cPage.cancel.click()
             }
             else {
-                if (params.countersigner?.constructor?.name == 'User') {
-                    await this.cPage.countersigner.setValue((params.countersigner as User).lovLookup)
+                if (params.countersigner?.constructor?.name == TestUser.name) {
+                    await this.cPage.countersigner.setValue((params.countersigner as TestUser).lovLookup)
                 } else if (params.countersigner != null) {
                     await this.cPage.countersigner.setValue(params.countersigner as string)
                 }

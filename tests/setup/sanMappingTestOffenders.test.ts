@@ -16,16 +16,16 @@ const initialOffenderDetails: OffenderDef = {
 }
 
 
-test('Create offender for SAN mapping tests', async ({ oasys, offender }) => {
+test('Create offender for SAN mapping tests', async ({ oasys, user, offender }) => {
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
 
     for (let i = 0; i < userSuffixes.length; i++) {
         const mappingTestOffender = await offender.createProbFromStandardOffender({ type: 'noEvent' })
         await fs.writeFile(`${mappingTestOffenderFile}${i}`, JSON.stringify(mappingTestOffender))
     }
 
-    await oasys.logout()
+    await user.logout()
 })
 
 

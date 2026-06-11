@@ -12,7 +12,7 @@ import { test } from 'fixtures'
 
 export function testRef4(offender1: OffenderDef, pks: { [key: number]: number }) {
 
-    test('OGRS regression test ref 4', async ({ oasys, offender, assessment, sections, risk, sentencePlan, sns, signing, ogrs }) => {
+    test('OGRS regression test ref 4', async ({ oasys, user, offender, assessment, sections, risk, sentencePlan, sns, signing, ogrs }) => {
 
         log(`Log in as as Probation Assessor used in Test Ref 3		
             Open up the Offender from Test Ref 3 that has the completed RoSHA assessment		
@@ -21,7 +21,7 @@ export function testRef4(offender1: OffenderDef, pks: { [key: number]: number })
             Check the OASYS_SET record has the SIX new '…ALGO_VERSION' fields all set to 1 apart from the OSP one which is set to 6		
             Check that OASYS_SET.RSR_ALGORITHM_VERSION has been set to 6`, 'Test step')
 
-        await oasys.login(oasys.users.probSpHeadPdu)
+        await user.prob.probSpHeadPdu.login()
         await oasys.history(offender1)
         await offender.offenderDetails.summarySheetTab.checkStatus('notVisible')
 
@@ -138,7 +138,7 @@ export function testRef4(offender1: OffenderDef, pks: { [key: number]: number })
         await sections.predictorQuestions.goto()
         await sections.predictorQuestions.o3_4.checkStatus('readonly')
 
-        await oasys.logout()
+        await user.logout()
     })
 
 }

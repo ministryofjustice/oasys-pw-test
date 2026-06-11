@@ -4,7 +4,7 @@ import * as data from '../data/mapping'
 
 // Ensure tests/data/local/mappingTestsOffender.txt has been updated by running tests/setup/sanMappingTestOffender first.
 
-test('Mapping test: accommodation', async ({ oasys, offender, assessment, sections, san }) => {
+test('Mapping test: accommodation', async ({ oasys, user, offender, assessment, sections, san }) => {
 
-    await mappingTest(oasys, offender, assessment, sections, san, data.Accommodation.script)
+    await mappingTest(user, offender, assessment, sections, san, data.Accommodation.script)
 })

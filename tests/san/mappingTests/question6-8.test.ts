@@ -5,7 +5,7 @@ import { getMappingTestOffender } from './xMappingTest'
 type AccommodationOptions = 'family' | 'friends' | 'partner' | 'child' | 'other' | 'unknown' | 'alone'
 type RelationshipOptions = 'partner' | 'ownChildren' | 'otherChildren' | 'family' | 'friends' | 'other'
 
-test('Mapping test for question 6.8', async ({ oasys, offender, assessment, san, }) => {
+test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment, san, }) => {
 
     /*
     Who is [subject] living with?
@@ -22,12 +22,12 @@ test('Mapping test for question 6.8', async ({ oasys, offender, assessment, san,
 
     const mappingTestOffender = await getMappingTestOffender()
 
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
     await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await oasys.logout()
+    await user.logout()
 
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
     const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 
@@ -92,7 +92,7 @@ test('Mapping test for question 6.8', async ({ oasys, offender, assessment, san,
         i++
     }
 
-    await oasys.logout()
+    await user.logout()
     expect(failed).toBeFalsy()
 })
 

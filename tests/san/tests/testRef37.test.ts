@@ -17,9 +17,9 @@ const offender1: OffenderDef = {
  * Delete that second 3.2 assessment. 
  * Roll back the first 3.2 assessment and carry on with that does it work with SAN statuses?
  */
-test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, signing, sections, san, risk, sentencePlan, sns }) => {
+test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, sns }) => {
 
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     await offender.createProb(offender1)
 
     // Create first assessment
@@ -28,7 +28,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     await san.queries.getSanApiTimeAndCheckDbValues(pk1, 'Y', null)
 
     // Check Create call
-    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, oasys.users.probSanUnappr, oasys.users.probationSanCode, 'INITIAL')
+    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probSanUnappr, providers.prob.sanCode, 'INITIAL')
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
 
     // Complete section 1
@@ -61,7 +61,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.probSanUnappr.forenameSurname,
+        'displayName': user.prob.probSanUnappr.forenameSurname,
         'accessMode': 'READ_WRITE',
     },
         'san', null
@@ -78,17 +78,17 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     await sentencePlan.populateMinimal()
 
     // Sign and lock, check API calls and OASYS_SET
-    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu, countersignComment: 'Test 37 part 1 signing' })
-    await san.queries.checkSanSigningCall(pk1, oasys.users.probSanUnappr, 'COUNTERSIGN')
+    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu, countersignComment: 'Test 37 part 1 signing' })
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanUnappr, 'COUNTERSIGN')
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
         SAN_ASSESSMENT_VERSION_NO: '0'
     })
-    await oasys.logout()
+    await user.logout()
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
 
@@ -105,7 +105,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'accessMode': 'READ_ONLY',
     },
         'san', 'assessment'
@@ -116,13 +116,13 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     // Countersign the assessment
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await signing.countersign({ page: 'spService', comment: 'Test 37 part 2 countersigning' })
-    await san.queries.checkSanCountersigningCall(pk1, oasys.users.probSanHeadPdu, 'COUNTERSIGNED')
+    await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
-    await oasys.logout()
+    await user.logout()
 
     log('Roll back the assessment and check API calls and assessment status, then sign again', 'Test step')
 
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelect(offender1)
 
     await assessment.openLatest()
@@ -139,7 +139,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.admin.forenameSurname,
+        'displayName': user.admin.forenameSurname,
         'accessMode': 'READ_ONLY',
     },
         'san', 'assessment'
@@ -151,11 +151,11 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     await assessment.rollBack('Test 37 part 3 rollback')
 
     // Check OASYS_SET and API calls
-    await san.queries.checkSanRollbackCall(pk1, oasys.users.admin)
-    await oasys.logout()
+    await san.queries.checkSanRollbackCall(pk1, user.admin)
+    await user.logout()
 
     // Sign and lock again, check API calls and OASYS_SET
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     await oasys.history()
 
     // Check it's now read-write
@@ -171,7 +171,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.probSanUnappr.forenameSurname,
+        'displayName': user.prob.probSanUnappr.forenameSurname,
         'accessMode': 'READ_WRITE',
     },
         'san', 'assessment'
@@ -181,8 +181,8 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     await oasys.clickButton('Next')
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
 
-    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu, countersignComment: 'Test 37 part 3 signing again' })
-    await san.queries.checkSanSigningCall(pk1, oasys.users.probSanUnappr, 'COUNTERSIGN')
+    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu, countersignComment: 'Test 37 part 3 signing again' })
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanUnappr, 'COUNTERSIGN')
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
@@ -190,11 +190,11 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
         SAN_ASSESSMENT_VERSION_NO: '0'
     })
-    await oasys.logout()
+    await user.logout()
 
     log('Countersign again', 'Test step')
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
 
@@ -210,7 +210,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'accessMode': 'READ_ONLY',
     },
         'san', 'assessment'
@@ -222,14 +222,14 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await signing.countersign({ page: 'spService', comment: 'Test 37 part 4 countersign again' })
 
-    await san.queries.checkSanCountersigningCall(pk1, oasys.users.probSanHeadPdu, 'COUNTERSIGNED')
+    await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
-    await oasys.logout()
+    await user.logout()
 
     log('Create 3.2 assessment and change some data, then delete it', 'Test step')
 
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     await offender.searchAndSelect(offender1)
 
     // Create new assessment
@@ -238,7 +238,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', pk1)
 
     // Check Create call
-    await san.queries.checkSanCreateAssessmentCall(pk2, pk1, pk1, oasys.users.probSanUnappr, oasys.users.probationSanCode, 'REVIEW')
+    await san.queries.checkSanCreateAssessmentCall(pk2, pk1, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
     await san.queries.checkSanGetAssessmentCall(pk2, 1)
 
     // Tweak section 1
@@ -272,7 +272,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.probSanUnappr.forenameSurname,
+        'displayName': user.prob.probSanUnappr.forenameSurname,
         'accessMode': 'READ_WRITE',
     },
         'san', null
@@ -285,12 +285,12 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     await risk.rmp.checkMenuVisibility(true)
     await san.queries.checkSanGetAssessmentCall(pk2, 1)
 
-    await oasys.logout()
+    await user.logout()
     // Delete the WIP assessment
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelect(offender1)
     await assessment.deleteLatest()
-    await san.queries.checkSanDeleteCall(pk2, oasys.users.admin)
+    await san.queries.checkSanDeleteCall(pk2, user.admin)
 
     log('Roll back the first assessment and check API calls and assessment status', 'Test step')
     await oasys.history(offender1)
@@ -308,7 +308,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.admin.forenameSurname,
+        'displayName': user.admin.forenameSurname,
         'accessMode': 'READ_ONLY',
     },
         'san', 'assessment'
@@ -320,13 +320,13 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     await assessment.rollBack('Test 38 part 2 rolling back again, after deleting the second assessment')
 
     // Check OASYS_SET and API calls
-    await san.queries.checkSanRollbackCall(pk1, oasys.users.admin)
-    await oasys.logout()
+    await san.queries.checkSanRollbackCall(pk1, user.admin)
+    await user.logout()
 
     log('Modify and sign again', 'Test step')
 
     // Open the assessment and check status
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
 
@@ -345,7 +345,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.probSanUnappr.forenameSurname,
+        'displayName': user.prob.probSanUnappr.forenameSurname,
         'accessMode': 'READ_WRITE',
     },
         'san', null
@@ -360,8 +360,8 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
 
     // Sign and lock again, check API calls and OASYS_SET
 
-    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu, countersignComment: 'Signing for the third time' })
-    await san.queries.checkSanSigningCall(pk1, oasys.users.probSanUnappr, 'COUNTERSIGN')
+    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu, countersignComment: 'Signing for the third time' })
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanUnappr, 'COUNTERSIGN')
     await san.queries.checkSanGetAssessmentCall(pk1, 2)
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
@@ -370,17 +370,17 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         SAN_ASSESSMENT_VERSION_NO: '2'
     })
 
-    await oasys.logout()
+    await user.logout()
 
     log('Countersign again', 'Test step')
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
 
     // Open as countsigner
-    await oasys.logout()
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.logout()
+    await user.prob.probSanHeadPdu.login()
     await oasys.history()
     await san.gotoSanReadOnly()
     await san.queries.checkSanOtlCall(pk1, {
@@ -394,7 +394,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'accessMode': 'READ_ONLY',
     },
         'san', 'assessment'
@@ -406,7 +406,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     await san.queries.checkSanGetAssessmentCall(pk1, 2)
     await signing.countersign({ page: 'spService', comment: 'Countersigning for the third time' })
 
-    await san.queries.checkSanCountersigningCall(pk1, oasys.users.probSanHeadPdu, 'COUNTERSIGNED')
+    await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
     await san.queries.checkSanGetAssessmentCall(pk1, 2)
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
 
@@ -420,8 +420,8 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
         {
             name: 'who',
             values: [
-                oasys.users.probSanHeadPdu.forenameSurname, oasys.users.probSanUnappr.forenameSurname, oasys.users.admin.forenameSurname, oasys.users.probSanHeadPdu.forenameSurname,
-                oasys.users.probSanUnappr.forenameSurname, oasys.users.admin.forenameSurname, oasys.users.probSanHeadPdu.forenameSurname, oasys.users.probSanUnappr.forenameSurname
+                user.prob.probSanHeadPdu.forenameSurname, user.prob.probSanUnappr.forenameSurname, user.admin.forenameSurname, user.prob.probSanHeadPdu.forenameSurname,
+                user.prob.probSanUnappr.forenameSurname, user.admin.forenameSurname, user.prob.probSanHeadPdu.forenameSurname, user.prob.probSanUnappr.forenameSurname
             ]
         },
         {
@@ -438,5 +438,5 @@ test('SAN integration - test ref 37/38', async ({ oasys, offender, assessment, s
     ]
     await sections.offenderInformation.signingHistory.checkData(expectedValues)
 
-    await oasys.logout()
+    await user.logout()
 })

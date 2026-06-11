@@ -8,9 +8,9 @@ Test will check the reassigning of the WIP task - drop down only comprises of th
 Also incorporates check of Male OPD calculation AND Learning Screening Tool (data taken from the SAN assessment).
 */
 
-test('SAN integration - test ref 16', async ({ oasys, offender, assessment, sections, tasks, san, risk }) => {
+test('SAN integration - test ref 16', async ({ oasys, user, offender, assessment, sections, tasks, san, risk }) => {
 
-    await oasys.login(oasys.users.prisSanUnappr)
+    await user.pris.prisSanUnappr.login()
     const offender1 = await offender.createPrisFromStandardOffender({ forename1: 'TestRefSixteen' })
 
     log(`Log in an Assessor who can complete SAN assessments.
@@ -30,16 +30,16 @@ test('SAN integration - test ref 16', async ({ oasys, offender, assessment, sect
     await tasks.search({ taskName: 'Assessment Work in Progress', offenderName: offender1.surname })
     await tasks.selectFirstTask()
 
-    await tasks.assessmentWipTask.reassignToUser.checkValueNotPresent(oasys.users.prisSanCAdm.lovLookup)  // Case admin user doesn't have the SAN service so shouldn't be in the list
-    await tasks.assessmentWipTask.reassignToUser.setValue(oasys.users.prisSanPom.lovLookup)
+    await tasks.assessmentWipTask.reassignToUser.checkValueNotPresent(user.pris.prisSanCAdm.lovLookup)  // Case admin user doesn't have the SAN service so shouldn't be in the list
+    await tasks.assessmentWipTask.reassignToUser.setValue(user.pris.prisSanPom.lovLookup)
     await tasks.assessmentWipTask.save.click()
 
     log(`Log out and log back in as the newly assigned assessor.
         Open up the Offender record and open the WIP OASys-SAN assessment - ensure the assessment is in full edit mode
         Navigate to the RoSH screening Section 1 and set R1.2 'Aggravated Burglary' Previous column to 'Yes' - this will invoke a full analysis`, 'Test step')
 
-    await oasys.logout()
-    await oasys.login(oasys.users.prisSanPom)
+    await user.logout()
+    await user.pris.prisSanPom.login()
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
     await san.gotoSan('Accommodation')
@@ -126,5 +126,5 @@ test('SAN integration - test ref 16', async ({ oasys, offender, assessment, sect
         true)
     await assessment.summarySheet.opd.checkValue('This individual meets the criteria for the OPD pathway.', true)
 
-    await oasys.logout()
+    await user.logout()
 })

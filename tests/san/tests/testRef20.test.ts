@@ -7,9 +7,9 @@ import * as testData from '../data/testRef20'
     Countersigner rejects the signing - (check for NOD-950 in 6.51.release)
  */
 
-test('SAN integration - test ref 20', async ({ oasys, offender, assessment, signing, sections, san, risk, sara, sentencePlan, sns }) => {
+test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sara, sentencePlan, sns }) => {
 
-    await oasys.login(oasys.users.probSanPo)
+    await user.prob.probSanPo.login()
     const offender1 = await offender.createProbFromStandardOffender({ type: 'sexual', forename1: 'TestRefTwenty' })
 
     log(`Create a new OASys-SAN assessment - Non-statutory with ISP	
@@ -27,7 +27,7 @@ test('SAN integration - test ref 20', async ({ oasys, offender, assessment, sign
     await san.queries.getSanApiTimeAndCheckDbValues(pk1, 'Y', null)
 
     // Check Create call
-    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, oasys.users.probSanPo, oasys.users.probationSanCode, 'INITIAL')
+    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probSanPo, providers.prob.sanCode, 'INITIAL')
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
 
     // Complete section 1
@@ -58,7 +58,7 @@ test('SAN integration - test ref 20', async ({ oasys, offender, assessment, sign
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'YES',
     }, {
-        'displayName': oasys.users.probSanPo.forenameSurname,
+        'displayName': user.prob.probSanPo.forenameSurname,
         'accessMode': 'READ_WRITE',
     },
         'san', 'assessment'
@@ -162,13 +162,13 @@ test('SAN integration - test ref 20', async ({ oasys, offender, assessment, sign
     log(`Click on S&L - get the complete sections alert	
         Continue to S&L - asks for a Countersigner, accept the default and enter a comment`)
 
-    await signing.signAndLock({ expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu, countersignComment: 'Sending test ref 20 for countersigning' })
+    await signing.signAndLock({ expectCountersigner: true, countersigner: user.prob.probSanHeadPdu, countersignComment: 'Sending test ref 20 for countersigning' })
 
     log(`OASys assessment now signed and locked, awaiting countersignature - ensure SIGN API has gone off to SAN and that the parameters are correct 
             including the 'signType' being set to 'COUNTERSIGN' along with users ID and name	
         In the database ensure the field OASYS_SET.SAN_ASSESSMENT_VERSION_NO and OASYS_SET.SSP_PLAN_VERSION_NO have been populated`, 'Test step')
 
-    await san.queries.checkSanSigningCall(pk1, oasys.users.probSanPo, 'COUNTERSIGN')
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanPo, 'COUNTERSIGN')
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
@@ -183,8 +183,8 @@ test('SAN integration - test ref 20', async ({ oasys, offender, assessment, sign
         · Offender has been assessed as High risk
         · Been referred for Multi Agency Public Protection Arrangement (R11.1)`, 'Test step')
 
-    await oasys.logout()
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.logout()
+    await user.prob.probSanHeadPdu.login()
     await offender.searchAndSelect(offender1)
 
     await assessment.openLatest()
@@ -205,7 +205,7 @@ test('SAN integration - test ref 20', async ({ oasys, offender, assessment, sign
 
     await signing.countersignReject({ comment: 'Rejecting test 20 for rework' })
 
-    await san.queries.checkSanCountersigningCall(pk1, oasys.users.probSanHeadPdu, 'REJECTED')
+    await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'REJECTED')
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
@@ -218,11 +218,11 @@ test('SAN integration - test ref 20', async ({ oasys, offender, assessment, sign
         Go straight to the sentence plan screen and S&L the assessment again leaving the default countersigner and adding a comment
         - ensure SIGN API has gone off to SAN and that the parameters are correct including the 'signType' being set to 'COUNTERSIGN' along with the users ID and name	`, 'Test step')
 
-    await oasys.logout()
-    await oasys.login(oasys.users.probSanPo)
+    await user.logout()
+    await user.prob.probSanPo.login()
     await oasys.history()
-    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu, countersignComment: 'Second attempt' })
-    await san.queries.checkSanSigningCall(pk1, oasys.users.probSanPo, 'COUNTERSIGN')
+    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu, countersignComment: 'Second attempt' })
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanPo, 'COUNTERSIGN')
 
     log(`Log out and log back in as the Countersigner	
         Open the assessment and go to the Countersigner Overview screen	
@@ -236,8 +236,8 @@ test('SAN integration - test ref 20', async ({ oasys, offender, assessment, sign
         Return to Assessment - last screen of the ISP section	
         Now countersign the assessment - does not require any further countersignature`, 'Test step')
 
-    await oasys.logout()
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.logout()
+    await user.prob.probSanHeadPdu.login()
     await oasys.history()
     await signing.gotoCountersignOverview('spService')
     await signing.countersigningOverview.details.checkValue(`Rejecting test 20 for rework`, true)
@@ -257,12 +257,12 @@ test('SAN integration - test ref 20', async ({ oasys, offender, assessment, sign
 
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
 
-    await san.queries.checkSanCountersigningCall(pk1, oasys.users.probSanHeadPdu, 'COUNTERSIGNED')
+    await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
     })
 
-    await oasys.logout()
+    await user.logout()
 
 })

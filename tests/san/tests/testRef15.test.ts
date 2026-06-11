@@ -2,9 +2,9 @@ import { test } from 'fixtures'
 import * as testData from '../data/testRef15'
 
 
-test('SAN integration - test ref 15', async ({ oasys, offender, assessment, sections, sentencePlan, san, risk, signing }) => {
+test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment, sections, sentencePlan, san, risk, signing }) => {
 
-    await oasys.login(oasys.users.prisSanCAdm)
+    await user.pris.prisSanCAdm.login()
     const offender1 = await offender.createPrisFromStandardOffender({ forename1: 'TestRefFifteen' })
 
     log(`Log in as a prison user who has the Case Admin role but DOES NOT have the SAN function.
@@ -21,11 +21,11 @@ test('SAN integration - test ref 15', async ({ oasys, offender, assessment, sect
         Check that we get a '200' response back from the API - the response contains parameters back and now includes sentence plan data
         Ensure that we have NOT stored down any SAN version number OR Sentence Plan version number on the OASYS_SET record`, 'Test step')
 
-    const pk1 = await assessment.createPris({ purposeOfAssessment: 'Start custody', selectAssessor: oasys.users.prisSanUnappr.lovLookup })
+    const pk1 = await assessment.createPris({ purposeOfAssessment: 'Start custody', selectAssessor: user.pris.prisSanUnappr.lovLookup })
 
     await san.checkLayer3Menu(true, sections)
 
-    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, oasys.users.prisSanCAdm, oasys.users.prisonSanCode, 'INITIAL')
+    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.pris.prisSanCAdm, providers.pris.sanCode, 'INITIAL')
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
 
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
@@ -66,7 +66,7 @@ test('SAN integration - test ref 15', async ({ oasys, offender, assessment, sect
         'location': 'PRISON',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.prisSanCAdm.forenameSurname,
+        'displayName': user.pris.prisSanCAdm.forenameSurname,
         'accessMode': 'READ_ONLY',
     },
         'san', 'assessment'
@@ -85,7 +85,7 @@ test('SAN integration - test ref 15', async ({ oasys, offender, assessment, sect
         'location': 'PRISON',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.prisSanCAdm.forenameSurname,
+        'displayName': user.pris.prisSanCAdm.forenameSurname,
         'planAccessMode': 'READ_ONLY',
     },
         'sp', 'assessment'
@@ -100,8 +100,8 @@ test('SAN integration - test ref 15', async ({ oasys, offender, assessment, sect
         Check that the database now has data in sections 2 to 12, definitely check that Section 8 contains data for the drugs entered in the SAN Assessment and that the Other Drug text field has all 400 characters in it.
         The 'Strengths and Needs Sections' menu item has a green tick against it`, 'Test step')
 
-    await oasys.logout()
-    await oasys.login(oasys.users.prisSanUnappr)
+    await user.logout()
+    await user.pris.prisSanUnappr.login()
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
 
@@ -154,7 +154,7 @@ test('SAN integration - test ref 15', async ({ oasys, offender, assessment, sect
         'location': 'PRISON',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.prisSanUnappr.forenameSurname,
+        'displayName': user.pris.prisSanUnappr.forenameSurname,
         'planAccessMode': 'READ_WRITE',
     },
         'sp', 'assessment', testData.otlCrimNeeds
@@ -169,10 +169,10 @@ test('SAN integration - test ref 15', async ({ oasys, offender, assessment, sect
 
     await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersignComment: 'Signing test 15' })
 
-    await oasys.logout()
+    await user.logout()
 
 
-    await oasys.login(oasys.users.prisSanPom)
+    await user.pris.prisSanPom.login()
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
 
@@ -182,20 +182,20 @@ test('SAN integration - test ref 15', async ({ oasys, offender, assessment, sect
 
     await signing.countersign({ page: 'spService', comment: 'Countersigning test ref 15', expectSecondCountersigner: true })
 
-    await san.queries.checkSanCountersigningCall(pk1, oasys.users.prisSanPom, 'AWAITING_DOUBLE_COUNTERSIGN')
+    await san.queries.checkSanCountersigningCall(pk1, user.pris.prisSanPom, 'AWAITING_DOUBLE_COUNTERSIGN')
 
-    await oasys.logout()
+    await user.logout()
 
     log(`Log in as the second countersigner - countersign the assessment, is now fully completed - check the COUNTERSIGN API has been posted with 
         contents correct (outcome = 'DOUBLE_COUNTERSIGNED' along with second countersigners ID and name)
         OASys-SAN assessment now in read only mode - Print the whole of the assessment.  Ensure the printout is correct to the screens.`, 'Test step')
 
-    await oasys.login(oasys.users.prisSanHomds)
+    await user.pris.prisSanHomds.login()
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
     await signing.countersign({ page: 'spService', comment: 'Countersigning test ref 15 second time' })
 
-    await san.queries.checkSanCountersigningCall(pk1, oasys.users.prisSanHomds, 'DOUBLE_COUNTERSIGNED')
+    await san.queries.checkSanCountersigningCall(pk1, user.pris.prisSanHomds, 'DOUBLE_COUNTERSIGNED')
 
     await oasys.history()
     await san.gotoSanReadOnly()
@@ -204,5 +204,5 @@ test('SAN integration - test ref 15', async ({ oasys, offender, assessment, sect
 
     await sentencePlan.spService.checkReadOnly()
 
-    await oasys.logout()
+    await user.logout()
 })

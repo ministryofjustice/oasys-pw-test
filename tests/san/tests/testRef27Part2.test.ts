@@ -1,23 +1,23 @@
 import { test } from 'fixtures'
 import * as testData from '../data/testRef27'
 
-test('SAN integration - test ref 27 part 2', async ({ oasys, cms, offender, assessment, san, sentencePlan }) => {
+test('SAN integration - test ref 27 part 2', async ({ oasys, user, cms, offender, assessment, san, sentencePlan }) => {
 
     log(`Lock Incomplete a prison OASys-SAN assessment when creating a new assessment where the internal transfer has stalled
         Create PRISON offender in a SAN PILOT Prison area whose latest assessment is a WIP OASys-SAN assessment (not signed and locked) and does NOT have a SARA.
         ALL the SAN data has been validated and the sentence plan has been agreed`, 'Test step')
 
-    await oasys.login(oasys.users.prisSanUnappr)
+    await user.pris.prisSanUnappr.login()
     const offender1 = await offender.createPrisFromStandardOffender({ forename1: 'TestRefTwentySeven-Two' })
-    await oasys.logout()
+    await user.logout()
 
     // First delete the BCS as it prevents the transfer
-    await oasys.login(oasys.users.admin, oasys.users.prisonSan)
+    await user.admin.login(providers.pris.san)
     await offender.searchAndSelect(offender1)
     await assessment.deleteLatest()
-    await oasys.logout()
+    await user.logout()
 
-    await oasys.login(oasys.users.prisSanUnappr)
+    await user.pris.prisSanUnappr.login()
     await offender.searchAndSelect(offender1)
     const pk1 = await assessment.createPris({ purposeOfAssessment: 'Start custody', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
 
@@ -44,20 +44,20 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, cms, offender, asse
         Return back to the Offender record`, 'Test step')
 
     await sentencePlan.spService.addGoal('offender')
-    await oasys.logout()
+    await user.logout()
 
     log(`Using the CMS stub submit an internal reception event to a NON SAN PILOT Prison area
             - the transfer will stall due to the WIP OASys assessment, the new prison will be noted in the 'Awaiting prison' field on the Offender Management tab
         Now log in as a user to the 'awaiting' NON SAN PILOT prison area.  
         Search for and open up the Offender record currently owned by the SAN Pilot probation area - will have 'full' access to the offender record`, 'Test step')
 
-    await oasys.login(oasys.users.prisHomds)
+    await user.pris.prisHomds.login()
     offender1.receptionCode = 'TRANSFER IN FROM OTHER ESTABLISHMENT'
     await cms.enterPrisonStubDetailsAndCreateReceptionEvent(offender1)
-    await offender.searchAndSelectByPnc(offender1.pnc, oasys.users.prisonSan)
+    await offender.searchAndSelectByPnc(offender1.pnc, providers.pris.san)
 
     await offender.offenderDetails.offenderManagementTab.click()
-    await offender.offenderManagementTab.awaitingPrisonOwner.checkValue(oasys.users.prisonNonSan)
+    await offender.offenderManagementTab.awaitingPrisonOwner.checkValue(providers.pris.nonSan)
 
     log(`Click on the <Create Assessment> button - shown 'Work In Progress Assessment at another Establishment…. Recording (Work in Progress)….' message
         Click on the <Lock Incomplete> button - returns back to the Offender record
@@ -66,7 +66,7 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, cms, offender, asse
 
     await oasys.clickButton('Create Assessment')
     await oasys.clickButton('Lock Incomplete')
-    await offender.offenderDetails.controllingOwner.checkValue(oasys.users.prisonNonSan)
+    await offender.offenderDetails.controllingOwner.checkValue(providers.pris.nonSan)
 
     log(`Make a note of the date and time in the OASYS_SET field 'LASTUPD_DATE'
         Check that Get Assessment has occurred BEFORE locking incomplete
@@ -77,7 +77,7 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, cms, offender, asse
         Check that the OASYS_SET record has the field 'SAN_ASSESSMENT_VERSION_NO' and 'SSP_PLAN_VERSION_NO' populated by the return API response
         Ensure the SAN section and the SSP section have both been set to 'COMPLETE_LOCKED'`, 'Test step')
 
-    await san.queries.checkSanLockIncompleteCall(pk1, oasys.users.prisHomds)
+    await san.queries.checkSanLockIncompleteCall(pk1, user.pris.prisHomds)
 
     const oasysSetData1 = await san.queries.getOasysSetUpdateTimes(pk1)
     const lastUpdFromSan1 = oasysDateTime.stringToTimestamp(oasysSetData1[0])
@@ -127,6 +127,6 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, cms, offender, asse
     expect(oasysDateTime.timestampDiff(lastUpdFromSan1, lastUpdFromSan2)).toBeLessThanOrEqual(0)
     expect(oasysDateTime.timestampDiff(lastUpdDate1, lastUpdDate2)).toBeLessThanOrEqual(0)
 
-    await oasys.logout()
+    await user.logout()
 
 })

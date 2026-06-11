@@ -1,21 +1,21 @@
 import { test } from 'fixtures'
 
 
-test('SAN integration - RFI test', async ({ oasys, offender, assessment }) => {
+test('SAN integration - RFI test', async ({ oasys, user, offender, assessment }) => {
     /**
      * RFI - Complete an RFI against an offender who does not have any WIP OASys assessment
      * Then create an OASys-SAN assessment - ensure the RFI has now been associated with the 
      * assessment and is visible and available (read only) from the left hand navigation menu.
      */
 
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
 
     // Create RFI
     await offender.rfi.goto()
     await offender.rfi.typeOfRfi.setValue('Ad Hoc')
-    await offender.rfi.internalUser.setValue(oasys.users.probSanUnappr.lovLookup)
+    await offender.rfi.internalUser.setValue(user.prob.probSanUnappr.lovLookup)
     await offender.rfi.reasonForRequest.setValue('Review')
     await offender.rfi.complete.click()
 
@@ -30,5 +30,5 @@ test('SAN integration - RFI test', async ({ oasys, offender, assessment }) => {
     await oasys.clickButton('Close')
     await oasys.clickButton('Close')
 
-    await oasys.logout()
+    await user.logout()
 })

@@ -3,7 +3,7 @@ import { test } from 'fixtures'
 /**
  * New probation MALE offender - NO assessment - Create a Standalone RSR and then clone to a new OASys assessment
  */
-test('OGRS regression test ref 12', async ({ oasys, offender, assessment, sections, ogrs, sns }) => {
+test('OGRS regression test ref 12', async ({ oasys, user, offender, assessment, sections, ogrs, sns }) => {
 
     log(`Log in as as Probation Assessor - create a new MALE probation offender > 18 yrs of age - ensure the CMS stub has just ONE event for it
     In the CMS stub for this offender set the offence code to be 028 01
@@ -13,7 +13,7 @@ test('OGRS regression test ref 12', async ({ oasys, offender, assessment, sectio
     Check the OFFENDER_RSR_SCORES record has the SIX new '…ALGO_VERSION' fields all set to 1 apart from the OSP one which is set to 6
     Check that OFFENDER_RSR_SCORES.RSR_ALGORITHM_VERSION has been set to 6`, 'Test step')
 
-    await oasys.login(oasys.users.probSpHeadPdu)
+    await user.prob.probSpHeadPdu.login()
     const offender1 = await offender.createProbFromStandardOffender()
     // const offender1: OffenderDef = {
     //     forename1: 'Autotest',

@@ -3,13 +3,13 @@ import { test } from 'fixtures'
 
 export function testRef12(offender1: OffenderDef, pks: number[]) {
 
-    test('SAN integration - test ref 12 - Another 3.1 assessment in non-pilot area', async ({ offender, sara, oasys, assessment, sections, san, risk, signing }) => {
+    test('SAN integration - test ref 12 - Another 3.1 assessment in non-pilot area', async ({ offender, sara, user, assessment, sections, san, risk, signing }) => {
 
         log(`Log in as an Assessor from a Non-Pilot probation area
             Find the offender used in Test Ref 11 - last assessment is a fully completed 3.1 OASys 
             Create a new 3.1 OASys 'Review' assessment.`, 'Test step')
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
 
         await offender.searchAndSelect(offender1)
         const pk = await assessment.createProb({ purposeOfAssessment: 'Review' })
@@ -132,7 +132,7 @@ export function testRef12(offender1: OffenderDef, pks: number[]) {
         await sara.cancelSara()
 
         await signing.signAndLock({ page: 'rsp' })
-        await oasys.logout()
+        await user.logout()
     })
 
 }

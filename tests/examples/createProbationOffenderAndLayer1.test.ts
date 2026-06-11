@@ -1,8 +1,8 @@
 import { test } from 'fixtures'
 
-test('Example test - create a probation offender and a layer 1 assessment', async ({ oasys, offender, assessment, signing }) => {
+test('Example test - create a probation offender and a layer 1 assessment', async ({ oasys, user, offender, assessment, signing }) => {
 
-    await oasys.login(oasys.users.probHeadPdu)
+    await user.prob.probHeadPdu.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Basic (Layer 1)' })
@@ -13,6 +13,6 @@ test('Example test - create a probation offender and a layer 1 assessment', asyn
 
     await signing.signAndLock({ page: 'basic' })
 
-    await oasys.logout()
+    await user.logout()
 
 })

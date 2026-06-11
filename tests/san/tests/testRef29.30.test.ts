@@ -1,13 +1,13 @@
 import { test } from 'fixtures'
 import * as testData from '../data/testRef29'
 
-test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, assessment, san, sections, sara, risk, sentencePlan }) => {
+test('SAN integration - test ref 29/30', async ({ oasys, user, signing, offender, assessment, san, sections, sara, risk, sentencePlan }) => {
 
     /**
         Check 'Soft Deleting' OASys-SAN assessments in various states sends a notification to the SAN Service
      */
 
-    await oasys.login(oasys.users.probSanHeadPdu)  // No countersigning for this test
+    await user.prob.probSanHeadPdu.login()  // No countersigning for this test
 
     const offender1 = await offender.createProbFromStandardOffender({ forename1: 'TestRefTwenty-One' })
     const offender2 = await offender.createProbFromStandardOffender({ forename1: 'TestRefTwenty-Two' })
@@ -22,7 +22,7 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
     await assessment.populateMinimal({ layer: 'Layer 3V2' })
     await signing.signAndLock({ expectRsrWarning: true })
 
-    await oasys.logout()
+    await user.logout()
 
     log(`Log into the SAN Pilot area as an Administrator
         Search for the offender and open up the readonly OASys-SAN assessment
@@ -31,24 +31,24 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
         An OASYS_SIGNING record has been created for the deletion 'ASSMT_DEL_SIGNING'
         A Delete API has been sent to the SAN Service - check the parameters are the OASYS_SET_PK, Admins User ID and Name - a 200 response has been received back`, 'Test step')
 
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelect(offender1)
     await assessment.deleteLatest()
     await assessment.queries.checkDeleted(o1pk1)
     await assessment.queries.checkSigningRecord(o1pk1, ['ASSMT_DEL_SIGNING', 'SIGNING'])
-    await san.queries.checkSanDeleteCall(o1pk1, oasys.users.admin)
+    await san.queries.checkSanDeleteCall(o1pk1, user.admin)
 
     log(`Test ref 30 - reverse deletion test`, 'Test step')
     await assessment.reverseDeletion(offender1, 'Assessment', 'Start of Community Order', 'Test ref 30 part 1 deletion reversal')
 
     await assessment.queries.checkNotDeleted(o1pk1)
     await assessment.queries.checkSigningRecord(o1pk1, ['ASS_DEL_RESTORE', 'ASSMT_DEL_SIGNING', 'SIGNING'])
-    await san.queries.checkSanUndeleteCall(o1pk1, oasys.users.admin)
+    await san.queries.checkSanUndeleteCall(o1pk1, user.admin)
 
-    await oasys.logout()
+    await user.logout()
 
     // Part 2
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
 
     log(`Create an offender whose latest assessment is a WIP OASYS-SAN`, 'Test step')
 
@@ -56,7 +56,7 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
 
     const o1pk2 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
 
-    await oasys.logout()
+    await user.logout()
 
     log(`Log into the SAN Pilot area as an Administrator
         Search for the offender and open up the readonly OASys-SAN assessment
@@ -65,12 +65,12 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
         An OASYS_SIGNING record has been created for the deletion 'ASSMT_DEL_SIGNING'
         A Delete API has been sent to the SAN Service - check the parameters are the OASYS_SET_PK, Admins User ID and Name - a 200 response has been received back`, 'Test step')
 
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelect(offender1)
     await assessment.deleteLatest()
     await assessment.queries.checkDeleted(o1pk2)
     await assessment.queries.checkSigningRecord(o1pk2, ['ASSMT_DEL_SIGNING'])
-    await san.queries.checkSanDeleteCall(o1pk2, oasys.users.admin)
+    await san.queries.checkSanDeleteCall(o1pk2, user.admin)
 
 
     log(`Test ref 30 - reverse deletion test`)
@@ -78,16 +78,16 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
 
     await assessment.queries.checkNotDeleted(o1pk2)
     await assessment.queries.checkSigningRecord(o1pk2, ['ASS_DEL_RESTORE', 'ASSMT_DEL_SIGNING'])
-    await san.queries.checkSanUndeleteCall(o1pk2, oasys.users.admin)
+    await san.queries.checkSanUndeleteCall(o1pk2, user.admin)
 
     // Leave the offender ready for part 4
     await oasys.history(offender1)
     await assessment.lockIncomplete()
 
-    await oasys.logout()
+    await user.logout()
 
     // Part 3
-    await oasys.login(oasys.users.probSanPo)
+    await user.prob.probSanPo.login()
     await offender.searchAndSelectByPnc(offender2.pnc)
 
     // Create and complete assessment and SARA
@@ -130,13 +130,13 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
     await sentencePlan.spService.gotoSpService('assessment')
     await sentencePlan.spService.populateTwoGoals()
 
-    await signing.signAndLock({ expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu, countersignComment: 'Sending test ref 20 for countersigning' })
+    await signing.signAndLock({ expectCountersigner: true, countersigner: user.prob.probSanHeadPdu, countersignComment: 'Sending test ref 20 for countersigning' })
 
     // Countersign
-    await oasys.logout()
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.logout()
+    await user.prob.probSanHeadPdu.login()
     await signing.countersign({ offender: offender2 })
-    await oasys.logout()
+    await user.logout()
 
     log(`Log into the SAN Pilot area as an Administrator
         Search for the offender and open up the SARA
@@ -145,7 +145,7 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
 
     const saraPk = await sara.queries.getSaraPk(o2pk1)
 
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelectByPnc(offender2.pnc)
     await assessment.open(2)  // SARA is second on the list
     await sara.deleteSara()
@@ -162,7 +162,7 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
 
     await oasys.history(offender2)
     await assessment.deleteLatest()
-    await san.queries.checkSanDeleteCall(o2pk1, oasys.users.admin)
+    await san.queries.checkSanDeleteCall(o2pk1, user.admin)
     await assessment.queries.checkDeleted(o2pk1)
     await assessment.queries.checkSigningRecord(o2pk1, ['ASSMT_DEL_SIGNING', 'COUNTERSIGNING', 'SIGNING'])
 
@@ -171,23 +171,23 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
 
     await assessment.queries.checkNotDeleted(o2pk1)
     await assessment.queries.checkSigningRecord(o2pk1, ['ASS_DEL_RESTORE', 'ASSMT_DEL_SIGNING', 'COUNTERSIGNING', 'SIGNING'])
-    await san.queries.checkSanUndeleteCall(o2pk1, oasys.users.admin)
+    await san.queries.checkSanUndeleteCall(o2pk1, user.admin)
     await assessment.queries.checkNotDeleted(saraPk)
     await assessment.queries.checkSigningRecord(saraPk, ['SARA_DEL_RESTORE', 'SARA_DEL_SIGNING', 'SARA_SIGNING'])
     await san.queries.checkNoSanCall(saraPk)
 
-    await oasys.logout()
+    await user.logout()
 
     // Part 4
 
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
 
     log(`Create an offender whose latest assessment is signed and locked but awaiting countersignature`, 'Test step')
 
     await offender.searchAndSelect(offender1)
     const o1pk3 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
-    await signing.signAndLock({ page: 'spService', expectRsrWarning: true, expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu })
-    await oasys.logout()
+    await signing.signAndLock({ page: 'spService', expectRsrWarning: true, expectCountersigner: true, countersigner: user.prob.probSanHeadPdu })
+    await user.logout()
 
     log(`Log into the SAN Pilot area as an Administrator
         Search for the offender and open up the readonly OASys-SAN assessment
@@ -196,28 +196,28 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
         An OASYS_SIGNING record has been created for the deletion 'ASSMT_DEL_SIGNING'
         A Delete API has been sent to the SAN Service - check the parameters are the OASYS_SET_PK, Admins User ID and Name - a 200 response has been received back`, 'Test step')
 
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelect(offender1)
     await assessment.deleteLatest()
     await assessment.queries.checkDeleted(o1pk3)
     await assessment.queries.checkSigningRecord(o1pk3, ['ASSMT_DEL_SIGNING', 'SIGNING'])
-    await san.queries.checkSanDeleteCall(o1pk3, oasys.users.admin)
+    await san.queries.checkSanDeleteCall(o1pk3, user.admin)
 
     log(`Test ref 30 - reverse deletion test`)
     await assessment.reverseDeletion(offender1, 'Assessment', 'Start', 'Test ref 30 part 4 deletion reversal')
 
     await assessment.queries.checkNotDeleted(o1pk3)
     await assessment.queries.checkSigningRecord(o1pk3, ['ASS_DEL_RESTORE', 'ASSMT_DEL_SIGNING', 'SIGNING'])
-    await san.queries.checkSanUndeleteCall(o1pk3, oasys.users.admin)
+    await san.queries.checkSanUndeleteCall(o1pk3, user.admin)
 
     // Leave the offender ready for part 5
     await oasys.history(offender1)
     await assessment.lockIncomplete('Do you wish to lock the assessment as incomplete? This assessment is currently awaiting countersignature')
 
-    await oasys.logout()
+    await user.logout()
 
     // Part 5
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
 
     log(`Create an offender whose latest assessment is a locked incomplete OASYS-SAN`, 'Test step')
 
@@ -228,7 +228,7 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
     await oasys.clickButton('Close')
     await assessment.lockIncomplete()
 
-    await oasys.logout()
+    await user.logout()
 
     log(`Log into the SAN Pilot area as an Administrator
         Search for the offender and open up the readonly OASys-SAN assessment
@@ -237,12 +237,12 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
         An OASYS_SIGNING record has been created for the deletion 'ASSMT_DEL_SIGNING'
         A Delete API has been sent to the SAN Service - check the parameters are the OASYS_SET_PK, Admins User ID and Name - a 200 response has been received back`, 'Test step')
 
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelectByPnc(offender1.pnc)
     await assessment.deleteLatest()
     await assessment.queries.checkDeleted(o1pk4)
     await assessment.queries.checkSigningRecord(o1pk4, ['ASSMT_DEL_SIGNING', 'LOCKED_INCOMPLETE'])
-    await san.queries.checkSanDeleteCall(o1pk4, oasys.users.admin)
+    await san.queries.checkSanDeleteCall(o1pk4, user.admin)
 
 
     log(`Test ref 30 - reverse deletion test`)
@@ -250,7 +250,7 @@ test('SAN integration - test ref 29/30', async ({ oasys, signing, offender, asse
 
     await assessment.queries.checkNotDeleted(o1pk4)
     await assessment.queries.checkSigningRecord(o1pk4, ['ASS_DEL_RESTORE', 'ASSMT_DEL_SIGNING', 'LOCKED_INCOMPLETE'])
-    await san.queries.checkSanUndeleteCall(o1pk4, oasys.users.admin)
+    await san.queries.checkSanUndeleteCall(o1pk4, user.admin)
 
-    await oasys.logout()
+    await user.logout()
 })

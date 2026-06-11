@@ -24,11 +24,11 @@ const pks: { [key: number]: number } = {}
 
 test.describe.serial('OGRS regression test refs 3 and 4', async () => {
 
-    test('Create offender', async ({ oasys, offender }) => {
+    test('Create offender', async ({ oasys, user, offender }) => {
 
-        await oasys.login(oasys.users.probSpHeadPdu)
+        await user.prob.probSpHeadPdu.login()
         await offender.createProb(offender1)
-        await oasys.logout()
+        await user.logout()
     })
 
     testRef3(offender1, pks)

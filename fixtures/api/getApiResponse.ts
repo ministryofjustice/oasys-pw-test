@@ -1,19 +1,9 @@
 import { APIRequestContext } from '@playwright/test'
-import { OAuth2Client } from '@badgateway/oauth2-client'     //  See https://github.com/badgateway/oauth2-client#readme for documentation
 
 import { restApiUrls } from './restApiUrls'
 import { testEnvironment } from '../../localSettings'
 
 const restConfig = testEnvironment.rest
-
-const client = new OAuth2Client({
-
-    clientId: restConfig.clientId,
-    clientSecret: restConfig.clientSecret,
-    server: restConfig.baseUrl,
-    tokenEndpoint: restApiUrls.filter((endpoint) => endpoint.endpoint == 'token')[0].url,
-})
-
 var token = ''
 
 /**
@@ -67,8 +57,24 @@ export async function getRestData(parameters: EndpointParams, request: APIReques
 async function getTokenIfRequired() {
 
     if (token == '') {
-        const tokenObject = await client.clientCredentials()
-        token = tokenObject.accessToken
+
+        const tokenUrl = `${restConfig.baseUrl}${restApiUrls.filter((endpoint) => endpoint.endpoint == 'token')[0].url}`
+        const credentials = Buffer.from(`${restConfig.clientId}:${restConfig.clientSecret}`).toString('base64')
+
+        const body = new URLSearchParams()
+        body.append('grant_type', 'client_credentials')
+
+        const response = await fetch(tokenUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${credentials}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body.toString(),
+        })
+
+        const data = await response.json()
+        token = data.access_token
     }
 }
 

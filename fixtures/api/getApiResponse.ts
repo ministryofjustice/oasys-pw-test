@@ -6,13 +6,29 @@ import { testEnvironment } from '../../localSettings'
 const restConfig = testEnvironment.rest
 var token = ''
 
+
 /**
- * Generic function to get a response from any of the endpoints defined in environments.ts.
+ * Get multiple responses from any of the endpoints defined in restApiUrls.ts.
+ * Parameter is an EndpointParams object array, which includes the endpoint name, crn, laoPrivilege, plus other parameters that may be relevant depending on the endpoint.
+ * 
+ * The RestResponse array return value includes url called, status code, returned data and error message if any.
+ */
+export async function getMultipleRestData(parameters: EndpointParams[], request: APIRequestContext): Promise<RestResponse[]> {
+
+    const response: RestResponse[] = []
+
+    for (let i = 0; i < parameters.length; i++) {
+        const r = await getRestData(parameters[i], request)
+        response.push(r)
+    }
+    return response
+}
+
+/**
+ * Get a response from any of the endpoints defined in restApiUrls.ts.
  * Parameter is an EndpointParams object, which includes the endpoint name, crn, laoPrivilege, plus other parameters that may be relevant depending on the endpoint.
  * 
  * The RestResponse return value includes the url called, status code, returned data and error message if any.
- * 
- * This function is called via cypress.config.ts using `cy.task('getRestData', parameters)`
  */
 export async function getRestData(parameters: EndpointParams, request: APIRequestContext): Promise<RestResponse> {
 
@@ -76,25 +92,6 @@ async function getTokenIfRequired() {
         const data = await response.json()
         token = data.access_token
     }
-}
-
-/**
- * Generic function to get multiple responses from any of the endpoints defined in environments.ts.
- * Parameter is an EndpointParams object array, which includes the endpoint name, crn, laoPrivilege, plus other parameters that may be relevant depending on the endpoint.
- * 
- * The RestResponse array return value includes url called, status code, returned data and error message if any.
- * 
- * This function is called via cypress.config.ts using `cy.task('getMultipleRestData', parameters)`
- */
-export async function getMultipleRestData(parameters: EndpointParams[], request: APIRequestContext): Promise<RestResponse[]> {
-
-    const response: RestResponse[] = []
-
-    for (let i = 0; i < parameters.length; i++) {
-        const r = await getRestData(parameters[i], request)
-        response.push(r)
-    }
-    return response
 }
 
 function getStatusCode(status: number): RestStatus {

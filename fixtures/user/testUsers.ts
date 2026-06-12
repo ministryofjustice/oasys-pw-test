@@ -47,7 +47,9 @@ export class TestUser {
 }
 
 
-
+/**
+ * Probation non-admin users
+ */
 export class TestUsersProb {
 
     constructor(readonly user: User) { }

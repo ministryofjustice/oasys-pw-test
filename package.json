@@ -13,6 +13,8 @@
     "decimal.js": "^10.6.0",
     "fs-extra": "^11.3.5",
     "oracledb": "^7.0.0",
+    "typedoc": "^0.28.19",
+    "typedoc-plugin-missing-exports": "^4.1.3",
     "typescript": "^6.0.3"
   },
   "dependencies": {

@@ -4,7 +4,6 @@ import { Locator, Page } from '@playwright/test'
  * The Page class is used to define OASys pages, including all the elements on the page (i.e. text boxes, buttons etc), and the menu options used
  * to access it (either main menu or floating menu).  Individual pages are in the `oasys\pages` folder, grouped by functional area into subfolders.
  * Any new pages must be added to the relevant `index.ts` file, they can then be referenced in a test as e.g. `pages.Assessment.Section2`.
- * @module
  */
 
 export abstract class OasysPage {

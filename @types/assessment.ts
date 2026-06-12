@@ -1,8 +1,3 @@
-/**
- * Assessment types
- * @module Assessment types
- */
-
 declare type AssessmentLayer = 'Basic (Layer 1)' | 'Full (Layer 3)'
 
 declare type PurposeOfAssessment =

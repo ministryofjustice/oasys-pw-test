@@ -1,4 +1,4 @@
-import { OasysPage, Element } from 'classes'
+import { Element } from 'classes'
 
 export class PredictorsTable extends Element.Table {
 

@@ -11,7 +11,8 @@ import { EndpointResponse } from './apiClasses/common'
  * Parameters:
  *      1) DbOffenderWithAssessments object containing all the relevant data from the database
  *      2) EndpointParams array with all the parameters needed to call the APIs
- *      3) Result alias for the returned array of either EndpointResponse or RestErrorResult objects
+ * 
+ * Returns an array of EnpointResponse objects or RestErrorResult objects
  */
 export async function getExpectedResponses(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams[]): Promise<(EndpointResponse | RestErrorResult)[]> {
 

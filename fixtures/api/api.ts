@@ -74,16 +74,16 @@ export class Api {
 
         // Get all relevant data from the OASys database
         const offenderData = await restApiDb.getOffenderWithAssessments(crnSource, crn, this.oasysDb)
+        // Store the elapsed time for database querying
+        stats?.push({ endpoint: 'database', responseTime: offenderData.dbElapsedTime })
         log('', '')
         log('', `Offender ${crnSource == 'prob' ? 'CRN' : 'NOMIS Id'}: ${crn}`)
 
-        if (offenderData == null) {  // null return indicates no offender data or multiple offenders with the same CRN.  Tests for these cases are covered elsewhere in the regression pack
+        if (offenderData == null) {  // null return indicates no offender data or multiple offenders with the same CRN
             log('Skipping this offender - no offender data or multiple offender records with the same CRN')
             log('')
 
         } else {
-            // Store the elapsed time for database querying
-            stats?.push({ endpoint: 'database', responseTime: offenderData.dbElapsedTime })
 
             ////////////////////////////////////////////////////////////
             // Compile a set of parameters for calling the API functions
@@ -103,9 +103,7 @@ export class Api {
 
                 // Add other AP endpoint params if the offender has assessments
                 const apAssessments = offenderData.assessments.filter(rest.Ap.ApCommon.assessmentFilter)
-                if (apAssessments.length > 0) {
-                    apAssessments.forEach((assessment) => this.addAssessment(apEndpoints, apiParams, offenderData.probationCrn, assessment))
-                }
+                apAssessments.forEach((assessment) => this.addAssessment(apEndpoints, apiParams, offenderData.probationCrn, assessment))
 
                 // Use latest complete or locked incomplete assessment for the AssSumm - only if initiated after 2020 to avoid incompatible data. In reality should only be used from release 6.46
                 const assSummAssessments = offenderData.assessments.filter((ass) =>
@@ -115,8 +113,9 @@ export class Api {
                 if (assSummAssessments.length > 0) {
                     const assessment = assSummAssessments[assSummAssessments.length - 1]
                     apiParams.push({
-                        endpoint: assessment['sanIndicator' as keyof dbClasses.DbAssessmentOrRsr] == 'Y' || assessment['spIndicator' as keyof dbClasses.DbAssessmentOrRsr] == 'Y' ? 'assSummSan' : 'assSumm', crn: offenderData.probationCrn, laoPrivilege: 'ALLOW',
-                        assessmentPk: assessment.assessmentPk, expectedStatus: assessment.status
+                        endpoint: assessment['sanIndicator' as keyof dbClasses.DbAssessmentOrRsr] == 'Y' || assessment['spIndicator' as keyof dbClasses.DbAssessmentOrRsr] == 'Y'
+                            ? 'assSummSan' : 'assSumm',
+                        crn: offenderData.probationCrn, laoPrivilege: 'ALLOW', assessmentPk: assessment.assessmentPk, expectedStatus: assessment.status
                     })
                 }
             }
@@ -141,7 +140,7 @@ export class Api {
                 standaloneRsrs.forEach((assessment) => this.addAssessment(v4RsrEndpoints, apiParams, offenderData.probationCrn, assessment))
             }
 
-            // Add PNI - only if initiated after 2020 to avoid incompatible data
+            // Add PNI - only if initiated after 2021 to avoid incompatible data
             const pniRelevantAssessments = offenderData.assessments.filter(rest.V4Common.pni.pniFilter).filter((ass) => ass.initiationDate > '2021')
             if (pniRelevantAssessments.length > 0) {
                 const v4PniParams: EndpointParams = {
@@ -158,7 +157,11 @@ export class Api {
             }
 
             // Filter to a limited list if specified, and remove anything in the exclusions list
-            const filteredParamsList = (limitEndpoints.length == 0 ? apiParams : apiParams.filter((param) => limitEndpoints.includes(param.endpoint))).filter((param) => !excludeEndpoints.includes(param.endpoint))
+            const filteredParamsList = (limitEndpoints.length == 0
+                ? apiParams
+                : apiParams.filter((param) => limitEndpoints.includes(param.endpoint)))
+                .filter((param) => !excludeEndpoints.includes(param.endpoint))
+                
             ///////////////////////////////////////////////////////////
             // Work out the expected responses, then call the endpoints
             const expectedValues = await rest.GetExpectedResponses.getExpectedResponses(offenderData, filteredParamsList)

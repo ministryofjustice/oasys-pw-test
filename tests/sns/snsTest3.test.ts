@@ -7,9 +7,9 @@ const offender1: OffenderDef = {
 
 }
 
-test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ oasys, user, offender, assessment, sns, signing, sections, risk }) => {
+test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ oasys, user, offender, assessment, sns, signing, sections, risk, sentencePlan }) => {
 
-    await user.prob.probHeadPdu.login()
+    await user.prob.probSpHeadPdu.login()
     await offender.createProb(offender1)
 
 
@@ -61,8 +61,9 @@ test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ 
 
     await sections.layer1Section2.populateMinimal()
     await sections.selfAssessmentForm.populateMinimal()
+    await sentencePlan.populateMinimal()
 
-    await signing.signAndLock({ page: 'basic' })
+    await signing.signAndLock()
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
 })

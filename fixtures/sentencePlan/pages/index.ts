@@ -1,5 +1,4 @@
 ﻿export { AccreditedProgramme } from './accreditedProgramme'
-export { BasicSentencePlan } from './basicSentencePlan'
 export { ContributorDetails } from './contributorDetails'
 export { IspSection1to4 } from './ispSection1to4'
 export { IspSection5 } from './ispSection5'

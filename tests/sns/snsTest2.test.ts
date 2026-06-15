@@ -10,7 +10,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
 
     test('No countersigning required', async ({ oasys, user, offender, assessment, sns, signing, sections, sentencePlan }) => {
 
-        await user.prob.probHeadPdu.login()
+        await user.prob.probSpHeadPdu.login()
         await offender.createProb(offender1)
 
         // First RoSHA
@@ -34,9 +34,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         await sections.layer1Section2.populateMinimal()
         await sections.selfAssessmentForm.populateMinimal()
 
-        await sentencePlan.goto('basic')
-        await sentencePlan.basicSentencePlan.terminationDate.setValue({})
-        await signing.signAndLock()
+        await signing.signAndLock({ page: 'spService' })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
         // Second RoSHA
@@ -62,7 +60,8 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         // await sections.layer1Section2.populateMinimal()
         await sections.selfAssessmentForm.populateMinimal()
 
-        await signing.signAndLock({ page: 'basic' })
+        await sentencePlan.populateMinimal()
+        await signing.signAndLock()
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
     })
 
@@ -71,28 +70,28 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
 test('Countersigning required', async ({ oasys, user, offender, assessment, sns, signing, sections, sentencePlan, risk }) => {
 
     // Create an offender with minimally complete layer 1 to get OGRS and RSR
-    await user.prob.probPso.login()
+    await user.prob.probSpPso.login()
     const offender1 = await offender.createProbFromStandardOffender()
 
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Basic (Layer 1)' })
-    await assessment.populateMinimal({ layer: 'Layer 1', sentencePlan: 'basic' })
+    await assessment.populateMinimal({ layer: 'Layer 1' })
 
     // Set to Medium risk to get countersigner
     await risk.populateWithSpecificRiskLevel('High')
 
     // Sign assessment and send for countersigning, then check SNS messages
-    await signing.signAndLock({ page: 'basic', expectCountersigner: true, countersigner: user.prob.probHeadPdu })
+    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSpHeadPdu })
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
     await user.logout()
 
     // Countersign assessment then check SNS messages again
-    await user.prob.probHeadPdu.login()
+    await user.prob.probSpHeadPdu.login()
     await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
     await user.logout()
 
-    await user.prob.probPso.login()
+    await user.prob.probSpPso.login()
     await oasys.history(offender1)
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Basic (Layer 1)' })
     await sections.offendingInformation.populateMinimal()
@@ -100,13 +99,13 @@ test('Countersigning required', async ({ oasys, user, offender, assessment, sns,
     await sections.selfAssessmentForm.populateMinimal()
 
     // Sign assessment, then check SNS messages
-    await signing.signAndLock({ page: 'basic', expectCountersigner: true, countersigner: user.prob.probHeadPdu })
+    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSpHeadPdu })
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
 
     await user.logout()
 
     // Countersign assessment then check SNS messages again
-    await user.prob.probHeadPdu.login()
+    await user.prob.probSpHeadPdu.login()
     await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])

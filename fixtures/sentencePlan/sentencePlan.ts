@@ -11,13 +11,12 @@ export class SentencePlan {
 
     constructor(private readonly page: Page, private readonly oasys: Oasys) { }
 
-    readonly basicSentencePlan = new pages.BasicSentencePlan(this.page)
     readonly ispSection52to8 = new pages.IspSection52to8(this.page)
     readonly rspSection72to10 = new pages.RspSection72to10(this.page)
     readonly spService = new SpService(this.page, this.oasys)
     readonly psr = new Psr(this.page)
     readonly changeSentencePlan = new pages.ChangeSentencePlan(this.page)
-    
+
 
     /**
      * Navigate to the sentence plan and populate the sentence plan with the minimum required to allow sign and lock.
@@ -59,14 +58,7 @@ export class SentencePlan {
 
     async goto(planType: SpType, suppressLog = false) {
 
-        switch (planType) {
-            case 'basic':
-                await this.basicSentencePlan.goto(suppressLog)
-                break
-            case 'spService':
-                await this.spService.sentencePlanService.goto(suppressLog)
-                break
-        }
+        await this.spService.sentencePlanService.goto(suppressLog)
     }
 
     // export function ispFullyPopulated(params: PopulateAssessmentParams) {

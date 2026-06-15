@@ -1,6 +1,5 @@
 /**
  * Classes used to extract data from the OASys database for use in API regression testing.
- * These objects are created by the RestDb functions in cypress/support/restApidb.ts using the queries defined here.
  */
 import { QaData } from './qaData'
 import { assignValues, buildQuery } from 'lib/queryBuilder'

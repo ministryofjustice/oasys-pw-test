@@ -203,7 +203,7 @@ export class Offender {
         if (p1['pnc']) {  // OffenderDef object
             await this.searchAndSelectByPnc(p1['pnc'] as string)
         } else {
-            await this.offenderSearchAndSelect(p1)
+            await this.offenderSearchAndSelect(p1 as PageData)
         }
     }
 

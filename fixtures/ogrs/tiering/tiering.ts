@@ -50,7 +50,7 @@ export class Tiering {
         let finalResult = arpCsrp == null ? null : getHigherTier(arpCsrp, maxModerator)
 
         // Provisional flag for static ARP and CSRP
-        let provisionalFlag = 'N'
+        let provisionalFlag: 'Y' | 'N' = 'N'
         let maxArpCsrpTier: Tier
 
         if (finalResult && (staticArp || staticCsrp)) {
@@ -73,7 +73,16 @@ export class Tiering {
                     provisionalFlag = 'Y'
                 }
             }
+        }
 
+        if (finalResult && !rosh && provisionalFlag == 'N') {
+
+            // Missing ROSH, result is provisional unless a non-provisional result above is at least as high as the highest possible ROSH result
+
+            const highestRosh = calculateRoshMappa('V', tieringCase.mappa)
+            if (finalResult > highestRosh) {
+                provisionalFlag = 'Y'
+            }
         }
 
         logText.push(`        ARP/CSRP   - ${arpCsrp}`)
@@ -147,7 +156,7 @@ function calculateDc(ospRisk: number, ospContactBand: string): Tier {
 function calculateRoshMappa(rosh: string, mappa: string): Tier {
 
     if (mappa == 'Y') {
-        return rosh == 'V' ? 'A' : rosh == 'H' ? 'C' : rosh == 'M' ? 'D' : rosh == 'L' ? 'E' : null
+        return rosh == 'V' ? 'A' : rosh == 'H' ? 'C' : rosh == 'M' ? 'D' : 'E' //rosh == 'L' ? 'E' : null
     } else {
         return rosh == 'V' ? 'C' : rosh == 'H' ? 'D' : null
     }

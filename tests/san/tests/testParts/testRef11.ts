@@ -3,20 +3,20 @@ import * as testData from '../../data/testRef11'
 
 export function testRef11(offender1: OffenderDef, pks: number[]) {
 
-    test('SAN integration - test ref 11 - Transfer to non-pilot area and complete 3.1 assessment', async ({ offender, tasks, oasys, assessment, sections, san, risk, sentencePlan, signing }) => {
+    test('SAN integration - test ref 11 - Transfer to non-pilot area and complete 3.1 assessment', async ({ offender, tasks, oasys, user, assessment, sections, san, risk, sentencePlan, signing }) => {
 
         log(`Log in as an Assessor from a Non-Pilot probation area
             Find the offender used in Test Ref 10
             Carry out a 'transfer' so that the probation owner and controlling owner transfers to the non-pilot area.`, 'Test step')
 
-        await oasys.login(oasys.users.probHeadPdu)
-        await offender.searchAndSelectByPnc(offender1.pnc, oasys.users.probationSan)
+        await user.prob.probHeadPdu.login()
+        await offender.searchAndSelectByPnc(offender1.pnc, providers.prob.san)
         await offender.requestTransfer()
-        await oasys.logout()
+        await user.logout()
 
-        await oasys.login(oasys.users.probSanUnappr)
+        await user.prob.probSanUnappr.login()
         await tasks.grantTransfer(offender1.surname)
-        await oasys.logout()
+        await user.logout()
 
         log(`Create a new 'Review' Layer 3 version 1 assessment - opens at the Case ID screen.  3.1 assessment includes a full analysis with sections 6.1 and 6.2.  
             Sections 2 to 13 and the SAQ are showing in the navigation menu.  'Open Strengths and Needs' is NOT shown in the navigation menu.
@@ -27,7 +27,7 @@ export function testRef11(offender1: OffenderDef, pks: number[]) {
             Check that the LAST THREE questions in Sections 7, 11 and 12 have ALL been set by the SAN data and are the same;  'identify' text box, 'linked to risk of serious harm...' 
             and 'linked to reoffending...'  (note: this is coming from the TBA section in the SAN Assessment and, rightly or wrongly, Cindy wanted it mapped to ALL 3 sections in OASys).`, 'Test step')
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         await oasys.history(offender1)
         const pk = await assessment.createProb({ purposeOfAssessment: 'Review' })
         pks.push(pk)
@@ -97,7 +97,7 @@ export function testRef11(offender1: OffenderDef, pks: number[]) {
             CLONED_FROM_PREV_OASYS_SAN_PK: prevPk.toString(),
             SAN_ASSESSMENT_VERSION_NO: null,
         })
-        await oasys.logout()
+        await user.logout()
     })
 
 }

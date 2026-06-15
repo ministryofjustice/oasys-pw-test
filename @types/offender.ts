@@ -1,8 +1,3 @@
-/**
- * Offender type
- * @module Offender type
- */
-
 declare type Gender = 'Male' | 'Female' | 'Not specified' | 'Not known' | 'Other'
 
 declare type OffenderDef = {

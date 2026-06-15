@@ -1,71 +1,11 @@
-import { Dialog, expect, Page, TestInfo } from '@playwright/test'
+import { expect, Page, TestInfo } from '@playwright/test'
 import { Temporal } from '@js-temporal/polyfill'
-
-import * as pages from './pages'
-import { testEnvironment } from 'localSettings'
-import { User } from 'classes'
-import * as users from './users'
-import { ScreeningSection5, Rmp } from 'fixtures/risk/pages'
-import { BasicSentencePlan, IspSection1to4, RspSection1to2, SentencePlanService } from 'fixtures/sentencePlan/pages'
 
 
 export class Oasys {
 
     constructor(private readonly page: Page, public readonly testInfo: TestInfo) { }
 
-    readonly users = users.Users
-    readonly loginPage = new pages.Login(this.page)
-    readonly selectProviderPage = new pages.SelectProvider(this.page)
-
-    async login(user: User, provider?: string): Promise<void>
-    async login(username: string, password: string, provider?: string): Promise<void>
-    async login(p1: User | string, p2?: string, p3?: string) {
-
-        var username: string
-        var password: string
-        var provider: string
-
-        if (p1 instanceof User) {
-            username = p1.username
-            password = testEnvironment.standardUserPassword
-            provider = p2
-        }
-        else if (typeof p1 == 'string') {
-            username = p1
-            password = p2
-            provider = p3
-        }
-
-        await this.loginPage.username.setValue(username)
-        await this.loginPage.password.setValue(password)
-        await this.loginPage.login.click()
-
-        if (provider) {
-            await this.selectProvider(provider)
-        }
-
-        const loginDetails = await this.page.locator('#bannerbarrightrnd').textContent()
-        log(`${loginDetails.replace(/[\n\r\t]/gm, '')}  (${username})`, 'User')
-    }
-
-    /**
-     * Selects a provider or establishment, assuming you are already on the Provider/Establishment page
-     */
-    async selectProvider(provider: string) {
-
-        await this.selectProviderPage.chooseProviderEstablishment.setValue(provider)
-        await this.selectProviderPage.setProviderEstablishment.click()
-    }
-
-    /**
-     * Click the logout button on any page
-     */
-    async logout() {
-
-        await this.clickButton('Logout', true)
-        await new pages.Login(this.page).checkCurrent(true)
-        log('Logged out', 'User')
-    }
 
     async clickButton(label: string, suppressLog: Boolean = false) {
 
@@ -131,31 +71,6 @@ export class Oasys {
         return null
     }
 
-    async gotoSigningPage(signingPage: SigningPage) {
-
-        switch (signingPage) {
-            case 'basic':
-                await new BasicSentencePlan(this.page).goto(true)
-                break
-            case 'isp':
-                await new IspSection1to4(this.page).goto(true)
-                break
-            case 'rsp':
-                await new RspSection1to2(this.page).goto(true)
-                break
-            case 'spService':
-                await new SentencePlanService(this.page).goto(true)
-                break
-            case 'riskScreening':
-                await new ScreeningSection5(this.page).goto(true)
-                break
-            case 'rmp':
-                await new Rmp(this.page).goto(true)
-                break
-        }
-
-
-    }
 
     /**
      * Check for errors on screen in the standard OASys format

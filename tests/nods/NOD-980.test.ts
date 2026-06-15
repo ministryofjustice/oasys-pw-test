@@ -3,9 +3,9 @@ import { test } from 'fixtures'
 
 test.describe('NOD-980: Test for RA cloning', () => {
 
-    test('RoSHA with 1.39 = NO -> RoSHA', async ({ oasys, offender, assessment, sns, signing }) => {
+    test('RoSHA with 1.39 = NO -> RoSHA', async ({ oasys, user, offender, assessment, sns, signing }) => {
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         const offender1 = await offender.createProbFromStandardOffender()
 
 
@@ -32,9 +32,9 @@ test.describe('NOD-980: Test for RA cloning', () => {
 
     })
 
-    test('RoSHA with 1.39 = YES -> RoSHA', async ({ oasys, offender, assessment, sns, signing }) => {
+    test('RoSHA with 1.39 = YES -> RoSHA', async ({ oasys, user, offender, assessment, sns, signing }) => {
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         const offender1 = await offender.createProbFromStandardOffender()
 
 

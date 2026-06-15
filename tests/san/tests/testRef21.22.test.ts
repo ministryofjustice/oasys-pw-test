@@ -49,19 +49,19 @@ const offender2Pks: number[] = []
  */
 test.describe.serial('Test refs 21 and 22', async () => {
 
-    test('Create offenders', async ({ oasys, cms, offender }) => {
+    test('Create offenders', async ({ oasys, user, cms, offender }) => {
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         await offender.createProb(offender1)
-        await oasys.logout()
+        await user.logout()
 
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.prob.probSanHeadPdu.login()
         await offender.createProb(offender2)
-        await oasys.logout()
-        
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.logout()
+
+        await user.prob.probHeadPdu.login()
         await cms.addProbationOffenderToStub(offender2)
-        await oasys.logout()
+        await user.logout()
 
     })
 

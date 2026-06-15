@@ -7,9 +7,9 @@ import * as testData from '../data/testRef23'
     alcohol sections questions 9.1 and 9.2
  */
 
-test('SAN integration - test refs 23 and 33', async ({ oasys, offender, assessment, sections, sentencePlan, san, risk, signing, sns }) => {
+test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, assessment, sections, sentencePlan, san, risk, signing, sns }) => {
 
-    await oasys.login(oasys.users.probSanHeadPdu)  // No countersigning for this test
+    await user.prob.probSanHeadPdu.login()  // No countersigning for this test
     const offender1 = await offender.createProbFromStandardOffender({ forename1: 'TestRefTwentyThree', gender: 'Not known' })
 
     log(`For the first assessment, create a new OASys-SAN assessment (3.2)	
@@ -117,7 +117,7 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, offender, assessme
     await sentencePlan.populateMinimal()
 
     await signing.signAndLock({ page: 'spService' })
-    await san.queries.checkSanSigningCall(pk1, oasys.users.probSanHeadPdu, 'SELF')
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanHeadPdu, 'SELF')
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
 
     log(`Still logged in as the Assessor open up the SAN Assessment from the offender records 'Open S&N' button.
@@ -137,7 +137,7 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, offender, assessme
 
     await sentencePlan.spService.addGoal('offender')
 
-    await oasys.logout()
+    await user.logout()
 
     log(`Log out and log back in again as an Administrator
         Open up the Offender record and open up the OASys-SAN assessment which is all read only.  No data is updated from SAN.
@@ -149,15 +149,15 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, offender, assessme
         After the call has been sent ensure that OASYS_SET.SAN_ASSESSMENT_VERSION_NO and OASYS_SET.SSP_PLAN_VERSION_NO have been nulled out due to becoming editable again
         Check that a new 'Assessment Work in Progress' task has been created`, 'Test step')
 
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
 
     await assessment.rollBack()
     await assessment.queries.checkSigningRecord(pk1, ['ROLLBACK', 'SIGNING'])
-    await san.queries.checkSanRollbackCall(pk1, oasys.users.admin)
+    await san.queries.checkSanRollbackCall(pk1, user.admin)
 
-    await oasys.logout()
+    await user.logout()
 
     log(`Log out and log back in again as the Assessor
         Assessment opens to the Case ID landing page - ensure that the navigation menu is now showing a full analysis with sections 6.1 and 6.2 in it -
@@ -165,7 +165,7 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, offender, assessme
         Complete entry of the full analysis etc. in the OASys part of the assessment 
         Sign and lock the assessment - no countersigner required.`, 'Test step')
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
     await oasys.history(offender1)
     await assessment.openLatest()
 
@@ -180,7 +180,7 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, offender, assessme
             and they differ from the version numbers logged at the time of the initial S&L
         Ensure an 'AssSumm' SNS Message has been created containing a ULR link for 'asssummsan'`, 'Test step')
 
-    await san.queries.checkSanSigningCall(pk1, oasys.users.probSanHeadPdu, 'SELF')
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanHeadPdu, 'SELF')
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
 
     log(`Go to Create a new Assessment
@@ -189,6 +189,6 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, offender, assessme
     await oasys.history(offender1)
     await assessment.getToCreateAssessmentPage()
     await assessment.createAssessmentPage.purposeOfAssessment.checkOptionNotAvailable('Fast Review')
-    await oasys.logout()
+    await user.logout()
 
 })

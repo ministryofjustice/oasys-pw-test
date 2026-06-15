@@ -4,9 +4,9 @@ import { test } from 'fixtures'
     New FEMALE Probation Offender in SAN Area - check functionality when say 'No' to cloning from an Historic OASys-SAN assessment.
  */
 
-test('SAN integration - test ref 14', async ({ oasys, offender, assessment, sections, san, signing, sentencePlan, risk }) => {
+test('SAN integration - test ref 14', async ({ oasys, user, offender, assessment, sections, san, signing, sentencePlan, risk }) => {
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
     const offender1 = await offender.createProbFromStandardOffender({ gender: 'Female', forename1: 'TestRefFourteen' })
 
     log(`For the first assessment, create a new OASys-SAN assessment (3.2) that now includes a SAN Sentence Plan
@@ -67,7 +67,7 @@ test('SAN integration - test ref 14', async ({ oasys, offender, assessment, sect
             'sexuallyMotivatedOffenceHistory': 'NO',
         },
         {
-            'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+            'displayName': user.prob.probSanHeadPdu.forenameSurname,
             'accessMode': 'READ_ONLY',
         },
         'san', 'assessment'
@@ -90,7 +90,7 @@ test('SAN integration - test ref 14', async ({ oasys, offender, assessment, sect
             'sexuallyMotivatedOffenceHistory': 'NO',
         },
         {
-            'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+            'displayName': user.prob.probSanHeadPdu.forenameSurname,
             'planAccessMode': 'READ_ONLY',
         },
         'sp', 'assessment'
@@ -107,13 +107,13 @@ test('SAN integration - test ref 14', async ({ oasys, offender, assessment, sect
 
     const pk2 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' }, 'No')
 
-    await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, oasys.users.probSanHeadPdu, oasys.users.probationSanCode, 'INITIAL')
+    await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, user.prob.probSanHeadPdu, providers.prob.sanCode, 'INITIAL')
     // Check values in OASYS_SET
     await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', null)
 
     await risk.rmp.checkMenuVisibility(false)
     await sentencePlan.spService.checkGoalCount(0, 0, 0)
 
-    await oasys.logout()
+    await user.logout()
 
 })

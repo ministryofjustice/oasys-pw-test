@@ -4,9 +4,9 @@ import { test } from 'fixtures'
 // Offender has a completed assessment with 2.3 Physical Violence and not 6.7DA, complete SARA with high/medium
 // Second assessment with SARA rejected
 
-test('NOD-1201', async ({ oasys, offender, assessment, sections, risk, sara, sentencePlan, signing, api, pni }) => {
+test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sara, sentencePlan, signing, api, pni }) => {
 
-    await oasys.login(oasys.users.probHeadPdu)
+    await user.prob.probHeadPdu.login()
 
     // Offender 1
     const offender1 = await offender.createProbFromStandardOffender()
@@ -85,5 +85,5 @@ test('NOD-1201', async ({ oasys, offender, assessment, sections, risk, sara, sen
     await pni.checkAssessmentCalc(offender1.probationCrn, pk3)
     failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true)
     expect(failed).toBeFalsy()
-    await oasys.logout()
+    await user.logout()
 })

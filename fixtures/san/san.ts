@@ -1,9 +1,5 @@
 /**
- * __await san.*function*__  
- * 
  * Functions to interact with the SAN assessment and Sentence Plan, and check results.
- * 
- * @module SAN Assessments
  */
 
 import { Page } from '@playwright/test'

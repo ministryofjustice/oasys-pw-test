@@ -6,9 +6,9 @@ import * as testData from '../data/testRef35'
     Includes Maturity Screening score
  */
 
-test('SAN integration - test refs 35 and 45', async ({ oasys, offender, assessment, sections, signing, san, risk, sentencePlan }) => {
+test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, assessment, sections, signing, san, risk, sentencePlan }) => {
 
-    await oasys.login(oasys.users.probSanHeadPdu)  // No countersigning for this test
+    await user.prob.probSanHeadPdu.login()  // No countersigning for this test
     const offender1 = await offender.createProbFromStandardOffender({ forename1: 'TestRefThirtyFive' })
 
     log(`Carry out a 3.2 assessment ensuring questions are set in SAN to produce a low maturity outcome`, 'Test step')
@@ -135,7 +135,7 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, offender, assessme
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'accessMode': 'READ_ONLY',
     },
         'san', 'offender'
@@ -160,11 +160,11 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, offender, assessme
         'location': 'COMMUNITY',
         'sexuallyMotivatedOffenceHistory': null,
     }, {
-        'displayName': oasys.users.probSanHeadPdu.forenameSurname,
+        'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'planAccessMode': 'READ_WRITE',
     },
         'sp', 'offender'
     )
 
-    await oasys.logout()
+    await user.logout()
 })

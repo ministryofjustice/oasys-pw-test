@@ -1,18 +1,18 @@
 import { test } from 'fixtures'
 
 
-test('SAN integration - test ref 24', async ({ oasys, offender, assessment, sections, sentencePlan, san, risk, signing }) => {
+test('SAN integration - test ref 24', async ({ oasys, user, offender, assessment, sections, sentencePlan, san, risk, signing }) => {
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
     const offender1 = await offender.createProbFromStandardOffender({ forename1: 'TestRefTwentyFour' })
-    await oasys.logout()
+    await user.logout()
 
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelect(offender1)
-    await offender.setLaoReader(oasys.users.probSanHeadPdu)
-    await oasys.logout()
+    await offender.setLaoReader(user.prob.probSanHeadPdu)
+    await user.logout()
 
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
 
     log(`Open up the Offender record - assessor has full editable rights to the offender
         At this point there is NO button on the banner for 'Open S&N'
@@ -28,7 +28,7 @@ test('SAN integration - test ref 24', async ({ oasys, offender, assessment, sect
 
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
 
-    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, oasys.users.probSanHeadPdu, oasys.users.probationSanCode, 'INITIAL')
+    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probSanHeadPdu, providers.prob.sanCode, 'INITIAL')
     await oasys.clickButton('Close')
     await offender.offenderDetails.openSan.checkStatus('enabled')
     await offender.offenderDetails.openSp.checkStatus('enabled')
@@ -71,16 +71,16 @@ test('SAN integration - test ref 24', async ({ oasys, offender, assessment, sect
     await risk.screeningNoRisks()
 
     await signing.signAndLock({ page: 'spService' })
-    await san.queries.checkSanSigningCall(pk1, oasys.users.probSanHeadPdu, 'SELF')
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanHeadPdu, 'SELF')
 
-    await oasys.logout()
+    await user.logout()
 
     log(`Log back in again as a User in the same probation region who has the SAN Service role but is NOT on the LAO readers list
         Search for and open the LAO offender record - the user ONLY has LAO boilerplate (all read only and just access to the 'alias' tab)
         The only buttons on the offender banner is <RFI> and <Close>.  There are NO buttons for 'Open S&N' or 'Open SP'
         Log out`, 'Test step')
 
-    await oasys.login(oasys.users.probSanUnappr)
+    await user.prob.probSanUnappr.login()
     await offender.searchAndSelect(offender1)
 
     await offender.offenderDetails.pnc.checkStatus('readonly')
@@ -88,18 +88,18 @@ test('SAN integration - test ref 24', async ({ oasys, offender, assessment, sect
     await offender.offenderDetails.createAssessment.checkStatus('notVisible')
     await offender.offenderDetails.openSan.checkStatus('notVisible')
     await offender.offenderDetails.openSp.checkStatus('notVisible')
-    await oasys.logout()
+    await user.logout()
 
     log(`Log back in again as a User in the same probation region who does NOT have the SAN Service role and is NOT on the LAO readers list
         Search for and open the LAO offender record - the user ONLY has LAO boilerplate (all read only and just access to the 'alias' tab)
         The only buttons on the offender banner is <RFI> and <Close>.  There are NO buttons for 'Open S&N' or 'Open SP'`, 'Test step')
 
-    await oasys.login(oasys.users.admin, oasys.users.probationSan)
+    await user.admin.login(providers.prob.san)
     await offender.searchAndSelect(offender1)
     await offender.offenderDetails.pnc.checkStatus('readonly')
     await offender.offenderDetails.assessmentsTab.checkStatus('notVisible')
     await offender.offenderDetails.createAssessment.checkStatus('notVisible')
     await offender.offenderDetails.openSan.checkStatus('notVisible')
     await offender.offenderDetails.openSp.checkStatus('notVisible')
-    await oasys.logout()
+    await user.logout()
 })

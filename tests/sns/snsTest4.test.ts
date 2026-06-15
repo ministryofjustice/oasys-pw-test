@@ -1,10 +1,10 @@
 import { test } from 'fixtures'
 
 
-test('Create assessments and check SNS messages - SAN assessment, no countersigning required', async ({ oasys, offender, assessment, sns, signing, sections, sentencePlan, san, risk }) => {
+test('Create assessments and check SNS messages - SAN assessment, no countersigning required', async ({ oasys, user, offender, assessment, sns, signing, sections, sentencePlan, san, risk }) => {
 
     // Create an offender with minimally complete layer 3.2
-    await oasys.login(oasys.users.probSanHeadPdu)
+    await user.prob.probSanHeadPdu.login()
     const offender1 = await offender.createProbFromStandardOffender()
 
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
@@ -42,5 +42,5 @@ test('Create assessments and check SNS messages - SAN assessment, no countersign
     await signing.signAndLock({ page: 'spService' })
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'OPD'])
 
-    await oasys.logout()
+    await user.logout()
 })

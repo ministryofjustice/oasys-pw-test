@@ -1,4 +1,4 @@
-import { Page, TestInfo } from '@playwright/test'
+import { Page } from '@playwright/test'
 
 import { Oasys } from 'fixtures'
 import * as pages from './pages'
@@ -7,7 +7,7 @@ import { Lov, Select } from 'classes/elements'
 
 export class Tasks {
 
-    constructor(public readonly page: Page, public readonly testInfo: TestInfo, readonly oasys: Oasys) { }
+    constructor(public readonly page: Page, readonly oasys: Oasys) { }
 
     readonly taskManager = new pages.TaskManager(this.page)
     readonly assessmentWipTask = new pages.AssessmentWipTask(this.page)

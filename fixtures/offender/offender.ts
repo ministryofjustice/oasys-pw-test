@@ -4,7 +4,7 @@ import { Oasys, Cms, OasysDb } from 'fixtures'
 import * as pages from './pages'
 import * as offenders from './offenderLib'
 import { Queries } from './queries'
-import { User } from 'classes'
+import { TestUser } from 'fixtures/user/testUsers'
 
 
 export class Offender {
@@ -203,7 +203,7 @@ export class Offender {
         if (p1['pnc']) {  // OffenderDef object
             await this.searchAndSelectByPnc(p1['pnc'] as string)
         } else {
-            await this.offenderSearchAndSelect(p1)
+            await this.offenderSearchAndSelect(p1 as PageData)
         }
     }
 
@@ -218,7 +218,7 @@ export class Offender {
         if (!suppressLog) log(`Search and select offender: ${JSON.stringify(data)}`)
     }
 
-    async setLaoReader(user: User) {
+    async setLaoReader(user: TestUser) {
 
         await this.lao.goto()
 

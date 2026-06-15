@@ -1,8 +1,8 @@
 import { test } from 'fixtures'
 
-test('Cloning test - current period of supervision', async ({ oasys, offender, assessment, sections, signing }) => {
+test('Cloning test - current period of supervision', async ({ oasys, user, offender, assessment, sections, signing }) => {
 
-    await oasys.login(oasys.users.probSpHeadPdu)
+    await user.prob.probSpHeadPdu.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
@@ -40,5 +40,5 @@ test('Cloning test - current period of supervision', async ({ oasys, offender, a
     await sections.section4.goto()
     await sections.section4.identifyIssues.checkValue('Third assessment section 4 issues')
 
-    await oasys.logout()
+    await user.logout()
 })

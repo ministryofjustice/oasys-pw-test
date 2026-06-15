@@ -1,9 +1,9 @@
 import { test } from 'fixtures'
 
 
-test('Example test - create a prison offender and a layer 1 assessment using new SP service', async ({ oasys, offender, assessment, signing }) => {
+test('Example test - create a prison offender and a layer 1 assessment using new SP service', async ({ oasys, user, offender, assessment, signing }) => {
 
-    await oasys.login(oasys.users.prisSpHomds)
+    await user.pris.prisSpHomds.login()
 
     await offender.createPrisFromStandardOffender()
     await assessment.createPris({ purposeOfAssessment: 'Transfer in from non England / Wales Court', assessmentLayer: 'Basic (Layer 1)' })
@@ -14,6 +14,6 @@ test('Example test - create a prison offender and a layer 1 assessment using new
 
     await signing.signAndLock()
 
-    await oasys.logout()
+    await user.logout()
 
 })

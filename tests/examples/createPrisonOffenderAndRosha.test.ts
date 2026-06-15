@@ -2,9 +2,9 @@
 import { test } from 'fixtures'
 
 
-test('Example test - create a prison offender and RoSHA assessment', async ({ oasys, offender, assessment, signing }) => {
+test('Example test - create a prison offender and RoSHA assessment', async ({ oasys, user, offender, assessment, signing }) => {
 
-    await oasys.login(oasys.users.prisHomds)
+    await user.pris.prisHomds.login()
 
     await offender.createPrisFromStandardOffender()
     await assessment.createPris({ purposeOfAssessment: 'Risk of Harm Assessment' })
@@ -15,6 +15,6 @@ test('Example test - create a prison offender and RoSHA assessment', async ({ oa
 
     await signing.signAndLock({ expectCsrpScore: true })
 
-    await oasys.logout()
+    await user.logout()
 
 })

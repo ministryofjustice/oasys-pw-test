@@ -1,7 +1,7 @@
 /**
  * The PageData type can be used for entering multiple values on a single page.  Key names need to match the names used on the page definition class.
  */
-declare type PageData = { [keys: string]: string | OasysDate | number | object | boolean }
+declare type PageData = { [keys: string]: string | OasysDate | number | boolean }
 
 declare type ElementStatus = 'notVisible' | 'enabled' | 'readonly' | 'visible'
 declare type ElementStatusAndValue = { status: ElementStatus, value: string }

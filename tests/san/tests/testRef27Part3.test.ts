@@ -1,6 +1,6 @@
 import { test } from 'fixtures'
 
-test('SAN integration - test ref 27 part 3', async ({ oasys, cms, offender, assessment, san, sentencePlan, sns }) => {
+test('SAN integration - test ref 27 part 3', async ({ oasys, user, cms, offender, assessment, san, sentencePlan, sns }) => {
 
     const offender1: OffenderDef = {
 
@@ -24,12 +24,12 @@ test('SAN integration - test ref 27 part 3', async ({ oasys, cms, offender, asse
 
     log(`Lock Incomplete a prison OASys-SAN assessment when the Offender has been discharged from Prison (WIP guillotines immediately)`, 'Test step')
 
-    await oasys.login(oasys.users.probHeadPdu)
+    await user.prob.probHeadPdu.login()
 
     await offender.createProb(offender1)
-    await oasys.logout()
+    await user.logout()
 
-    await oasys.login(oasys.users.prisSanUnappr)
+    await user.pris.prisSanUnappr.login()
     await cms.createReceptionEvent(offender1)
 
     log(`Create a PRISON offender in a SAN PILOT Prison area whose latest assessment is a PRISON WIP OASys-SAN assessment (not signed and locked).  
@@ -68,12 +68,12 @@ test('SAN integration - test ref 27 part 3', async ({ oasys, cms, offender, asse
     expect(sectionCount).toBe(2)
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
 
-    await oasys.logout()
+    await user.logout()
 
-    await oasys.login(oasys.users.probHeadPdu)
+    await user.prob.probHeadPdu.login()
     await oasys.history(offender1)
 
-    await offender.offenderDetails.controllingOwner.checkValue(oasys.users.probationNonSan)
+    await offender.offenderDetails.controllingOwner.checkValue(providers.prob.nonSan)
     await assessment.assessmentsTab.assessments.checkData([{
         name: 'status',
         values: ['Locked Incomplete Assessment', 'Locked Incomplete Assessment']
@@ -109,5 +109,5 @@ test('SAN integration - test ref 27 part 3', async ({ oasys, cms, offender, asse
     expect(oasysDateTime.timestampDiff(lastUpdFromSan1, lastUpdFromSan2)).toBeLessThanOrEqual(0)
     expect(oasysDateTime.timestampDiff(lastUpdDate1, lastUpdDate2)).toBeLessThanOrEqual(0)
 
-    await oasys.logout()
+    await user.logout()
 })

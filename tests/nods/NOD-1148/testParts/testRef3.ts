@@ -9,12 +9,12 @@ import { test } from 'fixtures'
 
 export function testRef3(offender1: OffenderDef, pks: { [key: number]: number }) {
 
-    test('OGRS regression test ref 3', async ({ oasys, assessment, sections, risk, sns, signing, ogrs }) => {
+    test('OGRS regression test ref 3', async ({ oasys, user, assessment, sections, risk, sns, signing, ogrs }) => {
 
-        await oasys.login(oasys.users.probSpHeadPdu)
+        await user.prob.probSpHeadPdu.login()
         await oasys.history(offender1)
         pks[1] = await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' })
-        
+
         log('Check the unpopulated values', 'Test step')
         await sections.roshaPredictors.goto()
         await sections.roshaPredictors.save.click() // generate a calculation
@@ -135,7 +135,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
         await sections.roshaPredictors.goto()
         await sections.roshaPredictors.o1_32.checkStatus('readonly')
 
-        await oasys.logout()
+        await user.logout()
     })
 
 }

@@ -3,22 +3,22 @@ import * as testData from '../../data/testRef13'
 
 export function testRef13(offender1: OffenderDef, pks: number[]) {
 
-    test('SAN integration - test ref 13 - Another 3.2 assessment in pilot area', async ({ offender, tasks, oasys, assessment, sections, san, signing }) => {
+    test('SAN integration - test ref 13 - Another 3.2 assessment in pilot area', async ({ offender, tasks, oasys, user, assessment, sections, san, signing }) => {
 
         log(`Log in as an Assessor that has the SAN function to the PILOT probation area
             Open up the offender record from Test Ref 12.  Transfer the offender back to the SAN PILOT probation area.
             Create a new 'review' assessment electing to use the SAN which has defaulted to NULL.`, 'Test step')
 
-        await oasys.login(oasys.users.probSanUnappr)
-        await offender.searchAndSelectByPnc(offender1.pnc, oasys.users.probationNonSan)
+        await user.prob.probSanUnappr.login()
+        await offender.searchAndSelectByPnc(offender1.pnc, providers.prob.nonSan)
         await offender.requestTransfer()
-        await oasys.logout()
+        await user.logout()
 
-        await oasys.login(oasys.users.probHeadPdu)
+        await user.prob.probHeadPdu.login()
         await tasks.grantTransfer(offender1.surname)
-        await oasys.logout()
+        await user.logout()
 
-        await oasys.login(oasys.users.probSanUnappr)
+        await user.prob.probSanUnappr.login()
         await offender.searchAndSelect(offender1)
         await assessment.getToCreateAssessmentPage()
         await assessment.createAssessmentPage.purposeOfAssessment.setValue('Review')
@@ -43,12 +43,12 @@ export function testRef13(offender1: OffenderDef, pks: number[]) {
         await san.checkSanSectionsCompletionStatus(9)
         await san.returnToOASys()
 
-        await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: oasys.users.probSanHeadPdu })
-        await oasys.logout()
+        await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu })
+        await user.logout()
 
-        await oasys.login(oasys.users.probSanHeadPdu)
+        await user.prob.probSanHeadPdu.login()
         await signing.countersign({ offender: offender1 })
-        await oasys.logout()
+        await user.logout()
 
         log(`With the latest assessment being a completed 3.2, open it up and use the Admin option 'Mark assessments as historic'.
             The offender record is showing the <Open Strengths and Needs> button.  Click on it.  
@@ -56,13 +56,13 @@ export function testRef13(offender1: OffenderDef, pks: number[]) {
             (this is because the latest OASys-SAN assessment is now historic).  
             Return back to the Offender record in OASys.`, 'Test step')
 
-        await oasys.login(oasys.users.admin, oasys.users.probationSan)
+        await user.admin.login(providers.prob.san)
         await offender.searchAndSelect(offender1)
         await assessment.openLatest()
         await assessment.markHistoric()
-        await oasys.logout()
+        await user.logout()
 
-        await oasys.login(oasys.users.probSanUnappr)
+        await user.prob.probSanUnappr.login()
         await offender.searchAndSelect(offender1)
 
         await assessment.openLatest()
@@ -78,7 +78,7 @@ export function testRef13(offender1: OffenderDef, pks: number[]) {
 
         const pk2 = await assessment.createProb({ purposeOfAssessment: 'Review', includeSanSections: 'Yes' }, 'Yes')
 
-        await san.queries.checkSanCreateAssessmentCall(pk2, pk1, pk1, oasys.users.probSanUnappr, oasys.users.probationSanCode, 'REVIEW')
+        await san.queries.checkSanCreateAssessmentCall(pk2, pk1, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
 
         log(`Check Section 1 of the assessment - ONLY 1.8 has cloned through.  
             The offence will not have cloned through unless it has been setup on the CMS stub and it gets copied from there.
@@ -105,7 +105,7 @@ export function testRef13(offender1: OffenderDef, pks: number[]) {
 
         const failed2 = await assessment.queries.checkAnswers(pk1, testData.clonedAndModifiedData, true)
         expect(failed2).toBeFalsy()
-        await oasys.logout()
+        await user.logout()
 
     })
 }

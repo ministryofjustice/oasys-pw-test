@@ -72,7 +72,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
         'san', 'assessment'
     )
 
-    await sentencePlan.spService.checkReadOnly()
+    await sentencePlan.checkReadOnly()
 
     await san.queries.checkSanOtlCall(pk1, {
         'crn': null,
@@ -202,7 +202,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
     await san.checkSanEditMode(false)
     await san.returnToOASys()
 
-    await sentencePlan.spService.checkReadOnly()
+    await sentencePlan.checkReadOnly()
 
     await user.logout()
 })

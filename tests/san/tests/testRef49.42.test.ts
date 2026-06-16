@@ -84,7 +84,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, user, offender, as
     )
 
     await san.returnToOASys()
-    await sentencePlan.spService.checkReadOnly()
+    await sentencePlan.checkReadOnly()
 
     await san.queries.checkSanOtlCall(pk1, {
         'crn': offender1.probationCrn,
@@ -174,7 +174,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, user, offender, as
         Ensure the OTL passes across READ_WRITE for the accessMode and the sentence plan version number is NULL
         Return to OASys`, 'Test step')
 
-    await sentencePlan.spService.openAndReturn('offender')
+    await sentencePlan.openAndReturn('offender')
 
     await san.queries.checkSanOtlCall(pk2, {
         'crn': offender1.probationCrn,
@@ -220,7 +220,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, user, offender, as
     )
 
     await san.returnToOASys()
-    await sentencePlan.spService.openAndReturn('assessment', true)
+    await sentencePlan.openAndReturn('assessment', true)
 
     await san.queries.checkSanOtlCall(pk1,
         {

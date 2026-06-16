@@ -74,7 +74,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
     await sara.sara.close.click()
 
     // Complete the assessment, but reject the SARA
-    await sentencePlan.spService.sentencePlanService.goto()
+    await sentencePlan.sentencePlanService.goto()
     await oasys.clickButton('Sign & Lock')
     await oasys.clickButton('Continue with Signing')
     await signing.signingStatus.noSaraReason.setValue('There was no suitably trained assessor available')

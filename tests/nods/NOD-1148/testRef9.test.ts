@@ -112,8 +112,8 @@ test('OGRS regression test ref 9', async ({ oasys, user, offender, assessment, s
         Warning - calculating OGRS.  The OGRS score cannot be calculated when the Gender selected for the offender is not 'Male' or 'Female'.							
         Warning - The OVP scores could not be calculated as the following fields have not been completed.`, 'Test step')
 
-    await sentencePlan.spService.sentencePlanService.goto()
-    await sentencePlan.spService.sentencePlanService.signAndLock.click()
+    await sentencePlan.sentencePlanService.goto()
+    await sentencePlan.sentencePlanService.signAndLock.click()
     await signing.checkSingleSignAndLockError('OGRS', false)
     await signing.checkSingleSignAndLockError('OVP', false)
     await signing.signingStatus.returnToAssessment.click()

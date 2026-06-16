@@ -135,7 +135,7 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, as
         This should have invoked a new version of the Sentence Plan in their database - Add another goal/steps to the sentence plan 
         Return back to the OASys Offender record screen`, 'Test step')
 
-    await sentencePlan.spService.addGoal('offender')
+    await sentencePlan.addGoal('offender')
 
     await user.logout()
 

@@ -34,8 +34,8 @@ test('Cloning test - historic period of supervision', async ({ oasys, user, offe
     await sections.offendingInformation.goto(true)
     await sections.offendingInformation.count.setValue(6)
     await sections.offendingInformation.offenceDate.setValue({ months: -1 })
-    await sentencePlan.populateMinimal('spService')
-    await signing.signAndLock({ page: 'spService' })
+    await sentencePlan.populateMinimal()
+    await signing.signAndLock()
 
     await oasys.history(offender1)
     await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Basic (Layer 1)' })

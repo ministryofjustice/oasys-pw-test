@@ -97,7 +97,7 @@ export function testRef10(offender1: OffenderDef, pks: number[]) {
         await risk.summary.markCompleteAndCheck()
         await risk.rmp.markCompleteAndCheck()
 
-        await sentencePlan.spService.sentencePlanService.checkCompletionStatus(true)
+        await sentencePlan.sentencePlanService.checkCompletionStatus(true)
         await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu })
 
         await user.logout()

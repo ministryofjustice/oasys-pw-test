@@ -16,7 +16,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
 
     await san.populateMinimal()
-    await sentencePlan.populateMinimal('spService')
+    await sentencePlan.populateMinimal()
 
     log(`Open up the offender record
         Click on the <Lock Incomplete> button and then click <OK> to confirm the action
@@ -58,7 +58,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     await san.checkSanEditMode(false)
     await san.returnToOASys()
 
-    await sentencePlan.spService.checkReadOnly()
+    await sentencePlan.checkReadOnly()
 
     await oasys.clickButton('Close')
 
@@ -120,7 +120,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
         Change or enter more data that changes the sentence plan e.g. add an objective.  Take screenshots of your input but do not agree the plan
         Return back to the Offender record`, 'Test step')
 
-    await sentencePlan.spService.addGoal('offender')
+    await sentencePlan.addGoal('offender')
 
     log(`In the Assessments tab, click on the <Lock Incomplete> button and then click <OK> to confirm the action
         Assessment now showing as locked incomplete
@@ -160,7 +160,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     await san.checkSanEditMode(false)
     await san.returnToOASys()
 
-    await sentencePlan.spService.checkReadOnly()
+    await sentencePlan.checkReadOnly()
 
     await oasys.clickButton('Close')
 
@@ -241,7 +241,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     await san.checkSanEditMode(false)
     await san.returnToOASys()
 
-    await sentencePlan.spService.checkReadOnly()
+    await sentencePlan.checkReadOnly()
 
     await oasys.clickButton('Close')
 

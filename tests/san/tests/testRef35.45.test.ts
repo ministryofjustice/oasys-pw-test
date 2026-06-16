@@ -19,7 +19,7 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
     await san.populateSanSections('Test ref 35', testData.sanPopulation1, true)
     await san.returnToOASys()
 
-    await sentencePlan.populateMinimal('spService')
+    await sentencePlan.populateMinimal()
 
     await assessment.summarySheet.goto()
     await assessment.summarySheet.maturityScreening.checkValue('This individual is likely to need support or services aimed at promoting maturation.', true)
@@ -147,7 +147,7 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
                     Navigates out to the Sentence Plan which should be shown in READ WRITE mode - check the OTL access mode parameter for SP
                     Return back to OASys`, 'Test step')
 
-    await sentencePlan.spService.openAndReturn('offender')
+    await sentencePlan.openAndReturn('offender')
 
     await san.queries.checkSanOtlCall(pk3, {
         'crn': offender1.probationCrn,

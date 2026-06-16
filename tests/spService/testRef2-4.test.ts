@@ -43,8 +43,8 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     log(`Navigate to the Sentence Plan Service screen and click on <Sign & Lock> - ensure there is an error:
         'The Sentence Plan has NOT been agreed. Please press 'Return to Assessment' and navigate back to the 'Sentence Plan Service' to complete and agree the plan.'`, 'Test step')
 
-    await sentencePlan.spService.sentencePlanService.goto()
-    await sentencePlan.spService.sentencePlanService.signAndLock.click()
+    await sentencePlan.sentencePlanService.goto()
+    await sentencePlan.sentencePlanService.signAndLock.click()
     await signing.checkSingleSignAndLockError(`The Sentence Plan has NOT been agreed. Please press 'Return to Assessment' and navigate back to the 'Sentence Plan Service' to complete and agree the plan.`, true)
     await signing.signingStatus.returnToAssessment.click()
 
@@ -58,7 +58,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         The Sentence Plan Service screen should be showing as a green tick in the navigation menu`, 'Test step')
 
     await oasys.clickButton('Next')
-    await sentencePlan.spService.sentencePlanService.checkCompletionStatus(true)
+    await sentencePlan.sentencePlanService.checkCompletionStatus(true)
     await sentencePlan.psr.createPsr.authorsTeam.setValue('BED Default LDU/Default Team')
     await sentencePlan.psr.createPsr.author.setValue(user.prob.probSpHeadPdu.lovLookup)
     await sentencePlan.psr.createPsr.create.click()
@@ -122,7 +122,6 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     await user.admin.login(providers.prob.nonSan)
     await offender.searchAndSelectByCrn(offender1.probationCrn)
     await assessment.openLatest()
-    await sentencePlan.changeSentencePlan.checkMenuVisibility(false)
 
     log(`Log out and log back in as the assessor - open up the WIP assessment
         Check that the navigation menu does NOT have ANY of the 'Initial sentence plan' screens but there is a menu option titled 'Sentence Plan Service' after the Summary Sheet
@@ -131,7 +130,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     await user.logout()
     await user.prob.probSpHeadPdu.login()
     await oasys.history(offender1, 'Start of Community Order')
-    await sentencePlan.spService.sentencePlanService.checkCompletionStatus(true)
+    await sentencePlan.sentencePlanService.checkCompletionStatus(true)
 
     log(`Data will have cloned through from the PSR assessment.  Change some of the data to invoke a full analysis.
         Complete the full analysis screens, setting the overall risk of the offender to HIGH and complete the RMP screen`, 'Test step')
@@ -147,7 +146,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Enter a second goal and step.  Plan remains agreed
         Return back to OASys`, 'Test step')
 
-    await sentencePlan.spService.checkGoalCount(1, 0, 0)
+    await sentencePlan.checkGoalCount(1, 0, 0)
     await san.queries.checkSanOtlCall(pk2,
         {
             'crn': offender1.probationCrn,
@@ -166,7 +165,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         },
         'sp', 'assessment'
     )
-    await sentencePlan.spService.addGoal('assessment')
+    await sentencePlan.addGoal('assessment')
 
     log(`S&L the assessment, the 'incomplete' screen should NOT show the Initial Sentence Plan or Sentence Plan Service screens in the list and the assessment should not require countersigning
         Check the SIGN API clog for the correct parameters`, 'Test step')
@@ -190,7 +189,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
 
     await oasys.history(offender1)
     await assessment.openLatest()
-    await sentencePlan.spService.checkGoalCount(2, 0, 0, 'assessment', true)  // checks readonly
+    await sentencePlan.checkGoalCount(2, 0, 0, 'assessment', true)  // checks readonly
     await assessment.queries.checkCountOfQuestionsInSection(pk2, 'ISP', 0)
     await oasys.clickButton('Close')
     const sanIcons2 = await assessment.assessmentsTab.assessments.san.getValues()
@@ -200,7 +199,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
           Sentence plan should show in READ ONLY mode and show the ONE goal and step added in Test Ref 2.`, 'Test step')
 
     await assessment.open(2)
-    await sentencePlan.spService.checkGoalCount(1, 0, 0, 'assessment', true)
+    await sentencePlan.checkGoalCount(1, 0, 0, 'assessment', true)
     await san.queries.checkSanOtlCall(pk1,
         {
             'crn': offender1.probationCrn,
@@ -255,7 +254,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check the database and ensure there are NO fields populated for the RSP section questions and answers EXCEPT for RP.3 which is set to 'REVIEW' 
             (this has to remain in case we are told to 'TERMINATE' the offender from the ARNS Sentence Plan data response.`, 'Test step')
 
-    await sentencePlan.spService.sentencePlanService.checkCompletionStatus(true)
+    await sentencePlan.sentencePlanService.checkCompletionStatus(true)
     await assessment.queries.checkCountOfQuestionsInSection(pk3, 'RSP', 1)
     await assessment.queries.checkSingleAnswer(pk3, 'RSP', 'RP.3', 'refAnswer', 'REVIEW')
 
@@ -264,7 +263,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Complete ONE of the goals and steps, leaves One active.  Plan remains agreed.
         Return back to OASys`, 'Test step')
 
-    await sentencePlan.spService.completeFirstGoal()
+    await sentencePlan.completeFirstGoal()
 
     log(`S&L the assessment, the 'incomplete' screen should NOT show the PSR Outline or Sentence Plan Service screens in the list and the assessment should not require countersigning
         Check the SIGN API clog for the correct parameters
@@ -293,7 +292,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Sentence plan should show in READ ONLY mode and show the TWO goals and steps as they were in Test Ref 2.`, 'Test step')
 
     await assessment.open(2)
-    await sentencePlan.spService.checkGoalCount(2, 0, 0, 'assessment', true)
+    await sentencePlan.checkGoalCount(2, 0, 0, 'assessment', true)
     await san.queries.checkSanOtlCall(pk2,
         {
             'crn': offender1.probationCrn,
@@ -319,7 +318,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Sentence plan should show in READ ONLY mode and the ONE ACTIVE goal and step and ONE COMPLETED goal and step.  The plan remains agreed.`, 'Test step')
 
     await assessment.openLatest()
-    await sentencePlan.spService.checkGoalCount(1, 0, 1, 'assessment', true)
+    await sentencePlan.checkGoalCount(1, 0, 1, 'assessment', true)
     await san.queries.checkSanOtlCall(pk2,
         {
             'crn': offender1.probationCrn,

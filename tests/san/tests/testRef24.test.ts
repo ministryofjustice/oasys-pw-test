@@ -43,7 +43,7 @@ test('SAN integration - test ref 24', async ({ oasys, user, offender, assessment
         Complete entry of the Sentence Plan with whatever you want but ensure you agree the plan
         Return back to the Offender record`, 'Test step')
 
-    await sentencePlan.populateMinimal('spService', 'offender')
+    await sentencePlan.populateMinimal('offender')
 
     log(`Check the database for the OASys-SAN assessment - at this point there will be nothing in it from the SAN assessment`)
 

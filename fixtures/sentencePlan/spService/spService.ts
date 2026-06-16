@@ -53,6 +53,7 @@ export class SpService {
 
         await this.steps.who.setValue('probation_practitioner')
         await this.steps.step.setValue('Do some stuff')
+        await this.steps.status.setValue('IN_PROGRESS')
         await this.steps.saveAndContinue.click()
 
         await this.sentencePlan.agreePlan.click()
@@ -73,9 +74,10 @@ export class SpService {
         await createGoal.targetDate.setValue('3months')
         await createGoal.addSteps.click()
 
-        await this.page.getByLabel('Who will do the step?').selectOption('probation_practitioner')
-        await this.page.getByRole('textbox', { name: 'What should they do to' }).fill('Do stuff')
-        await this.page.getByRole('button', { name: 'Save and continue' }).click()
+        await this.steps.who.setValue('probation_practitioner')
+        await this.steps.step.setValue('Do stuff')
+        await this.steps.status.setValue('IN_PROGRESS')
+        await this.steps.saveAndContinue.click()
 
         await this.sentencePlan.createGoal.click()
 
@@ -85,11 +87,12 @@ export class SpService {
         await createGoal.targetDate.setValue('6months')
         await createGoal.addSteps.click()
 
-        await this.page.getByLabel('Who will do the step?').selectOption('probation_practitioner')
-        await this.page.getByRole('textbox', { name: 'What should they do to' }).fill('Some other stuff')
+        await this.steps.who.setValue('probation_practitioner')
+        await this.steps.step.setValue('Some other stuff')
+        await this.steps.status.setValue('IN_PROGRESS')
+        await this.steps.saveAndContinue.click()
 
-        await this.page.getByRole('button', { name: 'Save and continue' }).click()
-        await this.page.getByRole('button', { name: 'Agree plan' }).click()
+        await this.sentencePlan.agreePlan.click()
         await this.page.getByRole('radio', { name: 'Yes, I agree' }).check()
         await this.page.getByRole('button', { name: 'Save' }).click()
 
@@ -152,9 +155,10 @@ export class SpService {
         await createGoal.targetDate.setValue('3months')
         await createGoal.addSteps.click()
 
-        await this.page.getByLabel('Who will do the step?').selectOption('probation_practitioner')
-        await this.page.getByRole('textbox', { name: 'What should they do to' }).fill('Do some additional stuff')
-        await this.page.getByRole('button', { name: 'Save and continue' }).click()
+        await this.steps.who.setValue('probation_practitioner')
+        await this.steps.step.setValue('Do some additional stuff')
+        await this.steps.status.setValue('IN_PROGRESS')
+        await this.steps.saveAndContinue.click()
 
         await this.returnToOasys()
     }

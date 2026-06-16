@@ -35,8 +35,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
 
     // Complete the assessment
     await oasys.history(offender1, 'Start of Community Order')
-    await sentencePlan.populateMinimal()
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
 
     await pni.checkAssessmentCalc(offender1.probationCrn, pk1)
 
@@ -54,7 +53,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
     await sara.reasonNoSara.reason.setValue('There was no suitably trained assessor available')
     await sara.reasonNoSara.ok.click()
 
-    await signing.signAndLock({ page: 'rsp', expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
     await pni.checkAssessmentCalc(offender1.probationCrn, pk2)
 
     failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, null, ['pni'])
@@ -75,7 +74,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
     await sara.sara.close.click()
 
     // Complete the assessment, but reject the SARA
-    await sentencePlan.rspSection72to10.goto()
+    await sentencePlan.spService.sentencePlanService.goto()
     await oasys.clickButton('Sign & Lock')
     await oasys.clickButton('Continue with Signing')
     await signing.signingStatus.noSaraReason.setValue('There was no suitably trained assessor available')

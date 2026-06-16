@@ -117,7 +117,7 @@ declare type PopulateAssessmentParams = {
     populate6_11?: 'Yes' | 'No',
 }
 
-declare type SigningPage = 'rsp' | 'spService' | 'rmp' | 'riskScreening'
+declare type SigningPage = 'spService' | 'rmp' | 'riskScreening'
 
 declare type Sentence =
     '' |

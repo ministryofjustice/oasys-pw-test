@@ -131,7 +131,7 @@ export function testRef12(offender1: OffenderDef, pks: number[]) {
 
         await sara.cancelSara()
 
-        await signing.signAndLock({ page: 'rsp' })
+        await signing.signAndLock({ page: 'spService' })
         await user.logout()
     })
 

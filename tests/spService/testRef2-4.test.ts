@@ -255,7 +255,6 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check the database and ensure there are NO fields populated for the RSP section questions and answers EXCEPT for RP.3 which is set to 'REVIEW' 
             (this has to remain in case we are told to 'TERMINATE' the offender from the ARNS Sentence Plan data response.`, 'Test step')
 
-    await sentencePlan.rspSection72to10.checkMenuVisibility(false)
     await sentencePlan.spService.sentencePlanService.checkCompletionStatus(true)
     await assessment.queries.checkCountOfQuestionsInSection(pk3, 'RSP', 1)
     await assessment.queries.checkSingleAnswer(pk3, 'RSP', 'RP.3', 'refAnswer', 'REVIEW')

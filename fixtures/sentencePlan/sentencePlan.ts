@@ -11,7 +11,6 @@ export class SentencePlan {
 
     constructor(private readonly page: Page, private readonly oasys: Oasys) { }
 
-    readonly rspSection72to10 = new pages.RspSection72to10(this.page)
     readonly spService = new SpService(this.page, this.oasys)
     readonly psr = new Psr(this.page)
     readonly changeSentencePlan = new pages.ChangeSentencePlan(this.page)
@@ -30,9 +29,6 @@ export class SentencePlan {
                 await this.spService.gotoSpService(from)
                 await this.spService.populateMinimal()
                 break
-            case 'rsp':
-                await this.rspSection72to10.populateMinimal()
-                break
         }
     }
 
@@ -42,9 +38,6 @@ export class SentencePlan {
             case 'spService':  // TODO others
                 await this.spService.gotoSpService(from)
                 // await this.spService.populateFull()  // TODO
-                break
-            case 'rsp':
-                // await this.rspSection72to10.populateFull()  // TODO
                 break
         }
     }

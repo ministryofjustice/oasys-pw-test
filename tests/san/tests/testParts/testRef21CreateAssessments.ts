@@ -87,8 +87,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         await sections.sections2To13NoIssues()
         await sections.selfAssessmentForm.populateMinimal()
-        await sentencePlan.populateMinimal('rsp')
-        await signing.signAndLock({ expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
         await user.logout()
 
         // Transfer back to Durham

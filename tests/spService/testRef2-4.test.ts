@@ -131,7 +131,6 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     await user.logout()
     await user.prob.probSpHeadPdu.login()
     await oasys.history(offender1, 'Start of Community Order')
-    await sentencePlan.ispSection52to8.checkMenuVisibility(false)
     await sentencePlan.spService.sentencePlanService.checkCompletionStatus(true)
 
     log(`Data will have cloned through from the PSR assessment.  Change some of the data to invoke a full analysis.

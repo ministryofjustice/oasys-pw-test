@@ -37,6 +37,6 @@ declare type ArnsSpParams = {
     futureGoals?: number,
 }
 
-declare type SpType = 'isp' | 'rsp' | 'spService' | 'psrOutline'
+declare type SpType = 'rsp' | 'spService' | 'psrOutline'
 
 declare type SpSelectionType = 'Initial' | 'Review' | 'PSR Outline'

@@ -1,8 +1,5 @@
 ﻿export { AccreditedProgramme } from './accreditedProgramme'
 export { ContributorDetails } from './contributorDetails'
-export { IspSection1to4 } from './ispSection1to4'
-export { IspSection5 } from './ispSection5'
-export { IspSection52to8 } from './ispSection52to8'
 export { ObjectivesAndActions } from './objectivesAndActions'
 export { OffenderSentencePlanSigning } from './offenderSentencePlanSigning'
 export { PrintSentencePlan } from './printSentencePlan'

@@ -6,13 +6,13 @@ import { test } from 'fixtures'
 
 test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sara, sentencePlan, signing, api, pni }) => {
 
-    await user.prob.probHeadPdu.login()
+    await user.prob.probSpHeadPdu.login()
 
     // Offender 1
     const offender1 = await offender.createProbFromStandardOffender()
 
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
-    await assessment.populateMinimal({ populate6_11: 'No', layer: 'Layer 3', sentencePlan: 'isp' })
+    await assessment.populateMinimal({ populate6_11: 'No', layer: 'Layer 3' })
 
     // Set 2.3 to trigger the SARA
     await sections.section2.goto()
@@ -35,7 +35,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
 
     // Complete the assessment
     await oasys.history(offender1, 'Start of Community Order')
-    await sentencePlan.ispSection52to8.populateMinimal()
+    await sentencePlan.populateMinimal()
     await signing.signAndLock({ expectRsrWarning: true })
 
     await pni.checkAssessmentCalc(offender1.probationCrn, pk1)

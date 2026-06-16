@@ -11,7 +11,6 @@ export class SentencePlan {
 
     constructor(private readonly page: Page, private readonly oasys: Oasys) { }
 
-    readonly ispSection52to8 = new pages.IspSection52to8(this.page)
     readonly rspSection72to10 = new pages.RspSection72to10(this.page)
     readonly spService = new SpService(this.page, this.oasys)
     readonly psr = new Psr(this.page)
@@ -31,9 +30,6 @@ export class SentencePlan {
                 await this.spService.gotoSpService(from)
                 await this.spService.populateMinimal()
                 break
-            case 'isp':
-                await this.ispSection52to8.populateMinimal()
-                break
             case 'rsp':
                 await this.rspSection72to10.populateMinimal()
                 break
@@ -47,9 +43,6 @@ export class SentencePlan {
                 await this.spService.gotoSpService(from)
                 // await this.spService.populateFull()  // TODO
                 break
-            case 'isp':
-                // await this.ispSection52to8.populateFull()  // TODO
-                break
             case 'rsp':
                 // await this.rspSection72to10.populateFull()  // TODO
                 break
@@ -61,19 +54,4 @@ export class SentencePlan {
         await this.spService.sentencePlanService.goto(suppressLog)
     }
 
-    // export function ispFullyPopulated(params: PopulateAssessmentParams) {
-
-    //     populate.SentencePlanPages.IspSection1to4.fullyPopulated(params.maxStrings)
-    //     populate.SentencePlanPages.IspSection5.fullyPopulated(params.maxStrings)
-    //     populate.SentencePlanPages.IspSection52to8.fullyPopulated(params.maxStrings)
-    // }
-
-    // export function rspFullyPopulated(params: PopulateAssessmentParams) {
-
-    //     populate.SentencePlanPages.RspSection1to2.fullyPopulated(params.maxStrings)
-    //     populate.SentencePlanPages.RspSection3to63.fullyPopulated(params.maxStrings)
-    //     populate.SentencePlanPages.RspSection7.fullyPopulated(params.maxStrings)
-    //     populate.SentencePlanPages.RspSection72to10.fullyPopulated(params.maxStrings)
-    //     // Transfer page TODO
-    // }
 }

@@ -5,13 +5,13 @@ import { test } from 'fixtures'
 
 test('NOD-1225', async ({ oasys, user, offender, assessment, sections, risk, sara, sentencePlan, signing, api, pni }) => {
 
-    await user.prob.probHeadPdu.login()
+    await user.prob.probSpHeadPdu.login()
 
     // Offender 1
     const offender1 = await offender.createProbFromStandardOffender()
 
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
-    await assessment.populateMinimal({ populate6_11: 'No', layer: 'Layer 3', sentencePlan: 'isp' })
+    await assessment.populateMinimal({ populate6_11: 'No', layer: 'Layer 3' })
 
     // Set 6.7 to trigger the SARA
     await sections.section6.goto()
@@ -37,7 +37,7 @@ test('NOD-1225', async ({ oasys, user, offender, assessment, sections, risk, sar
     await oasys.clickButton('Close')
 
     // Complete the assessment and reject the SARA
-    await sentencePlan.ispSection52to8.populateMinimal()
+    await sentencePlan.populateMinimal()
     await oasys.clickButton('Sign & Lock')
     await oasys.clickButton('Continue with Signing')
     await signing.signingStatus.noSaraReason.setValue('There was no suitably trained assessor available')

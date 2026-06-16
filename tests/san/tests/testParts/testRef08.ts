@@ -120,7 +120,6 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await risk.screeningSection1.checkMenuVisibility(true)
         await risk.screeningSection2to4.checkMenuVisibility(true)
         await risk.screeningSection5.checkMenuVisibility(true)
-        await sentencePlan.ispSection52to8.checkMenuVisibility(false)
 
         log(`Check the OASYS_SET record has new field 'SAN_ASSESSMENT_LINKED_IND' is SET to 'Y' and 'CLONED_FROM_PREV_OASYS_SAN_PK' is NULL
         Check that a CreateAssessment API post was sent off with the correct details in it (the OASYS_SET_PK of the newly created record,

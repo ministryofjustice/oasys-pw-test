@@ -1,9 +1,13 @@
-﻿import { BaseAssessmentPage, Element } from 'classes'
+import { OasysPage, Element } from 'classes'
 
-export abstract class SentencePlan extends BaseAssessmentPage {
+export class SentencePlan extends OasysPage {
 
-    signAndLock = new Element.Button(this.page, 'Sign & Lock')
-    countersign = new Element.Button(this.page, 'Countersign')
-    countersignOverview = new Element.Button(this.page, 'Countersign Overview')
-    printSentencePlan = new Element.Button(this.page, 'Print Sentence Plan')
+    returnToOASys = new Element.Button(this.page,'Return to OASys')
+    createGoal = new Element.Button(this.page,'Create goal')
+    agreePlan = new Element.Button(this.page,'Agree plan')
+    currentGoalCount = new Element.Link(this.page,'Goals to work on now (')
+    futureGoalCount = new Element.Link(this.page,'Future goals (')
+    achievedGoalCount = new Element.Link(this.page,'Achieved goals (')
+
+    update = new Element.Link(this.page, 'Update')
 }

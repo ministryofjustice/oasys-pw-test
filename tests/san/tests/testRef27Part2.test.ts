@@ -43,7 +43,7 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, user, cms, offender
         Change or enter more data that changes the sentence plan e.g. add an objective.  Take screenshots of your input but do not agree the plan
         Return back to the Offender record`, 'Test step')
 
-    await sentencePlan.spService.addGoal('offender')
+    await sentencePlan.addGoal('offender')
     await user.logout()
 
     log(`Using the CMS stub submit an internal reception event to a NON SAN PILOT Prison area
@@ -111,7 +111,7 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, user, cms, offender
         'Evidence of binge drinking or excessive alcohol use')
     await san.returnToOASys()
 
-    await sentencePlan.spService.checkGoalCount(2, 0, 0, 'assessment', true)
+    await sentencePlan.checkGoalCount(2, 0, 0, 'assessment', true)
 
     await oasys.clickButton('Close')
 

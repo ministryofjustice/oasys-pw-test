@@ -121,7 +121,7 @@ async function checkAssessment(user: string, offender1: OffenderDef, pk: number,
     await san.checkSanEditMode(false)
     await san.returnToOASys()
 
-    await sentencePlan.spService.checkReadOnly()
+    await sentencePlan.checkReadOnly()
     await san.queries.checkSanOtlCall(pk,
         {
             'crn': offender1.probationCrn,

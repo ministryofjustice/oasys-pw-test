@@ -1,20 +1,27 @@
 import { test, User, Maintenance } from 'fixtures'
 import { TestUser } from 'fixtures/user/testUsers'
-import { testEnvironment } from 'localSettings'
+import { userSuffixes } from 'localSettings'
 
-const t2 = testEnvironment.name.includes('T2')
 
-test('Create or update users', async ({ user, maintenance }) => {
+test.describe.configure({ mode: 'parallel' })
 
-    // NOTE: Admin user is handled by a separate script.
+// The script runs once for each of the user suffixes configured in localSettings.
+// Parallel running ensures that each of the suffixes is used in one test run.
+// NOTE: Admin user is handled by a separate script.
 
-    for (const testUser of Object.values(user.prob)) {
-        await createOrUpdateUser(testUser, user, maintenance)
-    }
-    for (const testUser of Object.values(user.pris)) {
-        await createOrUpdateUser(testUser, user, maintenance)
-    }
+userSuffixes.forEach((userSuffix) => {
 
+    test(`Create or update users for user suffix ${userSuffix}`, async ({ user, maintenance }) => {
+
+
+        for (const testUser of Object.values(user.prob)) {
+            await createOrUpdateUser(testUser, user, maintenance)
+        }
+        for (const testUser of Object.values(user.pris)) {
+            await createOrUpdateUser(testUser, user, maintenance)
+        }
+
+    })
 })
 
 async function createOrUpdateUser(testUser: TestUser, user: User, maintenance: Maintenance) {
@@ -35,13 +42,14 @@ async function createOrUpdateUser(testUser: TestUser, user: User, maintenance: M
         }
         await maintenance.maintainUser.surname.setValue(testUser.surname)
         await maintenance.maintainUser.forename1.setValue(testUser.forename1)
-        await maintenance.maintainUser.emailAddress.setValue(`${testUser.username}@eor.${t2 ? 'localdomain' : 'local'}`)
+        await maintenance.maintainUser.emailAddress.setValue(`${testUser.username}@eor.localdomain`)
         await maintenance.maintainUser.save.click()
 
         // New account goes to profile automatically.  Open profile if editing existing user.
         if (rows > 0) {
             await maintenance.maintainUser.close.click()
             await maintenance.userProfile.goto()
+            await maintenance.userProfile.providerEstablishment.setValue(testUser.profile.provider)
             await maintenance.userProfile.userName.setValue(testUser.username)
             await maintenance.userProfile.surname.setValue('')
             await maintenance.userProfile.forename1.setValue('')

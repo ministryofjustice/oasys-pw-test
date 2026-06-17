@@ -11,7 +11,7 @@ test('NOD 1148 OGRS regression - test ref 17', async ({ oasys, user, offender, a
     log(`Log in as as Probation Assessor - create a new FEMALE probation offender aged > 18								
         Create a Layer 3 Version 1 Start Community Order with an ISP`, 'Test step')
 
-    await user.prob.probSpHeadPdu.login()
+    await user.prob.probHeadPdu.login()
     const offender1 = await offender.createProbFromStandardOffender({ gender: 'Female', type: 'noEvent', age: 35 })
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 

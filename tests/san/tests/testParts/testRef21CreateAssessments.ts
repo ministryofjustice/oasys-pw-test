@@ -16,8 +16,8 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         // Create assessment
         const offender1Pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
         offender1Pks.push(offender1Pk1)
-        await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No', sentencePlan: 'isp' })
-        await signing.signAndLock({ page: 'isp', expectRsrWarning: true })
+        await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No' })
+        await signing.signAndLock({ expectRsrWarning: true })
         await user.logout()
 
         await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${offender1Pk1}`, {
@@ -87,8 +87,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         await sections.sections2To13NoIssues()
         await sections.selfAssessmentForm.populateMinimal()
-        await sentencePlan.populateMinimal('rsp')
-        await signing.signAndLock({ expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
         await user.logout()
 
         // Transfer back to Durham

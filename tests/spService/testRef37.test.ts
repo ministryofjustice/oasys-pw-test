@@ -34,7 +34,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
         SAN_ASSESSMENT_LINKED_IND: 'N',
         CLONED_FROM_PREV_OASYS_SAN_PK: pk1.toString(),
     })
-    await sentencePlan.spService.addGoal()
+    await sentencePlan.addGoal()
     await sections.sections2To13NoIssues({ populate6_11: 'No', })
     await sections.selfAssessmentForm.populateMinimal()
     await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
@@ -55,7 +55,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: pk1.toString(),
     })
-    await sentencePlan.spService.completeFirstGoal()
+    await sentencePlan.completeFirstGoal()
     await signing.signAndLock({ expectRsrWarning: true })
     const spVersion3 = await oasysDb.getSingleNumericValue(`select SSP_PLAN_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk3}`)
     expect(spVersion3).not.toBe(spVersion2)
@@ -84,7 +84,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
     await san.action('practitionerAnalysis')
     await san.accommodationPractitionerAnalysis.markAsComplete.click()
     await san.returnToOASys()
-    await sentencePlan.spService.completeSecondGoal()
+    await sentencePlan.completeSecondGoal()
     await signing.signAndLock({ expectRsrWarning: true })
     const spVersion4 = await oasysDb.getSingleNumericValue(`select SSP_PLAN_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk4}`)
     expect(spVersion4).not.toBe(spVersion3)
@@ -114,7 +114,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
     )
     await san.returnToOASys()
 
-    await sentencePlan.spService.checkGoalCount(0, 0, 2, 'offender', false)
+    await sentencePlan.checkGoalCount(0, 0, 2, 'offender', false)
 
     await san.queries.checkSanOtlCall(pk4, {
         'crn': offender1.probationCrn,
@@ -141,7 +141,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
     await san.gotoSanReadOnly()
     await san.checkSanEditMode(false)
     await san.returnToOASys()
-    await sentencePlan.spService.checkGoalCount(1, 0, 0, 'assessment', true)
+    await sentencePlan.checkGoalCount(1, 0, 0, 'assessment', true)
     await san.queries.checkSanOtlCall(pk1, {
         'crn': offender1.probationCrn,
         'pnc': offender1.pnc,
@@ -161,7 +161,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
     await oasys.clickButton('Close')
 
     await assessment.open(3)
-    await sentencePlan.spService.checkGoalCount(2, 0, 0, 'assessment', true)
+    await sentencePlan.checkGoalCount(2, 0, 0, 'assessment', true)
     await san.queries.checkSanOtlCall(pk2, {
         'crn': offender1.probationCrn,
         'pnc': offender1.pnc,
@@ -184,7 +184,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
     await san.gotoSanReadOnly()
     await san.checkSanEditMode(false)
     await san.returnToOASys()
-    await sentencePlan.spService.checkGoalCount(1, 0, 1, 'assessment', true)
+    await sentencePlan.checkGoalCount(1, 0, 1, 'assessment', true)
     await san.queries.checkSanOtlCall(pk3, {
         'crn': offender1.probationCrn,
         'pnc': offender1.pnc,
@@ -207,7 +207,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
     await san.gotoSanReadOnly()
     await san.checkSanEditMode(false)
     await san.returnToOASys()
-    await sentencePlan.spService.checkGoalCount(0, 0, 2, 'assessment', true)
+    await sentencePlan.checkGoalCount(0, 0, 2, 'assessment', true)
 
     await san.queries.checkSanOtlCall(pk4, {
         'crn': offender1.probationCrn,

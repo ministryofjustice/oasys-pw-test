@@ -50,8 +50,8 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await san.checkLayer3Menu(false, sections)
         await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, { SAN_ASSESSMENT_LINKED_IND: 'N' })
 
-        await sentencePlan.goto('spService')
-        await sentencePlan.spService.sentencePlanService.signAndLock.click()
+        await sentencePlan.gotoSpService('assessment')
+        await sentencePlan.sentencePlanService.signAndLock.click()
         await signing.checkSignAndLockErrorsVisible('section2To13Errors')
         await signing.checkSignAndLockErrorsNotVisible('sanSectionsIncomplete')
         await signing.signingStatus.returnToAssessment.click()
@@ -120,7 +120,6 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await risk.screeningSection1.checkMenuVisibility(true)
         await risk.screeningSection2to4.checkMenuVisibility(true)
         await risk.screeningSection5.checkMenuVisibility(true)
-        await sentencePlan.ispSection52to8.checkMenuVisibility(false)
 
         log(`Check the OASYS_SET record has new field 'SAN_ASSESSMENT_LINKED_IND' is SET to 'Y' and 'CLONED_FROM_PREV_OASYS_SAN_PK' is NULL
         Check that a CreateAssessment API post was sent off with the correct details in it (the OASYS_SET_PK of the newly created record,
@@ -151,8 +150,8 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         Then a list of the sections follows which are: Accommodation, Employment and education, Finance, Drug use, Alcohol use, Health and wellbeing, Personal relationships and community, Thinking, behaviours and attitudes, Offence analysis
         There is a new error stating 'In OASys the offender has been marked at 1.30 as having behaviours that are sexually motivated.  There are relevant questions within the Strengths and Needs assessment that must be completed.  Please press 'Return to Assessment' and navigate back to the 'Strengths and Needs Sections' to complete.`, 'Test step')
 
-        await sentencePlan.goto('spService')
-        await sentencePlan.spService.sentencePlanService.signAndLock.click()
+        await sentencePlan.gotoSpService('assessment')
+        await sentencePlan.sentencePlanService.signAndLock.click()
         await signing.checkSignAndLockErrorsNotVisible('section2To13Errors')
         await signing.checkSingleSignAndLockError(`Please provide a clear rationale for not fully completing the Self Assessment Questionnaire`, false)
         await signing.checkSingleSignAndLockError(`The following fields on the RoSH Screening have not been completed, Please press 'Return to Assessment' and navigate back to the RoSH Screening to complete.`, false)
@@ -363,7 +362,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await signing.countersigningOverview.details.checkValue(`The previous assessment was countersigned for the same risk attributes by ${user.prob.probSanHeadPdu.forenameSurname} on the ${today}`, true)
 
         await signing.countersigningOverview.returnToAssessment.click()
-        await sentencePlan.spService.sentencePlanService.checkCurrent()
+        await sentencePlan.sentencePlanService.checkCurrent()
 
         // Test ref 8 part 5
         log(`Navigate to the 'Strengths and Needs Sections' screen - 

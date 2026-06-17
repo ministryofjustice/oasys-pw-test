@@ -43,7 +43,7 @@ test('SAN integration - test ref 27 part 3', async ({ oasys, user, cms, offender
     await sentencePlan.populateMinimal()
     await oasys.clickButton('Next')
     await san.sanSections.checkCompletionStatus(true)
-    await sentencePlan.spService.sentencePlanService.checkCompletionStatus(true)
+    await sentencePlan.sentencePlanService.checkCompletionStatus(true)
 
     log(`Open up the offender record
         Using the CMS stub submit a 'discharge' message for the offender
@@ -93,7 +93,7 @@ test('SAN integration - test ref 27 part 3', async ({ oasys, user, cms, offender
     await san.checkSanEditMode(false)
     await san.returnToOASys()
 
-    await sentencePlan.spService.checkReadOnly()
+    await sentencePlan.checkReadOnly()
 
     await oasys.clickButton('Close')
 

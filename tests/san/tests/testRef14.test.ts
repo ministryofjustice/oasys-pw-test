@@ -76,7 +76,7 @@ test('SAN integration - test ref 14', async ({ oasys, user, offender, assessment
     await san.checkSanEditMode(false)
     await san.returnToOASys()
 
-    await sentencePlan.spService.checkReadOnly()
+    await sentencePlan.checkReadOnly()
     await san.queries.checkSanOtlCall(pk1,
         {
             'crn': offender1.probationCrn,
@@ -112,7 +112,7 @@ test('SAN integration - test ref 14', async ({ oasys, user, offender, assessment
     await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', null)
 
     await risk.rmp.checkMenuVisibility(false)
-    await sentencePlan.spService.checkGoalCount(0, 0, 0)
+    await sentencePlan.checkGoalCount(0, 0, 0)
 
     await user.logout()
 

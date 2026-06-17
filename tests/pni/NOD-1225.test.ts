@@ -11,7 +11,7 @@ test('NOD-1225', async ({ oasys, user, offender, assessment, sections, risk, sar
     const offender1 = await offender.createProbFromStandardOffender()
 
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
-    await assessment.populateMinimal({ populate6_11: 'No', layer: 'Layer 3', sentencePlan: 'isp' })
+    await assessment.populateMinimal({ populate6_11: 'No', layer: 'Layer 3' })
 
     // Set 6.7 to trigger the SARA
     await sections.section6.goto()
@@ -37,7 +37,7 @@ test('NOD-1225', async ({ oasys, user, offender, assessment, sections, risk, sar
     await oasys.clickButton('Close')
 
     // Complete the assessment and reject the SARA
-    await sentencePlan.ispSection52to8.populateMinimal()
+    await sentencePlan.sentencePlanService.goto()
     await oasys.clickButton('Sign & Lock')
     await oasys.clickButton('Continue with Signing')
     await signing.signingStatus.noSaraReason.setValue('There was no suitably trained assessor available')

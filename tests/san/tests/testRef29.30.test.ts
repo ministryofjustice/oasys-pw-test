@@ -127,8 +127,8 @@ test('SAN integration - test ref 29/30', async ({ oasys, user, signing, offender
     await risk.summary.populateWithSpecificRiskLevel('High')
     await risk.rmp.populateMinimalWithTextFields()
 
-    await sentencePlan.spService.gotoSpService('assessment')
-    await sentencePlan.spService.populateTwoGoals()
+    await sentencePlan.gotoSpService('assessment')
+    await sentencePlan.populateTwoGoals()
 
     await signing.signAndLock({ expectCountersigner: true, countersigner: user.prob.probSanHeadPdu, countersignComment: 'Sending test ref 20 for countersigning' })
 

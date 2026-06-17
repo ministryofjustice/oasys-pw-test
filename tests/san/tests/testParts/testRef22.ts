@@ -92,7 +92,7 @@ async function checkAssessment(user: string, offender: OffenderDef, pk: number, 
 
     await san.returnToOASys()
     // Pass user details as they get lost in the cy.get.then structure
-    await sentencePlan.spService.checkReadOnly()
+    await sentencePlan.checkReadOnly()
     await san.queries.checkSanOtlCall(pk,
         {
             'crn': offender.probationCrn,

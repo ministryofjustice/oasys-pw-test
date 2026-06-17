@@ -5,7 +5,7 @@ import { Oasys, Tasks } from 'fixtures'
 import * as pages from './pages'
 import { TestUser } from 'fixtures/user/testUsers'
 import { ScreeningSection5, Rmp } from 'fixtures/risk/pages'
-import { BasicSentencePlan, IspSection1to4, RspSection1to2, SentencePlanService } from 'fixtures/sentencePlan/pages'
+import { SentencePlanService } from 'fixtures/sentencePlan/pages'
 
 export class Signing {
 
@@ -214,15 +214,6 @@ export class Signing {
     async gotoSigningPage(signingPage: SigningPage) {
 
         switch (signingPage) {
-            case 'basic':
-                await new BasicSentencePlan(this.page).goto(true)
-                break
-            case 'isp':
-                await new IspSection1to4(this.page).goto(true)
-                break
-            case 'rsp':
-                await new RspSection1to2(this.page).goto(true)
-                break
             case 'spService':
                 await new SentencePlanService(this.page).goto(true)
                 break

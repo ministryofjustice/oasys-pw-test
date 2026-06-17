@@ -21,7 +21,7 @@ export function testRef4(offender1: OffenderDef, pks: { [key: number]: number })
             Check the OASYS_SET record has the SIX new '…ALGO_VERSION' fields all set to 1 apart from the OSP one which is set to 6		
             Check that OASYS_SET.RSR_ALGORITHM_VERSION has been set to 6`, 'Test step')
 
-        await user.prob.probSpHeadPdu.login()
+        await user.prob.probHeadPdu.login()
         await oasys.history(offender1)
         await offender.offenderDetails.summarySheetTab.checkStatus('notVisible')
 

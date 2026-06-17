@@ -115,7 +115,7 @@ export class Assessment {
         }
         await this.risk.screeningNoRisks()
         if (params.layer != 'Layer 1V2') {
-            await this.sentencePlan.populateMinimal(params?.sentencePlan)
+            await this.sentencePlan.populateMinimal()
         }
 
         log(`Minimally populated assessment: ${JSON.stringify(params)}`)
@@ -130,7 +130,7 @@ export class Assessment {
             // await this.san.populateFull()  // TODO
         }
         if (params.layer != 'Layer 1V2') {
-            await this.sentencePlan.populateFull(params?.sentencePlan)
+            await this.sentencePlan.populateFull()
         }
 
         log(`Fully populated assessment: ${JSON.stringify(params)}`)

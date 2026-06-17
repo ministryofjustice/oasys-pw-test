@@ -12,7 +12,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
     const offender1 = await offender.createProbFromStandardOffender()
 
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
-    await assessment.populateMinimal({ populate6_11: 'No', layer: 'Layer 3', sentencePlan: 'isp' })
+    await assessment.populateMinimal({ populate6_11: 'No', layer: 'Layer 3' })
 
     // Set 2.3 to trigger the SARA
     await sections.section2.goto()
@@ -35,8 +35,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
 
     // Complete the assessment
     await oasys.history(offender1, 'Start of Community Order')
-    await sentencePlan.ispSection52to8.populateMinimal()
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
 
     await pni.checkAssessmentCalc(offender1.probationCrn, pk1)
 
@@ -54,7 +53,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
     await sara.reasonNoSara.reason.setValue('There was no suitably trained assessor available')
     await sara.reasonNoSara.ok.click()
 
-    await signing.signAndLock({ page: 'rsp', expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
     await pni.checkAssessmentCalc(offender1.probationCrn, pk2)
 
     failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, null, ['pni'])
@@ -75,7 +74,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
     await sara.sara.close.click()
 
     // Complete the assessment, but reject the SARA
-    await sentencePlan.rspSection72to10.goto()
+    await sentencePlan.sentencePlanService.goto()
     await oasys.clickButton('Sign & Lock')
     await oasys.clickButton('Continue with Signing')
     await signing.signingStatus.noSaraReason.setValue('There was no suitably trained assessor available')

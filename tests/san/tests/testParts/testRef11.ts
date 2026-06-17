@@ -89,9 +89,7 @@ export function testRef11(offender1: OffenderDef, pks: number[]) {
         await sections.section12.o12_8.setValue('1-Quite motivated')
         await sections.selfAssessmentForm.populateMinimal()
 
-        await sentencePlan.rspSection72to10.goto()
-        await sentencePlan.rspSection72to10.agreeWithPlan.setValue('Yes')
-        await signing.signAndLock()
+        await signing.signAndLock({page: 'spService'})
         await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk}`, {
             SAN_ASSESSMENT_LINKED_IND: null,
             CLONED_FROM_PREV_OASYS_SAN_PK: prevPk.toString(),

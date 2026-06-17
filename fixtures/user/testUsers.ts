@@ -66,7 +66,12 @@ export class TestUsersProb {
      */
     probHeadPdu: TestUser = new TestUser(this.user,
         { username: 'AUTOHEADPDU', forename1: 'Autotest', surname: 'HEADPDU' },
-        { provider: providers.prob.nonSan, frameworkRole: 'Legacy - Head of PDU', defaultCountersigner: null, roles: ['NPS Assessor', 'Trainer', 'SARA'] }
+        {
+            provider: providers.prob.nonSan,
+            frameworkRole: 'Legacy - Head of PDU',
+            defaultCountersigner: null,
+            roles: ['NPS Assessor', 'Trainer', 'SARA', 'SP Service']
+        }
     )
 
     /**
@@ -79,36 +84,14 @@ export class TestUsersProb {
      */
     probPso: TestUser = new TestUser(this.user,
         { username: 'AUTOPSO', forename1: 'Autotest', surname: 'PSO' },
-        { provider: providers.prob.nonSan, frameworkRole: 'Legacy - Approved PSO, approved PQiP, NQO or unapproved PO', defaultCountersigner: null, roles: ['NPS Assessor', 'Trainer'] }
+        {
+            provider: providers.prob.nonSan,
+            frameworkRole: 'Legacy - Approved PSO, approved PQiP, NQO or unapproved PO',
+            defaultCountersigner: null,
+            roles: ['NPS Assessor', 'Trainer', 'SP Service']
+        }
     )
 
-    ///////////// PROBATION NON-SAN WITH SP SERVICE /////////////
-
-    /**
-     * AUTOSPHEADPDU-xx
-     *   - Forename/surname: Autotest SPHEADPDU-xx
-     *   - Framework role: Head of PDU - No Countersigning required
-     *   - Provider: Probation non-SAN
-     *   - Default countersigner: none
-     *   - Roles: NPS Assessor, Trainer, SARA
-     */
-    probSpHeadPdu: TestUser = new TestUser(this.user,
-        { username: 'AUTOSPHEADPDU', forename1: 'Autotest', surname: 'HEADSPPDU' },
-        { provider: providers.prob.nonSan, frameworkRole: 'Legacy - Head of PDU', defaultCountersigner: null, roles: ['NPS Assessor', 'Trainer', 'SARA', 'SP Service'], psrSigningLevel: 'Very High' }
-    )
-
-    /**
-     * AUTOSPPSO-xx
-     *   - Forename/surname: Autotest SPPSO-xx
-     *   - Framework role: Approved PSO, approved PQiP, NQO or unapproved PO
-     *   - Provider: Probation non-SAN
-     *   - Default countersigner: none
-     *   - Roles: NPS Assessor, Trainer
-     */
-    probSpPso: TestUser = new TestUser(this.user,
-        { username: 'AUTOSPPSO', forename1: 'Autotest', surname: 'SPPSO' },
-        { provider: providers.prob.nonSan, frameworkRole: 'Legacy - Approved PSO, approved PQiP, NQO or unapproved PO', defaultCountersigner: null, roles: ['NPS Assessor', 'Trainer', 'SP Service'] }
-    )
 
     ///////////// PROBATION SAN /////////////
 
@@ -122,7 +105,12 @@ export class TestUsersProb {
      */
     probSanHeadPdu: TestUser = new TestUser(this.user,
         { username: 'AUTOSANHEADPDU', forename1: 'Autotest', surname: 'SANHEADPDU' },
-        { provider: providers.prob.san, frameworkRole: 'Legacy - Head of PDU', defaultCountersigner: null, roles: ['NPS Assessor', 'San Service', 'Trainer', 'SP Service'] })
+        {
+            provider: providers.prob.san,
+            frameworkRole: 'Legacy - Head of PDU',
+            defaultCountersigner: null,
+            roles: ['NPS Assessor', 'San Service', 'Trainer', 'SP Service']
+        })
 
     /**
      * AUTOSANPO-xx
@@ -134,7 +122,12 @@ export class TestUsersProb {
      */
     probSanPo: TestUser = new TestUser(this.user,
         { username: 'AUTOSANPO', forename1: 'Autotest', surname: 'SANPO' },
-        { provider: providers.prob.san, frameworkRole: 'Legacy - Approved PO', defaultCountersigner: null, roles: ['NPS Assessor', 'San Service', 'SARA', 'Trainer', 'SP Service'] }
+        {
+            provider: providers.prob.san,
+            frameworkRole: 'Legacy - Approved PO',
+            defaultCountersigner: null,
+            roles: ['NPS Assessor', 'San Service', 'SARA', 'Trainer', 'SP Service']
+        }
     )
 
     /**
@@ -147,7 +140,12 @@ export class TestUsersProb {
      */
     probSanPso: TestUser = new TestUser(this.user,
         { username: 'AUTOSANPSO', forename1: 'Autotest', surname: 'SANPSO' },
-        { provider: providers.prob.san, frameworkRole: 'Legacy - Approved PSO, approved PQiP, NQO or unapproved PO', defaultCountersigner: this.probSanPo, roles: ['NPS Assessor', 'San Service', 'Trainer', 'SP Service'] }
+        {
+            provider: providers.prob.san,
+            frameworkRole: 'Legacy - Approved PSO, approved PQiP, NQO or unapproved PO',
+            defaultCountersigner: this.probSanPo,
+            roles: ['NPS Assessor', 'San Service', 'Trainer', 'SP Service']
+        }
     )
 
     /**
@@ -160,7 +158,12 @@ export class TestUsersProb {
      */
     probSanUnappr: TestUser = new TestUser(this.user,
         { username: 'AUTOSANUNAPPR', forename1: 'Autotest', surname: 'SANUNAPPR' },
-        { provider: providers.prob.san, frameworkRole: 'Legacy - Unapproved PSO & unapproved PQiP', defaultCountersigner: null, roles: ['NPS Assessor', 'San Service', 'Trainer', 'SP Service'] })
+        {
+            provider: providers.prob.san,
+            frameworkRole: 'Legacy - Unapproved PSO & unapproved PQiP',
+            defaultCountersigner: null,
+            roles: ['NPS Assessor', 'San Service', 'Trainer', 'SP Service']
+        })
 
 }
 
@@ -168,6 +171,7 @@ export class TestUsersProb {
 export class TestUsersPris {
 
     constructor(readonly user: User) { }
+
 
     ///////////// PRISON NON-SAN /////////////
 
@@ -181,25 +185,13 @@ export class TestUsersPris {
      */
     prisHomds: TestUser = new TestUser(this.user,
         { username: 'AUTOHOMDS', forename1: 'Autotest', surname: 'HOMDS' },
-        { provider: providers.pris.nonSan, frameworkRole: 'HOMDs', defaultCountersigner: null, roles: ['HMPS Assessor', 'Trainer'] }
+        {
+            provider: providers.pris.nonSan,
+            frameworkRole: 'HOMDs',
+            defaultCountersigner: null,
+            roles: ['HMPS Assessor', 'Trainer', 'SP Service']
+        }
     )
-
-    ///////////// PRISON NON-SAN WITH SP SERVICE /////////////
-
-    /**
-     * AUTOSPHOMDS-xx
-     *   - Forename/surname: Autotest SPHOMDS-xx
-     *   - Framework role: HOMDs
-     *   - Provider: Prison non-SAN
-     *   - Default countersigner: none
-     *   - Roles: HMPS Assessor, Trainer
-     */
-    prisSpHomds: TestUser = new TestUser(this.user,
-        { username: 'AUTOSPHOMDS', forename1: 'Autotest', surname: 'SPHOMDS' },
-        { provider: providers.pris.nonSan, frameworkRole: 'HOMDs', defaultCountersigner: null, roles: ['HMPS Assessor', 'Trainer', 'SP Service'] }
-    )
-
-
 
     ///////////// PRISON SAN /////////////
 
@@ -213,7 +205,12 @@ export class TestUsersPris {
      */
     prisSanHomds: TestUser = new TestUser(this.user,
         { username: 'AUTOSANPRISHOMDS', forename1: 'Autotest', surname: 'SANPRISHOMDS' },
-        { provider: providers.pris.san, frameworkRole: 'HOMDs', defaultCountersigner: null, roles: ['HMPS Assessor', 'San Service', 'Trainer', 'SP Service'] }
+        {
+            provider: providers.pris.san,
+            frameworkRole: 'HOMDs',
+            defaultCountersigner: null,
+            roles: ['HMPS Assessor', 'San Service', 'Trainer', 'SP Service']
+        }
     )
 
     /**
@@ -227,8 +224,10 @@ export class TestUsersPris {
     prisSanPom: TestUser = new TestUser(this.user,
         { username: 'AUTOSANPRISPOM', forename1: 'Autotest', surname: 'SANPRISPOM' },
         {
-            provider: providers.pris.san, frameworkRole: 'Approved Prison POM, approved PQiP, NQO or unapproved Probation POM',
-            defaultCountersigner: this.prisSanHomds, roles: ['HMPS Assessor', 'San Service', 'Trainer', 'SP Service']
+            provider: providers.pris.san,
+            frameworkRole: 'Approved Prison POM, approved PQiP, NQO or unapproved Probation POM',
+            defaultCountersigner: this.prisSanHomds,
+            roles: ['HMPS Assessor', 'San Service', 'Trainer', 'SP Service']
         }
     )
 
@@ -242,7 +241,12 @@ export class TestUsersPris {
      */
     prisSanUnappr: TestUser = new TestUser(this.user,
         { username: 'AUTOSANPRISUNAPPR', forename1: 'Autotest', surname: 'SANPRISUNAPPR' },
-        { provider: providers.pris.san, frameworkRole: 'Unapproved Prison POM & unapproved PQiP', defaultCountersigner: this.prisSanPom, roles: ['HMPS Assessor', 'San Service', 'Trainer', 'SP Service'] }
+        {
+            provider: providers.pris.san,
+            frameworkRole: 'Unapproved Prison POM & unapproved PQiP',
+            defaultCountersigner: this.prisSanPom,
+            roles: ['HMPS Assessor', 'San Service', 'Trainer', 'SP Service']
+        }
     )
 
     /**
@@ -255,7 +259,12 @@ export class TestUsersPris {
      */
     prisSanCAdm: TestUser = new TestUser(this.user,
         { username: 'AUTOSANPRISCADM', forename1: 'Autotest', surname: 'SANPRISCADM' },
-        { provider: providers.pris.san, frameworkRole: null, defaultCountersigner: null, roles: ['Case Admin Prison Autotest', 'Trainer', 'SP Service'] }
+        {
+            provider: providers.pris.san,
+            frameworkRole: null,
+            defaultCountersigner: null,
+            roles: ['Case Admin Prison Autotest', 'Trainer', 'SP Service']
+        }
     )
 }
 

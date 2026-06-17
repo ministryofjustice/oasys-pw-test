@@ -152,8 +152,8 @@ test('SAN integration - test ref 17', async ({ page, oasys, user, offender, asse
         Complete entry of the sentence plan with 2 goals/steps and ensure you 'Agree the Plan'
         Return back to the OASys Assessment - goes back to the 'Sentence Plan Service' screen`, 'TestStep')
 
-    await sentencePlan.spService.gotoSpService('assessment')
-    await sentencePlan.spService.populateTwoGoals()
+    await sentencePlan.gotoSpService('assessment')
+    await sentencePlan.populateTwoGoals()
     await san.queries.checkSanOtlCall(pk1, {
         'crn': offender1.probationCrn,
         'pnc': offender1.pnc,
@@ -273,7 +273,7 @@ test('SAN integration - test ref 17', async ({ page, oasys, user, offender, asse
     // countersigningOverview.details.checkValue('Integrated Offender Management (IOM)', true)
 
     await signing.countersigningOverview.returnToAssessment.click()
-    await sentencePlan.spService.sentencePlanService.checkCurrent()
+    await sentencePlan.sentencePlanService.checkCurrent()
 
     // Get oasys_set details to compare later
     const sanColumnsQuery = `select lastupd_from_san, san_assessment_version_no, ssp_plan_version_no from eor.oasys_set where cms_prob_number = '${offender1.probationCrn}'`

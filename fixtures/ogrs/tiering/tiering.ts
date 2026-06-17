@@ -75,11 +75,11 @@ export class Tiering {
             }
         }
 
-        if (finalResult && !rosh && provisionalFlag == 'N') {
+        if (finalResult && !rosh && provisionalFlag == 'N') {  // TODO changed rule for C / non-MAPPA
 
             // Missing ROSH, result is provisional unless a non-provisional result above is at least as high as the highest possible ROSH result
 
-            const highestRosh = calculateRoshMappa('V', tieringCase.mappa)
+            const highestRosh = 'A'  //calculateRoshMappa('V', tieringCase.mappa)
             if (finalResult > highestRosh) {
                 provisionalFlag = 'Y'
             }
@@ -156,7 +156,7 @@ function calculateDc(ospRisk: number, ospContactBand: string): Tier {
 function calculateRoshMappa(rosh: string, mappa: string): Tier {
 
     if (mappa == 'Y') {
-        return rosh == 'V' ? 'A' : rosh == 'H' ? 'C' : rosh == 'M' ? 'D' : 'E' //rosh == 'L' ? 'E' : null
+        return rosh == 'V' ? 'A' : rosh == 'H' ? 'C' : rosh == 'M' ? 'D' : 'E' // rosh == 'L' ? 'E' : null // TODO
     } else {
         return rosh == 'V' ? 'C' : rosh == 'H' ? 'D' : null
     }

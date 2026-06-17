@@ -1,9 +1,9 @@
 import { test } from 'fixtures'
 
 
-test('Example test - create a probation offender and a layer 1 assessment using new SP service', async ({ user, cms, offender, assessment, signing, api, sns, ogrs }) => {
+test('Example test - create a probation offender and a layer 1 assessment', async ({ user, offender, assessment, signing, api, sns, ogrs }) => {
 
-    await user.prob.probSpHeadPdu.login()
+    await user.prob.probHeadPdu.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Basic (Layer 1)' })
@@ -18,10 +18,6 @@ test('Example test - create a probation offender and a layer 1 assessment using 
     await api.testOneOffender(offender1.probationCrn, 'prob', false, false)
     await ogrs.checkOgrsInOasysSet(pk1)
 
-    await user.logout()
-
-    await user.pris.prisSpHomds.login()
-    await cms.createReceptionEvent(offender1)
     await user.logout()
 
 })

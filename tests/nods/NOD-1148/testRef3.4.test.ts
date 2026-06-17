@@ -26,7 +26,7 @@ test.describe.serial('OGRS regression test refs 3 and 4', async () => {
 
     test('Create offender', async ({ oasys, user, offender }) => {
 
-        await user.prob.probSpHeadPdu.login()
+        await user.prob.probHeadPdu.login()
         await offender.createProb(offender1)
         await user.logout()
     })

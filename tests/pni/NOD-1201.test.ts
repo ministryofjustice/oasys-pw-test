@@ -6,7 +6,7 @@ import { test } from 'fixtures'
 
 test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sara, sentencePlan, signing, api, pni }) => {
 
-    await user.prob.probSpHeadPdu.login()
+    await user.prob.probHeadPdu.login()
 
     // Offender 1
     const offender1 = await offender.createProbFromStandardOffender()

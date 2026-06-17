@@ -6,7 +6,7 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
     test('No countersigning required', async ({ oasys, user, offender, assessment, sns, signing, sections }) => {
 
         // Create an offender with minimally complete layer 3
-        await user.prob.probSpHeadPdu.login()
+        await user.prob.probHeadPdu.login()
 
         const offender1 = await offender.createProbFromStandardOffender()
 
@@ -39,7 +39,7 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
     test('Countersigning required', async ({ oasys, user, offender, assessment, sns, signing, risk, sentencePlan, sections }) => {
 
         // Create an offender with minimally complete layer 3 to get OGRS and RSR
-        await user.prob.probSpPso.login()
+        await user.prob.probPso.login()
         const offender1 = await offender.createProbFromStandardOffender()
 
         await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
@@ -53,19 +53,19 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         await sentencePlan.populateMinimal()
 
         // Sign assessment and send for countersigning, then check SNS messages
-        await signing.signAndLock({ expectRsrWarning: true, expectCountersigner: true, countersigner: user.prob.probSpHeadPdu })
+        await signing.signAndLock({ expectRsrWarning: true, expectCountersigner: true, countersigner: user.prob.probHeadPdu })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
         await user.logout()
 
         // Countersign assessment then check SNS messages again
-        await user.prob.probSpHeadPdu.login()
+        await user.prob.probHeadPdu.login()
         await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
         await user.logout()
 
         // Create another assessment, this one with OPD override and RSR
-        await user.prob.probSpPso.login()
+        await user.prob.probPso.login()
         await oasys.history(offender1)
 
         await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
@@ -79,12 +79,12 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         await assessment.summarySheet.opdOverrideReason.setValue('Testing')
 
         // Sign assessment and check SNS messages
-        await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSpHeadPdu })
+        await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probHeadPdu })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
         await user.logout()
 
         // Countersign assessment then check SNS messages again
-        await user.prob.probSpHeadPdu.login()
+        await user.prob.probHeadPdu.login()
         await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OPD'])

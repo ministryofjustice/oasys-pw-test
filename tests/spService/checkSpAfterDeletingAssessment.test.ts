@@ -3,7 +3,7 @@ import { test } from 'fixtures'
 
 test('Delete an assessment and check the sentence plan', async ({ oasys, user, offender, assessment, signing, sentencePlan }) => {
 
-    await user.prob.probSpHeadPdu.login()
+    await user.prob.probHeadPdu.login()
 
     // Create and complete an assessment with one goal in the sentence plan
     const offender1 = await offender.createProbFromStandardOffender()
@@ -26,7 +26,7 @@ test('Delete an assessment and check the sentence plan', async ({ oasys, user, o
     await user.logout()
 
     // Create a third assessment, check the number of goals
-    await user.prob.probSpHeadPdu.login()
+    await user.prob.probHeadPdu.login()
     await oasys.history(offender1)
     await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Basic (Layer 1)' })
     await sentencePlan.checkGoalCount(1, 0, 0)

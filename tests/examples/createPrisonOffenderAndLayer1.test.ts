@@ -2,7 +2,7 @@ import { test } from 'fixtures'
 
 test('Example test - create a prison offender and a layer 1 assessment', async ({ oasys, user, offender, assessment, signing, cms }) => {
 
-    await user.pris.prisSpHomds.login()
+    await user.pris.prisHomds.login()
 
     const offender1 = await offender.createPrisFromStandardOffender()
     await assessment.createPris({ purposeOfAssessment: 'Transfer in from non England / Wales Court', assessmentLayer: 'Basic (Layer 1)' })

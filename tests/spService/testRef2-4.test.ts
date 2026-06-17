@@ -21,10 +21,10 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check the CREATE API clog and make sure the parameters have been set correctly:
             the planType will be 'PSR_OUTLINE', the assessmentType will be 'SP', newPeriodOfSupervision will be 'Y', the 'Previous….' tags will both be null`, 'Test step')
 
-    await user.prob.probSpHeadPdu.login()
+    await user.prob.probHeadPdu.login()
     const offender1 = await offender.createProbFromStandardOffender()
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'PSR - SDR', assessmentLayer: 'Full (Layer 3)', sentencePlanType: 'PSR Outline', includeCourtReportTemplate: 'SDR' })
-    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probSpHeadPdu, providers.prob.nonSanCode, 'PSR_OUTLINE', true, 'Y')
+    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probHeadPdu, providers.prob.nonSanCode, 'PSR_OUTLINE', true, 'Y')
 
     log(`Check that OASYS_SET_SSP_TYPE_ELM = 'PSR_OUTLINE', OASYS_SET.ARNS_SP_ONLY_LINKED_IND = 'Y' and OASYS_SET.SAN_ASSESSMENT_LINKED_IND is NULL 
         Complete the OASys part of the assessment with whatever data you want but do NOT invoke a full analysis`, 'Test step')
@@ -60,7 +60,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     await oasys.clickButton('Next')
     await sentencePlan.sentencePlanService.checkCompletionStatus(true)
     await sentencePlan.psr.createPsr.authorsTeam.setValue('BED Default LDU/Default Team')
-    await sentencePlan.psr.createPsr.author.setValue(user.prob.probSpHeadPdu.lovLookup)
+    await sentencePlan.psr.createPsr.author.setValue(user.prob.probHeadPdu.lovLookup)
     await sentencePlan.psr.createPsr.create.click()
     await oasys.clickButton('Sign & Lock')
     await oasys.clickButton('Sign')
@@ -73,7 +73,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
 
     await oasys.history()
     await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
-    await san.queries.checkSanSigningCall(pk1, user.prob.probSpHeadPdu, 'SELF')
+    await san.queries.checkSanSigningCall(pk1, user.prob.probHeadPdu, 'SELF')
 
     log(`Check the correct SNS messages have been created, OGRS3, RSR and an ASSSUMMSAN (maybe OPD, depends on the data entered)
         Check the assessments tab for the offender - this latest completed PSR assessment shows an icon of SP against it (meaning it includes an ARNS sentence plan)`, 'Test step')
@@ -105,7 +105,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check that OASYS_SET_SSP_TYPE_ELM = 'INITIAL', OASYS_SET.ARNS_SP_ONLY_LINKED_IND = 'Y' and OASYS_SET.SAN_ASSESSMENT_LINKED_IND is 'N'`, 'Test step')
 
     const pk2 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', sentencePlanType: 'Initial' })
-    await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, user.prob.probSpHeadPdu, providers.prob.nonSanCode, 'INITIAL', true, 'N')
+    await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, user.prob.probHeadPdu, providers.prob.nonSanCode, 'INITIAL', true, 'N')
 
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk2}`, {
         SSP_TYPE_ELM: 'INITIAL',
@@ -128,7 +128,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         The Sentence Plan Service navigation option has a green tick on it because the plan was agreed as part of Test Ref 2 and it remains ongoing`, 'Test step')
 
     await user.logout()
-    await user.prob.probSpHeadPdu.login()
+    await user.prob.probHeadPdu.login()
     await oasys.history(offender1, 'Start of Community Order')
     await sentencePlan.sentencePlanService.checkCompletionStatus(true)
 
@@ -160,7 +160,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
             'sexuallyMotivatedOffenceHistory': null,
         },
         {
-            'displayName': user.prob.probSpHeadPdu.forenameSurname,
+            'displayName': user.prob.probHeadPdu.forenameSurname,
             'planAccessMode': 'READ_WRITE',
         },
         'sp', 'assessment'
@@ -171,7 +171,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check the SIGN API clog for the correct parameters`, 'Test step')
 
     await signing.signAndLock({ expectRsrWarning: true })
-    await san.queries.checkSanSigningCall(pk2, user.prob.probSpHeadPdu, 'SELF')
+    await san.queries.checkSanSigningCall(pk2, user.prob.probHeadPdu, 'SELF')
 
     log(`Check that OASYS_SET.SSP_PLAN_VERSION_NO differs from the version number on the previous PSR assessment.
         Check that OASYS_SET.SAN_ASSESSMENT_VERSION_NO remains null
@@ -213,7 +213,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
             'sexuallyMotivatedOffenceHistory': null,
         },
         {
-            'displayName': user.prob.probSpHeadPdu.forenameSurname,
+            'displayName': user.prob.probHeadPdu.forenameSurname,
             'planAccessMode': 'READ_ONLY',
         },
         'sp', 'assessment'
@@ -239,7 +239,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check that OASYS_SET_SSP_TYPE_ELM = 'REVIEW', OASYS_SET.ARNS_SP_ONLY_LINKED_IND = 'Y' and OASYS_SET.SAN_ASSESSMENT_LINKED_IND is 'N'`, 'Test step')
 
     const pk3 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)' })
-    await san.queries.checkSanCreateAssessmentCall(pk3, null, pk2, user.prob.probSpHeadPdu, providers.prob.nonSanCode, 'REVIEW', true, 'N')
+    await san.queries.checkSanCreateAssessmentCall(pk3, null, pk2, user.prob.probHeadPdu, providers.prob.nonSanCode, 'REVIEW', true, 'N')
 
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk3}`, {
         SSP_TYPE_ELM: 'REVIEW',
@@ -275,7 +275,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check the assessments tab for the offender - this latest completed REVIEW assessment shows an icon of SP against it (meaning it includes an ARNS sentence plan)`, 'Test step')
 
     await signing.signAndLock({ expectRsrWarning: true })
-    await san.queries.checkSanSigningCall(pk3, user.prob.probSpHeadPdu, 'SELF')
+    await san.queries.checkSanSigningCall(pk3, user.prob.probHeadPdu, 'SELF')
 
     const spVersion3 = await oasysDb.getSingleNumericValue(`select SSP_PLAN_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk3}`)
     expect(spVersion3).not.toBe(spVersion2)
@@ -306,7 +306,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
             'sexuallyMotivatedOffenceHistory': null,
         },
         {
-            'displayName': user.prob.probSpHeadPdu.forenameSurname,
+            'displayName': user.prob.probHeadPdu.forenameSurname,
             'planAccessMode': 'READ_ONLY',
         },
         'sp', 'assessment'
@@ -332,7 +332,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
             'sexuallyMotivatedOffenceHistory': null,
         },
         {
-            'displayName': user.prob.probSpHeadPdu.forenameSurname,
+            'displayName': user.prob.probHeadPdu.forenameSurname,
             'planAccessMode': 'READ_ONLY',
         },
         'sp', 'assessment'

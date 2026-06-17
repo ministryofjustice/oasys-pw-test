@@ -9,7 +9,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
             Offender has just one assessment
             FIRST - LAYER 3 v1 - oasys_set.cloned_from_previous_san_pk is NULL`, 'Test step')
 
-        await user.prob.probSpHeadPdu.login()
+        await user.prob.probHeadPdu.login()
         await oasys.history(offender1)
         // new oasys.Pages.Offender.OffenderDetails().pnc.setValue('UNKNOWN PNC')
 

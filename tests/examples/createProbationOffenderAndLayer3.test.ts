@@ -3,7 +3,7 @@ import { test } from 'fixtures'
 
 test('Example test - create a probation offender and a layer 3 assessment using new SP service', async ({ oasys, user, offender, assessment, signing }) => {
 
-    await user.prob.probSpHeadPdu.login()
+    await user.prob.probHeadPdu.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })

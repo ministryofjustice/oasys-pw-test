@@ -11,7 +11,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
 
     test('OGRS regression test ref 3', async ({ oasys, user, assessment, sections, risk, sns, signing, ogrs }) => {
 
-        await user.prob.probSpHeadPdu.login()
+        await user.prob.probHeadPdu.login()
         await oasys.history(offender1)
         pks[1] = await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' })
 

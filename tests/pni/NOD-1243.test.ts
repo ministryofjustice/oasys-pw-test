@@ -6,7 +6,7 @@ import { test } from 'fixtures'
 
 test('NOD-1243', async ({ oasys, user, offender, assessment, sections, risk, sara, sentencePlan, signing, api, pni }) => {
 
-    await user.prob.probSpHeadPdu.login()
+    await user.prob.probHeadPdu.login()
 
     const offender1 = await offender.createProbFromStandardOffender()
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })

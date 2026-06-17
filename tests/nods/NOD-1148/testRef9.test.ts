@@ -19,7 +19,7 @@ test('OGRS regression test ref 9', async ({ oasys, user, offender, assessment, s
         Check the OASYS_SET record has the SIX new '…ALGO_VERSION' fields all set to 1 apart from the OSP one which is set to 6								
         Check that OASYS_SET.RSR_ALGORITHM_VERSION has been set to 6`, 'Test step')
 
-    await user.pris.prisSpHomds.login()
+    await user.pris.prisHomds.login()
     const offender1 = await offender.createPrisFromStandardOffender({ gender: 'Not specified' })
     const pk1 = await assessment.createPris({ purposeOfAssessment: 'Risk of Harm Assessment' })
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {

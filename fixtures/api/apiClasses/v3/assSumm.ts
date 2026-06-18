@@ -1,7 +1,7 @@
 import * as common from '../common'
 import * as v3Common from './v3Common'
 import * as dbClasses from 'fixtures/api/data/dbClasses'
-import * as env from '../../restApiUrls'
+import * as env from '../../endpointUrls'
 import { NewActuarialPredictors } from '../riskScoreClasses'
 
 export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {

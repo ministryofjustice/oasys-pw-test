@@ -1,21 +1,26 @@
 import * as fs from 'fs-extra'
-import { TestInfo } from '@playwright/test'
+import { TestInfo, test } from '@playwright/test'
 
 import { userSuffixes } from 'localSettings'
 
 const oasysLogs: { [key: number]: Log[] } = {}
 const fileLog: { [key: number]: string[] } = {}
+export const statsLog: { [key: number]: string[] } = {}
+
 
 globalThis.log = (logtext: string, type?: string) => {
 
-    const testProcess = Number.parseInt(process.env.TEST_PARALLEL_INDEX)
-    oasysLogs[testProcess].push({ logText: logtext, type: type })
+    oasysLogs[utils.testProcessNumber()].push({ logText: logtext, type: type })
 }
 
 globalThis.fileLog = (logtext: string) => {
 
-    const testProcess = Number.parseInt(process.env.TEST_PARALLEL_INDEX)
-    fileLog[testProcess].push(logtext)
+    fileLog[utils.testProcessNumber()].push(logtext)
+}
+
+globalThis.statsLog = (type: string, time: number) => {
+
+    statsLog[utils.testProcessNumber()].push(`${type}\t${time}`)
 }
 
 const fileLogFolder = 'logs/'
@@ -26,20 +31,16 @@ export class Logs {
 
     async initialise() {
 
-        const testProcesses = userSuffixes.length
+        const testProcesses = 5//userSuffixes.length
         for (let i = 0; i < testProcesses; i++) {
             oasysLogs[i] = []
-        }
-        for (let i = 0; i < testProcesses; i++) {
             fileLog[i] = []
         }
-        await fs.emptyDir(fileLogFolder)
-
     }
 
     async finalise() {
 
-        const testProcess = Number.parseInt(process.env.TEST_PARALLEL_INDEX)
+        const testProcess = utils.testProcessNumber()
         for (let log of oasysLogs[testProcess]) {
             this.testInfo.annotations.push({ type: (log.type ?? ''), description: `${log.type && log.logText != '' ? '\n' : ''}${log.logText}` })
         }
@@ -49,3 +50,26 @@ export class Logs {
     }
 
 }
+
+/**
+ * Additional logging for API test stats - allows multiple parallel tests to write to the same stats file
+ */
+test.beforeAll(async () => {
+
+    const testProcesses = 5// userSuffixes.length
+    for (let i = 0; i < testProcesses; i++) {
+        statsLog[i] = []
+    }
+    await fs.emptyDir(fileLogFolder)
+})
+
+test.afterAll(async () => {
+
+    const testProcesses = 5// userSuffixes.length
+    for (let i = 0; i < testProcesses; i++) {
+        if (statsLog[i].length > 0) {
+            await fs.appendFile(`${fileLogFolder}stats.csv`, statsLog[i].join('\n'))
+            await fs.appendFile(`${fileLogFolder}stats.csv`, '\n')
+        }
+    }
+})

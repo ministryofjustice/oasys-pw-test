@@ -1,4 +1,4 @@
-export const restApiUrls: EndpointUrl[] = [
+export const endpointUrls: EndpointUrl[] = [
     { endpoint: 'token', url: 'oauth/token' },
     { endpoint: 'offences', url: 'ass/offence/{crn}/{laoPrivilege}' },
     { endpoint: 'riskScores', url: 'ass/risk/{crn}/{laoPrivilege}' },

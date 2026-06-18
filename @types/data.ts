@@ -70,7 +70,7 @@ declare type OffenderApisResult = {
     stats: EndpointStat[],
 }
 
-declare type RestResponse = {
+declare type ApiResponse = {
     url: string,
     statusCode: RestStatus,
     result: { [key: string]: any },

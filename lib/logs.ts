@@ -1,7 +1,6 @@
 import * as fs from 'fs-extra'
 import { TestInfo, test } from '@playwright/test'
 
-import { userSuffixes } from 'localSettings'
 
 const oasysLogs: { [key: number]: Log[] } = {}
 const fileLog: { [key: number]: string[] } = {}
@@ -31,7 +30,7 @@ export class Logs {
 
     async initialise() {
 
-        const testProcesses = 5//userSuffixes.length
+        const testProcesses = this.testInfo.config.workers
         for (let i = 0; i < testProcesses; i++) {
             oasysLogs[i] = []
             fileLog[i] = []
@@ -54,18 +53,18 @@ export class Logs {
 /**
  * Additional logging for API test stats - allows multiple parallel tests to write to the same stats file
  */
-test.beforeAll(async () => {
+test.beforeAll(async ({},testInfo: TestInfo) => {
 
-    const testProcesses = 5// userSuffixes.length
+    const testProcesses = testInfo.config.workers
     for (let i = 0; i < testProcesses; i++) {
         statsLog[i] = []
     }
     await fs.emptyDir(fileLogFolder)
 })
 
-test.afterAll(async () => {
+test.afterAll(async ({},testInfo: TestInfo) => {
 
-    const testProcesses = 5// userSuffixes.length
+    const testProcesses = testInfo.config.workers
     for (let i = 0; i < testProcesses; i++) {
         if (statsLog[i].length > 0) {
             await fs.appendFile(`${fileLogFolder}stats.csv`, statsLog[i].join('\n'))

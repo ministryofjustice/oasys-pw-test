@@ -17,34 +17,21 @@ export class Tiering {
         return result
     }
 
-    calculate(tieringCase: TieringCase, logText: string[]): { tier: Tier, provisional: string } {
-
-        // CSRP score
-        const csrpScore = tieringCase.arpCsrp.ncRsrPercentageScore
-        const staticCsrp = tieringCase.arpCsrp.rsrStaticOrDynamic != 'DYNAMIC'
-
-        // ARP score
-        const arpScore = tieringCase.arpCsrp.ogp2Percentage2yr ?? tieringCase.arpCsrp.ogrs4gPercentage2yr
-        const staticArp = tieringCase.arpCsrp.ogp2Percentage2yr == null
-
-        // RoSH flag - use Delius flag if available, otherwise take the one from oasys_set
-        const rosh = tieringCase.rosh ?? tieringCase.roshLevelElm
+    calculate(testCase: TieringCase, logText: string[]): { tier: Tier, provisional: string } {
 
         // Initial tier calculation - ARP/CSRP
-        const arpCsrp = calculateArpCsrp(arpScore, csrpScore)
+        const arpCsrp = calculateArpCsrp(testCase.arp, testCase.csrp)
 
         // Moderator calculations
-        const dc = calculateDc(tieringCase.srp.ncOspDcPercentageScore, tieringCase.srp.ncOspDcRiskReconElm)
-        const roshMappa = calculateRoshMappa(rosh, tieringCase.mappa)
-        const lifer = calculateLifer(tieringCase)
-        const daStalkingCp = calculateDaStalkingCp(tieringCase)
-        const pCoSos = calculatePCoSos(tieringCase)
+        const dc = calculateDc(testCase.ospDcScore, testCase.oscDcBand)
+        const roshMappa = calculateRoshMappa(testCase.rosh, testCase.mappa)
+        const lifer = calculateLifer(testCase)
+        const otherModerators = calculateOtherModerators(testCase)
 
         // Find the highest moderator
         let maxModerator = getHigherTier(dc, roshMappa)
         maxModerator = getHigherTier(maxModerator, lifer)
-        maxModerator = getHigherTier(maxModerator, daStalkingCp)
-        maxModerator = getHigherTier(maxModerator, pCoSos)
+        maxModerator = getHigherTier(maxModerator, otherModerators)
 
         // Determine the final result - null if no ARP/CSRP
         let finalResult = arpCsrp == null ? null : getHigherTier(arpCsrp, maxModerator)
@@ -53,19 +40,19 @@ export class Tiering {
         let provisionalFlag: 'Y' | 'N' = 'N'
         let maxArpCsrpTier: Tier
 
-        if (finalResult && (staticArp || staticCsrp)) {
+        if (finalResult && (testCase.arpStatic || testCase.csrpStatic)) {
 
             // If both static, result is always provisional unless moderators make it A
-            if (staticArp && staticCsrp) {
+            if (testCase.arpStatic && testCase.csrpStatic) {
                 if (maxModerator != 'A') {
                     provisionalFlag = 'Y'
                 }
             } else {
                 // Otherwise, depends on the possible maximum if one predictor went from static to dynamic
-                if (staticArp) {
-                    maxArpCsrpTier = calculateArpCsrp(100, csrpScore)
+                if (testCase.arpStatic) {
+                    maxArpCsrpTier = calculateArpCsrp(100, testCase.csrp)
                 } else {
-                    maxArpCsrpTier = calculateArpCsrp(arpScore, 100)
+                    maxArpCsrpTier = calculateArpCsrp(testCase.arp, 100)
                 }
 
                 // Provisional unless a moderator has taken it to the maximum available or higher
@@ -75,24 +62,23 @@ export class Tiering {
             }
         }
 
-        if (finalResult && !rosh && provisionalFlag == 'N') {  // TODO changed rule for C / non-MAPPA
+        if (finalResult && !testCase.rosh && provisionalFlag == 'N') {
 
             // Missing ROSH, result is provisional unless a non-provisional result above is at least as high as the highest possible ROSH result
 
-            const highestRosh = 'A'  //calculateRoshMappa('V', tieringCase.mappa)
+            const highestRosh = calculateRoshMappa('V', testCase.mappa)
             if (finalResult > highestRosh) {
                 provisionalFlag = 'Y'
             }
         }
 
-        logText.push(`        ARP/CSRP   - ${arpCsrp}`)
-        logText.push(`        DC-SRP     - ${dc}`)
-        logText.push(`        RoSH/MAPPA - ${roshMappa}`)
-        logText.push(`        Lifer      - ${lifer}`)
-        logText.push(`        DA, st, CP - ${daStalkingCp}`)
-        logText.push(`        PCoSo      - ${pCoSos}`)
-        logText.push(`        [Max ARP/CSRP - ${maxArpCsrpTier}]`)
-        logText.push(`        [Max moderator - ${maxModerator}]`)
+        logText.push(`        ARP/CSRP         - ${arpCsrp}`)
+        logText.push(`        DC-SRP           - ${dc}`)
+        logText.push(`        RoSH/MAPPA       - ${roshMappa}`)
+        logText.push(`        Lifer            - ${lifer}`)
+        logText.push(`        Other moderators - ${otherModerators}`)
+        logText.push(`        [Max ARP/CSRP    - ${maxArpCsrpTier}]`)
+        logText.push(`        [Max moderator   - ${maxModerator}]`)
 
         return { tier: finalResult ?? 'M', provisional: provisionalFlag }
     }
@@ -153,10 +139,10 @@ function calculateDc(ospRisk: number, ospContactBand: string): Tier {
     return null
 }
 
-function calculateRoshMappa(rosh: string, mappa: string): Tier {
+function calculateRoshMappa(rosh: string, mappa: boolean): Tier {
 
-    if (mappa == 'Y') {
-        return rosh == 'V' ? 'A' : rosh == 'H' ? 'C' : rosh == 'M' ? 'D' : 'E' // rosh == 'L' ? 'E' : null // TODO
+    if (mappa) {
+        return rosh == 'V' ? 'A' : rosh == 'H' ? 'C' : rosh == 'M' ? 'D' : 'E'
     } else {
         return rosh == 'V' ? 'C' : rosh == 'H' ? 'D' : null
     }
@@ -164,41 +150,23 @@ function calculateRoshMappa(rosh: string, mappa: string): Tier {
 
 function calculateLifer(tieringCase: TieringCase): Tier {
 
-    if (tieringCase.lifer != 'Y' || tieringCase.custodyInd == 'Y' || tieringCase.communityDate == null || tieringCase.dateCompleted == null) {
+    if (!tieringCase.lifer || tieringCase.inCustody || tieringCase.communityDate == null || tieringCase.communityDateFuture) {
         return null
     }
 
-    if (oasysDateTime.dateDiffString(tieringCase.dateCompleted, tieringCase.communityDate, 'day') > 0) {        // Community date is in the future
-        return null
-    }
-
-    const diffYears = oasysDateTime.dateDiffString(tieringCase.communityDate, tieringCase.dateCompleted, 'year') // Assessment date minus community date
+    const diffYears = oasysDateTime.dateDiff(tieringCase.communityDate, oasysDateTime.testStartDate, 'year') // Today minus community date
     return diffYears == 0 ? 'B' : diffYears < 5 ? 'D' : 'E'
 }
 
-function calculateDaStalkingCp(tieringCase: TieringCase): Tier {
+function calculateOtherModerators(tieringCase: TieringCase): Tier {
 
-    if (tieringCase.daStalkingCp.da == 'Y' || tieringCase.daStalkingCp.daHistory == 'Y') {
+    if (tieringCase.da || tieringCase.o1_30) {
         return 'E'
     }
-    if (tieringCase.daStalkingCp.stalking == 'Y' || tieringCase.daStalkingCp.childProtection == 'Y') {
+    if (tieringCase.stalking || tieringCase.cp) {
         return 'F'
     }
     return null
-}
-
-function calculatePCoSos(tieringCase: TieringCase): Tier {
-
-    return tieringCase.o1_30 == 'Y' ? 'E' : null
-}
-
-function calculateMinCsrp(tieringCase: TieringCase): number {
-
-    let result = tieringCase.srp.ncOspDcPercentageScore ?? 0
-    if (tieringCase.srp.ncOspIicPercentageScore) {
-        result += tieringCase.srp.ncOspIicPercentageScore
-    }
-    return result
 }
 
 function getHigherTier(t1: Tier, t2: Tier): Tier {

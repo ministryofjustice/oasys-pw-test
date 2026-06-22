@@ -2,42 +2,87 @@ import * as fs from 'fs-extra'
 
 import { test } from 'fixtures'
 import { TieringCase } from 'fixtures/ogrs/tiering/dbClasses'
+import { getCaseFromCsv } from 'fixtures/ogrs/tiering/csv'
 
-const count: number = 0
+const csvCount: number = 300000
+const oracleCount = 300000
+const whereClause: string = null
+// const whereClause = `cms_prob_number = 'V017263'`
 const reportAll = false
-const testFile = 'tests/ogrs/data/local/tiers-preprod-2026-06-17.csv'
+const testFile = 'tests/ogrs/data/local/tiers-preprod-2026-06-19.csv'
 
 test('Tier calculations test - CSV', async ({ ogrs }) => {
 
     let failed = 0
     let passed = 0
     let skipped = 0
+    let arpMismatch = 0
+    let csrpMismatch = 0
+    let releaseDate = 0
+    let scoreOverlap = 0
+    let releaseDateScoreOverlap = 0
+    let anyMismatch = 0
 
+    // CSV data (with PI results)
     const testData = await fs.readFile(testFile, 'utf8')
     const testCases = testData.split('\r\n')
     const numCases = testCases.length
+    const rows = csvCount == 0 || numCases < csvCount ? numCases - 1 : csvCount  // First row is header
 
-    const rows = count == 0 || numCases < count ? numCases - 1 : count  // First row is header
+    // Oracle data (with Oracle results)
+    const oracleTieringData = await ogrs.tiering.getTieringTestData(oracleCount, whereClause)
+    const oracleTestCases: { [key: string]: TieringCase } = {}
+    for (let i = 0; i < oracleTieringData.length; i++) {
+        oracleTestCases[oracleTieringData[i].probationCrn] = oracleTieringData[i]
+    }
+
 
     for (let i = 1; i <= rows; i++) {
 
         const logText: string[] = []
 
-        const tieringCase = getCaseFromCsv(testCases[i])
-        if (tieringCase) {
-            const caseResult = ogrs.tiering.calculate(tieringCase, logText)
-            const caseFailed = caseResult.tier != tieringCase.oracleResults.finalTier || caseResult.provisional != tieringCase.oracleResults.provisional
+        const csvTestCase = getCaseFromCsv(testCases[i])
+        if (csvTestCase) {
+
+            const oracleTestCase = oracleTestCases[csvTestCase.probationCrn] // oracleTieringData.find((c) => c.probationCrn == csvTestCase.probationCrn)
+
+            const calculatedResult = ogrs.tiering.calculate(csvTestCase, logText)
+            const caseFailed =
+                calculatedResult.tier != csvTestCase.csvOrOracleResults.finalTier
+                || calculatedResult.provisional != csvTestCase.csvOrOracleResults.provisional
+                || (oracleTestCase && (calculatedResult.tier != oracleTestCase?.csvOrOracleResults.finalTier
+                    || calculatedResult.provisional != oracleTestCase?.csvOrOracleResults.provisional))
 
             if (caseFailed || reportAll) {
-                log(`     ${JSON.stringify(tieringCase)}`, `CRN: ${tieringCase.probationCrn} / ${tieringCase.prisonCrn} ${caseFailed ? 'FAILED' : ''}`)
-                log(`     CSV tier: ${tieringCase.oracleResults.finalTier}, Test result: ${caseResult.tier}`)
-                log(`     CSV provisional: ${tieringCase.oracleResults.provisional}, Test result: ${caseResult.provisional}`)
+                log(` CSV: ${JSON.stringify(csvTestCase)}\n Oracle: ${JSON.stringify(oracleTestCase)}`,
+                    `CRN: ${csvTestCase.probationCrn} ${caseFailed ? 'FAILED' : ''}`)
+                log(`     Tier - CSV: ${csvTestCase.csvOrOracleResults.finalTier}, Oracle: ${oracleTestCase?.csvOrOracleResults.finalTier}, Calculated: ${calculatedResult.tier}`)
+                log(`     Provisional - CSV: ${csvTestCase.csvOrOracleResults.provisional}, Oracle: ${oracleTestCase?.csvOrOracleResults.provisional}, Calculated:  ${calculatedResult.provisional}`)
                 logText.forEach((logLine) => {
                     log(logLine)
                 })
                 log(' ')
                 if (caseFailed) {
                     failed++
+
+                    if (csvTestCase.arp != oracleTestCase.arp) {
+                        arpMismatch++
+                    }
+                    if (csvTestCase.csrp != oracleTestCase.csrp) {
+                        csrpMismatch++
+                    }
+                    if (csvTestCase.arp != oracleTestCase.arp && csvTestCase.csrp != oracleTestCase.csrp) {
+                        scoreOverlap++
+                    }
+                    if (csvTestCase.communityDate != oracleTestCase.communityDate) {
+                        releaseDate++
+                    }
+                    if (csvTestCase.communityDate != oracleTestCase.communityDate && (csvTestCase.arp != oracleTestCase.arp || csvTestCase.csrp != oracleTestCase.csrp)) {
+                        releaseDateScoreOverlap++
+                    }
+                    if (csvTestCase.arp != oracleTestCase.arp || csvTestCase.csrp != oracleTestCase.csrp || csvTestCase.communityDate != oracleTestCase.communityDate) {
+                        anyMismatch++
+                    }
                 }
             }
             if (!caseFailed) {
@@ -50,88 +95,14 @@ test('Tier calculations test - CSV', async ({ ogrs }) => {
     }
 
     log(`Passed: ${passed}, failed: ${failed}, skipped: ${skipped}`, 'Summary')
+    log(`ARP mismatch: ${arpMismatch}, CSRP mismatch: ${csrpMismatch}, score overlap: ${scoreOverlap}`)
+    log(`Releast date mismatch: ${releaseDate}, overlap: ${releaseDateScoreOverlap}`)
+    log(`Any mismatch: ${anyMismatch}`)
     console.log(`Passed: ${passed}, failed: ${failed}, skipped: ${skipped}`)
+    console.log(`ARP mismatch: ${arpMismatch}, CSRP mismatch: ${csrpMismatch}, score overlap: ${scoreOverlap}`)
+    console.log(`Release date mismatch: ${releaseDate}, overlap: ${releaseDateScoreOverlap}`)
+    console.log(`Any mismatch: ${anyMismatch}`)
 
     expect(failed).toBe(0)
 
 })
-
-function getCaseFromCsv(testCaseData: string): TieringCase {
-
-    const data = testCaseData.split(',')
-    // 00 crn
-    // 01 tier
-    // 02 provisional
-    // 03 tier_calculation_id
-    // 04 tier_calculated_at
-    // 05 assessment_completed_at
-    // 06 arp_score
-    // 07 arp_band
-    // 08 arp_static_or_dynamic
-    // 09 csrp_score
-    // 10 csrp_band
-    // 11 csrp_static_or_dynamic
-    // 12 dcsrp_score
-    // 13 dcsrp_band
-    // 14 iicsrp_score
-    // 15 iicsrp_band
-    // 16 ever_committed_sexual_offence
-    // 17 has_active_event
-    // 18 rosh
-    // 19 mappa_level
-    // 20 mappa_category
-    // 21 lifer_ipp
-    // 22 latest_release_date
-    // 23 stalking
-    // 24 domestic_abuse
-    // 25 child_protection
-
-    if (data[1] == 'NOT_SUPERVISED') {
-        return null
-    }
-
-    const result: TieringCase = {
-        probationCrn: data[0],
-        prisonCrn: null,
-        assessmentPk: null,
-        offenderPk: null,
-        dateCompleted: '16/06/2026', // TODO data[5],
-        o1_30: trueFalseToYN(data[16]),
-        arpCsrp: {
-            ncRsrPercentageScore: utils.stringToFloat(data[9]),
-            rsrStaticOrDynamic: data[11],
-            ogrs4gPercentage2yr: data[8] == 'STATIC' ? utils.stringToFloat(data[6]) : null,
-            ogp2Percentage2yr: data[8] == 'DYNAMIC' ? utils.stringToFloat(data[6]) : null,
-        },
-        srp: {
-            ncOspDcRiskReconElm: data[13].charAt(0),
-            ncOspDcPercentageScore: utils.stringToFloat(data[12]),
-            ncOspIicRiskReconElm: data[15].charAt(0),
-            ncOspIicPercentageScore: utils.stringToFloat(data[14]),
-            dcSrpRiskReduction: null,
-        },
-        rosh: data[18].charAt(0),
-        roshLevelElm: null,
-        mappa: data[20] == '' ? null : 'Y',
-        lifer: trueFalseToYN(data[21]),
-        custodyInd: null,
-        communityDate: data[22] == '' ? null : data[22],
-        daStalkingCp: {
-            da: trueFalseToYN(data[24]),
-            daHistory: null,
-            stalking: trueFalseToYN(data[23]),
-            childProtection: trueFalseToYN(data[25]),
-        },
-        oracleResults: {
-            finalTier: data[1].charAt(0),
-            provisional: trueFalseToYN(data[2]),
-        },
-    }
-
-    return result
-}
-
-function trueFalseToYN(data: string): 'Y' | 'N' {
-
-    return data == 'TRUE' ? 'Y' : 'N'
-}

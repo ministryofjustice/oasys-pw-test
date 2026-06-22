@@ -10,25 +10,30 @@ test('Tier calculations test', async ({ ogrs }) => {
 
     let failed = 0
     let passed = 0
+    let communityDateIssue = 0
 
     const tieringData = await ogrs.tiering.getTieringTestData(count, whereClause)
 
-    for (const tieringCase of tieringData) {
+    for (const testCase of tieringData) {
         const logText: string[] = []
 
-        const caseResult = ogrs.tiering.calculate(tieringCase, logText)
-        const caseFailed = caseResult.tier != tieringCase.oracleResults.finalTier || caseResult.provisional != tieringCase.oracleResults.provisional
+        const caseResult = ogrs.tiering.calculate(testCase, logText)
+        const caseFailed = caseResult.tier != testCase.csvOrOracleResults.finalTier || caseResult.provisional != testCase.csvOrOracleResults.provisional
+        const caseCommunityDateIssue = testCase.lifer && !testCase.inCustody && testCase.communityDateFuture
 
         if (caseFailed || reportAll) {
-            log(`     ${JSON.stringify(tieringCase)}`, `CRN: ${tieringCase.probationCrn} / ${tieringCase.prisonCrn} ${caseFailed ? 'FAILED' : ''}`)
-            log(`     Oracle tier: ${tieringCase.oracleResults.finalTier}, Test result: ${caseResult.tier}`)
-            log(`     Oracle provisional: ${tieringCase.oracleResults.provisional}, Test result: ${caseResult.provisional}`)
+            log(`     ${JSON.stringify(testCase)}`, `CRN: ${testCase.probationCrn} ${caseFailed ? 'FAILED' : ''}`)
+            log(`     Oracle tier: ${testCase.csvOrOracleResults.finalTier}, Test result: ${caseResult.tier}`)
+            log(`     Oracle provisional: ${testCase.csvOrOracleResults.provisional}, Test result: ${caseResult.provisional}`)
             logText.forEach((logLine) => {
                 log(logLine)
             })
             log(' ')
             if (caseFailed) {
                 failed++
+            }
+            if (caseCommunityDateIssue) {
+                communityDateIssue++
             }
         }
         if (!caseFailed) {
@@ -37,8 +42,8 @@ test('Tier calculations test', async ({ ogrs }) => {
 
     }
 
-    log(`Passed: ${passed}, failed: ${failed}`, 'Summary')
-    console.log(`Passed: ${passed}, failed: ${failed}`)
+    log(`Passed: ${passed}, failed: ${failed}, community date issue: ${communityDateIssue}`, 'Summary')
+    console.log(`Passed: ${passed}, failed: ${failed}, community date issue: ${communityDateIssue}`)
 
     expect(failed).toBe(0)
 

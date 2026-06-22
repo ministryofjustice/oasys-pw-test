@@ -1,7 +1,7 @@
 import * as common from '../common'
 import * as v4Common from './v4Common'
 import * as dbClasses from 'fixtures/api/data/dbClasses'
-import * as env from '../../restApiUrls'
+import * as env from '../../endpointUrls'
 import { QaData } from 'fixtures/api/data/qaData'
 import { pniCalc } from 'fixtures/pni/pniCalc'
 

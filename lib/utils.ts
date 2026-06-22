@@ -144,4 +144,8 @@ export class Utils {
         return array.indexOf(value) === index
     }
 
+    testProcessNumber(): number {
+        
+        return Number.parseInt(process.env.TEST_PARALLEL_INDEX)
+    }
 }

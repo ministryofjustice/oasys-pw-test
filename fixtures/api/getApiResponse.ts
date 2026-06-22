@@ -1,6 +1,6 @@
 import { APIRequestContext } from '@playwright/test'
 
-import { restApiUrls } from './restApiUrls'
+import { endpointUrls } from './endpointUrls'
 import { testEnvironment } from '../../localSettings'
 
 const restConfig = testEnvironment.rest
@@ -13,12 +13,12 @@ var token = ''
  * 
  * The RestResponse array return value includes url called, status code, returned data and error message if any.
  */
-export async function getMultipleRestData(parameters: EndpointParams[], request: APIRequestContext): Promise<RestResponse[]> {
+export async function getMultipleApiResponses(parameters: EndpointParams[], request: APIRequestContext): Promise<ApiResponse[]> {
 
-    const response: RestResponse[] = []
+    const response: ApiResponse[] = []
 
     for (let i = 0; i < parameters.length; i++) {
-        const r = await getRestData(parameters[i], request)
+        const r = await getApiResponse(parameters[i], request)
         response.push(r)
     }
     return response
@@ -30,18 +30,18 @@ export async function getMultipleRestData(parameters: EndpointParams[], request:
  * 
  * The RestResponse return value includes the url called, status code, returned data and error message if any.
  */
-export async function getRestData(parameters: EndpointParams, request: APIRequestContext): Promise<RestResponse> {
+export async function getApiResponse(parameters: EndpointParams, request: APIRequestContext): Promise<ApiResponse> {
 
     // Construct the URL with parameters
-    restApiUrls.filter((endpoint) => endpoint.endpoint == parameters.endpoint)[0].url
-    let url = (' ' + restApiUrls.filter((endpoint) => endpoint.endpoint == parameters.endpoint)[0].url).slice(1)  // have to force copying to a new object to avoid problems with replace function
+    endpointUrls.filter((endpoint) => endpoint.endpoint == parameters.endpoint)[0].url
+    let url = (' ' + endpointUrls.filter((endpoint) => endpoint.endpoint == parameters.endpoint)[0].url).slice(1)  // have to force copying to a new object to avoid problems with replace function
     Object.keys(parameters).forEach((parameter) => {
         if (parameter != 'endpoint') {
             url = url.replace(`{${parameter}}`, parameters[parameter as keyof EndpointParams] as string)
         }
     })
 
-    var restResponse: RestResponse = { url: url, statusCode: 'ok', result: null, message: null, responseTime: null }
+    var restResponse: ApiResponse = { url: url, statusCode: 'ok', result: null, message: null, responseTime: null }
 
     try {
         await getTokenIfRequired()
@@ -74,7 +74,7 @@ async function getTokenIfRequired() {
 
     if (token == '') {
 
-        const tokenUrl = `${restConfig.baseUrl}${restApiUrls.filter((endpoint) => endpoint.endpoint == 'token')[0].url}`
+        const tokenUrl = `${restConfig.baseUrl}${endpointUrls.filter((endpoint) => endpoint.endpoint == 'token')[0].url}`
         const credentials = Buffer.from(`${restConfig.clientId}:${restConfig.clientSecret}`).toString('base64')
 
         const body = new URLSearchParams()

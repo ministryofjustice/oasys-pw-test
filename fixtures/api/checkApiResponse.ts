@@ -1,6 +1,6 @@
 import { flatten } from 'flat'
 import { EndpointResponse } from './apiClasses/common'
-import { restErrorResults } from './restApiUrls'
+import { restErrorResults } from './endpointUrls'
 
 /**
  * Checks an endpoint response value against the expected return values.
@@ -13,7 +13,7 @@ import { restErrorResults } from './restApiUrls'
  */
 
 
-export async function checkApiResponse(expectedValues: EndpointResponse | RestErrorResult, response: RestResponse, reportPasses: boolean): Promise<boolean> {
+export async function checkApiResponse(expectedValues: EndpointResponse | RestErrorResult, response: ApiResponse, reportPasses: boolean): Promise<boolean> {
 
     let failed = false
     const logText: string[] = []

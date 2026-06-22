@@ -25,5 +25,6 @@ declare global {
     var waitForPageUpdate: (page: Page, initialDelay?: number) => Promise<void>
     var log: (logtext: string, type?: string) => void
     var fileLog: (logtext: string) => void
+    var statsLog: (type: string, time: number) => void
     var appConfig: AppConfig
 }

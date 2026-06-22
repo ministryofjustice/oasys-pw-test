@@ -1,7 +1,7 @@
 import { OGP, OVP, OGRS, RSR, OSP, NewActuarialPredictors } from '../riskScoreClasses'
 import * as v1Common from './v1Common'
 import * as dbClasses from 'fixtures/api/data/dbClasses'
-import * as env from '../../restApiUrls'
+import * as env from '../../endpointUrls'
 
 export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {
 

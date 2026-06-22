@@ -180,4 +180,3 @@ export const test = base.extend<OasysFixtures>({
         await logs.finalise()
     }, { auto: true }],
 })
-

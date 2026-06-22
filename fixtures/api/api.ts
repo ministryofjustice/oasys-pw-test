@@ -22,8 +22,7 @@ export class Api {
      *  - skipPkOnlyCalls - if true, any APIs that are called with just an assessment PK will be skipped on the basis that the calling script is repeating an offender 
      *                      (selected this time using the prison CRN instead of probation) so these calls will be identical.
      */
-    async testOneOffender(crn: string, crnSource: Provider, skipPkOnlyCalls: boolean, reportPasses: boolean,
-        stats: EndpointStat[] = null, limitEndpoints: Endpoint[] = [], excludeEndpoints: Endpoint[] = []): Promise<boolean> {
+    async testOneOffender(crn: string, crnSource: Provider, skipPkOnlyCalls: boolean, reportPasses: boolean, limitEndpoints: Endpoint[] = [], excludeEndpoints: Endpoint[] = []): Promise<boolean> {
 
         const v1Endpoints: Endpoint[] = [
             'offences',
@@ -74,9 +73,7 @@ export class Api {
 
         // Get all relevant data from the OASys database
         const offenderData = await restApiDb.getOffenderWithAssessments(crnSource, crn, this.oasysDb)
-        // Store the elapsed time for database querying
-        stats?.push({ endpoint: 'database', responseTime: offenderData.dbElapsedTime })
-        log('', '')
+        log('', ' ')
         log('', `Offender ${crnSource == 'prob' ? 'CRN' : 'NOMIS Id'}: ${crn}`)
 
         if (offenderData == null) {  // null return indicates no offender data or multiple offenders with the same CRN
@@ -84,6 +81,8 @@ export class Api {
             log('')
 
         } else {
+            // Store the elapsed time for database querying
+            statsLog('database', offenderData.dbElapsedTime)
 
             ////////////////////////////////////////////////////////////
             // Compile a set of parameters for calling the API functions
@@ -161,11 +160,11 @@ export class Api {
                 ? apiParams
                 : apiParams.filter((param) => limitEndpoints.includes(param.endpoint)))
                 .filter((param) => !excludeEndpoints.includes(param.endpoint))
-                
+
             ///////////////////////////////////////////////////////////
             // Work out the expected responses, then call the endpoints
             const expectedValues = await rest.GetExpectedResponses.getExpectedResponses(offenderData, filteredParamsList)
-            const actualValues = await restApi.getMultipleRestData(filteredParamsList, this.request)
+            const actualValues = await restApi.getMultipleApiResponses(filteredParamsList, this.request)
 
             ////////////////////////////////////
             // Compare results for each endpoint
@@ -197,7 +196,7 @@ export class Api {
                 if (slow != '') {
                     log(`${actualValues[i].responseTime}ms ${slow}`)
                 }
-                stats?.push({ endpoint: filteredParamsList[i].endpoint, responseTime: actualValues[i].responseTime })
+                statsLog(filteredParamsList[i].endpoint, actualValues[i].responseTime)
                 log('')
             }
         }

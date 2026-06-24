@@ -1,4 +1,6 @@
-import { TieringCase } from "./dbClasses"
+import { Temporal } from '@js-temporal/polyfill'
+
+import { TieringCase } from './dbClasses'
 
 export function getCaseFromCsv(testCaseData: string): TieringCase {
 
@@ -30,7 +32,7 @@ export function getCaseFromCsv(testCaseData: string): TieringCase {
     // 24 domestic_abuse
     // 25 child_protection
 
-    if (data[1] == 'NOT_SUPERVISED' || (data[4] != '18/06/2026' && data[4] != '19/06/2026')) {
+    if (data[1] == 'NOT_SUPERVISED') {
         return null
     }
 
@@ -43,23 +45,23 @@ export function getCaseFromCsv(testCaseData: string): TieringCase {
         arp: utils.stringToFloat(data[6]),
         csrp: utils.stringToFloat(data[9]),
 
-        oscDcBand: data[13].charAt(0),
+        oscDcBand: data[13]?.charAt(0),
         ospDcScore: utils.stringToFloat(data[12]),
 
-        rosh: data[18].charAt(0),
+        rosh: data[18]?.charAt(0),
         mappa: data[20] != '',
-        lifer: data[21] == 'TRUE',
+        lifer: data[21]?.toUpperCase() == 'TRUE',
         inCustody: null,
-        communityDate: oasysDateTime.stringToDate(data[22]),
-        communityDateFuture: oasysDateTime.dateDiff(oasysDateTime.testStartDate, oasysDateTime.stringToDate(data[22]), 'day') > 0,
+        releaseDate: oasysDateTime.stringToDate(data[22]),
+        runDate: oasysDateTime.stringToDate(data[4]),
 
-        o1_30: data[16] == 'TRUE',
-        da: data[24] == 'TRUE',
-        stalking: data[23] == 'TRUE',
-        cp: data[25] == 'TRUE',
+        o1_30: data[16]?.toUpperCase() == 'TRUE',
+        da: data[24]?.toUpperCase() == 'TRUE',
+        stalking: data[23]?.toUpperCase() == 'TRUE',
+        cp: data[25]?.toUpperCase() == 'TRUE',
 
         csvOrOracleResults: {
-            finalTier: data[1].charAt(0),
+            finalTier: data[1]?.charAt(0),
             provisional: trueFalseToYN(data[2]),
         },
     }
@@ -69,5 +71,5 @@ export function getCaseFromCsv(testCaseData: string): TieringCase {
 
 function trueFalseToYN(data: string): 'Y' | 'N' {
 
-    return data == 'TRUE' ? 'Y' : 'N'
+    return data?.toUpperCase() == 'TRUE' ? 'Y' : 'N'
 }

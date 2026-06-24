@@ -17,8 +17,8 @@ export class TieringCase {
 
     lifer: boolean
     inCustody: boolean
-    communityDate: Temporal.PlainDate
-    communityDateFuture: boolean
+    releaseDate: Temporal.PlainDate
+    runDate: Temporal.PlainDate
 
     o1_30: boolean
     da: boolean
@@ -30,7 +30,7 @@ export class TieringCase {
         provisional: string
     }
 
-    constructor(tieringData: string[]) {
+    constructor(tieringData: string[], runDate?: Temporal.PlainDate) {
 
         let i = 0
         this.probationCrn = tieringData[i++]
@@ -51,8 +51,8 @@ export class TieringCase {
         this.mappa = tieringData[i++] == 'Y'
         this.lifer = tieringData[i++] == 'Y'
         this.inCustody = tieringData[i++] == 'Y'
-        this.communityDate = oasysDateTime.stringToDate(tieringData[i++])
-        this.communityDateFuture = oasysDateTime.dateDiff(oasysDateTime.testStartDate, this.communityDate, 'day') > 0
+        this.releaseDate = oasysDateTime.stringToDate(tieringData[i++])
+        this.runDate = runDate ?? oasysDateTime.testStartDate
 
         this.o1_30 = tieringData[i++] == 'Y'
         this.da = tieringData[i++] == 'Y'
@@ -67,17 +67,19 @@ export class TieringCase {
 
     static query(rows: number, whereClause: string): string {
 
-        const where = whereClause == null ? '' : `where ${whereClause}`
+        let where = whereClause == null ? '' : `where ${whereClause}`
+
         return `select 
-                    cms_prob_number,
-                    ogrs4g_percentage_2yr, ogp2_percentage_2yr, 
-                    nc_rsr_static_or_dynamic, nc_rsr_percentage_score, 
-                    nc_osp_dc_risk_recon_elm, nc_osp_dc_percentage_score,  
-                    rosh, mappa, lifer, custody_ind, to_char(community_date, '${dateFormat}'),
-                    one_point_thirty,
-                    da, stalking, child_protection,
-                    final_tier, provisional
-                    from eor.df453_new_prediction 
+                    df.cms_prob_number,
+                    df.ogrs4g_percentage_2yr, df.ogp2_percentage_2yr, 
+                    df.nc_rsr_static_or_dynamic, df.nc_rsr_percentage_score, 
+                    df.nc_osp_dc_risk_recon_elm, df.nc_osp_dc_percentage_score,  
+                    df.rosh, df.mappa, df.lifer, df.custody_ind, 
+                    to_char(df.delius_release_date, '${dateFormat}'),
+                    df.one_point_thirty,
+                    df.da, df.stalking, df.child_protection,
+                    df.final_tier, df.provisional
+                    from eor.df453_new_prediction df, eor.oasys_set_change osc, eor.oasys_set os
                     ${where}
                     fetch first ${rows} rows only`
     }

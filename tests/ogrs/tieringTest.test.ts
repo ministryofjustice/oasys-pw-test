@@ -10,7 +10,6 @@ test('Tier calculations test', async ({ ogrs }) => {
 
     let failed = 0
     let passed = 0
-    let communityDateIssue = 0
 
     const tieringData = await ogrs.tiering.getTieringTestData(count, whereClause)
 
@@ -19,7 +18,6 @@ test('Tier calculations test', async ({ ogrs }) => {
 
         const caseResult = ogrs.tiering.calculate(testCase, logText)
         const caseFailed = caseResult.tier != testCase.csvOrOracleResults.finalTier || caseResult.provisional != testCase.csvOrOracleResults.provisional
-        const caseCommunityDateIssue = testCase.lifer && !testCase.inCustody && testCase.communityDateFuture
 
         if (caseFailed || reportAll) {
             log(`     ${JSON.stringify(testCase)}`, `CRN: ${testCase.probationCrn} ${caseFailed ? 'FAILED' : ''}`)
@@ -32,9 +30,6 @@ test('Tier calculations test', async ({ ogrs }) => {
             if (caseFailed) {
                 failed++
             }
-            if (caseCommunityDateIssue) {
-                communityDateIssue++
-            }
         }
         if (!caseFailed) {
             passed++
@@ -42,9 +37,8 @@ test('Tier calculations test', async ({ ogrs }) => {
 
     }
 
-    log(`Passed: ${passed}, failed: ${failed}, community date issue: ${communityDateIssue}`, 'Summary')
-    console.log(`Passed: ${passed}, failed: ${failed}, community date issue: ${communityDateIssue}`)
-
+    log(`Passed: ${passed}, failed: ${failed}`, 'Summary')
+    console.log(`Passed: ${passed}, failed: ${failed}`)
     expect(failed).toBe(0)
 
 })

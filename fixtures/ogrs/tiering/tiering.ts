@@ -5,7 +5,7 @@ export class Tiering {
 
     constructor(private readonly oasysDb: OasysDb) { }
 
-    async getTieringTestData(rows: number, whereClause: string): Promise<TieringCase[]> {
+    async getTieringTestData(rows: number, whereClause?: string): Promise<TieringCase[]> {
 
         const cases = await this.oasysDb.getData(TieringCase.query(rows, whereClause))
 

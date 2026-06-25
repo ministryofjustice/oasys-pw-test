@@ -67,7 +67,7 @@ export class TieringCase {
 
     static query(rows: number, whereClause: string): string {
 
-        let where = whereClause == null ? '' : `where ${whereClause}`
+        let andWhere = whereClause == null ? '' : `and ${whereClause}`
 
         return `select 
                     df.cms_prob_number,
@@ -79,8 +79,9 @@ export class TieringCase {
                     df.one_point_thirty,
                     df.da, df.stalking, df.child_protection,
                     df.final_tier, df.provisional
-                    from eor.df453_new_prediction df, eor.oasys_set_change osc, eor.oasys_set os
-                    ${where}
+                    from eor.df453_new_prediction df, eor.oasys_set os
+                    where os.oasys_set_pk = df.oasys_set_pk 
+                    ${andWhere}
                     fetch first ${rows} rows only`
     }
 }

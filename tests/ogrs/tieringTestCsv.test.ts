@@ -6,11 +6,9 @@ import { getCaseFromCsv } from 'fixtures/ogrs/tiering/csv'
 
 const csvCount: number = 300000
 const oracleCount = 300000
-const whereClause = `   osc.oasys_set_pk = df.oasys_set_pk
-                        and osc.lastupd_date < to_date('14-06-2026', 'DD-MM-YYYY')
-                        and os.oasys_set_pk = df.oasys_set_pk
-                        and os.snsv_algo_version is null
-                        `
+
+const whereClause = 'os.snsv_algo_version is null'
+// SNSV_ALGO_VERSION - ignore cases where this has been set in OASYS_SET, as Delius will not use the rescore values for these
 
 
 const reportAll = false
@@ -64,7 +62,7 @@ test('Tier calculations test - CSV', async ({ ogrs }) => {
                 if (caseFailed) {
                     failed++
 
-                    const logDetails:string[] = []
+                    const logDetails: string[] = []
                     logDetails.push(csvTestCase.probationCrn)
                     logDetails.push(csvTestCase.csvOrOracleResults.finalTier)
                     logDetails.push(csvTestCase.csvOrOracleResults.provisional)

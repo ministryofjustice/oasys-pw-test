@@ -24,7 +24,7 @@ export class Api {
      * @param excludeEndpoints - if provided, prevents calling the specified endpoints
      * @returns True for any failure
      */
-    async testOneOffender(crn: string, crnSource: Provider, skipPkOnlyCalls: boolean, reportPasses: boolean, limitEndpoints: Endpoint[] = [], excludeEndpoints: Endpoint[] = []): Promise<boolean> {
+    async testOneOffender(crn: string, crnSource: Provider, skipPkOnlyCalls: boolean, reportPasses: boolean, limitEndpoints: Endpoint[] = null, excludeEndpoints: Endpoint[] = null): Promise<boolean> {
 
         const v1Endpoints: Endpoint[] = [
             'offences',
@@ -158,10 +158,8 @@ export class Api {
             }
 
             // Filter to a limited list if specified, and remove anything in the exclusions list
-            const filteredParamsList = (limitEndpoints.length == 0
-                ? apiParams
-                : apiParams.filter((param) => limitEndpoints.includes(param.endpoint)))
-                .filter((param) => !excludeEndpoints.includes(param.endpoint))
+            let filteredParamsList = limitEndpoints && limitEndpoints.length > 0 ? apiParams.filter((param) => limitEndpoints.includes(param.endpoint)) : apiParams
+            filteredParamsList = excludeEndpoints ?  filteredParamsList.filter((param) => !excludeEndpoints.includes(param.endpoint)) : filteredParamsList
 
             ///////////////////////////////////////////////////////////
             // Work out the expected responses, then call the endpoints

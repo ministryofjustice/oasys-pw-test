@@ -1,8 +1,6 @@
 import { test } from 'fixtures'
 
-const count = 260000
-const whereClause: string = null
-// const whereClause = `cms_prob_number = 'V017263'`
+const count = 300000
 const reportAll = false
 
 
@@ -11,7 +9,7 @@ test('Tier calculations test', async ({ ogrs }) => {
     let failed = 0
     let passed = 0
 
-    const tieringData = await ogrs.tiering.getTieringTestData(count, whereClause)
+    const tieringData = await ogrs.tiering.getTieringTestData(count)
 
     for (const testCase of tieringData) {
         const logText: string[] = []

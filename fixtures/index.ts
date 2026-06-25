@@ -1,3 +1,8 @@
+/**
+ * @hidden
+ * @module
+ */
+
 import { test as base, TestInfo } from '@playwright/test'
 
 import { OasysDb } from './oasysDb/oasysDb'

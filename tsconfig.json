@@ -37,7 +37,9 @@
         ],
         "excludeExternals": true,
         "excludeReferences": true,
-        "router": "structure",
+        "disableGit": true,
+        "sourceLinkTemplate": "../../{path}",
+        "router": "kind",
         "plugin": [
             "typedoc-plugin-missing-exports"
         ],

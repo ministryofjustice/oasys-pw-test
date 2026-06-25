@@ -9,18 +9,20 @@ import * as restApiDb from './data/restApiDb'
 
 
 export class Api {
-
     constructor(private readonly oasysDb: OasysDb, private readonly request: APIRequestContext) { }
 
     /** 
      * Tests all endpoints for all assessments for given offender CRN; returns an OffenderApisResult object including pass/fail, reporting output and timing stats.
      * All necessary data is pulled from the database to build expected responses.
      * 
-     * Parameters:
-     *  - crn (either probation or prison CRN as specified by the next parameter)
-     *  - crnSource - 'prob' or 'pris'
-     *  - skipPkOnlyCalls - if true, any APIs that are called with just an assessment PK will be skipped on the basis that the calling script is repeating an offender 
+     * @param crn (either probation or prison CRN as specified by the next parameter)
+     * @param crnSource - 'prob' or 'pris'
+     * @param skipPkOnlyCalls - if true, any APIs that are called with just an assessment PK will be skipped on the basis that the calling script is repeating an offender 
      *                      (selected this time using the prison CRN instead of probation) so these calls will be identical.
+     * @param reportPasses - include details for all cases (or just failures) in the test report
+     * @param limitEndpoints - if provided, limits the test to only the specified endpoints
+     * @param excludeEndpoints - if provided, prevents calling the specified endpoints
+     * @returns True for any failure
      */
     async testOneOffender(crn: string, crnSource: Provider, skipPkOnlyCalls: boolean, reportPasses: boolean, limitEndpoints: Endpoint[] = [], excludeEndpoints: Endpoint[] = []): Promise<boolean> {
 

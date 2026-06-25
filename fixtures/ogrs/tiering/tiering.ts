@@ -150,11 +150,15 @@ function calculateRoshMappa(rosh: string, mappa: boolean): Tier {
 
 function calculateLifer(tieringCase: TieringCase): Tier {
 
-    if (!tieringCase.lifer || tieringCase.inCustody || tieringCase.communityDate == null || tieringCase.communityDateFuture) {
+    if (!tieringCase.lifer || tieringCase.inCustody || tieringCase.releaseDate == null) {
         return null
     }
 
-    const diffYears = oasysDateTime.dateDiff(tieringCase.communityDate, oasysDateTime.testStartDate, 'year') // Today minus community date
+    if (oasysDateTime.dateDiff(tieringCase.runDate, tieringCase.releaseDate, 'day') > 0) { // Future release
+        return null
+    }
+
+    const diffYears = oasysDateTime.dateDiff(tieringCase.releaseDate.add({ days: 1 }), tieringCase.runDate, 'year')
     return diffYears == 0 ? 'B' : diffYears < 5 ? 'D' : 'E'
 }
 

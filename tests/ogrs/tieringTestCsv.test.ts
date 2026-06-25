@@ -6,26 +6,25 @@ import { getCaseFromCsv } from 'fixtures/ogrs/tiering/csv'
 
 const csvCount: number = 300000
 const oracleCount = 300000
-const whereClause: string = null
-// const whereClause = `cms_prob_number = 'V017263'`
+const whereClause = `   osc.oasys_set_pk = df.oasys_set_pk
+                        and osc.lastupd_date < to_date('14-06-2026', 'DD-MM-YYYY')
+                        and os.oasys_set_pk = df.oasys_set_pk
+                        and os.snsv_algo_version is null
+                        `
+
+
 const reportAll = false
-const testFile = 'tests/ogrs/data/local/tiers-preprod-2026-06-19.csv'
+const testFile = 'tests/ogrs/data/local/tiers-preprod-2026-06-22.csv'
 
 test('Tier calculations test - CSV', async ({ ogrs }) => {
 
     let failed = 0
     let passed = 0
     let skipped = 0
-    let arpMismatch = 0
-    let csrpMismatch = 0
-    let releaseDate = 0
-    let scoreOverlap = 0
-    let releaseDateScoreOverlap = 0
-    let anyMismatch = 0
 
     // CSV data (with PI results)
     const testData = await fs.readFile(testFile, 'utf8')
-    const testCases = testData.split('\r\n')
+    const testCases = testData.split('\n')
     const numCases = testCases.length
     const rows = csvCount == 0 || numCases < csvCount ? numCases - 1 : csvCount  // First row is header
 
@@ -44,7 +43,7 @@ test('Tier calculations test - CSV', async ({ ogrs }) => {
         const csvTestCase = getCaseFromCsv(testCases[i])
         if (csvTestCase) {
 
-            const oracleTestCase = oracleTestCases[csvTestCase.probationCrn] // oracleTieringData.find((c) => c.probationCrn == csvTestCase.probationCrn)
+            const oracleTestCase = oracleTestCases[csvTestCase.probationCrn]
 
             const calculatedResult = ogrs.tiering.calculate(csvTestCase, logText)
             const caseFailed =
@@ -65,24 +64,18 @@ test('Tier calculations test - CSV', async ({ ogrs }) => {
                 if (caseFailed) {
                     failed++
 
-                    if (csvTestCase.arp != oracleTestCase.arp) {
-                        arpMismatch++
-                    }
-                    if (csvTestCase.csrp != oracleTestCase.csrp) {
-                        csrpMismatch++
-                    }
-                    if (csvTestCase.arp != oracleTestCase.arp && csvTestCase.csrp != oracleTestCase.csrp) {
-                        scoreOverlap++
-                    }
-                    if (csvTestCase.communityDate != oracleTestCase.communityDate) {
-                        releaseDate++
-                    }
-                    if (csvTestCase.communityDate != oracleTestCase.communityDate && (csvTestCase.arp != oracleTestCase.arp || csvTestCase.csrp != oracleTestCase.csrp)) {
-                        releaseDateScoreOverlap++
-                    }
-                    if (csvTestCase.arp != oracleTestCase.arp || csvTestCase.csrp != oracleTestCase.csrp || csvTestCase.communityDate != oracleTestCase.communityDate) {
-                        anyMismatch++
-                    }
+                    const logDetails:string[] = []
+                    logDetails.push(csvTestCase.probationCrn)
+                    logDetails.push(csvTestCase.csvOrOracleResults.finalTier)
+                    logDetails.push(csvTestCase.csvOrOracleResults.provisional)
+                    logDetails.push(csvTestCase.arp?.toString())
+                    logDetails.push(csvTestCase.csrp?.toString())
+                    logDetails.push(oracleTestCase.csvOrOracleResults.finalTier)
+                    logDetails.push(oracleTestCase.csvOrOracleResults.provisional)
+                    logDetails.push(oracleTestCase.arp?.toString())
+                    logDetails.push(oracleTestCase.csrp?.toString())
+                    logDetails.push(csvTestCase.releaseDate?.toString())
+                    fileLog(logDetails.join('\t'))
                 }
             }
             if (!caseFailed) {
@@ -95,14 +88,7 @@ test('Tier calculations test - CSV', async ({ ogrs }) => {
     }
 
     log(`Passed: ${passed}, failed: ${failed}, skipped: ${skipped}`, 'Summary')
-    log(`ARP mismatch: ${arpMismatch}, CSRP mismatch: ${csrpMismatch}, score overlap: ${scoreOverlap}`)
-    log(`Releast date mismatch: ${releaseDate}, overlap: ${releaseDateScoreOverlap}`)
-    log(`Any mismatch: ${anyMismatch}`)
-    console.log(`Passed: ${passed}, failed: ${failed}, skipped: ${skipped}`)
-    console.log(`ARP mismatch: ${arpMismatch}, CSRP mismatch: ${csrpMismatch}, score overlap: ${scoreOverlap}`)
-    console.log(`Release date mismatch: ${releaseDate}, overlap: ${releaseDateScoreOverlap}`)
-    console.log(`Any mismatch: ${anyMismatch}`)
-
+    console.log(`Passed: ${passed}, failed: ${failed}, skipped: ${skipped}`, 'Summary')
     expect(failed).toBe(0)
 
 })

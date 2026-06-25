@@ -24,7 +24,7 @@ export function testRef22(offender1: OffenderDef, offender2: OffenderDef, offend
         await offender.demerge(oasys)
         await user.logout()
 
-        await san.queries.checkSanMergeCall(user.admin, 5)
+        await san.queries.checkSanMergeCall(user.admin, 7)
 
         log('Check offender 1', 'Test step')
         await user.prob.probHeadPdu.login()

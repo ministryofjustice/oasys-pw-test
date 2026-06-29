@@ -8,7 +8,7 @@
   "devDependencies": {
     "@playwright/test": "^1.60.0",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^25.9.3",
+    "@types/node": "^26.0.1",
     "@types/oracledb": "^7.0.0",
     "decimal.js": "^10.6.0",
     "fs-extra": "^11.3.5",

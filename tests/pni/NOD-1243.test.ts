@@ -38,7 +38,7 @@ test('NOD-1243', async ({ oasys, user, offender, assessment, sections, risk, sar
 
     await pni.checkAssessmentCalc(offender1.probationCrn, pk1)
 
-    let failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, null, ['pni'])
+    let failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, ['pni'])
     expect(failed).toBeFalsy()
 
     // Create assessment 2
@@ -54,7 +54,7 @@ test('NOD-1243', async ({ oasys, user, offender, assessment, sections, risk, sar
 
     // Trigger a PNI calculation
     await sections.summarySheet.goto()
-    failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, null, ['pni'])
+    failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, ['pni'])
     expect(failed).toBeFalsy()
     await pni.checkAssessmentCalc(offender1.probationCrn, pk2)
 
@@ -75,7 +75,7 @@ test('NOD-1243', async ({ oasys, user, offender, assessment, sections, risk, sar
 
     // Trigger a PNI calculation
     await sections.summarySheet.goto()
-    failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, null, ['pni'])
+    failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, ['pni'])
     expect(failed).toBeFalsy()
     await pni.checkAssessmentCalc(offender1.probationCrn, pk3)
 
@@ -96,7 +96,7 @@ test('NOD-1243', async ({ oasys, user, offender, assessment, sections, risk, sar
 
     // Trigger a PNI calculation
     await sections.summarySheet.goto()
-    failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, null, ['pni'])
+    failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, ['pni'])
     expect(failed).toBeFalsy()
     await pni.checkAssessmentCalc(offender1.probationCrn, pk4)
 

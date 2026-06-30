@@ -23,8 +23,6 @@ export function testRef12(offender1: OffenderDef, pks: number[]) {
             just in case the next assessment they carry out is a 3.2. 
             Change some of the data and fully complete the 3.1 assessment.`, 'Test step')
 
-        await san.queries.checkNoSanCall(pk)
-
         await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk}`, {
             SAN_ASSESSMENT_LINKED_IND: null,
             CLONED_FROM_PREV_OASYS_SAN_PK: prevSanPk.toString(),

@@ -50,7 +50,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await san.checkLayer3Menu(false, sections)
         await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, { SAN_ASSESSMENT_LINKED_IND: 'N' })
 
-        await sentencePlan.gotoSpService('assessment')
+        await sentencePlan.sentencePlanService.goto()
         await sentencePlan.sentencePlanService.signAndLock.click()
         await signing.checkSignAndLockErrorsVisible('section2To13Errors')
         await signing.checkSignAndLockErrorsNotVisible('sanSectionsIncomplete')
@@ -150,7 +150,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         Then a list of the sections follows which are: Accommodation, Employment and education, Finance, Drug use, Alcohol use, Health and wellbeing, Personal relationships and community, Thinking, behaviours and attitudes, Offence analysis
         There is a new error stating 'In OASys the offender has been marked at 1.30 as having behaviours that are sexually motivated.  There are relevant questions within the Strengths and Needs assessment that must be completed.  Please press 'Return to Assessment' and navigate back to the 'Strengths and Needs Sections' to complete.`, 'Test step')
 
-        await sentencePlan.gotoSpService('assessment')
+        await sentencePlan.sentencePlanService.goto()
         await sentencePlan.sentencePlanService.signAndLock.click()
         await signing.checkSignAndLockErrorsNotVisible('section2To13Errors')
         await signing.checkSingleSignAndLockError(`Please provide a clear rationale for not fully completing the Self Assessment Questionnaire`, false)

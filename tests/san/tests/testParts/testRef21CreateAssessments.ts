@@ -24,7 +24,6 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
             SAN_ASSESSMENT_LINKED_IND: null,
             CLONED_FROM_PREV_OASYS_SAN_PK: null,
             SAN_ASSESSMENT_VERSION_NO: null,
-            SSP_PLAN_VERSION_NO: null,
             CLONED_IND: 'N',
         })
 

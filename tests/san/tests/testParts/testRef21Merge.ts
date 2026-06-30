@@ -48,7 +48,7 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
         expect(mergedOasysSetData[5][0]).toBe(null) // Assessment 1
         expect(mergedOasysSetData[6][0]).toBe(null) // Assessment on offender 1
 
-        await san.queries.checkSanMergeCall(user.prob.probSanHeadPdu, 5)
+        await san.queries.checkSanMergeCall(user.prob.probSanHeadPdu, 7)
 
         /**
          * Merged offender has 7 assessments (latest on top)

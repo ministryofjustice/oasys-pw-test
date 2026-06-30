@@ -4,7 +4,7 @@ import { TieringCase } from './dbClasses'
 
 export function getCaseFromCsv(testCaseData: string): TieringCase {
 
-    const data = testCaseData.split(',')
+    const data = testCaseData.replaceAll('\r','').split(',')
     // 00 crn
     // 01 tier
     // 02 provisional
@@ -32,13 +32,20 @@ export function getCaseFromCsv(testCaseData: string): TieringCase {
     // 24 domestic_abuse
     // 25 child_protection
 
-    if (data[1] == 'NOT_SUPERVISED') {
+    if (data[1] == 'NOT_SUPERVISED' || data[5] == '') {
         return null
     }
+    if(data[4] < '29/06/2026 15:55') {
+        return null
+    }
+    // if (data[0] != 'D522605') return null
+
 
     const result: TieringCase = {
 
         probationCrn: data[0],
+        assessmentPk: null,
+        offenderPk: null,
 
         arpStatic: data[8] != 'DYNAMIC',
         csrpStatic: data[11] != 'DYNAMIC',

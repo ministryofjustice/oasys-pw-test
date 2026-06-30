@@ -17,7 +17,8 @@ export class OasysDateTime {
         }
         let reformatted = param
         if (['/', '-'].includes(param.substring(2, 3))) {
-            reformatted = `${param.substring(6)}-${param.substring(3, 5)}-${param.substring(0, 2)}`
+            reformatted = reformatted.substring(0, 10)
+            reformatted = `${reformatted.substring(6)}-${reformatted.substring(3, 5)}-${reformatted.substring(0, 2)}`
         }
         try {
             return Temporal.PlainDate.from(reformatted)

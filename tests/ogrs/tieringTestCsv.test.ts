@@ -2,10 +2,11 @@ import * as fs from 'fs-extra'
 
 import { test } from 'fixtures'
 import { TieringCase } from 'fixtures/ogrs/tiering/dbClasses'
-import { getCaseFromCsv } from 'fixtures/ogrs/tiering/csv'
+import { getPiCaseFromCsv } from 'fixtures/ogrs/tiering/csv'
 
 const csvCount: number = 300000
 const oracleCount = 300000
+const oracleCsvExport: string = 'tests/ogrs/data/local/PP test export filtered.csv'
 
 const whereClause: string = `os.snsv_algo_version is null`
 // SNSV_ALGO_VERSION - ignore cases where this has been set in OASYS_SET, as Delius will not use the rescore values for these
@@ -27,7 +28,7 @@ test('Tier calculations test - CSV', async ({ ogrs }) => {
     const rows = csvCount == 0 || numCases < csvCount ? numCases - 1 : csvCount  // First row is header
 
     // Oracle data (with Oracle results)
-    const oracleTieringData = await ogrs.tiering.getTieringTestData(oracleCount, whereClause)
+    const oracleTieringData = await ogrs.tiering.getTieringTestData(oracleCount, whereClause, oracleCsvExport)
     const oracleTestCases: { [key: string]: TieringCase } = {}
     for (let i = 0; i < oracleTieringData.length; i++) {
         oracleTestCases[oracleTieringData[i].probationCrn] = oracleTieringData[i]
@@ -38,7 +39,7 @@ test('Tier calculations test - CSV', async ({ ogrs }) => {
 
         const logText: string[] = []
 
-        const csvTestCase = getCaseFromCsv(testCases[i])
+        const csvTestCase = getPiCaseFromCsv(testCases[i])
         if (csvTestCase) {
 
             const oracleTestCase = oracleTestCases[csvTestCase.probationCrn]

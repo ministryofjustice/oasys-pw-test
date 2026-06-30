@@ -1,10 +1,8 @@
-import { Temporal } from '@js-temporal/polyfill'
-
 import { TieringCase } from './dbClasses'
 
-export function getCaseFromCsv(testCaseData: string): TieringCase {
+export function getPiCaseFromCsv(testCaseData: string): TieringCase {
 
-    const data = testCaseData.replaceAll('\r','').split(',')
+    const data = testCaseData.replaceAll('\r', '').split(',')
     // 00 crn
     // 01 tier
     // 02 provisional
@@ -35,7 +33,7 @@ export function getCaseFromCsv(testCaseData: string): TieringCase {
     if (data[1] == 'NOT_SUPERVISED' || data[5] == '') {
         return null
     }
-    if(data[4] < '29/06/2026 15:55') {
+    if (data[4] < '29/06/2026 15:55') {
         return null
     }
     // if (data[0] != 'D522605') return null

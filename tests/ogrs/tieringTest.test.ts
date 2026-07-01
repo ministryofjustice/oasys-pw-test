@@ -2,7 +2,7 @@ import { test } from 'fixtures'
 
 const count = 300000
 const reportAll = false
-const oracleCsvExport: string = 'tests/ogrs/data/local/PP test export unfiltered.csv'
+const oracleCsvExport: string = 'tests/ogrs/data/local/Step6Extract_300626.csv'
 
 test('Tier calculations test', async ({ ogrs }) => {
 

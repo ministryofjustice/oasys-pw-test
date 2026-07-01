@@ -33,9 +33,9 @@ export function getPiCaseFromCsv(testCaseData: string): TieringCase {
     if (data[1] == 'NOT_SUPERVISED' || data[5] == '') {
         return null
     }
-    if (data[4] < '29/06/2026 15:55') {
-        return null
-    }
+    // if (data[4] < '29/06/2026 15:55') {
+    //     return null
+    // }
     // if (data[0] != 'D522605') return null
 
 

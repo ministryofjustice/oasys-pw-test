@@ -6,14 +6,14 @@ import { getPiCaseFromCsv } from 'fixtures/ogrs/tiering/csv'
 
 const csvCount: number = 300000
 const oracleCount = 300000
-const oracleCsvExport: string = 'tests/ogrs/data/local/PP test export filtered.csv'
+const oracleCsvExport: string = 'tests/ogrs/data/local/Step12Extract_300626.csv'
 
 const whereClause: string = `os.snsv_algo_version is null`
 // SNSV_ALGO_VERSION - ignore cases where this has been set in OASYS_SET, as Delius will not use the rescore values for these
 
 
 const reportAll = false
-const testFile = 'tests/ogrs/data/local/tiers-preprod-2026-06-30.csv'
+const testFile = 'tests/ogrs/data/local/tiers-prod-2026-07-01.csv'
 
 test('Tier calculations test - CSV', async ({ ogrs }) => {
 
@@ -65,19 +65,22 @@ test('Tier calculations test - CSV', async ({ ogrs }) => {
 
                     const logDetails: string[] = []
                     logDetails.push(csvTestCase.probationCrn)
+                    logDetails.push(oracleTestCase?.assessmentPk)
                     logDetails.push(oracleTestCase?.offenderPk)
                     logDetails.push(csvTestCase.csvOrOracleResults.finalTier)
                     logDetails.push(csvTestCase.csvOrOracleResults.provisional)
+                    logDetails.push(csvTestCase.rosh)
                     logDetails.push(csvTestCase.arp?.toString())
                     logDetails.push(csvTestCase.csrp?.toString())
                     logDetails.push(csvTestCase.o1_30?.toString())
                     logDetails.push(csvTestCase.releaseDate?.toString())
                     logDetails.push(oracleTestCase?.csvOrOracleResults.finalTier)
                     logDetails.push(oracleTestCase?.csvOrOracleResults.provisional)
+                    logDetails.push(oracleTestCase?.rosh)
                     logDetails.push(oracleTestCase?.arp?.toString())
                     logDetails.push(oracleTestCase?.csrp?.toString())
-                    logDetails.push(oracleTestCase.o1_30?.toString())
-                    logDetails.push(oracleTestCase.inCustody?.toString())
+                    logDetails.push(oracleTestCase?.o1_30?.toString())
+                    logDetails.push(oracleTestCase?.inCustody?.toString())
                     fileLog(logDetails.join('\t'))
                 }
             }

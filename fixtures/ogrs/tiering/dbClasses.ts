@@ -5,6 +5,9 @@ export const dateFormat = 'DD-MM-YYYY'
 export class TieringCase {
 
     probationCrn: string
+    assessmentPk: string
+    offenderPk: string
+
     arpStatic: boolean
     csrpStatic: boolean
     arp: number
@@ -34,6 +37,8 @@ export class TieringCase {
 
         let i = 0
         this.probationCrn = tieringData[i++]
+        this.assessmentPk = tieringData[i++]
+        this.offenderPk = tieringData[i++]
 
         const ogrs = utils.stringToFloat(tieringData[i++])
         const ogp = utils.stringToFloat(tieringData[i++])
@@ -70,7 +75,7 @@ export class TieringCase {
         let andWhere = whereClause == null ? '' : `and ${whereClause}`
 
         return `select 
-                    df.cms_prob_number,
+                    df.cms_prob_number, df.oasys_set_pk, df.offender_pk,
                     df.ogrs4g_percentage_2yr, df.ogp2_percentage_2yr, 
                     df.nc_rsr_static_or_dynamic, df.nc_rsr_percentage_score, 
                     df.nc_osp_dc_risk_recon_elm, df.nc_osp_dc_percentage_score,  

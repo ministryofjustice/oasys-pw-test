@@ -1,19 +1,30 @@
+import * as fs from 'fs-extra'
+
 import { OasysDb } from 'fixtures'
 import { TieringCase } from './dbClasses'
+import { getOracleCaseFromCSV } from './oracleCsv'
 
 export class Tiering {
 
     constructor(private readonly oasysDb: OasysDb) { }
 
-    async getTieringTestData(rows: number, whereClause?: string): Promise<TieringCase[]> {
-
-        const cases = await this.oasysDb.getData(TieringCase.query(rows, whereClause))
+    async getTieringTestData(rows: number, whereClause?: string, oracleCsvExport?: string): Promise<TieringCase[]> {
 
         const result: TieringCase[] = []
-        for (let a = 0; a < cases.length; a++) {
-            result.push(new TieringCase(cases[a]))
-        }
+        if (oracleCsvExport) {
+            const testData = await fs.readFile(oracleCsvExport, 'utf8')
+            const testCases = testData.split('\n')
+            for (const testCase of testCases) {
+                result.push(getOracleCaseFromCSV(testCase))
+            }
 
+        } else {
+            const cases = await this.oasysDb.getData(TieringCase.query(rows, whereClause))
+
+            for (let a = 0; a < cases.length; a++) {
+                result.push(new TieringCase(cases[a]))
+            }
+        }
         return result
     }
 

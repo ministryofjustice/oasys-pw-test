@@ -2,14 +2,14 @@ import { test } from 'fixtures'
 
 const count = 300000
 const reportAll = false
-
+const oracleCsvExport: string = 'tests/ogrs/data/local/Step6Extract_300626.csv'
 
 test('Tier calculations test', async ({ ogrs }) => {
 
     let failed = 0
     let passed = 0
 
-    const tieringData = await ogrs.tiering.getTieringTestData(count)
+    const tieringData = await ogrs.tiering.getTieringTestData(count, null, oracleCsvExport)
 
     for (const testCase of tieringData) {
         const logText: string[] = []

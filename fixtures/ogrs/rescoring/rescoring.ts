@@ -39,8 +39,8 @@ export class Rescoring {
 
     createAssessmentTestCase(assessment: RescoringAssessment, staticFlag: 'Y' | 'N', useCurrentDate: boolean): OgrsInputParams {
 
-        const after6_30 = oasysDateTime.checkIfAfterReleaseNode('6.30', assessment.initiationDate)
-        const after6_35 = oasysDateTime.checkIfAfterReleaseNode('6.35', assessment.initiationDate)
+        const after6_30 = oasysDateTime.checkIfAfter('6.30', assessment.initiationDate)
+        const after6_35 = oasysDateTime.checkIfAfter('6.35', assessment.initiationDate)
 
         let staticCalc = staticFlag
         if (staticCalc == 'N' && assessment.type == 'LAYER_1' && assessment.version == 2) {  // RoSHA - set static flag according to 1.39 (offender interview)
@@ -48,7 +48,7 @@ export class Rescoring {
                 staticCalc = 'Y'
             }
         }
-        
+
         const p: OgrsInputParams = {
             ASSESSMENT_DATE: useCurrentDate ? oasysDateTime.testStartDate : oasysDateTime.stringToDate(assessment.completedDate),
             STATIC_CALC: staticCalc,

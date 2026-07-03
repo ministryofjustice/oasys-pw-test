@@ -3,7 +3,7 @@ import * as testData from '../../data/testRef21'
 
 export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, offender2Pks: number[]) {
 
-    test('SAN integration - test ref 21 merge assessments', async ({ page, oasys, user, oasysDb, offender, assessment, signing, san, risk, sentencePlan, tasks }) => {
+    test('SAN integration - test ref 21 merge assessments', async ({ page, oasys, user, oasysDb, offender, assessment, signing, san, risk, sentencePlan, tasks, sns }) => {
 
         log('Check original cloning details', 'Test step')
         const oasysSetQuery = `select os.cloned_from_prev_oasys_san_pk from eor.offender o, eor.oasys_assessment_group oag, eor.oasys_set os 
@@ -29,6 +29,7 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
             await dialog.accept()
         })
         await offender.offenderDetails.save.click()
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
         await user.logout()
 
         log('Login to pilot area to grant the merge and retain ownership', 'Test step')

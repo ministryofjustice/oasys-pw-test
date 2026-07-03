@@ -3,12 +3,14 @@ import { MergeTestData } from '../testRef39.40.test'
 
 export function demergeAndCheckOffenders(mergeTestData: MergeTestData) {
 
-    test('Merge tests part 5 - demerge offenders', async ({ oasys, user, offender, san }) => {
+    test('Merge tests part 5 - demerge offenders', async ({ oasys, user, offender, san, sns }) => {
 
         await user.admin.login(providers.prob.san)
         await offender.searchAndSelectByPnc(mergeTestData.offender2.pnc)
 
         await offender.demerge(oasys)
+        await sns.testSnsMessageData(mergeTestData.offender1.probationCrn,'assessment',['AssSumm', 'OGRS','RSR'])
+        await sns.testSnsMessageData(mergeTestData.offender2.probationCrn,'assessment',['AssSumm', 'OGRS','RSR'])
         await oasys.clickButton('Close')
         await user.logout()
 

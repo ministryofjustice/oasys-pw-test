@@ -4,7 +4,7 @@ import * as testData from '../../data/mergeTest'
 
 export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
 
-    test('Merge tests part 1 - create and complete 3.2 assessment on offender 1', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan }) => {
+    test('Merge tests part 1 - create and complete 3.2 assessment on offender 1', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, sns }) => {
 
         log('Merge tests part 1 - create and complete 3.2 assessment on offender 1', 'Test step')
 
@@ -41,6 +41,7 @@ export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
         // Complete SP, then sign and lock
         await sentencePlan.populateMinimal()
         await signing.signAndLock({ page: 'spService' })
+        await sns.testSnsMessageData(mergeTestData.offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
         log('Merge tests part 2 - create and complete two 3.2 assessments on offender 2, delete the second', 'Test step')
         await offender.createProb(mergeTestData.offender2)
@@ -77,6 +78,7 @@ export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
         await sentencePlan.populateMinimal()
 
         await signing.signAndLock({ page: 'spService' })
+        await sns.testSnsMessageData(mergeTestData.offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
         // Deleted assessment added for testing of SAN defect ARN-2427
         await oasys.history(mergeTestData.offender2)

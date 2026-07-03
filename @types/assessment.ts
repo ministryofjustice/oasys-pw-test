@@ -31,7 +31,9 @@ declare type PurposeOfAssessment =
     'Other' |
     'Re-categorisation to Open Conditions' |
     'Pre-handover' |
-    'Impact Cohort Assessment'
+    'Impact Cohort Assessment' |
+    'Standalone Unpaid Work' |
+    'Final Third Suspension'
 
 declare type YesNoAnswer = 'Yes' | 'No' | ''
 declare type YesNoDKAnswer = 'Yes' | 'No' | `Don't Know` | ''

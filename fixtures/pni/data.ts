@@ -18,8 +18,10 @@ export class Data {
         const oasysSetData = await this.oasysDb.getData(oasysSetQuery(pk))
 
         const oasysSetValues = {
-            ogrs3RiskRecon: '',
-            ovpRisk: '',
+            arpStaticBand: '',
+            arpDynamicBand: '',
+            vrpStaticBand: '',
+            vrpDynamicBand: '',
             ospDc: '',
             ospIic: '',
             rsrPercentageScore: 0,
@@ -56,8 +58,8 @@ export class Data {
             s11_6: getOasysScore(qaValues['11.6']),
             s12_1: getOasysScore(qaValues['12.1']),
             s12_9: getOasysScore(qaValues['12.9']),
-            ogrs3RiskRecon: oasysSetValues.ogrs3RiskRecon,
-            ovpRisk: oasysSetValues.ovpRisk,
+            arpBand: oasysSetValues.arpDynamicBand ?? oasysSetValues.arpStaticBand,
+            vrpBand: oasysSetValues.vrpDynamicBand ?? oasysSetValues.vrpStaticBand,
             ospDc: oasysSetValues.ospDc,
             ospIic: oasysSetValues.ospIic,
             rsrPercentageScore: oasysSetValues.rsrPercentageScore,
@@ -86,8 +88,10 @@ function yn(param: string): string {
 
 const oasysSetColumns: Columns = {
 
-    ogrs3RiskRecon: { name: 'ogrs3_risk_recon_elm', type: 'string' },
-    ovpRisk: { name: 'ovp_risk_recon_elm', type: 'string' },
+    arpStaticBand: { name: 'ogrs4g_band_risk_recon_elm', type: 'string' },
+    arpDynamicBand: { name: 'ogp_risk_recon_elm', type: 'string' },
+    vrpStaticBand: { name: 'ogrs4v_band_risk_recon_elm', type: 'string' },
+    vrpDynamicBand: { name: 'ovp_risk_recon_elm', type: 'string' },
     ospDc: { name: 'osp_dc_risk_recon_elm', type: 'string' },
     ospIic: { name: 'osp_iic_risk_recon_elm', type: 'string' },
     rsrPercentageScore: { name: 'rsr_percentage_score', type: 'float' },

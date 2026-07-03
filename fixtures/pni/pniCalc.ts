@@ -183,11 +183,11 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     let riskLevelProject = 'O'
 
-    if (pniParams.ogrs3RiskRecon == null) {
+    if (pniParams.arpBand == null) {
         riskLevelProject = 'H'
         result.missingFields.push('OGRS')
     }
-    if (pniParams.ovpRisk == null) {
+    if (pniParams.vrpBand == null) {
         riskLevelProject = 'H'
         result.missingFields.push('OVP')
     }
@@ -217,11 +217,11 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
     }
 
     // Now calculate the risk domain
-    if (['H', 'V'].includes(pniParams.ogrs3RiskRecon) || ['H', 'V'].includes(pniParams.ovpRisk) || ['H', 'V'].includes(pniParams.ospDc) || pniParams.ospIic == 'H' ||
+    if (['H', 'V'].includes(pniParams.arpBand) || ['H', 'V'].includes(pniParams.vrpBand) || ['H', 'V'].includes(pniParams.ospDc) || pniParams.ospIic == 'H' ||
         (pniParams.ospDc == 'NA' && pniParams.ospIic == 'NA' && rsrRiskLevel == 'H') || pniParams.saraRiskPartner == 3 || pniParams.saraRiskOther == 3) {
         result.riskLevel = 'H'
         riskLevelProject = 'H'
-    } else if (pniParams.ogrs3RiskRecon == 'M' || pniParams.ovpRisk == 'M' || pniParams.ospDc == 'M' || pniParams.ospIic == 'M' || (pniParams.ospDc == 'NA' && pniParams.ospIic == 'NA' && rsrRiskLevel == 'M') || pniParams.saraRiskPartner == 2 || pniParams.saraRiskOther == 2) {
+    } else if (pniParams.arpBand == 'M' || pniParams.vrpBand == 'M' || pniParams.ospDc == 'M' || pniParams.ospIic == 'M' || (pniParams.ospDc == 'NA' && pniParams.ospIic == 'NA' && rsrRiskLevel == 'M') || pniParams.saraRiskPartner == 2 || pniParams.saraRiskOther == 2) {
         result.riskLevel = 'M'
     } else {
         result.riskLevel = 'L'
@@ -264,7 +264,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
     // High OGRS with High OVP or High SARA as this returns High Intensity && it is job done
     let calcComplete = false
 
-    if (['H', 'V'].includes(pniParams.ogrs3RiskRecon) && (['H', 'V'].includes(pniParams.ovpRisk) || pniParams.saraRiskPartner == 3 || pniParams.saraRiskOther == 3)) { // They are High OGRS
+    if (['H', 'V'].includes(pniParams.arpBand) && (['H', 'V'].includes(pniParams.vrpBand) || pniParams.saraRiskPartner == 3 || pniParams.saraRiskOther == 3)) { // They are High OGRS
         result.pniCalculation = pniParams.community ? 'M' : 'H'
         calcComplete = true
     }

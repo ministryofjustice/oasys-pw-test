@@ -17,7 +17,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         const offender1Pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
         offender1Pks.push(offender1Pk1)
         await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No' })
-        await signing.signAndLock({ expectRsrWarning: true })
+        await signing.signAndLock()
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
 
         await user.logout()
@@ -57,7 +57,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         await sections.sections2To13NoIssues({ populate6_11: 'No' })
         await sections.selfAssessmentForm.populateMinimal()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
         await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
 
         // Create and complete assessment 3 (layer 3 v2)
@@ -69,7 +69,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await san.returnToOASys()
 
         await risk.setRationaleText()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
         await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
         await user.logout()
 
@@ -91,7 +91,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         await sections.sections2To13NoIssues()
         await sections.selfAssessmentForm.populateMinimal()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
         await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
         await user.logout()
 
@@ -115,7 +115,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await san.populateSanSections('Test ref 21', testData.assessment5, true)
         await san.returnToOASys()
         await risk.setRationaleText()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
         await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
 
         // Create and complete assessment 6 (layer 3 v2)
@@ -126,7 +126,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await san.populateSanSections('Test ref 21', testData.assessment6, true)
         await san.returnToOASys()
         await risk.setRationaleText()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
         await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
 
         await user.logout()

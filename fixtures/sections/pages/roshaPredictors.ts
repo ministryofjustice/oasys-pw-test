@@ -147,7 +147,6 @@ export class RoshaPredictors extends BaseAssessmentPage {
         await this.o1_40.setValue(0)
         await this.o1_29.setValue({ days: -7 })
         await this.o1_30.setValue('No')
-        await this.o1_38.setValue({ months: 18 })
     }
 
     async populateFull(withDateFirstSanction = true) {

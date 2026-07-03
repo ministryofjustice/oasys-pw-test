@@ -12,7 +12,7 @@ test('Example test - create a probation offender and a layer 3 assessment using 
     await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No', sentencePlan: 'spService' })
     // await oasys.Populate.fullyPopulated({layer: 'Layer 1', maxStrings: false })
 
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
 
     await user.logout()
 

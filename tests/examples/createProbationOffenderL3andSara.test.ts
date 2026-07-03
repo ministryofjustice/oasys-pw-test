@@ -26,7 +26,7 @@ test('Example test - create a probation offender and a layer 3 assessment plus S
 
     await oasys.history(offender1.surname, offender1.forename1, 'Start of Community Order')
     await sentencePlan.populateMinimal()
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
 
     await user.logout()
 })

@@ -9,8 +9,8 @@ export function demergeAndCheckOffenders(mergeTestData: MergeTestData) {
         await offender.searchAndSelectByPnc(mergeTestData.offender2.pnc)
 
         await offender.demerge(oasys)
-        await sns.testSnsMessageData(mergeTestData.offender1.probationCrn,'assessment',['AssSumm', 'OGRS','RSR'])
-        await sns.testSnsMessageData(mergeTestData.offender2.probationCrn,'assessment',['AssSumm', 'OGRS','RSR'])
+        await sns.testSnsMessageData(mergeTestData.offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(mergeTestData.offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
         await oasys.clickButton('Close')
         await user.logout()
 

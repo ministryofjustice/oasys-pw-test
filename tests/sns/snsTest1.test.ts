@@ -14,7 +14,7 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No' })
 
         // Sign assessment, then check SNS messages
-        await signing.signAndLock({ expectRsrWarning: true })
+        await signing.signAndLock()
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment')
 
         // Create another assessment (cloning from the one above), this one with OPD override and RSR
@@ -53,8 +53,8 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         await sentencePlan.populateMinimal()
 
         // Sign assessment and send for countersigning, then check SNS messages
-        await signing.signAndLock({ expectRsrWarning: true, expectCountersigner: true, countersigner: user.prob.probHeadPdu })
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
+        await signing.signAndLock({ expectCountersigner: true, countersigner: user.prob.probHeadPdu })
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
         await user.logout()
 
         // Countersign assessment then check SNS messages again

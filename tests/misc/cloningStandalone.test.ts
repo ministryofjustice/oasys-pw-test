@@ -20,7 +20,7 @@ test('Cloning test - standalone CSRP', async ({ oasys, user, offender, assessmen
     await risk.screeningSection2to4.r2_3.setValue('No')
     await risk.screeningSection2to4.rationale.setValue('Rationale')
 
-    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService' })
 
     await oasys.history(offender1)
     await offender.standaloneCsrp.goto()

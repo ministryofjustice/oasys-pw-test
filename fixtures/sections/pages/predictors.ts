@@ -61,6 +61,8 @@ export class Predictors extends BaseAssessmentPage {
         await this.dateFirstSanction.setValue({ years: -2 })
         await this.o1_32.setValue(2)
         await this.o1_40.setValue(0)
+        await this.o1_29.setValue({ months: -3 })
+        await this.o1_30.setValue('No')
     }
 
 

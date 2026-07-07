@@ -91,7 +91,7 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
         await san.populateSanSections('Test ref 21', testData.assessment7, true)
         await san.returnToOASys()
         await risk.setRationaleText()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
 
         await user.logout()
     })

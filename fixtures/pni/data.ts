@@ -154,7 +154,7 @@ async function getSaraParameters(probationCrn: string, assessmentPk: number, age
     const saraPk = await oasysDb.getSingleNumericValue(`select oasys_set_pk from eor.oasys_set where parent_oasys_set_pk = ${assessmentPk} order by initiation_date desc`)
 
     // Rule 2 - SARA has been created on this assessment and has not been rejected
-    if (saraPk && !noSaraDate) { // latest SARA is assocated with the assessment  // TODO Workaround for defect 1265 (fails the tests for 1201 and 1225).  Remove the !noSaraDate
+    if (saraPk) { // latest SARA is assocated with the assessment
         return getSaraRiskLevels(saraPk, oasysDb)
     }
 

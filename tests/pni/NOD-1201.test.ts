@@ -35,7 +35,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
 
     // Complete the assessment
     await oasys.history(offender1, 'Start of Community Order')
-    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService' })
 
     await pni.checkAssessmentCalc(offender1.probationCrn, pk1)
 
@@ -53,7 +53,7 @@ test('NOD-1201', async ({ oasys, user, offender, assessment, sections, risk, sar
     await sara.reasonNoSara.reason.setValue('There was no suitably trained assessor available')
     await sara.reasonNoSara.ok.click()
 
-    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService' })
     await pni.checkAssessmentCalc(offender1.probationCrn, pk2)
 
     failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true, ['pni'])

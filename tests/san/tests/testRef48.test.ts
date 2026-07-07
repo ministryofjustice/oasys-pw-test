@@ -16,7 +16,7 @@ test('SAN integration - test ref 48', async ({ oasys, user, offender, assessment
     // Create and complete layer 3
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'No' })
     await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No' })
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
 
     // Make historic
     await oasys.history()

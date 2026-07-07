@@ -20,7 +20,7 @@ test('SAN integration - test ref 29/30', async ({ oasys, user, signing, offender
     const o1pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
 
     await assessment.populateMinimal({ layer: 'Layer 3V2' })
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
 
     await user.logout()
 
@@ -186,7 +186,7 @@ test('SAN integration - test ref 29/30', async ({ oasys, user, signing, offender
 
     await offender.searchAndSelect(offender1)
     const o1pk3 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
-    await signing.signAndLock({ page: 'spService', expectRsrWarning: true, expectCountersigner: true, countersigner: user.prob.probSanHeadPdu })
+    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu })
     await user.logout()
 
     log(`Log into the SAN Pilot area as an Administrator

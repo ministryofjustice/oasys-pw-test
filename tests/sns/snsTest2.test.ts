@@ -81,7 +81,7 @@ test('Countersigning required', async ({ oasys, user, offender, assessment, sns,
 
     // Sign assessment and send for countersigning, then check SNS messages
     await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probHeadPdu })
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
     await user.logout()
 
     // Countersign assessment then check SNS messages again
@@ -100,7 +100,7 @@ test('Countersigning required', async ({ oasys, user, offender, assessment, sns,
 
     // Sign assessment, then check SNS messages
     await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probHeadPdu })
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
 
     await user.logout()
 

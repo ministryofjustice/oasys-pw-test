@@ -34,7 +34,7 @@ test('NOD-1243', async ({ oasys, user, offender, assessment, sections, risk, sar
 
     // Complete the assessment
     await oasys.history(offender1, 'Start of Community Order')
-    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService' })
 
     await pni.checkAssessmentCalc(offender1.probationCrn, pk1)
 

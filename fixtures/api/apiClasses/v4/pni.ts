@@ -4,6 +4,7 @@ import * as dbClasses from 'fixtures/api/data/dbClasses'
 import * as env from '../../endpointUrls'
 import { QaData } from 'fixtures/api/data/qaData'
 import { pniCalc } from 'fixtures/pni/pniCalc'
+import { NewActuarialPredictors } from '../riskScoreClasses'
 
 export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {
 
@@ -81,6 +82,7 @@ export class PniAssessment extends v4Common.V4AssessmentCommon {
     ogpOvp: OgpOvp
     ldcData: LdcData
     rsrOspData: RsrOspData
+    newActuarialPredictors: NewActuarialPredictors
 
     addDetails(dbAssessment: dbClasses.DbAssessment) {
 
@@ -105,6 +107,7 @@ export class PniAssessment extends v4Common.V4AssessmentCommon {
         this.ogpOvp = new OgpOvp(dbAssessment.riskDetails)
         this.ldcData = new LdcData(dbAssessment)
         this.rsrOspData = new RsrOspData(dbAssessment)
+        this.newActuarialPredictors = new NewActuarialPredictors(dbAssessment.riskDetails)
     }
 }
 
@@ -242,8 +245,6 @@ class PniCalc {
             pniParams.arpBand = dbAssessment.riskDetails.ogrs3RiskRecon
             pniParams.vrpBand = dbAssessment.riskDetails.ovpRisk
         }
-
-
 
         const pniCalcResult = pniCalc(pniParams)
 

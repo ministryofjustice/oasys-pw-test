@@ -110,8 +110,16 @@ export class Ogrs {
       * Checks the calculation stored in offender_rsr_scores for a given pk.
       * Returns an Ogrs4CalcResult object
       */
-    async checkOgrsInStandaloneCsrp(csrpPk: number): Promise<Ogrs4CalcResult> {
+    async checkOgrsInStandaloneCsrp(csrpPk: number): Promise<Ogrs4CalcResult>
+    async checkOgrsInStandaloneCsrp(probationCrn: string): Promise<Ogrs4CalcResult>
+    async checkOgrsInStandaloneCsrp(p1: number | string): Promise<Ogrs4CalcResult> {
 
+        let csrpPk: number
+        if (typeof p1 == 'string') {
+            csrpPk = await this.offender.queries.getLatestStandaloneCsrpPk(p1)
+        } else {
+            csrpPk = p1
+        }
         const csrp = await this.data.getOneCsrp(csrpPk)
         const calculatorParams = createCsrpInputParams(csrp)
 

@@ -101,7 +101,7 @@ test('OGRS regression test ref 12', async ({ oasys, user, offender, assessment, 
     log(`Now complete ALL of the remaining DYNAMIC questions including selecting and populating ALL of the DRUG table and checkboxes and entering in text for other drug (this is for cloning purposes later on)
         Click on <Calculate Predictor Scores> - scores have been calculated and the screen has turned READ ONLY`, 'Test step')
 
-    await offender.standaloneCsrp.populateAllDynamic()
+    await offender.standaloneCsrp.populateAllDynamicQuestions()
     await offender.standaloneCsrp.calculateScores.click()
     ogrsResult = await ogrs.checkOgrsInStandaloneCsrp(pk1)
     await ogrs.checkResultsOnStandaloneCsrpScreen(ogrsResult)

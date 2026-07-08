@@ -81,6 +81,11 @@ export class Oasys {
         const errors = await this.page.locator('.a-Notification-list').getByRole('listitem').allTextContents()
         expect(errors).toContain(message)
     }
+    
+    async checkNoErrorMessage() {
+        
+        await expect(this.page.getByText('Error(s) have occurred')).not.toBeVisible()
+    }
 
     /**
      * Clicks the button that should trigger an alert, optionally checks the alert text then and accepts the alert.

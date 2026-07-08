@@ -75,6 +75,24 @@ export class TestUsersProb {
     )
 
     /**
+     * AUTOSPHEADPDU-xx
+     *   - Forename/surname: Autotest HEADPDU-xx
+     *   - Framework role: Head of PDU - No Countersigning required
+     *   - Provider: Probation non-SAN
+     *   - Default countersigner: none
+     *   - Roles: NPS Assessor, Trainer, SARA
+     */
+    probLegacySpHeadPdu: TestUser = new TestUser(this.user,
+        { username: 'AUTOSPHEADPDU', forename1: 'Autotest', surname: 'LegacySpHeadPDU' },
+        {
+            provider: providers.prob.nonSan,
+            frameworkRole: 'Legacy - Head of PDU',
+            defaultCountersigner: null,
+            roles: ['NPS Assessor', 'Trainer', 'SARA']
+        }
+    )
+
+    /**
      * AUTOPSO-xx
      *   - Forename/surname: Autotest PSO-xx
      *   - Framework role: Approved PSO, approved PQiP, NQO or unapproved PO

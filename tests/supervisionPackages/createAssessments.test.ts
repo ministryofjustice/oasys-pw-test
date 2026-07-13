@@ -23,18 +23,19 @@ test.describe.serial('Create assessments', async () => {
 
 function runTest(i: number) {
 
-    test(`Test - ${i}`, async ({ user, offender, assessment, sections }) => {
+    test(`Create assessment - test case ${i}`, async ({ oasys, user, offender, assessment, sections, risk }) => {
 
         const data = (await readSheet(filename, sheetName)) as string[][]
         const testCol = i + firstTestCol - 2
-        const probationCrn = data[crnRow][testCol]
+        const probationCrn = data[crnRow - 1][testCol]
         const testData = getTestData(data, testCol)
 
+        await user.admin.login(providers.prob.nonSan)
+        await offender.searchAndSelectByCrn(probationCrn)
+        await assessment.deleteLatest()
+        await user.logout()
         await user.prob.probHeadPdu.login()
-
-        // TODO open existing offender
-        // TODO delete all assessments
-        const offender1 = await offender.createProbFromStandardOffender()
+        await offender.searchAndSelectByCrn(probationCrn)
         await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Basic (Layer 1)' })
 
         for (const page of testData) {
@@ -50,17 +51,22 @@ function runTest(i: number) {
                     break
                 case 'Predictor questions':
                     await sections.predictorQuestions.goto()
-                    await sections.predictorQuestions.setValues(page.data)
+                    for (let elementName of Object.keys(page.data)) {
+
+                        const element = sections.predictorQuestions[elementName as keyof sections.predictorQuestions]
+                        await element.setValue(page.data[elementName])
+                    }
+            
                     break
                 case 'Risk screening':
-                    await sections.predictorQuestions.goto()
-                    await sections.predictorQuestions.setValues(page.data)
+                    await risk.screeningSection1.goto()
+                    await risk.screeningSection1.setValues(page.data)
                     break
                 default:
                     throw ('Page name error')
             }
         }
-// TODO save page
+        await oasys.clickButton('Save')
         await user.logout()
     })
 }
@@ -79,18 +85,21 @@ function getTestData(data: string[][], testCol: number): TestData {
         for (const questionRow of filteredData) {
 
             const q = questionLookup[questionRow[questionCol - 1]]
+            const a = questionRow[testCol]
 
-            switch (questionRow[typeCol - 1]) {
-                case 'String':
-                case 'Yes/No':
-                    pageData[q] = questionRow[testCol]
-                    break
+            if (a) {
+                switch (questionRow[typeCol - 1]) {
+                    case 'String':
+                    case 'Yes/No':
+                        pageData[q] = a
+                        break
                     case 'Date':
-                    pageData[q] = // TODO convert Excel date to dd/mm/yyyy
-                    break
-                case 'Number':
-                    pageData[q] = utils.stringToInt(questionRow[testCol])
-                    break
+                        pageData[q] = ((a as unknown) as Date)?.toLocaleDateString()
+                        break
+                    case 'Number':
+                        pageData[q] = utils.stringToInt(a)
+                        break
+                }
             }
         }
         result.push({ page: page, data: pageData })
@@ -115,44 +124,44 @@ const questionLookup: { [key: string]: string } = {
     '1.37': 'o1_37',
     '1.38': 'o1_38',
     '1.43': 'o1_43',
-    '2.2': '',
-    '3.4': '',
-    '4.2': '',
-    '6.4': '',
+    '2.2': 'o2_2Weapon',
+    '3.4': 'o3_4',
+    '4.2': 'o4_2',
+    '6.4': 'o6_4',
     '6.7.2.1da': '',
-    '6.8': '',
-    '7.2': '',
-    '8.1': '',
-    '8.2.8.1': '',
-    '8.2.7.1': '',
-    '8.2.11.1': '',
-    '8.2.4.1': '',
-    '8.2.10.1': '',
-    '8.2.9.1': '',
-    '8.2.1.1': '',
-    '8.2.16.1': '',
-    '8.2.2.1': '',
-    '8.2.6.1': '',
-    '8.2.14.1': '',
-    '8.2.3.1': '',
-    '8.2.5.1': '',
-    '8.2.12.1': '',
-    '8.2.15.1': '',
-    '8.2.13.1': '',
-    '8.8': '',
-    '9.1': '',
-    '9.2': '',
-    '11.2': '',
-    '11.4': '',
-    '12.1': '',
-    'R1.2.6': '',
-    'R1.2.7': '',
-    'R1.2.8': '',
-    'R1.2.10': '',
-    'R1.2.2': '',
-    'R1.2.1': '',
-    'R1.2.9': '',
-    'R1.2.12': '',
-    'R1.2.13': '',
+    '6.8': 'o6_8',
+    '7.2': 'o7_2',
+    '8.1': 'o8_1',
+    '8.2.8.1': 'hCurrent',
+    '8.2.7.1': 'gCurrent',
+    '8.2.11.1': 'kCurrent',
+    '8.2.4.1': 'dCurrent',
+    '8.2.10.1': 'jCurrent',
+    '8.2.9.1': 'iCurrent',
+    '8.2.1.1': 'aCurrent',
+    '8.2.16.1': 'qCurrent',
+    '8.2.2.1': 'bCurrent',
+    '8.2.6.1': 'fCurrent',
+    '8.2.14.1': 'nCurrent',
+    '8.2.3.1': 'cCurrent',
+    '8.2.5.1': 'eCurrent',
+    '8.2.12.1': 'lCurrent',
+    '8.2.15.1': 'pCurrent',
+    '8.2.13.1': 'mCurrent',
+    '8.8': 'o8_8',
+    '9.1': 'o9_1',
+    '9.2': 'o9_2',
+    '11.2': 'o11_2',
+    '11.4': 'o11_4',
+    '12.1': 'o12_1',
+    'R1.2.6': 'r1_2_6P',
+    'R1.2.7': 'r1_2_7P',
+    'R1.2.8': 'r1_2_8P',
+    'R1.2.10': 'r1_2_10P',
+    'R1.2.2': 'r1_2_2P',
+    'R1.2.1': 'r1_2_1P',
+    'R1.2.9': 'r1_2_9P',
+    'R1.2.12': 'r1_2_12P',
+    'R1.2.13': 'r1_2_13P',
 
 }

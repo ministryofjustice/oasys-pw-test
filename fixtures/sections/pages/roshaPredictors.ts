@@ -153,7 +153,6 @@ export class RoshaPredictors extends BaseAssessmentPage {
 
         log('Fully populating RoSHA Predictors page')
         await this.goto(true)
-        await this.goto(true)
         if (withDateFirstSanction) {
             await this.dateFirstSanction.setValue({ years: -2 })
         }

@@ -130,7 +130,7 @@ export class Assessment {
             // await this.san.populateFull()  // TODO
         }
         if (params.layer != 'Layer 1V2') {
-            await this.sentencePlan.populateFull()
+            await this.sentencePlan.populateTwoGoals()
         }
 
         log(`Fully populated assessment: ${JSON.stringify(params)}`)

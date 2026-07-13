@@ -116,6 +116,7 @@ declare type PopulateAssessmentParams = {
     sentencePlan?: SpType,
     r1_30PrePopulated?: boolean,
     r1_41PrePopulated?: boolean,
+    o6_7PrePopulated?: boolean,
     populate6_11?: 'Yes' | 'No',
 }
 

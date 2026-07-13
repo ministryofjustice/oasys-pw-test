@@ -155,10 +155,10 @@ export abstract class OasysPage {
         }
 
         await waitForPageUpdate(this.page)
+        if (!suppressLog) log(`Go to page: ${this.name} `)
         if (this.menu.type == 'Main' || this.menu.type == 'Floating') {
             await this.checkCurrent(suppressLog)
         }
-        if (!suppressLog) log(`Go to page: ${this.name} `)
     }
 
     /**

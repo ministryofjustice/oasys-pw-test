@@ -152,7 +152,6 @@ test('SAN integration - test ref 17', async ({ page, oasys, user, offender, asse
         Complete entry of the sentence plan with 2 goals/steps and ensure you 'Agree the Plan'
         Return back to the OASys Assessment - goes back to the 'Sentence Plan Service' screen`, 'TestStep')
 
-    await sentencePlan.gotoSpService('assessment')
     await sentencePlan.populateTwoGoals()
     await san.queries.checkSanOtlCall(pk1, {
         'crn': offender1.probationCrn,

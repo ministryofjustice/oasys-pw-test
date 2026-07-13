@@ -22,7 +22,7 @@ export class Sections {
 
     // Layer 1
     readonly layer1Section2 = new pages.Layer1Section2(this.page)
-    
+
     /**    
      * - A Heroin
      * - B Methadone(not prescribed)
@@ -113,9 +113,9 @@ export class Sections {
                 await this.predictors.populateFull(params)
                 await this.offendingInformation.populateFull(params)
                 await this.layer1Section2.populateFull()
-
                 await this.victim.victim1()
                 await this.victim.victim2()
+                await this.predictorQuestions.populateFull(true)
                 await this.selfAssessmentForm.populateFull()
                 break
             case 'Layer 1V2':

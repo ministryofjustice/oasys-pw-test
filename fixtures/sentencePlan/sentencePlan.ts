@@ -66,8 +66,9 @@ export class SentencePlan {
         await this.returnToOasys()
     }
 
-    async populateTwoGoals() {
-
+    async populateTwoGoals(from: 'offender' | 'assessment' = 'assessment') {
+        
+        await this.gotoSpService(from)
         await this.sentencePlan.createGoal.click()
 
         const createGoal = new pages.CreateGoal(this.page)
@@ -190,11 +191,5 @@ export class SentencePlan {
         await this.returnToOasys()
     }
 
-
-    async populateFull(from: 'assessment' | 'offender' = 'assessment') {
-
-        await this.gotoSpService(from)
-        // await this.spService.populateFull()  // TODO
-    }
 
 }

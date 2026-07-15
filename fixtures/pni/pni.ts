@@ -19,7 +19,7 @@ export class Pni {
         await this.assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk}`, {
             pni_func_proc: 'Y',
             pni_calculation: pniResult.pniCalculation,
-            pni_missing_fields_txt: pniResult.missingFields?.join('\n') ?? null,
+            pni_missing_fields_txt: pniResult.missingFields ? `\n${pniResult.missingFields.join('\n')}` : null,
         })
     }
 }

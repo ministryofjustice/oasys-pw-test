@@ -185,11 +185,11 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.arpBand == null) {
         riskLevelProject = 'H'
-        result.missingFields.push('OGRS')
+        result.missingFields.push('ARP')
     }
     if (pniParams.vrpBand == null) {
         riskLevelProject = 'H'
-        result.missingFields.push('OVP')
+        result.missingFields.push('VRP')
     }
     if (pniParams.ospDc == null) {
         riskLevelProject = 'H'
@@ -201,7 +201,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
     }
     if (pniParams.ospDc == 'NA' && pniParams.ospIic == 'NA' && rsrRiskLevel == null) {
         riskLevelProject = 'H'
-        result.missingFields.push('RSR')
+        result.missingFields.push('CSRP')
     }
 
     let saraTrump = false

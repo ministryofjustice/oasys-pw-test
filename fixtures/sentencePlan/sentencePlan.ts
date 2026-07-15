@@ -73,11 +73,10 @@ export class SentencePlan {
     async populateTwoGoals() {
 
         await this.sentencePlan.createGoal.click()
-        await this.createGoal.goal.setValue('Score a goal')
-        
         await this.areaOfNeed.areaOfNeed.setValue('Accommodation')
         await this.areaOfNeed.continue.click()
-        
+
+        await this.createGoal.goal.setValue('Score a goal')
         await this.createGoal.related.setValue('no')
         await this.createGoal.startNow.setValue('yes')
         await this.createGoal.targetDate.setValue('3months')
@@ -89,6 +88,8 @@ export class SentencePlan {
         await this.steps.saveAndContinue.click()
 
         await this.sentencePlan.createGoal.click()
+        await this.areaOfNeed.areaOfNeed.setValue('Alcohol use')
+        await this.areaOfNeed.continue.click()
 
         await this.createGoal.goal.setValue('Do something else')
         await this.createGoal.related.setValue('no')
@@ -156,8 +157,9 @@ export class SentencePlan {
         await this.gotoSpService(from)
 
         await this.sentencePlan.createGoal.click()
+        await this.areaOfNeed.areaOfNeed.setValue('Finances')
+        await this.areaOfNeed.continue.click()
 
-        const createGoal = new pages.CreateGoal(this.page)
         await this.createGoal.goal.setValue('Adding a goal')
         await this.createGoal.related.setValue('no')
         await this.createGoal.startNow.setValue('yes')

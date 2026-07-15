@@ -20,7 +20,9 @@ export function mergeAndCreateAssessment(mergeTestData: MergeTestData) {
         await oasys.clickButton('Close')
         await tasks.taskManager.goto()
         await tasks.grantMerge(mergeTestData.offender2.surname)
-        await sns.testSnsMessageData(mergeTestData.offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        // Winner already had the latest assessment, so no new SNS messages
+        await sns.checkNoMessagesForAssessment(mergeTestData.offender1Pks[0])
+        await sns.checkNoMessagesForAssessment(mergeTestData.offender2Pks[0])
 
         // Get new assessment PKs
         mergeTestData.crn1AfterMergePks = await assessment.queries.getAllSetPksByProbationCrn(mergeTestData.offender1.probationCrn)

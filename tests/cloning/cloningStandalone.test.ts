@@ -31,7 +31,7 @@ test('Cloning test - standalone CSRP', async ({ oasys, user, offender, assessmen
     await offender.standaloneCsrp.o1_32.setValue(5)
     await offender.standaloneCsrp.o1_40.setValue(4)
     await offender.standaloneCsrp.o1_29.setValue({ months: -1 })
-    await offender.standaloneCsrp.o1_38.setValue({ months: +1 })
+    await offender.standaloneCsrp.o1_38.setValue({ days: -7 })
     await offender.standaloneCsrp.o1_30.setValue('No')
     await offender.standaloneCsrp.o1_39.setValue('No') // Offender interview
 

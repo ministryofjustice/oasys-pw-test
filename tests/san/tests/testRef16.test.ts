@@ -81,7 +81,6 @@ test('SAN integration - test ref 16', async ({ oasys, user, offender, assessment
     await sections.predictors.o1_45.setValue(0)
     await sections.predictors.o1_46.setValue(0)
     await sections.predictors.o1_37.setValue(0)
-    await sections.predictors.o1_38.setValue({ months: -1 })
 
     log(`Navigate to the Summary Sheet screen - ensure that the OPD section has changed to 'This individual does not meet the criteria for the OPD pathway.'
         and the screen override field has defaulted to 'No'

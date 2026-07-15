@@ -29,7 +29,7 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
             await dialog.accept()
         })
         await offender.offenderDetails.save.click()
-        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
         await user.logout()
 
         log('Login to pilot area to grant the merge and retain ownership', 'Test step')
@@ -111,7 +111,7 @@ async function checkAssessment(user: string, offender1: OffenderDef, pk: number,
             'dateOfBirth': offender1.dateOfBirth,
             'gender': '1',
             'location': 'COMMUNITY',
-            'sexuallyMotivatedOffenceHistory': null,
+            'sexuallyMotivatedOffenceHistory': 'NO',
         },
         {
             'displayName': user,
@@ -133,7 +133,7 @@ async function checkAssessment(user: string, offender1: OffenderDef, pk: number,
             'dateOfBirth': offender1.dateOfBirth,
             'gender': '1',
             'location': 'COMMUNITY',
-            'sexuallyMotivatedOffenceHistory': null,
+            'sexuallyMotivatedOffenceHistory': 'NO',
         },
         {
             'displayName': user,

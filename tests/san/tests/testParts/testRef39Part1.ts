@@ -4,7 +4,7 @@ import * as testData from '../../data/mergeTest'
 
 export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
 
-    test('Merge tests part 1 - create and complete 3.2 assessment on offender 1', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, sns }) => {
+    test('Merge tests part 1 & 2 - create and complete 3.2 assessment on offender 1', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, sns }) => {
 
         log('Merge tests part 1 - create and complete 3.2 assessment on offender 1', 'Test step')
 

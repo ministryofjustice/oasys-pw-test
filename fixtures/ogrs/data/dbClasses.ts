@@ -59,6 +59,7 @@ const csrpColumns: Columns = {
     s1_43_last_offence_date: { name: 's1_43_last_offence_date', type: 'date' },
     s1_38_community_date: { name: 's1_38_community_date', type: 'date' },
     s1_30_sexual_element: { name: 's1_30_sexual_element', type: 'string' },
+    s1_39_offender_interview: { name: 's1_39_offender_interview', type: 'string' },
     s2_2_weapon: { name: 's2_2_weapon', type: 'string' },
     s3_q4_suitable_accom: { name: 's3_q4_suitable_accom', type: 'string' },
     s4_q2_unemployed: { name: 's4_q2_unemployed', type: 'string' },
@@ -143,6 +144,7 @@ export class OgrsRsr {
     s1_43_last_offence_date: Temporal.PlainDate
     s1_38_community_date: Temporal.PlainDate
     s1_30_sexual_element: string
+    s1_39_offender_interview: string
     s2_2_weapon: string
     s3_q4_suitable_accom: string
     s4_q2_unemployed: string

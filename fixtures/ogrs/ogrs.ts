@@ -178,14 +178,14 @@ export class Ogrs {
         result.svrpText = svrp ? `${svrpType}  ${svrp.toFixed(2).padStart(padding)}%   ${svrpBand}` : 'Unable to calculate due to'
 
         result.dcSrpBand = result.outputParams.OSP_DC_BAND?.toUpperCase() ?? null
-        result.dcSrpText = result.dcSrpBand ? '' : 'Unable to calculate DC-SRP due to missing details'
+        result.dcSrpText = result.dcSrpBand ? '' : 'Unable to calculate'
         result.iicSrpBand = result.outputParams.OSP_IIC_BAND?.toUpperCase() ?? null
-        result.iicSrpText = result.iicSrpBand ? '' : 'Unable to calculate IIC-SRP due to missing details'
+        result.iicSrpText = result.iicSrpBand ? '' : 'Unable to calculate'
 
         result.csrpBand = result.outputParams.RSR_BAND?.toUpperCase() ?? null
         result.csrpType = result.outputParams.RSR_DYNAMIC == 'Y' ? 'DYNAMIC' : result.outputParams.RSR_CALCULATED == 'Y' ? 'STATIC' : ''
         result.csrpScore = result.csrpBand ? `${result.outputParams.RSR_PERCENTAGE.toFixed(2).padStart(6)}% ` : ''
-        result.csrpText = result.csrpBand ? '' : 'Unable to calculate CSRP due to missing details'
+        result.csrpText = result.csrpBand ? '' : 'Unable to calculate'
 
     }
 

@@ -34,6 +34,7 @@ const testDataIssues = [
     `'ZLHTSIW'`,  // SAN issue
     `'ZNBWPWW'`,  // SAN issue
     `'ZUFYJQT'`,  // SAN issue
+    `'X778253'`,  // SAN issue
 ]
 
 for (let i = 0; i < dateConditions.length; i++) {

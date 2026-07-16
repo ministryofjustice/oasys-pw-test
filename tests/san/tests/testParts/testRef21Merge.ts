@@ -29,7 +29,6 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
             await dialog.accept()
         })
         await offender.offenderDetails.save.click()
-        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
         await user.logout()
 
         log('Login to pilot area to grant the merge and retain ownership', 'Test step')

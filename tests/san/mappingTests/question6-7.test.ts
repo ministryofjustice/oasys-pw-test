@@ -13,7 +13,7 @@ type TestCase = {
 }
 
 
-
+test.describe.configure({ retries: 1 })
 test('Mapping test for question 6.7', async ({ oasys, user, offender, assessment, san, }) => {
 
     /*

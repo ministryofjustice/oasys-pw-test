@@ -16,6 +16,8 @@ export class SentencePlan {
     readonly steps = new pages.Steps(this.page)
     readonly agreePlan = new pages.AgreePlan(this.page)
     readonly updateGoalAndSteps = new pages.UpdateGoalAndSteps(this.page)
+    readonly areaOfNeed = new pages.AreaOfNeed(this.page)
+    readonly createGoal = new pages.CreateGoal(this.page)
 
     async gotoSpService(from: 'offender' | 'assessment', readonly: boolean = false) {
 
@@ -47,12 +49,14 @@ export class SentencePlan {
         await this.gotoSpService(from)
         await this.sentencePlan.createGoal.click()
 
-        const createGoal = new pages.CreateGoal(this.page)
-        await createGoal.goal.setValue('Score a goal')
-        await createGoal.related.setValue('no')
-        await createGoal.startNow.setValue('yes')
-        await createGoal.targetDate.setValue('3months')
-        await createGoal.addSteps.click()
+        await this.areaOfNeed.areaOfNeed.setValue('Accommodation')
+        await this.areaOfNeed.continue.click()
+
+        await this.createGoal.goal.setValue('Score a goal')
+        await this.createGoal.related.setValue('no')
+        await this.createGoal.startNow.setValue('yes')
+        await this.createGoal.targetDate.setValue('3months')
+        await this.createGoal.addSteps.click()
 
         await this.steps.who.setValue('probation_practitioner')
         await this.steps.step.setValue('Do some stuff')
@@ -70,13 +74,14 @@ export class SentencePlan {
         
         await this.gotoSpService(from)
         await this.sentencePlan.createGoal.click()
+        await this.areaOfNeed.areaOfNeed.setValue('Accommodation')
+        await this.areaOfNeed.continue.click()
 
-        const createGoal = new pages.CreateGoal(this.page)
-        await createGoal.goal.setValue('Score a goal')
-        await createGoal.related.setValue('no')
-        await createGoal.startNow.setValue('yes')
-        await createGoal.targetDate.setValue('3months')
-        await createGoal.addSteps.click()
+        await this.createGoal.goal.setValue('Score a goal')
+        await this.createGoal.related.setValue('no')
+        await this.createGoal.startNow.setValue('yes')
+        await this.createGoal.targetDate.setValue('3months')
+        await this.createGoal.addSteps.click()
 
         await this.steps.who.setValue('probation_practitioner')
         await this.steps.step.setValue('Do stuff')
@@ -84,12 +89,14 @@ export class SentencePlan {
         await this.steps.saveAndContinue.click()
 
         await this.sentencePlan.createGoal.click()
+        await this.areaOfNeed.areaOfNeed.setValue('Alcohol use')
+        await this.areaOfNeed.continue.click()
 
-        await createGoal.goal.setValue('Do something else')
-        await createGoal.related.setValue('no')
-        await createGoal.startNow.setValue('yes')
-        await createGoal.targetDate.setValue('6months')
-        await createGoal.addSteps.click()
+        await this.createGoal.goal.setValue('Do something else')
+        await this.createGoal.related.setValue('no')
+        await this.createGoal.startNow.setValue('yes')
+        await this.createGoal.targetDate.setValue('6months')
+        await this.createGoal.addSteps.click()
 
         await this.steps.who.setValue('probation_practitioner')
         await this.steps.step.setValue('Some other stuff')
@@ -151,13 +158,14 @@ export class SentencePlan {
         await this.gotoSpService(from)
 
         await this.sentencePlan.createGoal.click()
+        await this.areaOfNeed.areaOfNeed.setValue('Finances')
+        await this.areaOfNeed.continue.click()
 
-        const createGoal = new pages.CreateGoal(this.page)
-        await createGoal.goal.setValue('Adding a goal')
-        await createGoal.related.setValue('no')
-        await createGoal.startNow.setValue('yes')
-        await createGoal.targetDate.setValue('3months')
-        await createGoal.addSteps.click()
+        await this.createGoal.goal.setValue('Adding a goal')
+        await this.createGoal.related.setValue('no')
+        await this.createGoal.startNow.setValue('yes')
+        await this.createGoal.targetDate.setValue('3months')
+        await this.createGoal.addSteps.click()
 
         await this.steps.who.setValue('probation_practitioner')
         await this.steps.step.setValue('Do some additional stuff')

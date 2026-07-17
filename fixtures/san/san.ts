@@ -33,6 +33,9 @@ export class San {
     readonly employment1 = new pages.Employment1(this.page)
     readonly employment2 = new pages.Employment2(this.page)
     readonly informationSummary = new pages.InformationSummary(this.page)
+    readonly offenceAnalysis1 = new pages.OffenceAnalysis1(this.page)
+    readonly offenceAnalysis2 = new pages.OffenceAnalysis2(this.page)
+    readonly offenceAnalysis3 = new pages.OffenceAnalysis3(this.page)
 
     readonly queries = new Queries(this.oasysDb)
 

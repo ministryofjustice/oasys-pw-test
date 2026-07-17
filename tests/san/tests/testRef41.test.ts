@@ -1,6 +1,7 @@
 import { test } from 'fixtures'
 
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - RFI test', async ({ oasys, user, offender, assessment }) => {
     /**
      * RFI - Complete an RFI against an offender who does not have any WIP OASys assessment

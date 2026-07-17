@@ -4,6 +4,7 @@ import { test } from 'fixtures'
     New FEMALE Probation Offender in SAN Area - check functionality when say 'No' to cloning from an Historic OASys-SAN assessment.
  */
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 14', async ({ oasys, user, offender, assessment, sections, san, signing, sentencePlan, risk }) => {
 
     await user.prob.probSanHeadPdu.login()

@@ -19,7 +19,7 @@ export class Sns {
      * 
      * The third optional parameter can be a list of expected message types, allowing confirmation that the data is in the right state to generate those messages.
      */
-    async testSnsMessageData(crn: string, type: AssessmentOrCsrp, expectingMessages?: ('AssSumm' | 'OGRS' | 'OPD' | 'RSR')[]) {
+    async testSnsMessageData(crn: string, type: AssessmentOrCsrp, expectingMessages?: ('AssSumm' | 'OGRS' | 'OPD' | 'RSR')[], timeout: number = 5) {
 
         let failed = false
         const actualSnsMessages: DbSns[] = []
@@ -41,8 +41,8 @@ export class Sns {
                 }
             }
 
-            // Get SNS messages from the database for the assessment - limit to last 5 seconds
-            const snsData = await this.oasysDb.getData(DbSns.query(assessment.pk, type, 5))
+            // Get SNS messages from the database for the assessment - limit to last 5 seconds (or longer if specified e.g. for demerges)
+            const snsData = await this.oasysDb.getData(DbSns.query(assessment.pk, type, timeout))
             for (let sns of snsData) {
                 actualSnsMessages.push(new DbSns(sns))
             }

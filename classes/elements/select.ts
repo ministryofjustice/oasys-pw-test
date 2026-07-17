@@ -14,6 +14,7 @@ export class Select<T extends string> {
 
     async setValue(value: T) {
 
+        await this.selector.click()
         await this.selector.selectOption(value as string)
     }
 

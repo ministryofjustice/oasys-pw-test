@@ -248,9 +248,16 @@ class PniCalc {
 
         const pniCalcResult = pniCalc(pniParams)
 
+        let missingFields: string[] = pniCalcResult.missingFields ? [] : null
+        if (pniCalcResult.missingFields) {
+            for (const missingField of pniCalcResult.missingFields) {
+                missingFields.push(after77 ? missingField : missingField?.replaceAll('ARP', 'OGRS3')?.replaceAll('VRP', 'OVP')?.replaceAll('CSRP', 'RSR'))
+            }
+        }
+
         this.offenderPk = offenderData.offenderPk
         this.pniCalculation = pniCalcResult.pniCalculation
-        this.missingFields = pniCalcResult.missingFields
+        this.missingFields = missingFields
         this.riskLevel = pniCalcResult.riskLevel
         this.sexDomainLevel = pniCalcResult.sexDomainLevel
         this.sexDomainScore = pniCalcResult.sexDomainScore

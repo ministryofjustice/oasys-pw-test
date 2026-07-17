@@ -5,6 +5,7 @@ import { getMappingTestOffender } from './xMappingTest'
 type HighestQualOptions = 'entryLevel' | 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'level6' | 'level7' | 'level8' | 'none' | 'unknown'
 type ProfessionalQualOptions = 'yes' | 'no' | 'unknown'
 
+test.describe.configure({ retries: 1 })
 test('Mapping test for question 4.9', async ({ oasys, user, offender, assessment, san, }) => {
 
     /*

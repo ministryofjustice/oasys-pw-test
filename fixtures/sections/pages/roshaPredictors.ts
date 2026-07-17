@@ -122,7 +122,7 @@ export class RoshaPredictors extends BaseAssessmentPage {
     o11_2 = new Element.Select<ProblemsAnswer>(this.page, '#P5_QU_11_2')
     o11_4 = new Element.Select<ProblemsAnswer>(this.page, '#P5_QU_11_4')
     o12_1 = new Element.Select<ProblemsAnswer>(this.page, '#P5_QU_12_1')
-    
+
     predictorsText = new Element.Text(this.page, "h2:has-text('ACTUARIAL PREDICTORS')+table>tbody>tr>td")
     arpText = new Element.Text(this.page, "td:has-text('ALL REOFFENDING PREDICTOR OVER THE NEXT TWO YEARS')+td")
     vrpText = new Element.Text(this.page, ":nth-match(td:has-text('VIOLENT REOFFENDING PREDICTOR OVER THE NEXT TWO YEARS')+td,1)")
@@ -136,7 +136,7 @@ export class RoshaPredictors extends BaseAssessmentPage {
     csrpScore = new Element.Text(this.page, ":nth-match(svg:has-text('CSRP')>text:nth-of-type(4),1)")
     csrpText = new Element.Text(this.page, '#P5_REOFF_NEXT_2')
 
-    async populateMinimal(withDateFirstSanction = true) {
+    async populateMinimal(params?: PopulateAssessmentParams, withDateFirstSanction = true) {
 
         log('Minimally populating RoSHA Predictors page')
         await this.goto(true)
@@ -147,6 +147,9 @@ export class RoshaPredictors extends BaseAssessmentPage {
         await this.o1_40.setValue(0)
         await this.o1_29.setValue({ days: -7 })
         await this.o1_30.setValue('No')
+        if (params?.populate1_38) {
+            await this.o1_38.setValue(params.populate1_38)
+        }
     }
 
     async populateFull(withDateFirstSanction = true) {
@@ -162,12 +165,12 @@ export class RoshaPredictors extends BaseAssessmentPage {
         await this.o1_30.setValue('Yes')
         await this.o1_41.setValue('Yes')
         await this.o1_44.setValue('Yes')
-        await this.o1_33.setValue({ years: -5 })
+        await this.o1_33.setValue({ years: -2 })
         await this.o1_34.setValue('0')
         await this.o1_45.setValue('0')
         await this.o1_46.setValue('0')
         await this.o1_37.setValue('2')
-        await this.o1_38.setValue({ months: 18 })
+        await this.o1_38.setValue({ months: -6 })
         await this.o1_39.setValue('Yes')
         await this.o2_2.setValue('Yes')
         await this.o2_2Weapon.setValue('A knife')

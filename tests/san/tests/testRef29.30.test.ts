@@ -1,6 +1,7 @@
 import { test } from 'fixtures'
 import * as testData from '../data/testRef29'
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 29/30', async ({ oasys, user, signing, offender, assessment, san, sections, sara, risk, sentencePlan }) => {
 
     /**

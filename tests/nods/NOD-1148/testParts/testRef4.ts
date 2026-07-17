@@ -118,7 +118,11 @@ export function testRef4(offender1: OffenderDef, pks: { [key: number]: number })
         await risk.rmp.populateMinimalWithTextFields()
         await sentencePlan.populateMinimal()
 
-        await signing.signAndLock()
+        await risk.screeningSection2to4.goto()
+        await risk.screeningSection2to4.r2_3.setValue('No')
+        await risk.screeningSection2to4.rationale.setValue('Rationale')
+
+        await signing.signAndLock({ page: 'spService' })
 
         log(`Check that SNS messages are created for the L1 V1:		
                 OGRS msg - ensure the MESSAGE_DATA field is now including the new fields as per the specification	

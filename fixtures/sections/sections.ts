@@ -85,23 +85,23 @@ export class Sections {
 
         switch (params?.layer) {
             case 'Layer 1':
-                await this.predictors.populateMinimal()
                 await this.offendingInformation.populateMinimal()
+                await this.predictors.populateMinimal(params)
                 await this.layer1Section2.populateMinimal()
                 await this.selfAssessmentForm.populateMinimal()
                 break
             case 'Layer 1V2':
-                await this.roshaPredictors.populateMinimal()
+                await this.roshaPredictors.populateMinimal(params)
                 break
             case 'Layer 3':
-                await this.predictors.populateMinimal()
                 await this.offendingInformation.populateMinimal()
+                await this.predictors.populateMinimal(params)
                 await this.sections2To13NoIssues(params)
                 await this.selfAssessmentForm.populateMinimal()
                 break
             case 'Layer 3V2':
-                await this.predictors.populateMinimal()
                 await this.offendingInformation.populateMinimal()
+                await this.predictors.populateMinimal(params)
                 break
         }
     }
@@ -110,8 +110,8 @@ export class Sections {
 
         switch (params?.layer) {
             case 'Layer 1':
-                await this.predictors.populateFull(params)
                 await this.offendingInformation.populateFull(params)
+                await this.predictors.populateFull(params)
                 await this.layer1Section2.populateFull()
                 await this.victim.victim1()
                 await this.victim.victim2()
@@ -122,8 +122,8 @@ export class Sections {
                 await this.roshaPredictors.populateFull()
                 break
             case 'Layer 3':
-                await this.predictors.populateFull(params)
                 await this.offendingInformation.populateFull(params)
+                await this.predictors.populateFull(params)
                 await this.sections2To13populateFull(params)
                 await this.selfAssessmentForm.populateFull(params.maxStrings)
                 break

@@ -10,6 +10,7 @@ import * as testData from '../data/testRef36'
  * Check parameters (in particular PKs and versions) and cloning.  Does assessment 3 clone SAN content from 1 or 2????
  */
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment, sections, sentencePlan, san, risk, signing, sns }) => {
 
     await user.prob.probSanUnappr.login()

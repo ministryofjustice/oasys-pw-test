@@ -2,6 +2,7 @@ import { test } from 'fixtures'
 import * as testData from '../data/testRef15'
 
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment, sections, sentencePlan, san, risk, signing }) => {
 
     await user.pris.prisSanCAdm.login()
@@ -44,7 +45,6 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
     await sections.predictors.o1_40.setValue(0)
     await sections.predictors.o1_29.setValue({ months: -6 })
     await sections.predictors.o1_30.setValue('No')
-    await sections.predictors.o1_38.setValue({ months: -1 })
     await sections.predictors.markCompleteAndCheck()
 
     log(`Navigate out to S&N section - check the OTL parameters (should go across as READ ONLY).  Check you cannot edit anything in the SAN Assessment

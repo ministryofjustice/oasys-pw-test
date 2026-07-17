@@ -34,6 +34,9 @@ test('Cloning test - historic period of supervision', async ({ oasys, user, offe
     await sections.offendingInformation.goto(true)
     await sections.offendingInformation.count.setValue(6)
     await sections.offendingInformation.offenceDate.setValue({ months: -1 })
+    await sections.predictors.goto()
+    await sections.predictors.o1_32.setValue(2)
+    await sections.predictors.o1_40.setValue(0)
     await sentencePlan.populateMinimal()
     await signing.signAndLock()
 

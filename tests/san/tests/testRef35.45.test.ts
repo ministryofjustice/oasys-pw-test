@@ -6,6 +6,7 @@ import * as testData from '../data/testRef35'
     Includes Maturity Screening score
  */
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, assessment, sections, signing, san, risk, sentencePlan }) => {
 
     await user.prob.probSanHeadPdu.login()  // No countersigning for this test

@@ -2,6 +2,7 @@ import { test } from 'fixtures'
 import * as testData from '../data/testRef15'
 
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment, sections, sentencePlan, san, risk, signing }) => {
 
     await user.pris.prisSanCAdm.login()

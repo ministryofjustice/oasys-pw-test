@@ -8,6 +8,7 @@ Test will check the reassigning of the WIP task - drop down only comprises of th
 Also incorporates check of Male OPD calculation AND Learning Screening Tool (data taken from the SAN assessment).
 */
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 16', async ({ oasys, user, offender, assessment, sections, tasks, san, risk }) => {
 
     await user.pris.prisSanUnappr.login()

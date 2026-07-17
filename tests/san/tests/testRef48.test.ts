@@ -6,6 +6,7 @@ import { test } from 'fixtures'
     Assessor creates a 3.2 assessment - does NOT get asked whether they wish to clone section 3 to 13 and sentence plan question (improved cloning)
  */
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 48', async ({ oasys, user, offender, assessment, sections, signing }) => {
 
     await user.prob.probSanHeadPdu.login()

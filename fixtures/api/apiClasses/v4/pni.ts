@@ -4,6 +4,7 @@ import * as dbClasses from 'fixtures/api/data/dbClasses'
 import * as env from '../../endpointUrls'
 import { QaData } from 'fixtures/api/data/qaData'
 import { pniCalc } from 'fixtures/pni/pniCalc'
+import { NewActuarialPredictors } from '../riskScoreClasses'
 
 export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {
 
@@ -81,6 +82,7 @@ export class PniAssessment extends v4Common.V4AssessmentCommon {
     ogpOvp: OgpOvp
     ldcData: LdcData
     rsrOspData: RsrOspData
+    newActuarialPredictors: NewActuarialPredictors
 
     addDetails(dbAssessment: dbClasses.DbAssessment) {
 
@@ -105,6 +107,7 @@ export class PniAssessment extends v4Common.V4AssessmentCommon {
         this.ogpOvp = new OgpOvp(dbAssessment.riskDetails)
         this.ldcData = new LdcData(dbAssessment)
         this.rsrOspData = new RsrOspData(dbAssessment)
+        this.newActuarialPredictors = new NewActuarialPredictors(dbAssessment.riskDetails)
     }
 }
 
@@ -169,7 +172,7 @@ class PniCalc {
 
             } else {
                 const q2_3 = dbAssessment.qaData.getStringArray('2.3')?.includes('Physical violence towards partner')
-                const after6_30 = oasysDateTime.checkIfAfterReleaseNode('6.30', dbAssessment.initiationDate)
+                const after6_30 = oasysDateTime.checkIfAfter('6.30', dbAssessment.initiationDate)
                 const q6_7 = da(dbAssessment.qaData, after6_30)
 
                 // Rule 3
@@ -210,7 +213,8 @@ class PniCalc {
 
         // Set up the parameters and call the calculator
         // const pniCalcResult = pniCalc(dbAssessment, community, this.saraRiskLevelToPartner, this.saraRiskLevelToOther)
-        const after649 = oasysDateTime.checkIfAfterReleaseNode('6.49', dbAssessment.initiationDate)
+        const after649 = oasysDateTime.checkIfAfter('6.49', dbAssessment.initiationDate)
+        const after77 = oasysDateTime.checkIfAfter('7.7', dbAssessment.initiationDate)
 
         const pniParams: PniParams = {
             s1_30: dbAssessment.qaData.getString('1.30'),
@@ -228,8 +232,8 @@ class PniCalc {
             s11_6: dbAssessment.qaData.getOasysScore('11.6'),
             s12_1: dbAssessment.qaData.getOasysScore('12.1'),
             s12_9: dbAssessment.qaData.getOasysScore('12.9'),
-            ogrs3RiskRecon: dbAssessment.riskDetails.ogrs3RiskRecon,
-            ovpRisk: dbAssessment.riskDetails.ovpRisk,
+            arpBand: dbAssessment.riskDetails.ogp2Risk ?? dbAssessment.riskDetails.ogrs4gRisk,
+            vrpBand: dbAssessment.riskDetails.ovp2Risk ?? dbAssessment.riskDetails.ogrs4vRisk,
             ospDc: after649 ? dbAssessment.riskDetails.ospDcRisk : dbAssessment.riskDetails.ospCRisk,
             ospIic: after649 ? dbAssessment.riskDetails.ospIicRisk : dbAssessment.riskDetails.ospIRisk,
             rsrPercentageScore: dbAssessment.riskDetails.rsrPercentageScore,
@@ -237,12 +241,23 @@ class PniCalc {
             saraRiskPartner: this.saraRiskLevelToPartner,
             saraRiskOther: this.saraRiskLevelToOther,
         }
+        if (!after77) {  // Old assessments use the OGRS3 bands
+            pniParams.arpBand = dbAssessment.riskDetails.ogrs3RiskRecon
+            pniParams.vrpBand = dbAssessment.riskDetails.ovpRisk
+        }
 
         const pniCalcResult = pniCalc(pniParams)
 
+        let missingFields: string[] = pniCalcResult.missingFields ? [] : null
+        if (pniCalcResult.missingFields) {
+            for (const missingField of pniCalcResult.missingFields) {
+                missingFields.push(after77 ? missingField : missingField?.replaceAll('ARP', 'OGRS3')?.replaceAll('VRP', 'OVP')?.replaceAll('CSRP', 'RSR'))
+            }
+        }
+
         this.offenderPk = offenderData.offenderPk
         this.pniCalculation = pniCalcResult.pniCalculation
-        this.missingFields = pniCalcResult.missingFields
+        this.missingFields = missingFields
         this.riskLevel = pniCalcResult.riskLevel
         this.sexDomainLevel = pniCalcResult.sexDomainLevel
         this.sexDomainScore = pniCalcResult.sexDomainScore

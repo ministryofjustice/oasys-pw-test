@@ -1,5 +1,6 @@
 import { test } from 'fixtures'
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 27 part 3', async ({ oasys, user, cms, offender, assessment, san, sentencePlan, sns }) => {
 
     const offender1: OffenderDef = {

@@ -12,7 +12,7 @@ test('Example test - create a probation offender and RoSHA assessment', async ({
     await assessment.populateMinimal({ layer: 'Layer 1V2' })
     // await assessment.populateFull({ layer: 'Layer 1V2', maxStrings: false })
 
-    await signing.signAndLock({ expectCsrpScore: true })
+    await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
 
     await user.logout()
 

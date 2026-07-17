@@ -72,13 +72,13 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check the SIGN API clog for the correct parameters`, 'Test step')
 
     await oasys.history()
-    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService' })
     await san.queries.checkSanSigningCall(pk1, user.prob.probHeadPdu, 'SELF')
 
     log(`Check the correct SNS messages have been created, OGRS3, RSR and an ASSSUMMSAN (maybe OPD, depends on the data entered)
         Check the assessments tab for the offender - this latest completed PSR assessment shows an icon of SP against it (meaning it includes an ARNS sentence plan)`, 'Test step')
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
     await oasys.history(offender1)
     const sanIcons = await assessment.assessmentsTab.assessments.san.getValues()
     expect(sanIcons[0]).toBe('Includes Sentence Plan Service')
@@ -170,7 +170,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     log(`S&L the assessment, the 'incomplete' screen should NOT show the Initial Sentence Plan or Sentence Plan Service screens in the list and the assessment should not require countersigning
         Check the SIGN API clog for the correct parameters`, 'Test step')
 
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
     await san.queries.checkSanSigningCall(pk2, user.prob.probHeadPdu, 'SELF')
 
     log(`Check that OASYS_SET.SSP_PLAN_VERSION_NO differs from the version number on the previous PSR assessment.
@@ -181,7 +181,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     expect(spVersion2).not.toBe(spVersion1)
     const sanVersion1 = await oasysDb.getSingleNumericValue(`select SAN_ASSESSMENT_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk2}`)
     expect(sanVersion1).toBe('')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
     log(`Open up the START assessment - now all read only
         Check the database and ensure there are NO fields populated for the ISP section questions and answers
@@ -274,7 +274,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check the database and ensure there are NO fields populated for the RSP section questions and answers EXCEPT for RP.3 which is set to 'REVIEW' (this has to remain in case we are told to 'TERMINATE' the offender from the ARNS Sentence Plan data response.
         Check the assessments tab for the offender - this latest completed REVIEW assessment shows an icon of SP against it (meaning it includes an ARNS sentence plan)`, 'Test step')
 
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
     await san.queries.checkSanSigningCall(pk3, user.prob.probHeadPdu, 'SELF')
 
     const spVersion3 = await oasysDb.getSingleNumericValue(`select SSP_PLAN_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk3}`)

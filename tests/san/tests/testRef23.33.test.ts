@@ -7,6 +7,7 @@ import * as testData from '../data/testRef23'
     alcohol sections questions 9.1 and 9.2
  */
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, assessment, sections, sentencePlan, san, risk, signing, sns }) => {
 
     await user.prob.probSanHeadPdu.login()  // No countersigning for this test

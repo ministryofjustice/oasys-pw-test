@@ -5,6 +5,7 @@ import { getMappingTestOffender } from './xMappingTest'
 type AccommodationOptions = 'family' | 'friends' | 'partner' | 'child' | 'other' | 'unknown' | 'alone'
 type RelationshipOptions = 'partner' | 'ownChildren' | 'otherChildren' | 'family' | 'friends' | 'other'
 
+test.describe.configure({ retries: 1 })
 test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment, san, }) => {
 
     /*

@@ -469,4 +469,6 @@ const poaLookup: { [key: string]: string } = {
     650: 'Pre-handover',
     660: 'Probation Reset Suspension',
     670: 'Impact Cohort Assessment',
+    680: 'Standalone Unpaid Work',
+    690: 'Final Third Suspension',
 }

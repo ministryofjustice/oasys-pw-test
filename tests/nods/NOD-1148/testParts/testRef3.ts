@@ -45,7 +45,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
         await sections.roshaPredictors.o1_32.setValue(4)
         await sections.roshaPredictors.o1_29.setValue({ months: -6 })
         await sections.roshaPredictors.o1_30.setValue('No')
-        await sections.roshaPredictors.o1_38.setValue({ months: 12 })
+        await sections.roshaPredictors.o1_38.setValue({ months: -3 })
         await sections.roshaPredictors.save.click()
 
         log('Check the predictor values', 'Test step')
@@ -122,7 +122,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
         await risk.screeningSection2to4.r2_3.setValue('No')
         await risk.screeningSection2to4.rationale.setValue('Because')
 
-        await signing.signAndLock({ page: 'rmp', expectCsrpScore: true, csrpScoreMessage: '2.93% (Medium)' })
+        await signing.signAndLock({ page: 'rmp', expectCsrpScore: true, csrpScoreMessage: '2.94% (Medium)' })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
         log(`Check that there is a record in the new table 'PREDICTOR_FEATURE_LINES' for this OASYS_SET_PK and it has stored ALL the fields coming back from the new Predictor calculator as at the last time it run

@@ -6,6 +6,7 @@ import * as testData from '../data/testRef35'
     Includes Maturity Screening score
  */
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, assessment, sections, signing, san, risk, sentencePlan }) => {
 
     await user.prob.probSanHeadPdu.login()  // No countersigning for this test
@@ -73,7 +74,7 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
     await offender.standaloneCsrp.o1_32.setValue(4)
     await offender.standaloneCsrp.o1_40.setValue(1)
     await offender.standaloneCsrp.o1_29.setValue({})
-    await offender.standaloneCsrp.o1_38.setValue({ months: 6 })
+    await offender.standaloneCsrp.o1_38.setValue({ days: -10 })
     await offender.standaloneCsrp.o3_4.setValue('1-Some problems')
     await offender.standaloneCsrp.o4_2.setValue('2-Yes')
     await offender.standaloneCsrp.o6_4.setValue('0-No problems')

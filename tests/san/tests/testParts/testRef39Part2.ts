@@ -4,7 +4,7 @@ import * as testData from '../../data/mergeTest'
 
 export function mergeAndCreateAssessment(mergeTestData: MergeTestData) {
 
-    test('Merge tests part 3 - merge offenders', async({ page, oasys, user, offender, assessment, tasks, san }) => {
+    test('Merge tests part 3 - merge offenders', async ({ page, oasys, user, offender, assessment, tasks, san, sns }) => {
 
         await user.prob.probSanHeadPdu.login()
         await offender.searchAndSelect(mergeTestData.offender1)
@@ -20,6 +20,9 @@ export function mergeAndCreateAssessment(mergeTestData: MergeTestData) {
         await oasys.clickButton('Close')
         await tasks.taskManager.goto()
         await tasks.grantMerge(mergeTestData.offender2.surname)
+        // Winner already had the latest assessment, so no new SNS messages
+        await sns.checkNoMessagesForAssessment(mergeTestData.offender1Pks[0])
+        await sns.checkNoMessagesForAssessment(mergeTestData.offender2Pks[0])
 
         // Get new assessment PKs
         mergeTestData.crn1AfterMergePks = await assessment.queries.getAllSetPksByProbationCrn(mergeTestData.offender1.probationCrn)

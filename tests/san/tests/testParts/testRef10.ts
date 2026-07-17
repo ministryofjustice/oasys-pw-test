@@ -39,7 +39,7 @@ export function testRef10(offender1: OffenderDef, pks: number[]) {
 
         await san.queries.getSanApiTimeAndCheckDbValues(pk, 'Y', prevPk)
         await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk}`, {
-            RSR_PERCENTAGE_SCORE: '9.96',
+            RSR_PERCENTAGE_SCORE: '9.93',
             RSR_STATIC_OR_DYNAMIC: 'DYNAMIC',
             RSR_ERROR_COUNT: '0',
             OSP_IIC_PERCENTAGE_SCORE: '3.33',

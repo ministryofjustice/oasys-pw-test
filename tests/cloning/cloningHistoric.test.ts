@@ -7,19 +7,19 @@ test('Cloning test - historic period of supervision', async ({ oasys, user, offe
     const offender1 = await offender.createProbFromStandardOffender()
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
     await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No' })
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
 
     await oasys.history(offender1)
     await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)' })
     await sections.section3.goto()
     await sections.section3.identifyIssues.setValue('Second assessment section 3 issues')
-    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService' })
 
     await oasys.history(offender1)
     await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)' })
     await sections.section4.goto()
     await sections.section4.identifyIssues.setValue('Third assessment section 4 issues')
-    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService' })
 
     await user.logout()
     await user.admin.login(providers.prob.nonSan)
@@ -34,6 +34,9 @@ test('Cloning test - historic period of supervision', async ({ oasys, user, offe
     await sections.offendingInformation.goto(true)
     await sections.offendingInformation.count.setValue(6)
     await sections.offendingInformation.offenceDate.setValue({ months: -1 })
+    await sections.predictors.goto()
+    await sections.predictors.o1_32.setValue(2)
+    await sections.predictors.o1_40.setValue(0)
     await sentencePlan.populateMinimal()
     await signing.signAndLock()
 

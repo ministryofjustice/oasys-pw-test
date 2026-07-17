@@ -3,7 +3,7 @@ import * as testData from '../../data/testRef21'
 
 export function testRef21CreateAssessments(offender1: OffenderDef, offender2: OffenderDef, offender1Pks: number[], offender2Pks: number[]) {
 
-    test('SAN integration - test ref 21 create assessments', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, tasks }) => {
+    test('SAN integration - test ref 21 create assessments', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sns, tasks }) => {
 
         log(`SET UP OFFENDER 1 - is in a NON SAN pilot probation area - PNC is set to UNKNOWN PNC
             Offender has just one assessment
@@ -17,7 +17,9 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         const offender1Pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
         offender1Pks.push(offender1Pk1)
         await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No' })
-        await signing.signAndLock({ expectRsrWarning: true })
+        await signing.signAndLock()
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+
         await user.logout()
 
         await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${offender1Pk1}`, {
@@ -46,6 +48,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         await assessment.populateMinimal({ layer: 'Layer 1', sentencePlan: 'spService' })
         await signing.signAndLock()
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
         // Create and complete assessment 2 (layer 3 v1)
         await oasys.history(offender2)
@@ -54,7 +57,8 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         await sections.sections2To13NoIssues({ populate6_11: 'No' })
         await sections.selfAssessmentForm.populateMinimal()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
         // Create and complete assessment 3 (layer 3 v2)
         await oasys.history(offender2)
@@ -65,7 +69,8 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await san.returnToOASys()
 
         await risk.setRationaleText()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
         await user.logout()
 
         // Transfer to Bedfordshire
@@ -86,7 +91,8 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         await sections.sections2To13NoIssues()
         await sections.selfAssessmentForm.populateMinimal()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
         await user.logout()
 
         // Transfer back to Durham
@@ -109,7 +115,8 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await san.populateSanSections('Test ref 21', testData.assessment5, true)
         await san.returnToOASys()
         await risk.setRationaleText()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
         // Create and complete assessment 6 (layer 3 v2)
         await oasys.history(offender2)
@@ -119,7 +126,8 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await san.populateSanSections('Test ref 21', testData.assessment6, true)
         await san.returnToOASys()
         await risk.setRationaleText()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
         await user.logout()
 

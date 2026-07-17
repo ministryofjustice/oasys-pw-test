@@ -100,7 +100,7 @@ export class Section2Assessment extends v4Common.V4AssessmentCommon {
         this.offenceLinkedToReoffending = dbAssessment.qaData.getString('2.98')
         this.offenceLinkedToHarm = dbAssessment.qaData.getString('2.99')
 
-        if (oasysDateTime.checkIfAfterReleaseNode('6.35', dbAssessment.initiationDate)) {
+        if (oasysDateTime.checkIfAfter('6.35', dbAssessment.initiationDate)) {
             this.involveCarryingWeapon = dbAssessment.qaData.getString('2.2_V2_WEAPON')
             this.involveViolenceOrThreat = dbAssessment.qaData.getString('2.2_V2_ANYVIOL')
             this.involveExcessiveViolence = dbAssessment.qaData.getString('2.2_V2_EXCESSIVE')
@@ -131,7 +131,7 @@ export class Section2Assessment extends v4Common.V4AssessmentCommon {
             this.whichWeapon = dbAssessment.qaData.getString('2.2.t')
         }
 
-        if (oasysDateTime.checkIfAfterReleaseNode('6.35', dbAssessment.initiationDate)) {
+        if (oasysDateTime.checkIfAfter('6.35', dbAssessment.initiationDate)) {
             this.sexual = dbAssessment.qaData.getString('2.9_V2_SEXUAL')
             this.financial = dbAssessment.qaData.getString('2.9_V2_FINANCIAL')
             this.addictions = dbAssessment.qaData.getString('2.9_V2_ADDICTION')

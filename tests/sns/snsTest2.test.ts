@@ -15,7 +15,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
 
         // First RoSHA
         await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' })
-        await assessment.populateMinimal({ layer: 'Layer 1V2' })
+        await assessment.populateMinimal({ layer: 'Layer 1V2', populate1_38: { days: -5 } })
 
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
@@ -40,9 +40,10 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         // Second RoSHA
         await oasys.history(offender1)
         await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' }, 'Yes')
+        await sections.roshaPredictors.populateMinimal({ populate1_38: { days: -1 } }, false)
 
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])  // Defect NOD-980
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
 
         // Second L1
         await oasys.history(offender1)
@@ -62,7 +63,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
 
         await sentencePlan.populateMinimal()
         await signing.signAndLock()
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
     })
 
 })
@@ -81,7 +82,7 @@ test('Countersigning required', async ({ oasys, user, offender, assessment, sns,
 
     // Sign assessment and send for countersigning, then check SNS messages
     await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probHeadPdu })
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
     await user.logout()
 
     // Countersign assessment then check SNS messages again
@@ -100,7 +101,7 @@ test('Countersigning required', async ({ oasys, user, offender, assessment, sns,
 
     // Sign assessment, then check SNS messages
     await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probHeadPdu })
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
 
     await user.logout()
 

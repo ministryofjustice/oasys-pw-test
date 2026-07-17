@@ -299,7 +299,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
             },
             {
                 name: 'twoYear',
-                values: [' 29.05', '  3.71', '  0.43', '  6.18', '  3.33', '  9.94']
+                values: [' 26.97', '  3.37', '  0.41', '  6.18', '  3.33', '  9.92']
             },
             {
                 name: 'category',

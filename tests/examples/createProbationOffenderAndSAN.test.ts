@@ -12,7 +12,7 @@ test('Example test - create a prison offender and a SAN 3.2 assessment', async (
     await assessment.populateMinimal({ layer: 'Layer 3V2' })
     // await oasys.Populate.fullyPopulated({layer: 'Layer 1',provider: 'pris',  sentencePlan: 'SpService' , maxStrings: false })
 
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
 
     await user.logout()
 

@@ -160,17 +160,6 @@ export class OasysDateTime {
         return this.timestampDiff(this.timers[name], Temporal.Now.plainDateTimeISO())
     }
 
-    checkIfAfterReleaseNode(version: SignificantAppVersions, date: Temporal.PlainDateTime | string): boolean {
-
-        return this.checkIfAfter(version, date)
-    }
-
-    // Generic version for use in code that could be called from either Cypress or Node
-    checkIfAfterRelease(version: SignificantAppVersions, date: Temporal.PlainDateTime | string): boolean {
-
-        return this.checkIfAfter(version, date)
-    }
-
     dateToVersion(date: string | Temporal.PlainDateTime): string {
 
         const testDate = typeof date == 'string' ? this.stringToTimestamp(date) : date
@@ -196,6 +185,7 @@ const versionLookup = {
     '6.30': '6.30.0.0',
     '6.35': '6.35.0.0',
     '6.49': '6.49.0.0',
+    '7.7': '7.7.0.0',
 }
 
 

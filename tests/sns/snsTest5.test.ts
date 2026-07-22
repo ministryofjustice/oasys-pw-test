@@ -19,8 +19,8 @@ test('Create assessments and check SNS messages - SAN assessment, countersigning
     await sentencePlan.populateMinimal()
 
     // Sign assessment and send for countersigning, then check SNS messages
-    await signing.signAndLock({ page: 'spService', expectCountersigner: true, expectRsrWarning: true, countersigner: user.prob.probSanHeadPdu })
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS'])
+    await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu })
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
     await user.logout()
 
     // Countersign assessment then check SNS messages again
@@ -42,7 +42,7 @@ test('Create assessments and check SNS messages - SAN assessment, countersigning
     await sections.predictors.goto()
     await sections.predictors.o1_29.setValue({ months: -1 })
     await sections.predictors.o1_30.setValue('No')
-    await sections.predictors.o1_38.setValue({ years: 1 })
+    await sections.predictors.o1_38.setValue({ days: -10 })
     await assessment.summarySheet.goto()
     await assessment.summarySheet.opdOverride.setValue('Yes')
     await assessment.summarySheet.opdOverrideReason.setValue('Testing')

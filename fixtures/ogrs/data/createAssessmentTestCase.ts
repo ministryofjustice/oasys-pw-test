@@ -5,8 +5,8 @@ import { OgrsInputParams } from '../types'
 
 export function createAssessmentInputParams(assessment: OgrsAssessment, dateParam: string | Temporal.PlainDate = null): OgrsInputParams {
 
-    const after6_30 = oasysDateTime.checkIfAfterRelease('6.30', assessment.initiationDate)
-    const after6_35 = oasysDateTime.checkIfAfterRelease('6.35', assessment.initiationDate)
+    const after6_30 = oasysDateTime.checkIfAfter('6.30', assessment.initiationDate)
+    const after6_35 = oasysDateTime.checkIfAfter('6.35', assessment.initiationDate)
 
     const drugs = getDrugsUsage(assessment.qaData)
     const q81 = utils.lookupString('8.1', assessment.qaData)

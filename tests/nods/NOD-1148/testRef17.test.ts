@@ -51,7 +51,7 @@ test('NOD 1148 OGRS regression - test ref 17', async ({ oasys, user, offender, a
 
     await sections.predictors.o1_41.setValue('Yes')
     await sections.predictors.o1_44.setValue('No')
-    await sections.predictors.o1_33.setValue({ years: -6, months: -8 })
+    await sections.predictors.o1_33.setValue({ years: -4, months: -8 })
     await sections.predictors.o1_34.setValue(4)
     await sections.predictors.o1_45.setValue(2)
     await sections.predictors.o1_46.setValue(2)

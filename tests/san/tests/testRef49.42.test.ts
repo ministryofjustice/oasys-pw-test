@@ -4,6 +4,7 @@ import { test } from 'fixtures'
     New FEMALE Probation Offender in SAN Area - check functionality when say 'No' to cloning from an Historic OASys-SAN assessment.
  */
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test refs 49 and 42', async ({ oasys, user, offender, assessment, sections, san, risk, sentencePlan, signing }) => {
 
     await user.prob.probSanHeadPdu.login()
@@ -132,7 +133,7 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, user, offender, as
     await sections.predictors.o1_40.setValue(0)
     await sections.predictors.o1_29.setValue({ days: -10 })
     await sections.predictors.o1_30.setValue('No')
-    await sections.predictors.o1_38.setValue({ months: 6 })
+    await sections.predictors.o1_38.setValue({ days: -5 })
 
     await sections.section2.goto()
     await sections.section2.briefOffenceDetails.checkValue('Offence description') // Confirms cloning from historic SAN

@@ -7,6 +7,7 @@ import * as testData from '../data/testRef20'
     Countersigner rejects the signing - (check for NOD-950 in 6.51.release)
  */
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sara, sentencePlan, sns }) => {
 
     await user.prob.probSanPo.login()

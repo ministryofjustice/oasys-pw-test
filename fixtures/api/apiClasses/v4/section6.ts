@@ -89,7 +89,7 @@ export class Section6Assessment extends v4Common.V4AssessmentCommon {
         this.relLinkedToHarm = dbAssessment.qaData.getString('6.98')
         this.relLinkedToReoffending = dbAssessment.qaData.getString('6.99')
 
-        if (oasysDateTime.checkIfAfterReleaseNode('6.30', dbAssessment.initiationDate)) {
+        if (oasysDateTime.checkIfAfter('6.30', dbAssessment.initiationDate)) {
             this.prevOrCurrentDomesticAbuse = dbAssessment.qaData.getString('6.7da')
             this.victimOfPartner = dbAssessment.qaData.getString('6.7.1.1da')
             this.victimOfFamily = dbAssessment.qaData.getString('6.7.1.2da')

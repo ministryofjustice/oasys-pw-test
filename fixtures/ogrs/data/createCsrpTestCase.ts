@@ -6,7 +6,7 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
 
     const p: OgrsInputParams = {
         ASSESSMENT_DATE: oasysDateTime.testStartDate,
-        STATIC_CALC: 'N',
+        STATIC_CALC: csrp.s1_39_offender_interview == 'YES' ? 'N' : 'Y',
         DOB: csrp.dob,
         GENDER: lookupValue(csrp.gender, utils.genderNumberLookup),
         OFFENCE_CODE: csrp.offence,

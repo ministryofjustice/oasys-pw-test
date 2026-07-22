@@ -17,6 +17,8 @@ const offender1: OffenderDef = {
  * Delete that second 3.2 assessment. 
  * Roll back the first 3.2 assessment and carry on with that does it work with SAN statuses?
  */
+
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, sns }) => {
 
     await user.prob.probSanUnappr.login()

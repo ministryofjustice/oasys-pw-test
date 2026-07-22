@@ -19,7 +19,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
     const offender1 = await offender.createProbFromStandardOffender()
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
     await assessment.populateMinimal({ layer: 'Layer 3V2' })
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
     const spVersion1 = await oasysDb.getSingleNumericValue(`select SSP_PLAN_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk1}`)
 
     log(`2nd assessment - Now create a L3 V1 SP assessment. Should have the field 'CLONED_FROM_PREV_OASYS_SAN_PK' set to the PK of the previous L3 V2 assessment
@@ -37,7 +37,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
     await sentencePlan.addGoal()
     await sections.sections2To13NoIssues({ populate6_11: 'No', })
     await sections.selfAssessmentForm.populateMinimal()
-    await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+    await signing.signAndLock({ page: 'spService' })
     const spVersion2 = await oasysDb.getSingleNumericValue(`select SSP_PLAN_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk2}`)
     expect(spVersion2).not.toBe(spVersion1)
 
@@ -56,7 +56,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
         CLONED_FROM_PREV_OASYS_SAN_PK: pk1.toString(),
     })
     await sentencePlan.completeFirstGoal()
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
     const spVersion3 = await oasysDb.getSingleNumericValue(`select SSP_PLAN_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk3}`)
     expect(spVersion3).not.toBe(spVersion2)
 
@@ -85,7 +85,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
     await san.accommodationPractitionerAnalysis.markAsComplete.click()
     await san.returnToOASys()
     await sentencePlan.completeSecondGoal()
-    await signing.signAndLock({ expectRsrWarning: true })
+    await signing.signAndLock()
     const spVersion4 = await oasysDb.getSingleNumericValue(`select SSP_PLAN_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk4}`)
     expect(spVersion4).not.toBe(spVersion3)
 
@@ -105,7 +105,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
         'dateOfBirth': offender1.dateOfBirth,
         'gender': '1',
         'location': 'COMMUNITY',
-        'sexuallyMotivatedOffenceHistory': null,
+        'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
         'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'accessMode': 'READ_WRITE',
@@ -125,7 +125,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
         'dateOfBirth': offender1.dateOfBirth,
         'gender': '1',
         'location': 'COMMUNITY',
-        'sexuallyMotivatedOffenceHistory': null,
+        'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
         'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'planAccessMode': 'READ_WRITE',
@@ -151,7 +151,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
         'dateOfBirth': offender1.dateOfBirth,
         'gender': '1',
         'location': 'COMMUNITY',
-        'sexuallyMotivatedOffenceHistory': null,
+        'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
         'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'planAccessMode': 'READ_ONLY',
@@ -194,7 +194,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
         'dateOfBirth': offender1.dateOfBirth,
         'gender': '1',
         'location': 'COMMUNITY',
-        'sexuallyMotivatedOffenceHistory': null,
+        'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
         'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'planAccessMode': 'READ_ONLY',
@@ -218,7 +218,7 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
         'dateOfBirth': offender1.dateOfBirth,
         'gender': '1',
         'location': 'COMMUNITY',
-        'sexuallyMotivatedOffenceHistory': null,
+        'sexuallyMotivatedOffenceHistory': 'NO',
     }, {
         'displayName': user.prob.probSanHeadPdu.forenameSurname,
         'planAccessMode': 'READ_ONLY',

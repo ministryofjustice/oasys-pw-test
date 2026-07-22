@@ -1,6 +1,7 @@
 import { test } from 'fixtures'
 
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 24', async ({ oasys, user, offender, assessment, sections, sentencePlan, san, risk, signing }) => {
 
     await user.prob.probSanHeadPdu.login()

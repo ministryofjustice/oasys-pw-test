@@ -31,7 +31,9 @@ declare type PurposeOfAssessment =
     'Other' |
     'Re-categorisation to Open Conditions' |
     'Pre-handover' |
-    'Impact Cohort Assessment'
+    'Impact Cohort Assessment' |
+    'Standalone Unpaid Work' |
+    'Final Third Suspension'
 
 declare type YesNoAnswer = 'Yes' | 'No' | ''
 declare type YesNoDKAnswer = 'Yes' | 'No' | `Don't Know` | ''
@@ -115,6 +117,7 @@ declare type PopulateAssessmentParams = {
     r1_30PrePopulated?: boolean,
     r1_41PrePopulated?: boolean,
     populate6_11?: 'Yes' | 'No',
+    populate1_38?: OasysDate,
 }
 
 declare type SigningPage = 'spService' | 'rmp' | 'riskScreening' | 'psr'
@@ -355,8 +358,8 @@ declare type PniParams = {
     s11_6: number,
     s12_1: number,
     s12_9: number,
-    ogrs3RiskRecon: string,
-    ovpRisk: string,
+    arpBand: string,
+    vrpBand: string,
     ospDc: string,
     ospIic: string,
     rsrPercentageScore: number,

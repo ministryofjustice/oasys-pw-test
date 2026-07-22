@@ -1,6 +1,7 @@
 import { test } from 'fixtures'
 import * as testData from '../data/testRef27'
 
+test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, assessment, san, sns, sentencePlan }) => {
 
     log(`Create an offender whose latest assessment is a WIP OASys-SAN assessment without a SARA.

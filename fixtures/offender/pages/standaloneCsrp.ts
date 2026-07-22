@@ -228,8 +228,47 @@ export class StandaloneCsrp extends OasysPage {
     svrpErrorText = new Element.Text(this.page, "tr:has-text('SERIOUS VIOLENT REOFFENDING PREDICTOR OVER THE NEXT TWO YEARS')+tr")
     csrpErrorText = new Element.Text(this.page, '#P5_RSR_TEXT_2')
 
+    async populateMinimal() {
 
-    async populateAllDynamic() {
+        await this.goto()
+        await this.o1_8.setValue({ months: -6 })
+        await this.o1_32.setValue(1)
+        await this.o1_40.setValue(0)
+        await this.o1_29.setValue({ months: -1 })
+        await this.o1_30.setValue('No')
+        await this.o1_38.setValue({})
+        await this.o1_39.setValue('No')
+    }
+
+    async populateMinimalDynamic() {
+
+        await this.o1_39.setValue('Yes')
+        await this.o2_2.setValue('No')
+        await this.o3_4.setValue('0-No problems')
+        await this.o4_2.setValue('0-Not available for work')
+        await this.o6_4.setValue('0-No problems')
+        await this.o6_7.setValue('No')
+        await this.o6_8.setValue('Not in a relationship')
+        await this.o7_2.setValue('0-No problems')
+        await this.o8_1.setValue('No')
+        await this.o9_1.setValue('0-No problems')
+        await this.o9_2.setValue('0-No problems')
+        await this.o11_2.setValue('0-No problems')
+        await this.o11_4.setValue('0-No problems')
+        await this.o12_1.setValue('0-No problems')
+        await this.weaponPrevious.setValue('No')
+        await this.murderPrevious.setValue('No')
+        await this.woundingPrevious.setValue('No')
+        await this.burglaryPrevious.setValue('No')
+        await this.arsonPrevious.setValue('No')
+        await this.damagePrevious.setValue('No')
+        await this.kidnappingPrevious.setValue('No')
+        await this.firearmPrevious.setValue('No')
+        await this.robberyPrevious.setValue('No')
+
+    }
+
+    async populateAllDynamicQuestions() {
 
         await this.o2_2.setValue('Yes')
         await this.o2_2Weapon.setValue('A dagger')

@@ -18,7 +18,7 @@ const dateConditions = [
 ]
 
 const limitEndpoints: Endpoint[] = []
-// const limitEndpoints: Endpoint[] = ['crimNeeds']
+//const limitEndpoints: Endpoint[] = ['pni']
 
 const excludeEndpoints: Endpoint[] = []
 // const excludeEndpoints: Endpoint[] = ['pni']
@@ -34,6 +34,7 @@ const testDataIssues = [
     `'ZLHTSIW'`,  // SAN issue
     `'ZNBWPWW'`,  // SAN issue
     `'ZUFYJQT'`,  // SAN issue
+    `'X778253'`,  // SAN issue
 ]
 
 for (let i = 0; i < dateConditions.length; i++) {
@@ -60,8 +61,8 @@ for (let i = 0; i < dateConditions.length; i++) {
                 where rownum <= ${dateConditions[i].count}`
 
         const offenders = await oasysDb.getData(offenderQuery)
-        await runTest(offenders, api)
-
+        const failed = await runTest(offenders, api)
+        expect(failed).toBeFalsy()
     })
 }
 

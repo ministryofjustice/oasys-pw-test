@@ -15,7 +15,7 @@ test('NOD-1228', async ({ oasys, user, offender, assessment, sections, signing, 
     await sections.section6.goto()
     await sections.section6.o6_1.setValue('Missing')
 
-    await signing.signAndLock({ expectRsrWarning: true, page: 'spService' })
+    await signing.signAndLock({ page: 'spService' })
 
     await pni.checkAssessmentCalc(offender1.probationCrn, pk1)
     const failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true)

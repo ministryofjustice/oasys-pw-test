@@ -3,7 +3,7 @@ import * as testData from '../../data/testRef21'
 
 export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, offender2Pks: number[]) {
 
-    test('SAN integration - test ref 21 merge assessments', async ({ page, oasys, user, oasysDb, offender, assessment, signing, san, risk, sentencePlan, tasks }) => {
+    test('SAN integration - test ref 21 merge assessments', async ({ page, oasys, user, oasysDb, offender, assessment, signing, san, risk, sentencePlan, tasks, sns }) => {
 
         log('Check original cloning details', 'Test step')
         const oasysSetQuery = `select os.cloned_from_prev_oasys_san_pk from eor.offender o, eor.oasys_assessment_group oag, eor.oasys_set os 
@@ -90,7 +90,7 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
         await san.populateSanSections('Test ref 21', testData.assessment7, true)
         await san.returnToOASys()
         await risk.setRationaleText()
-        await signing.signAndLock({ page: 'spService', expectRsrWarning: true })
+        await signing.signAndLock({ page: 'spService' })
 
         await user.logout()
     })
@@ -110,7 +110,7 @@ async function checkAssessment(user: string, offender1: OffenderDef, pk: number,
             'dateOfBirth': offender1.dateOfBirth,
             'gender': '1',
             'location': 'COMMUNITY',
-            'sexuallyMotivatedOffenceHistory': null,
+            'sexuallyMotivatedOffenceHistory': 'NO',
         },
         {
             'displayName': user,
@@ -132,7 +132,7 @@ async function checkAssessment(user: string, offender1: OffenderDef, pk: number,
             'dateOfBirth': offender1.dateOfBirth,
             'gender': '1',
             'location': 'COMMUNITY',
-            'sexuallyMotivatedOffenceHistory': null,
+            'sexuallyMotivatedOffenceHistory': 'NO',
         },
         {
             'displayName': user,

@@ -31,7 +31,7 @@ export class Tiering {
     calculate(testCase: TieringCase, logText: string[]): { tier: Tier, provisional: string } {
 
         // Initial tier calculation - ARP/CSRP
-        const arpCsrp = calculateArpCsrp(testCase.arp, testCase.csrp)
+        const arpCsrp = this.calculateArpCsrp(testCase.arp, testCase.csrp)
 
         // Moderator calculations
         const dc = calculateDc(testCase.ospDcScore, testCase.oscDcBand)
@@ -61,9 +61,9 @@ export class Tiering {
             } else {
                 // Otherwise, depends on the possible maximum if one predictor went from static to dynamic
                 if (testCase.arpStatic) {
-                    maxArpCsrpTier = calculateArpCsrp(100, testCase.csrp)
+                    maxArpCsrpTier = this.calculateArpCsrp(100, testCase.csrp)
                 } else {
-                    maxArpCsrpTier = calculateArpCsrp(testCase.arp, 100)
+                    maxArpCsrpTier = this.calculateArpCsrp(testCase.arp, 100)
                 }
 
                 // Provisional unless a moderator has taken it to the maximum available or higher
@@ -93,29 +93,29 @@ export class Tiering {
 
         return { tier: finalResult ?? 'M', provisional: provisionalFlag }
     }
-}
-
-function calculateArpCsrp(arp: number, csrp: number): Tier {
-
-    if (arp == null || csrp == null) {
-        return null
-    }
-
-    const arpCol = arp >= 90 ? 0 : arp >= 75 ? 1 : arp >= 50 ? 2 : arp >= 25 ? 3 : arp >= 15 ? 4 : 5
-
-    const resultLookup: { [keys: string]: Tier[] } = {
-        row1: ['A', 'A', 'B', 'B', 'B', 'B'],
-        row2: ['A', 'B', 'C', 'C', 'C', 'C'],
-        row3: ['B', 'C', 'D', 'E', 'E', 'E'],
-        row4: ['C', 'D', 'E', 'E', 'F', 'F'],
-        row5: ['D', 'D', 'E', 'F', 'F', 'G'],
-    }
-
-    if (csrp >= 6.9) return resultLookup.row1[arpCol]
-    if (csrp >= 3) return resultLookup.row2[arpCol]
-    if (csrp >= 1) return resultLookup.row3[arpCol]
-    if (csrp >= 0.5) return resultLookup.row4[arpCol]
-    return resultLookup.row5[arpCol]
+    
+    calculateArpCsrp(arp: number, csrp: number): Tier {
+        
+        if (arp == null || csrp == null) {
+            return null
+        }
+        
+        const arpCol = arp >= 90 ? 0 : arp >= 75 ? 1 : arp >= 50 ? 2 : arp >= 25 ? 3 : arp >= 15 ? 4 : 5
+        
+        const resultLookup: { [keys: string]: Tier[] } = {
+            row1: ['A', 'A', 'B', 'B', 'B', 'B'],
+            row2: ['A', 'B', 'C', 'C', 'C', 'C'],
+            row3: ['B', 'C', 'D', 'E', 'E', 'E'],
+            row4: ['C', 'D', 'E', 'E', 'F', 'F'],
+            row5: ['D', 'D', 'E', 'F', 'F', 'G'],
+        }
+        
+        if (csrp >= 6.9) return resultLookup.row1[arpCol]
+        if (csrp >= 3) return resultLookup.row2[arpCol]
+        if (csrp >= 1) return resultLookup.row3[arpCol]
+        if (csrp >= 0.5) return resultLookup.row4[arpCol]
+        return resultLookup.row5[arpCol]
+    }   
 }
 
 function calculateDc(ospRisk: number, ospContactBand: string): Tier {

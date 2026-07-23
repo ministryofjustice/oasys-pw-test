@@ -155,6 +155,23 @@ export class Assessment {
     }
 
     /**
+     * Select any existing assessments and delete them.  Assumes you have the appropriate rights and are on the OffenderDetails page with the assessments tab visible.
+     */
+    async deleteAllByCrn(probationCrn: string) {
+
+        const count = await this.assessmentsTab.assessments.purposeOfAssessment.getCount()
+
+        for (let i = 0; i < count; i++) {
+            await this.assessmentsTab.assessments.purposeOfAssessment.clickFirstRow()
+            await this.deleteAssessment.goto(true)
+            await this.deleteAssessment.reasonForDeletion.setValue('Testing')
+            await this.deleteAssessment.ok.click()
+            await this.offender.searchAndSelectByCrn(probationCrn)
+        }
+        log(`Deleted ${count} assessment(s)`)
+    }
+
+    /**
      * Delete the most recent assessment.  Assumes you have the appropriate rights and are on the OffenderDetails page with the assessments tab visible.
      */
     async deleteLatest() {

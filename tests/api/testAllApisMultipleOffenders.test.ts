@@ -35,6 +35,7 @@ const testDataIssues = [
     `'ZNBWPWW'`,  // SAN issue
     `'ZUFYJQT'`,  // SAN issue
     `'X778253'`,  // SAN issue
+    `'R698334'`,  // OASYS 1 assessment
 ]
 
 for (let i = 0; i < dateConditions.length; i++) {
@@ -62,13 +63,13 @@ for (let i = 0; i < dateConditions.length; i++) {
 
         const offenders = await oasysDb.getData(offenderQuery)
         const failed = await runTest(offenders, api)
-        expect(failed).toBeFalsy()
+        expect(failed).toBe(0)
     })
 }
 
-async function runTest(offenders: string[][], api: Api): Promise<boolean> {
+async function runTest(offenders: string[][], api: Api): Promise<number> {
 
-    let failed = false
+    let failed = 0
     let count = 1
 
     for (let offender of offenders) {
@@ -79,14 +80,14 @@ async function runTest(offenders: string[][], api: Api): Promise<boolean> {
             const offenderFailed = await api.testOneOffender(offender[0], 'prob', false, reportPasses, limitEndpoints, excludeEndpoints)
             if (offenderFailed) {
                 console.log('Failed')
-                failed = true
+                failed++
             }
         }
         if (offender[1] != null) {  // call with NomisId
             const offenderFailed = await api.testOneOffender(offender[1], 'pris', offender[0] != null, reportPasses, limitEndpoints, excludeEndpoints)  // skipPrisSubsequents if already done for prob crn
             if (offenderFailed) {
                 console.log('Failed')
-                failed = true
+                failed++
             }
         }
     }

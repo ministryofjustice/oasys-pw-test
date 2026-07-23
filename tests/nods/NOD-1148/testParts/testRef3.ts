@@ -72,7 +72,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
             Also check that the original OGRS3 fields are set on the OASYS_SET record`, 'Test step')
 
         await sections.roshaPredictors.o1_39.setValue('Yes')
-        await sections.roshaPredictors.o2_2.setValue('No')
+        await sections.roshaPredictors.o2_2Weapon.setValue('No')
         await sections.roshaPredictors.o3_4.setValue('1-Some problems')
         await sections.roshaPredictors.o4_2.setValue('0-Not available for work')
         await sections.roshaPredictors.o6_4.setValue('2-Significant problems')

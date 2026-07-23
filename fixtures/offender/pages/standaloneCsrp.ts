@@ -20,11 +20,11 @@ export class StandaloneCsrp extends OasysPage {
     /**
      *  Date of first sanction
      */
-    o1_8 = new Element.Textbox<OasysDate>(this.page, '#P5_QU_1_8_2', true)
+    dateFirstSanction = new Element.Textbox<OasysDate>(this.page, '#P5_QU_1_8_2', true)
     /**
      *  Age at first conviction (calculated from 1.8)
      */
-    o1_8Age = new Element.Textbox<string>(this.page, '#P5_QU_1_8')
+    ageFirstSanction = new Element.Textbox<string>(this.page, '#P5_QU_1_8')
     /**
      *  Number of sanctions for all offences
      */
@@ -60,11 +60,11 @@ export class StandaloneCsrp extends OasysPage {
     /**
      *  Number of previous/current sanctions involving direct contact child sexual/sexually motivated offences
      */
-    o1_35 = new Element.Textbox<number>(this.page, '#P5_QU_1_35')
+    o1_45 = new Element.Textbox<number>(this.page, '#P5_QU_1_45')
     /**
      *  Number of previous/current sanctions involving indecent child image sexual/sexually motivated offences or indirect child contacts
      */
-    o1_36 = new Element.Textbox<number>(this.page, '#P5_QU_1_36')
+    o1_46 = new Element.Textbox<number>(this.page, '#P5_QU_1_46')
     /**
      *  Number of non-contact sexual offences
      */
@@ -80,11 +80,11 @@ export class StandaloneCsrp extends OasysPage {
     /**
      * Did the offence involve carrying or using a weapon
     */
-    o2_2 = new Element.Select<YesNoAnswer>(this.page, '#P5_QU_2_2')
+    o2_2Weapon = new Element.Select<YesNoAnswer>(this.page, '#P5_QU_2_2')
     /**
      * Specify which weapon
     */
-    o2_2Weapon = new Element.Textbox(this.page, '#P5_QU_2_2_TXT')
+    o2_2SpecifyWeapon = new Element.Textbox(this.page, '#P5_QU_2_2_TXT')
     /**
      *  Is the offender living in suitable accommodation?
      */
@@ -200,16 +200,15 @@ export class StandaloneCsrp extends OasysPage {
      * Does the offender have pro-criminal attitudes
      */
     o12_1 = new Element.Select<ProblemsAnswer>(this.page, '#P5_QU_12_1')
-
-    weaponPrevious = new Element.Select<YesNoAnswer>(this.page, '#P5_WEAPON_PREV')
-    murderPrevious = new Element.Select<YesNoAnswer>(this.page, '#P5_MURDER_PREV')
-    woundingPrevious = new Element.Select<YesNoAnswer>(this.page, '#P5_WOUND_PREV')
-    burglaryPrevious = new Element.Select<YesNoAnswer>(this.page, '#P5_BURGLARY_PREV')
-    arsonPrevious = new Element.Select<YesNoAnswer>(this.page, '#P5_ARSON_PREV')
-    damagePrevious = new Element.Select<YesNoAnswer>(this.page, '#P5_CRIMINAL_PREV')
-    kidnappingPrevious = new Element.Select<YesNoAnswer>(this.page, '#P5_KIDNAP_PREV')
-    firearmPrevious = new Element.Select<YesNoAnswer>(this.page, '#P5_FIREARM_PREV')
-    robberyPrevious = new Element.Select<YesNoAnswer>(this.page, '#P5_ROBBERY_PREV')
+    r1_2_13P = new Element.Select<YesNoAnswer>(this.page, '#P5_WEAPON_PREV')
+    r1_2_1P = new Element.Select<YesNoAnswer>(this.page, '#P5_MURDER_PREV')
+    r1_2_2P = new Element.Select<YesNoAnswer>(this.page, '#P5_WOUND_PREV')
+    r1_2_6P = new Element.Select<YesNoAnswer>(this.page, '#P5_BURGLARY_PREV')
+    r1_2_7P = new Element.Select<YesNoAnswer>(this.page, '#P5_ARSON_PREV')
+    r1_2_8P = new Element.Select<YesNoAnswer>(this.page, '#P5_CRIMINAL_PREV')
+    r1_2_9P = new Element.Select<YesNoAnswer>(this.page, '#P5_KIDNAP_PREV')
+    r1_2_10P = new Element.Select<YesNoAnswer>(this.page, '#P5_FIREARM_PREV')
+    r1_2_12P = new Element.Select<YesNoAnswer>(this.page, '#P5_ROBBERY_PREV')
 
     arpText = new Element.Text(this.page, "td:has-text('ALL REOFFENDING PREDICTOR OVER THE NEXT TWO YEARS')+td")
     vrpText = new Element.Text(this.page, ":nth-match(td:has-text('VIOLENT REOFFENDING PREDICTOR OVER THE NEXT TWO YEARS')+td,1)")
@@ -231,7 +230,7 @@ export class StandaloneCsrp extends OasysPage {
     async populateMinimal() {
 
         await this.goto()
-        await this.o1_8.setValue({ months: -6 })
+        await this.dateFirstSanction.setValue({ months: -6 })
         await this.o1_32.setValue(1)
         await this.o1_40.setValue(0)
         await this.o1_29.setValue({ months: -1 })
@@ -243,7 +242,7 @@ export class StandaloneCsrp extends OasysPage {
     async populateMinimalDynamic() {
 
         await this.o1_39.setValue('Yes')
-        await this.o2_2.setValue('No')
+        await this.o2_2Weapon.setValue('No')
         await this.o3_4.setValue('0-No problems')
         await this.o4_2.setValue('0-Not available for work')
         await this.o6_4.setValue('0-No problems')
@@ -256,22 +255,22 @@ export class StandaloneCsrp extends OasysPage {
         await this.o11_2.setValue('0-No problems')
         await this.o11_4.setValue('0-No problems')
         await this.o12_1.setValue('0-No problems')
-        await this.weaponPrevious.setValue('No')
-        await this.murderPrevious.setValue('No')
-        await this.woundingPrevious.setValue('No')
-        await this.burglaryPrevious.setValue('No')
-        await this.arsonPrevious.setValue('No')
-        await this.damagePrevious.setValue('No')
-        await this.kidnappingPrevious.setValue('No')
-        await this.firearmPrevious.setValue('No')
-        await this.robberyPrevious.setValue('No')
+        await this.r1_2_13P.setValue('No')
+        await this.r1_2_1P.setValue('No')
+        await this.r1_2_2P.setValue('No')
+        await this.r1_2_6P.setValue('No')
+        await this.r1_2_7P.setValue('No')
+        await this.r1_2_8P.setValue('No')
+        await this.r1_2_9P.setValue('No')
+        await this.r1_2_10P.setValue('No')
+        await this.r1_2_12P.setValue('No')
 
     }
 
     async populateAllDynamicQuestions() {
 
-        await this.o2_2.setValue('Yes')
-        await this.o2_2Weapon.setValue('A dagger')
+        await this.o2_2Weapon.setValue('Yes')
+        await this.o2_2SpecifyWeapon.setValue('A dagger')
         await this.o3_4.setValue('2-Significant problems')
         await this.o4_2.setValue('0-Not available for work')
         await this.o6_4.setValue('2-Significant problems')
@@ -344,14 +343,14 @@ export class StandaloneCsrp extends OasysPage {
         await this.o11_2.setValue('1-Some problems')
         await this.o11_4.setValue('0-No problems')
         await this.o12_1.setValue('2-Significant problems')
-        await this.weaponPrevious.setValue('No')
-        await this.murderPrevious.setValue('Yes')
-        await this.woundingPrevious.setValue('No')
-        await this.burglaryPrevious.setValue('Yes')
-        await this.arsonPrevious.setValue('Yes')
-        await this.damagePrevious.setValue('No')
-        await this.kidnappingPrevious.setValue('Yes')
-        await this.firearmPrevious.setValue('No')
-        await this.robberyPrevious.setValue('Yes')
+        await this.r1_2_13P.setValue('No')
+        await this.r1_2_1P.setValue('Yes')
+        await this.r1_2_2P.setValue('No')
+        await this.r1_2_6P.setValue('Yes')
+        await this.r1_2_7P.setValue('Yes')
+        await this.r1_2_8P.setValue('No')
+        await this.r1_2_9P.setValue('Yes')
+        await this.r1_2_10P.setValue('No')
+        await this.r1_2_12P.setValue('Yes')
     }
 }

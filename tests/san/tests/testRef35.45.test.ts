@@ -55,14 +55,14 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
     await offender.standaloneCsrp.goto()
 
     // Check cloning from the assessment
-    await offender.standaloneCsrp.o1_8Age.checkValue('23')
+    await offender.standaloneCsrp.ageFirstSanction.checkValue('23')
     await offender.standaloneCsrp.o1_32.checkValue(2)
     await offender.standaloneCsrp.o1_40.checkValue(0)
     await offender.standaloneCsrp.o1_29.checkValue({ months: -1 })
     await offender.standaloneCsrp.o1_30.checkValue('No')
     await offender.standaloneCsrp.o1_38.checkValue({})
     await offender.standaloneCsrp.o1_39.setValue('Yes') // Offender interview
-    await offender.standaloneCsrp.o2_2.setValue('Yes')
+    await offender.standaloneCsrp.o2_2Weapon.setValue('Yes')
     await offender.standaloneCsrp.o3_4.checkValue('0-No problems')
     await offender.standaloneCsrp.o4_2.checkValue('0-No')
     await offender.standaloneCsrp.o6_4.checkValue('2-Significant problems')
@@ -83,8 +83,8 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
     await offender.standaloneCsrp.o11_4.setValue('2-Significant problems')
     await offender.standaloneCsrp.o12_1.setValue('1-Some problems')
 
-    await offender.standaloneCsrp.weaponPrevious.setValue('Yes')
-    await offender.standaloneCsrp.burglaryPrevious.setValue('Yes')
+    await offender.standaloneCsrp.r1_2_13P.setValue('Yes')
+    await offender.standaloneCsrp.r1_2_6P.setValue('Yes')
 
     await offender.standaloneCsrp.calculateScores.click()
 

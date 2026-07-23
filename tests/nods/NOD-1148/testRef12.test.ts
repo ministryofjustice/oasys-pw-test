@@ -87,7 +87,7 @@ test('OGRS regression test ref 12', async ({ oasys, user, offender, assessment, 
         A popout message is given that states 'Please complete all questions and click Calculate Predictor Score' - click on <OK>
         Check the predictor values shown on screen`, 'Test step')
 
-    await offender.standaloneCsrp.o1_8.setValue({ months: -5 })
+    await offender.standaloneCsrp.dateFirstSanction.setValue({ months: -5 })
     await offender.standaloneCsrp.o1_32.setValue(2)
     await offender.standaloneCsrp.o1_40.setValue(1)
     await offender.standaloneCsrp.o1_29.setValue({ months: -3 })

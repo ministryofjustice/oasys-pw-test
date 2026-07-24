@@ -35,6 +35,7 @@ export class Offender {
      * - N Other
      */
     readonly standaloneCsrp = new pages.StandaloneCsrp(this.page)
+    readonly deleteStandaloneCsrp = new pages.DeleteStandaloneCsrp(this.page)
     readonly lao = new pages.Lao(this.page)
     readonly requestTransferPage = new pages.RequestTransfer(this.page)
 
@@ -241,6 +242,16 @@ export class Offender {
 
         await this.offenderDetails.requestTransfer.click()
         await this.requestTransferPage.submit.click()
+    }
+
+    async deleteAllStandalone(probationCrn: string) {
+
+        const standaloneCount = await this.oasysDb.getSingleNumericValue(`select count(*) from eor.offender_rsr_scores where cms_prob_number = '${probationCrn}' and deleted_date is null`)
+        for (let i = 0; i < standaloneCount; i++) {
+            await this.deleteStandaloneCsrp.goto()
+            await this.deleteStandaloneCsrp.reasonForDeletion.setValue('Testing')
+            await this.deleteStandaloneCsrp.ok.click()
+        }
     }
 
     /**

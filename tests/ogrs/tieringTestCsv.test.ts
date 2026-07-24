@@ -13,7 +13,7 @@ const whereClause: string = `os.snsv_algo_version is null`
 
 
 const reportAll = false
-const testFile = 'tests/ogrs/data/local/tiers-prod-2026-07-01.csv'
+const testFile = 'tests/ogrs/data/local/tiers-prod-2026-07-01_2.csv'
 
 test('Tier calculations test - CSV', async ({ ogrs }) => {
 

@@ -77,9 +77,9 @@ export async function checkApiResponse(expectedValues: EndpointResponse | RestEr
                 let receivedValue: any = null
 
                 if (typeof expectedElements[key] == 'string') {
-                    expectedValue = expectedElements[key]?.substring(0, 3500)
+                    expectedValue = expectedElements[key]?.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, "")?.substring(0, 3500)
                     const receivedString = actualElements[key]?.toString()
-                    receivedValue = receivedString ? receivedString.replaceAll('\x02', '').substring(0, 3500) : receivedString
+                    receivedValue = receivedString ? receivedString.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, "").substring(0, 3500) : receivedString
                 } else if (typeof expectedElements[key] == 'object') {
                     expectedValue = JSON.stringify(expectedElements[key])
                     receivedValue = JSON.stringify(actualElements[key])

@@ -1,4 +1,5 @@
 ﻿import { OasysPage, Element } from 'classes'
+import { Sns } from 'fixtures'
 
 /**
  * this.page is a base class for assessment pages that contain the standard navigation buttons
@@ -62,6 +63,24 @@ export class BaseAssessmentPage extends OasysPage {
         await expect(this.page.locator('#contextright')).toContainText('|')
         const context = await this.context.getValue()
         return context.split('|')[3].trim()
+    }
+
+    async saveAndCheckSns(probationCrn: string, expectRosh: boolean, expectPredictors: boolean, sns: Sns) {
+
+        await this.save.click()
+        await sns.testWipAssessmentMessages(probationCrn, expectRosh, expectPredictors)
+    }
+
+    async nextAndCheckSns(probationCrn: string, expectRosh: boolean, expectPredictors: boolean, sns: Sns) {
+
+        await this.next.click()
+        await sns.testWipAssessmentMessages(probationCrn, expectRosh, expectPredictors)
+    }
+
+    async previousAndCheckSns(probationCrn: string, expectRosh: boolean, expectPredictors: boolean, sns: Sns) {
+
+        await this.previous.click()
+        await sns.testWipAssessmentMessages(probationCrn, expectRosh, expectPredictors)
     }
 
 }

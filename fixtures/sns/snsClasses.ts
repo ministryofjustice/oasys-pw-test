@@ -28,6 +28,12 @@ export class SnsMessage {
             case 'RSR':
                 this.messageData = new RsrMessageData(assessment, crn)
                 break
+            case 'TierRiskFlag':
+                this.messageData = new TierRiskFlagMessageData(crn)
+                break
+            case 'TierPredictors':
+                this.messageData = new TierPredictorsMessageData(crn)
+                break
         }
         this.messageSubject = this.messageData.eventType
     }
@@ -142,3 +148,29 @@ export class RsrMessageData extends SnsMessageData {
     }
 }
 
+
+export class TierRiskFlagMessageData extends SnsMessageData {
+
+    constructor(crn: string) {
+
+        const baseUrl = testEnvironment.name.includes('T2') ? 'https://t2-b.oasys.service.justice.gov.uk/eor/oasys/ass' : 'https://ords.justice.gov.uk/ords'
+
+        super(crn)
+        this.eventType = 'risk.flag.tier.change"'
+        this.description = 'Risk Flag for tiering has changed'
+        this.detailUrl = `${baseUrl}/tierriskflag/${crn}/ALLOW`
+        delete this.additionalInformation
+    }
+}
+
+export class TierPredictorsMessageData extends SnsMessageData {
+
+    constructor(crn: string) {
+
+        super(crn)
+        this.eventType = 'predictors.tier.change'
+        this.description = 'Predictors for tiering have changed'
+        this.detailUrl = `https://some-url-where-we-can-get-more-info-this-might-not-exist`
+        delete this.additionalInformation
+    }
+}

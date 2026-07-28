@@ -19,7 +19,7 @@ export class Sns {
      * 
      * The third optional parameter can be a list of expected message types, allowing confirmation that the data is in the right state to generate those messages.
      */
-    async testSnsMessageData(crn: string, type: AssessmentOrCsrp, expectingMessages?: ('AssSumm' | 'OGRS' | 'OPD' | 'RSR')[], timeout: number = 5) {
+    async testSnsMessageData(crn: string, type: AssessmentOrCsrp, expectingMessages?: SnsMessageType[], timeout = 5) {
 
         let failed = false
         const actualSnsMessages: DbSns[] = []
@@ -41,13 +41,13 @@ export class Sns {
                 }
             }
 
-            // Get SNS messages from the database for the assessment - limit to last 5 seconds (or longer if specified e.g. for demerges)
+            // Get SNS messages from the database for the assessment - limit to last 5 seconds (or other if specified e.g. longer for demerges)
             const snsData = await this.oasysDb.getData(DbSns.query(assessment.pk, type, timeout))
             for (let sns of snsData) {
                 actualSnsMessages.push(new DbSns(sns))
             }
             // Check all expected messages against actuals
-            const expectedSnsMessages = this.buildExpectedMessages(assessment, crn)
+            const expectedSnsMessages = this.buildExpectedMessages(assessment, crn, expectingMessages)
 
             // If 'expectingMessages' parameter has been specified, check it against expectedSnsMessages determined from database values
             if (expectingMessages != null) {
@@ -101,13 +101,77 @@ export class Sns {
 
     }
 
-    async checkNoMessagesForAssessment(pk: number) {
+    async checkNoMessagesForAssessment(pk: number, timeout = 5) {
 
         log(`Checking no messages have been sent for assessment PK ${pk}`)
-        // Get SNS messages from the database for the assessment - limit to last 5 seconds
-        const snsData = await this.oasysDb.getData(DbSns.query(pk, 'assessment', 5))
+        // Get SNS messages from the database for the assessment - limit to last 5 seconds (or other if specified)
+        const snsData = await this.oasysDb.getData(DbSns.query(pk, 'assessment', timeout))
         expect(snsData.length).toBe(0)
     }
+
+    async testWipAssessmentMessages(probationCrn: string, expectRosh: boolean, expectPredictors: boolean, timeout = 2) {
+
+        let failed = false
+        const actualSnsMessages: DbSns[] = []
+
+        log('', `Testing WIP assessment SNS messages for offender ${probationCrn}`)
+
+        // Get latest assessment or RSR from the database and build the expected SNS messages.
+        const assessment = await this.getAssessment(probationCrn, 'assessment')
+
+        if (assessment == null) {
+            log(`No assessment found`)
+            failed = true
+        } else {
+            // Get SNS messages from the database for the assessment - limit to last 2 seconds (or as specified)
+            const snsData = await this.oasysDb.getData(DbSns.query(assessment.pk, 'assessment', timeout))
+            for (let sns of snsData) {
+                actualSnsMessages.push(new DbSns(sns))
+            }
+            // Check all expected messages against actuals
+            const expectedSnsMessages: SnsMessage[] = []
+            if (expectRosh) {
+                expectedSnsMessages.push(new SnsMessage(assessment, probationCrn, 'TierRiskFlag'))
+            }
+            if (expectPredictors) {
+                expectedSnsMessages.push(new SnsMessage(assessment, probationCrn, 'TierPredictors'))
+            }
+            
+            for (let expectedSnsMessage of expectedSnsMessages) {
+
+                const actualSnsMessage = this.getLastActualSnsMessage(actualSnsMessages, expectedSnsMessage.messageType)
+                if (actualSnsMessage == null) {
+                    failed = true
+                    log(`FAILED - Expected ${expectedSnsMessage.messageType} message not found`)
+                } else if (actualSnsMessage.messageSubject != expectedSnsMessage.messageSubject) {
+                    failed = true
+                    log(`FAILED - Expected subject: ${expectedSnsMessage.messageSubject}, got: ${actualSnsMessage.messageSubject}`)
+                } else {
+                    if (this.validateSNS(expectedSnsMessage, actualSnsMessage)) {
+                        log(`FAILED - ${expectedSnsMessage.messageType}`)
+                        log(JSON.stringify(actualSnsMessage))
+                        failed = true
+                    }
+                    else {
+                        log(`* ${expectedSnsMessage.messageType} - passed`)
+                    }
+                }
+                log('')
+
+                // Check for unexpected messages in the database
+                actualSnsMessages.forEach((actualSnsMessage) => {
+                    if (expectedSnsMessages.filter(m => m.messageType == actualSnsMessage.messageType).length == 0) {
+                        failed = true
+                        log(`FAILED - Found ${actualSnsMessage.messageType} message not expected`)
+                    }
+                })
+            }
+        }
+
+        expect(failed).toBeFalsy()
+
+    }
+
 
     private async getAssessment(crn: string, type: AssessmentOrCsrp): Promise<DbAssessmentOrCsrp> {
 
@@ -121,14 +185,12 @@ export class Sns {
         }
     }
 
-    private buildExpectedMessages(assessment: DbAssessmentOrCsrp, crn: string): SnsMessage[] {
+    private buildExpectedMessages(assessment: DbAssessmentOrCsrp, crn: string, expectedMessages: SnsMessageType[]): SnsMessage[] {
 
         const expectedSnsMessages: SnsMessage[] = []
-        const excludedAssessmentTypes = ['Risk of Harm Assessment', 'TSP Assessment', 'RSR Only']
+        const excludedAssessmentTypes = ['TSP Assessment', 'RSR Only']
 
-        if (assessment.type == 'assessment'
-            && assessment.completedDate != null
-            && (assessment.roshaRiskAssessmentCompleted || !excludedAssessmentTypes.includes(assessment.purposeOfAssessment))) {
+        if (assessment.type == 'assessment' && assessment.completedDate != null && !excludedAssessmentTypes.includes(assessment.purposeOfAssessment)) {
             expectedSnsMessages.push(new SnsMessage(assessment, crn, 'AssSumm'))
         }
         if (assessment.ogrs1yr != null && (assessment.status == 'SIGNED' || assessment.countersignedDate == null)) {  // OGRS message on signing or completion if no countersigning required

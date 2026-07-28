@@ -1,6 +1,6 @@
 declare type DbResponse = { data: number | string | string[] | string[][], error: string }
 
-declare type SnsMessageType = 'AssSumm' | 'OGRS' | 'OPD' | 'RSR'
+declare type SnsMessageType = 'AssSumm' | 'OGRS' | 'OPD' | 'RSR' | 'TierRiskFlag' | 'TierPredictors'
 declare type AssessmentOrCsrp = 'assessment' | 'csrp'
 
 declare type EndpointStat = { endpoint: Endpoint | 'database', responseTime: number }
@@ -12,7 +12,8 @@ declare type EndpointParams = {
     additionalParameter?: 'Y' | 'N',
     laoPrivilege: 'ALLOW' | 'LIMIT' | 'rubbish',
     assessmentPk?: number,
-    expectedStatus?: string
+    expectedStatus?: string,
+    recordType?: 'O' | 'R'
 }
 
 declare type EndpointUrl = { endpoint: Endpoint, url: string }
@@ -57,7 +58,9 @@ declare type Endpoint =
     'v4RiskScoresAss' |
     'v4RiskScoresRsr' |
     'crimNeeds' |
-    'pni'
+    'pni' |
+    'tierRiskFlag' |
+    'tierPredictors'
 
 declare type CheckAPIResult = {
     failed: boolean,

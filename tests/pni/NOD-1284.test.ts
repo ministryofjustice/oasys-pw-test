@@ -61,8 +61,10 @@ test('NOD-1284', async ({ oasys, user, offender, assessment, sections, risk, sar
     await oasys.clickButton('Continue with Signing')
     await oasys.clickButton('Confirm Sign & Lock')
     await user.logout()
+    await pni.checkAssessmentCalc(offender1.probationCrn, pk1)
 
     // Sign the SARA
+    log('Signing the SARA')
     await saraAssessment.signAndLock.click()
     await saraAssessment.confirmSignAndLock.click()
 

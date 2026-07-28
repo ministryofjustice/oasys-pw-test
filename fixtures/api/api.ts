@@ -67,6 +67,10 @@ export class Api {
             'crimNeeds',
         ]
 
+        if (crnSource == 'prob') {
+            v4AssessmentEndpoints.push('tierPredictors')
+        }
+
         const v4RsrEndpoints: Endpoint[] = [
             'v4RiskScoresRsr',
         ]
@@ -130,6 +134,16 @@ export class Api {
             }
             apiParams.push(v4Asslistparams)
 
+            if (crnSource == 'prob') {
+                // Add V4 tierRiskFlag for probation only
+                const v4TierRiskFlagparams: EndpointParams = {
+                    endpoint: 'tierRiskFlag',
+                    crn: offenderData.probationCrn,
+                    laoPrivilege: 'ALLOW'
+                }
+                apiParams.push(v4TierRiskFlagparams)
+            }
+
             // Add other V4 endpoint params if the offender has assessments and if skipPkOnlyCalls parameter is false
             if (!skipPkOnlyCalls) {
                 // V4 timeline includes layer2 but the subsequents do not
@@ -159,7 +173,7 @@ export class Api {
 
             // Filter to a limited list if specified, and remove anything in the exclusions list
             let filteredParamsList = limitEndpoints && limitEndpoints.length > 0 ? apiParams.filter((param) => limitEndpoints.includes(param.endpoint)) : apiParams
-            filteredParamsList = excludeEndpoints ?  filteredParamsList.filter((param) => !excludeEndpoints.includes(param.endpoint)) : filteredParamsList
+            filteredParamsList = excludeEndpoints ? filteredParamsList.filter((param) => !excludeEndpoints.includes(param.endpoint)) : filteredParamsList
 
             ///////////////////////////////////////////////////////////
             // Work out the expected responses, then call the endpoints
@@ -210,6 +224,9 @@ export class Api {
             const params: EndpointParams = {
                 endpoint: endpoint, crn: crn,
                 laoPrivilege: 'ALLOW', assessmentPk: assessment.assessmentPk, expectedStatus: assessment.status
+            }
+            if (endpoint == 'tierPredictors') {
+                params.recordType = assessment.assessmentType == 'STANDALONE' ? 'R' : 'O'
             }
             parameters.push(params)
         })

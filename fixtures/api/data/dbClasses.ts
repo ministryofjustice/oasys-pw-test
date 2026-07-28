@@ -98,6 +98,7 @@ const assessmentColumns: Columns = {
     learningToolScore: { name: 'learning_tool_score', type: 'integer' },
     ldcSubTotal: { name: 'ldc_sub_total', type: 'integer' },
     ldcFuncProc: { name: 'ldc_func_proc', type: 'string' },
+    tierRiskLevel: { name: 'tiering_rosh_level_elm', type: 'string' },
 }
 
 export class DbAssessment extends DbAssessmentOrRsr {
@@ -120,6 +121,7 @@ export class DbAssessment extends DbAssessmentOrRsr {
     learningToolScore: number
     ldcSubTotal: number
     ldcFuncProc: string
+    tierRiskLevel: string
 
     offences: DbOffence[] = []
     victims: DbVictim[] = []
@@ -197,9 +199,12 @@ const rsrColumns: Columns = {
     initiationDate: { name: 'initiation_date', type: 'date' },
     completedDate: { name: 'date_completed', type: 'date' },
     lastUpdatedDate: { name: 'lastupd_date', type: 'date' },
+    everCommittedSexualOffence: { name: 's1_30_sexual_element', type: 'string' },
 }
 
 export class DbRsr extends DbAssessmentOrRsr {
+
+    everCommittedSexualOffence: string
 
     constructor(assessmentData: string[]) {
 

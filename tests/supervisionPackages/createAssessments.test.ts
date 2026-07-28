@@ -6,7 +6,8 @@ import { passwordLookup } from 'localSettings'
 
 const filename = 'tests/supervisionPackages/data/OGRS4 test inputs.xlsx'
 const crnSheetName = 'CRNs'
-const testDataSheetName = 'Test data'
+const maleWorksheetName = 'Male'
+const femaleWorksheetName = 'Female'
 const questionCol = 1
 const typeCol = 3
 const firstScenarioCol = 9
@@ -24,10 +25,17 @@ test('Create assessments', async ({ oasysDb, oasys, user, offender, assessment, 
     test.setTimeout(0)
 
     const crnData = (await readSheet(filename, crnSheetName)) as string[][]
-    const standaloneScenarios = getTestData((await readSheet(filename, testDataSheetName)) as string[][], 'standalone')
-    const roshaScenarios = getTestData((await readSheet(filename, testDataSheetName)) as string[][], 'rosha')
-    const layer1Scenarios = getTestData((await readSheet(filename, testDataSheetName)) as string[][], 'layer1')
-    const layer3Scenarios = getTestData((await readSheet(filename, testDataSheetName)) as string[][], 'layer3')
+    const maleData = (await readSheet(filename, maleWorksheetName)) as string[][]
+    const femaleData = (await readSheet(filename, femaleWorksheetName)) as string[][]
+    const standaloneScenariosMale = getTestData(maleData, 'standalone')
+    const roshaScenariosMale = getTestData(maleData, 'rosha')
+    const layer1ScenariosMale = getTestData(maleData, 'layer1')
+    const layer3ScenariosMale = getTestData(maleData, 'layer3')
+    const standaloneScenariosFemale = getTestData(femaleData, 'standalone')
+    const roshaScenariosFemale = getTestData(femaleData, 'rosha')
+    const layer1ScenariosFemale = getTestData(femaleData, 'layer1')
+    const layer3ScenariosFemale = getTestData(femaleData, 'layer3')
+
 
     for (let i = 1; i < crnData.length; i++) {
 
@@ -46,20 +54,21 @@ test('Create assessments', async ({ oasysDb, oasys, user, offender, assessment, 
         // Find offender and create assessment/standalone
         await user.adhocLogin(userName, passwordLookup[userName])
         await offender.searchAndSelectByCrn(probationCrn)
+        const male = (await offender.offenderDetails.gender.getValue()) == 'Male'
 
         let pk: number
         switch (assessmentType) {
             case 'standalone':
-                pk = await standaloneCsrp(standaloneScenarios, scenarioName, probationCrn, offender)
+                pk = await standaloneCsrp(male ? standaloneScenariosMale : standaloneScenariosFemale, scenarioName, probationCrn, offender)
                 break
             case 'rosha':
-                pk = await roshaAssessment(roshaScenarios, scenarioName, oasys, assessment, sections, risk)
+                pk = await roshaAssessment(male ? roshaScenariosMale : roshaScenariosFemale, scenarioName, oasys, assessment, sections, risk)
                 break
             case 'layer1':
-                pk = await layer1Assessment(layer1Scenarios, scenarioName, oasys, assessment, sections, risk)
+                pk = await layer1Assessment(male ? layer1ScenariosMale : layer1ScenariosFemale, scenarioName, oasys, assessment, sections, risk)
                 break
             case 'layer3':
-                pk = await layer3Assessment(layer3Scenarios, scenarioName, oasys, assessment, sections, risk, sentencePlan)
+                pk = await layer3Assessment(male ? layer3ScenariosMale : layer3ScenariosFemale, scenarioName, oasys, assessment, sections, risk, sentencePlan)
                 break
         }
 

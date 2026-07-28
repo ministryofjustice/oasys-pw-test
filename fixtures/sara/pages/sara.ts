@@ -134,11 +134,12 @@ export class Sara extends OasysPage {
     /**
      * Fully populates a SARA assessment
      */
-    async populate(riskToPartner: 'Low' | 'Medium' | 'High', riskToOther: 'Low' | 'Medium' | 'High') {
+    async populate(riskToPartner: 'Low' | 'Medium' | 'High', riskToOther: 'Low' | 'Medium' | 'High', alreadyLoaded = false) {
 
         log('Populating SARA')
-        await this.goto()
-
+        if (!alreadyLoaded) {
+            await this.goto()
+        }
         await this.s1Rating.setValue('P')
         await this.s1Critical.setValue('Yes')
         await this.s1Comments.setValue('Comment')

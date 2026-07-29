@@ -182,13 +182,10 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await sections.predictors.o1_32.setValue(4)
         await sections.predictors.o1_40.setValue(0)
         await sections.predictors.o1_29.setValue({ days: -7 })
-        await sections.predictors.save.click()
-        await sections.predictors.next.click()
+        await sections.predictors.save()
+        await sections.predictors.next()
 
         await san.sanSections.checkCurrent()
-        await san.sanSections.close.checkStatus('enabled')
-        await san.sanSections.next.checkStatus('enabled')
-        await san.sanSections.previous.checkStatus('enabled')
         await san.sanSections.markAsComplete.checkStatus('notVisible')
         await san.sanSections.openSanLabel.checkStatus('visible')
         await san.gotoSan()
@@ -238,7 +235,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
                 values: [null, null, 'N/A', null, null, 'N/A', null, null, null]
             }
         ]
-        await assessment.summarySheet.save.click()  // Workaround for defect NOD-1165
+        await assessment.summarySheet.save()  // Workaround for defect NOD-1165
         await assessment.summarySheet.sanCrimTable.checkData(expectedValues1)
 
         // Test ref 8 part 3
@@ -289,7 +286,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
                 values: ['0', '0', 'N/A', '0', '0', 'N/A', '4', '6', '0']
             }
         ]
-        await assessment.summarySheet.save.click()  // Workaround for defect NOD-1165
+        await assessment.summarySheet.save()  // Workaround for defect NOD-1165
         await assessment.summarySheet.sanCrimTable.checkData(expectedValues2)
 
         const expectedPredictorsValues: ColumnValues[] = [

@@ -9,12 +9,32 @@ export class BaseAssessmentPage extends OasysPage {
     name = 'BaseAssessmentPage'
 
     context = new Element.Text(this.page, '#contextright')
-    save = new Element.Button(this.page, 'Save')
-    next = new Element.Button(this.page, 'Next')
-    previous = new Element.Button(this.page, 'Previous')
-    close = new Element.Button(this.page, 'Close')
+    private saveButton = new Element.Button(this.page, 'Save')
+    private nextButton = new Element.Button(this.page, 'Next')
+    private previousButton = new Element.Button(this.page, 'Previous')
+    private closeButton = new Element.Button(this.page, 'Close')
     print = new Element.Button(this.page, 'Print')
     markAsComplete = new Element.Button(this.page, 'Mark As Complete')
+
+    async save() {
+
+        await this.saveButton.click()
+    }
+
+    async next() {
+
+        await this.nextButton.click()
+    }
+
+    async previous() {
+
+        await this.previousButton.click()
+    }
+
+    async close() {
+
+        await this.closeButton.click()
+    }
 
     /**
      * Navigate to the page, click on Mark as Complete, and then check that the section is marked complete.
@@ -67,19 +87,19 @@ export class BaseAssessmentPage extends OasysPage {
 
     async saveAndCheckSns(probationCrn: string, expectRosh: boolean, expectPredictors: boolean, sns: Sns) {
 
-        await this.save.click()
+        await this.save()
         await sns.testWipAssessmentMessages(probationCrn, expectRosh, expectPredictors)
     }
 
     async nextAndCheckSns(probationCrn: string, expectRosh: boolean, expectPredictors: boolean, sns: Sns) {
 
-        await this.next.click()
+        await this.next()
         await sns.testWipAssessmentMessages(probationCrn, expectRosh, expectPredictors)
     }
 
     async previousAndCheckSns(probationCrn: string, expectRosh: boolean, expectPredictors: boolean, sns: Sns) {
 
-        await this.previous.click()
+        await this.previous()
         await sns.testWipAssessmentMessages(probationCrn, expectRosh, expectPredictors)
     }
 

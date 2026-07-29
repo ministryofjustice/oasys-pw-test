@@ -99,7 +99,7 @@ export function testRef4(offender1: OffenderDef, pks: { [key: number]: number })
         await sections.predictors.goto()
         await sections.predictors.o1_32.setValue(6)
         await sections.predictors.o1_40.setValue(3)
-        await sections.predictors.save.click()
+        await sections.predictors.save()
         ogrsResult = await ogrs.checkOgrsInOasysSet(pks[2])
         await ogrs.checkResultsOnPredictorsScreen(ogrsResult)
 

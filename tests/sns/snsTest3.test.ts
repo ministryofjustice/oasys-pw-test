@@ -24,7 +24,7 @@ test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ 
     await sections.roshaPredictors.o1_30.setValue('No')
     await sections.roshaPredictors.o1_29.setValue({ days: -1 })
     await sections.roshaPredictors.o1_38.setValue({ days: -1 })
-    await sections.roshaPredictors.save.click()
+    await sections.roshaPredictors.save()
 
     await risk.screeningSection1.populateMinimal()
     await oasys.clickButton('Next')
@@ -36,7 +36,7 @@ test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ 
     await risk.screeningSection2to4.r4_1.setValue(`Don't Know`)
     await risk.screeningSection2to4.r4_6.setValue(`Don't Know`)
     await risk.screeningSection2to4.r4_4.setValue(`Don't know`)
-    await risk.screeningSection2to4.next.click()
+    await risk.screeningSection2to4.next()
 
     await signing.signAndLock({ expectCsrpScore: true })
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])

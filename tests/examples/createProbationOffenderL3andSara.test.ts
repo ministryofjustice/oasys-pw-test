@@ -15,7 +15,7 @@ test('Example test - create a probation offender and a layer 3 assessment plus S
     await risk.screeningNoRisks()
     await sections.section2.goto()
     await sections.section2.o2_3PhysicalViolence.setValue(true)
-    await sections.section2.save.click()
+    await sections.section2.save()
 
     await risk.screeningSection5.goto()
     await oasys.clickButton('Next')

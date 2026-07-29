@@ -45,7 +45,7 @@ export function testRef12(offender1: OffenderDef, pks: number[]) {
         await sections.section3.o3_4.setValue('2-Significant problems')
         await sections.section3.o3_5.setValue('2-Significant problems')
         await sections.section3.o3_6.setValue('2-Significant problems')
-        await sections.section3.save.click()
+        await sections.section3.save()
 
         await sections.section4.goto(true)
         await sections.section4.o4_2.setValue('2 - Yes')
@@ -125,7 +125,7 @@ export function testRef12(offender1: OffenderDef, pks: number[]) {
         await risk.screeningSection2to4.goto(true)
         await risk.screeningSection2to4.r2_3.setValue('No')
         await risk.screeningSection2to4.rationale.setValue('Some reason')
-        await risk.screeningSection2to4.save.click()
+        await risk.screeningSection2to4.save()
 
         await sara.cancelSara()
 

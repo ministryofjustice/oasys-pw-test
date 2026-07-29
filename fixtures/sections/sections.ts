@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test'
 
 import * as pages from './pages'
-import { BaseAssessmentPage } from 'classes'
 
 
 export class Sections {
@@ -9,8 +8,6 @@ export class Sections {
     constructor(private readonly page: Page) { }
 
     assessmentPk: number // Updated on creating an assessment.  Used at lock incomplete and sign&lock to call the OGRS4 regression test
-
-    readonly baseAssessmentPage = new BaseAssessmentPage(this.page)
 
     // Common pages
     readonly offenderInformation = new pages.OffenderInformation(this.page)

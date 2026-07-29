@@ -17,7 +17,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
 
         log('Check the unpopulated values', 'Test step')
         await sections.roshaPredictors.goto()
-        await sections.roshaPredictors.save.click() // generate a calculation
+        await sections.roshaPredictors.save() // generate a calculation
         let ogrsResult = await ogrs.checkOgrsInOasysSet(pks[1])
 
         log(`Go to the RoSH Screening section 1 and mark everything as 'No'
@@ -27,7 +27,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
         await risk.screeningSection1.populateMinimal()
         await risk.screeningSection2to4.populateMinimal()
         await risk.screeningSection2to4.r3_4.setValue('Yes')
-        await risk.screeningSection2to4.save.click()
+        await risk.screeningSection2to4.save()
         await ogrs.checkResultsOnRiskSummary(ogrsResult)
 
         log(`Enter in a date at 'Date of first sanction' to get 1.8 Age at first sanction' populated
@@ -46,7 +46,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
         await sections.roshaPredictors.o1_29.setValue({ months: -6 })
         await sections.roshaPredictors.o1_30.setValue('No')
         await sections.roshaPredictors.o1_38.setValue({ months: -3 })
-        await sections.roshaPredictors.save.click()
+        await sections.roshaPredictors.save()
 
         log('Check the predictor values', 'Test step')
         ogrsResult = await ogrs.checkOgrsInOasysSet(pks[1])
@@ -56,7 +56,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
         Click on the <SAVE> button and screen refreshes`, 'Test step')
 
         await sections.roshaPredictors.o1_40.setValue(4)
-        await sections.roshaPredictors.save.click()
+        await sections.roshaPredictors.save()
         ogrsResult = await ogrs.checkOgrsInOasysSet(pks[1])
         await ogrs.checkResultsOnRoshaPredictorsScreen(ogrsResult)
 
@@ -94,7 +94,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
         await sections.roshaPredictors.o11_2.setValue('1-Some problems')
         await sections.roshaPredictors.o11_4.setValue('1-Some problems')
         await sections.roshaPredictors.o12_1.setValue('1-Some problems')
-        await sections.roshaPredictors.next.click()
+        await sections.roshaPredictors.next()
 
         ogrsResult = await ogrs.checkOgrsInOasysSet(pks[1])
         expect(ogrsResult.outputParams.OGP2_CALCULATED).toBe('Y')

@@ -1,8 +1,13 @@
+import { Ogrs } from 'fixtures'
 import * as v4Common from './v4Common'
 import * as dbClasses from 'fixtures/api/data/dbClasses'
 import * as env from '../../endpointUrls'
+import { OgrsInputParams, OgrsOutputParams } from 'fixtures/ogrs/types'
+import { createAssessmentInputParams } from 'fixtures/ogrs/data/createAssessmentTestCase'
+import { createCsrpInputParams } from 'fixtures/ogrs/data/createCsrpTestCase'
+import { Decimal } from 'decimal.js'
 
-export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {
+export async function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams, ogrs: Ogrs) {
 
     const assessment = offenderData.assessments[offenderData.assessments.map((ass) => ass.assessmentPk).indexOf(parameters.assessmentPk)]
 
@@ -11,7 +16,7 @@ export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssess
 
     } else {
         const result = new TierPredictorsEndpointResponse(offenderData, parameters)
-        result.addAssessment(assessment)
+        await result.addAssessment(assessment, ogrs)
         delete result.timeline
 
         return result
@@ -27,11 +32,11 @@ export class TierPredictorsEndpointResponse extends v4Common.V4EndpointResponse 
         super(offenderData, parameters)
     }
 
-    addAssessment(dbAssessment: dbClasses.DbAssessmentOrRsr) {
+    async addAssessment(dbAssessment: dbClasses.DbAssessmentOrRsr, ogrs: Ogrs) {
 
         super.addAssessment(dbAssessment, TierPredictorsAssessment)
         if (this.assessments.length > 0) {
-            this.assessments[0].addDetails(dbAssessment)
+            await this.assessments[0].addDetails(dbAssessment, ogrs)
         }
     }
 
@@ -42,7 +47,7 @@ export class TierPredictorsAssessment extends v4Common.V4AssessmentCommon {
     everCommittedSexualOffence: string
     tierPredictors: TierPredictorGroup
 
-    addDetails(dbAssessment: dbClasses.DbAssessmentOrRsr) {
+    async addDetails(dbAssessment: dbClasses.DbAssessmentOrRsr, ogrs: Ogrs) {
 
         // Remove standard stuff not included in this endpoint
         delete this.dateCompleted
@@ -63,11 +68,11 @@ export class TierPredictorsAssessment extends v4Common.V4AssessmentCommon {
 
         if (dbAssessment.assessmentType == 'STANDALONE') {
             this.everCommittedSexualOffence = (dbAssessment as dbClasses.DbRsr).everCommittedSexualOffence // TODO convert to Yes/No?
-        }
-        else {
+        } else {
             this.everCommittedSexualOffence = (dbAssessment as dbClasses.DbAssessment).qaData.getString('1.30')
         }
-        this.tierPredictors = new TierPredictorGroup(dbAssessment)
+        this.tierPredictors = new TierPredictorGroup()
+        await this.tierPredictors.addPredictorDetails(dbAssessment, ogrs)
     }
 }
 
@@ -77,11 +82,22 @@ class TierPredictorGroup {
     rsr: Rsr
     osp: Osp
 
-    constructor(dbAssessment: dbClasses.DbAssessmentOrRsr) {
+    async addPredictorDetails(dbAssessment: dbClasses.DbAssessmentOrRsr, ogrs: Ogrs) {
 
-        this.newActuarialPredictors = new RecalculatedNewActuarialPredictors(dbAssessment)
-        this.rsr = new Rsr(dbAssessment)
-        this.osp = new Osp(dbAssessment)
+        let calculatorParams: OgrsInputParams
+        if (dbAssessment.assessmentType == 'STANDALONE') {
+            const csrp = await ogrs.data.getOneCsrp(dbAssessment.assessmentPk)
+            calculatorParams = createCsrpInputParams(csrp)
+        } else {
+            const assessment = await ogrs.data.getOneAssessment(dbAssessment.assessmentPk)
+            calculatorParams = createAssessmentInputParams(assessment)
+        }
+
+        const recalculatedOgrs = ogrs.calculate(calculatorParams)
+
+        this.newActuarialPredictors = new RecalculatedNewActuarialPredictors(recalculatedOgrs)
+        this.rsr = new Rsr(recalculatedOgrs)
+        this.osp = new Osp(recalculatedOgrs)
     }
 
 }
@@ -95,9 +111,14 @@ class RecalculatedNewActuarialPredictors {
     ogp2Band: string
     ogp2Calculated: string
 
-    constructor(dbAssessment: dbClasses.DbAssessmentOrRsr) {
+    constructor(ogrs: OgrsOutputParams) {
 
-
+        this.ogrs4gYr2 = formatDecimal(ogrs.OGRS4G_PERCENTAGE)
+        this.ogrs4gBand = ogrs.OGRS4G_BAND
+        this.ogrs4gCalculated = ogrs.OGRS4G_CALCULATED
+        this.ogp2Yr2 = formatDecimal(ogrs.OGP2_PERCENTAGE)
+        this.ogp2Band = ogrs.OGP2_BAND
+        this.ogp2Calculated = ogrs.OGP2_CALCULATED
     }
 }
 
@@ -108,9 +129,12 @@ class Rsr {
     rsrScoreLevel: string
     rsrExceptionError: string
 
-    constructor(dbAssessment: dbClasses.DbAssessmentOrRsr) {
+    constructor(ogrs: OgrsOutputParams) {
 
-
+        this.rsrStaticOrDynamic = ogrs.RSR_DYNAMIC ? 'DYNAMIC' : 'STATIC'
+        this.rsrPercentageScore = formatDecimal(ogrs.RSR_PERCENTAGE)
+        this.rsrScoreLevel = ogrs.RSR_BAND
+        this.rsrExceptionError = ogrs.RSR_MISSING_QUESTIONS
     }
 }
 
@@ -120,8 +144,15 @@ class Osp {
     ospDirectContactScoreLevel: string
     ospDirectContactRiskReduction: string
 
-    constructor(dbAssessment: dbClasses.DbAssessmentOrRsr) {
+    constructor(ogrs: OgrsOutputParams) {
 
-
+        this.ospDirectContactPercentageScore = formatDecimal(ogrs.OSP_DC_PERCENTAGE)
+        this.ospDirectContactScoreLevel = ogrs.OSP_DC_BAND
+        this.ospDirectContactRiskReduction = ogrs.OSP_DC_RISK_REDUCTION ? 'Y' : 'N'
     }
+}
+
+function formatDecimal(dec: Decimal): number {
+
+    return Number.parseFloat(dec.toFixed(2))
 }

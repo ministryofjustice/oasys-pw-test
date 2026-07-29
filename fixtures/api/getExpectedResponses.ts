@@ -1,3 +1,4 @@
+import { Ogrs } from 'fixtures'
 import * as dbClasses from './data/dbClasses'
 import * as v1 from './apiClasses/v1'
 import * as ap from './apiClasses/ap'
@@ -14,18 +15,19 @@ import { EndpointResponse } from './apiClasses/common'
  * 
  * Returns an array of EnpointResponse objects or RestErrorResult objects
  */
-export async function getExpectedResponses(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams[]): Promise<(EndpointResponse | RestErrorResult)[]> {
+export async function getExpectedResponses(
+    offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams[], ogrs: Ogrs): Promise<(EndpointResponse | RestErrorResult)[]> {
 
     const results: (EndpointResponse | RestErrorResult)[] = []
 
     for (var params of parameters) {
-        const result = await getSingleResponse(offenderData, params)
+        const result = await getSingleResponse(offenderData, params, ogrs)
         results.push(result)
     }
     return results
 }
 
-async function getSingleResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams): Promise<EndpointResponse | RestErrorResult> {
+async function getSingleResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams, ogrs: Ogrs): Promise<EndpointResponse | RestErrorResult> {
 
     // Select the right function to build an endpoint response for the given endpoint parameter, then call it to get the expected response back in the resultAlias
     const functions: { [key: string]: Function } = {
@@ -68,11 +70,15 @@ async function getSingleResponse(offenderData: dbClasses.DbOffenderWithAssessmen
         crimNeeds: v4.crimNeeds.getExpectedResponse,
         pni: v4.pni.getExpectedResponse,
         tierRiskFlag: v4.tierRiskFlag.getExpectedResponse,
-        tierPredictors: v4.tierPredictors.getExpectedResponse,
     }
 
-    const f: Function = functions[parameters.endpoint]
-    return f(offenderData, parameters)
+    if (parameters.endpoint == 'tierPredictors') {
+        const result = await v4.tierPredictors.getExpectedResponse(offenderData, parameters, ogrs)
+        return result
+    } else {
+        const f: Function = functions[parameters.endpoint]
+        return f(offenderData, parameters)
+    }
 
 }
 

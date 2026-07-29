@@ -23,7 +23,7 @@ export class Ogrs {
     constructor(private readonly oasysDb: OasysDb, private readonly offender: Offender, private readonly sections: Sections, private readonly risk: Risk) { }
 
     private readonly calculator = new Calculator()
-    private readonly data = new Data(this.oasysDb)
+    readonly data = new Data(this.oasysDb)
     readonly rescoring = new Rescoring(this.oasysDb)
     readonly tiering = new Tiering(this.oasysDb)
     readonly rescoringLic = new RescoringLic(this.oasysDb)

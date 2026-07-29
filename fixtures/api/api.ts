@@ -1,6 +1,6 @@
 import { APIRequestContext } from '@playwright/test'
 
-import { OasysDb } from 'fixtures'
+import { OasysDb, Ogrs } from 'fixtures'
 import * as rest from './apiClasses'
 import * as dbClasses from './data/dbClasses'
 import * as restApi from './getApiResponse'
@@ -9,7 +9,8 @@ import * as restApiDb from './data/restApiDb'
 
 
 export class Api {
-    constructor(private readonly oasysDb: OasysDb, private readonly request: APIRequestContext) { }
+
+    constructor(private readonly oasysDb: OasysDb, private readonly request: APIRequestContext, private readonly ogrs: Ogrs) { }
 
     /** 
      * Tests all endpoints for all assessments for given offender CRN; returns an OffenderApisResult object including pass/fail, reporting output and timing stats.
@@ -177,7 +178,7 @@ export class Api {
 
             ///////////////////////////////////////////////////////////
             // Work out the expected responses, then call the endpoints
-            const expectedValues = await rest.GetExpectedResponses.getExpectedResponses(offenderData, filteredParamsList)
+            const expectedValues = await rest.GetExpectedResponses.getExpectedResponses(offenderData, filteredParamsList, this.ogrs)
             const actualValues = await restApi.getMultipleApiResponses(filteredParamsList, this.request)
 
             ////////////////////////////////////

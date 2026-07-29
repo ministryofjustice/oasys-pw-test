@@ -11,7 +11,7 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         const offender1 = await offender.createProbFromStandardOffender()
 
         await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
-        await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No' })
+        await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No', probationCrn: offender1.probationCrn })
 
         // Sign assessment, then check SNS messages
         await signing.signAndLock()
@@ -45,11 +45,13 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
         await sections.offendingInformation.populateMinimal()
         await sections.predictors.populateMinimal()
-        await sections.sections2To13NoIssues({ populate6_11: 'No' })
+        await sections.saveAndCheckSns(offender1.probationCrn, false, true)
+        await sections.sections2To13NoIssues({ populate6_11: 'No', probationCrn: offender1.probationCrn })
         await sections.selfAssessmentForm.populateMinimal()
 
-        // Set to Medium risk to get countersigner
-        await risk.populateWithSpecificRiskLevel('High')
+        // Set to High risk to get countersigner
+        await risk.populateWithSpecificRiskLevel('High', offender1.probationCrn)
+        await risk.saveAndCheckSns(offender1.probationCrn, true, false)
         await sentencePlan.populateMinimal()
 
         // Sign assessment and send for countersigning, then check SNS messages
@@ -74,6 +76,7 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         await sections.predictors.o1_30.setValue('No')
         await sections.predictors.o1_29.setValue({ months: -1 })
         await sections.predictors.o1_38.setValue({ days: -5 })
+        await sections.saveAndCheckSns(offender1.probationCrn, false, true)
         await assessment.summarySheet.goto()
         await assessment.summarySheet.opdOverride.setValue('Yes')
         await assessment.summarySheet.opdOverrideReason.setValue('Testing')

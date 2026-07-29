@@ -24,7 +24,7 @@ test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ 
     await sections.roshaPredictors.o1_30.setValue('No')
     await sections.roshaPredictors.o1_29.setValue({ days: -1 })
     await sections.roshaPredictors.o1_38.setValue({ days: -1 })
-    await sections.roshaPredictors.save()
+    await sections.saveAndCheckSns(offender1.probationCrn, false, true)
 
     await risk.screeningSection1.populateMinimal()
     await oasys.clickButton('Next')
@@ -58,8 +58,11 @@ test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ 
     await sections.offendingInformation.courtProximity.setValue('Local Court')
     await sections.offendingInformation.courtName.setValue('Bedford MC')
     await sections.offendingInformation.orderLengthMonths.setValue('12')
+    await sections.saveAndCheckSns(offender1.probationCrn, false, true)
+    
 
     await sections.layer1Section2.populateMinimal()
+    await sections.saveAndCheckSns(offender1.probationCrn, false, true)
     await sections.selfAssessmentForm.populateMinimal()
     await sentencePlan.populateMinimal()
 

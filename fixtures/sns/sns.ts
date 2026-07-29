@@ -117,7 +117,7 @@ export class Sns {
         log('', `Testing WIP assessment SNS messages for offender ${probationCrn}`)
 
         // Get latest assessment or RSR from the database and build the expected SNS messages.
-        const assessment = await this.getAssessment(probationCrn, 'assessment')
+        const assessment = await this.getAssessment(probationCrn, 'assessment', true)  // Get WIP assessment
 
         if (assessment == null) {
             log(`No assessment found`)
@@ -173,9 +173,9 @@ export class Sns {
     }
 
 
-    private async getAssessment(crn: string, type: AssessmentOrCsrp): Promise<DbAssessmentOrCsrp> {
+    private async getAssessment(crn: string, type: AssessmentOrCsrp, wip = false): Promise<DbAssessmentOrCsrp> {
 
-        const query = type == 'assessment' ? DbAssessmentOrCsrp.assessmentQuery(crn) : DbAssessmentOrCsrp.csrpQuery(crn)
+        const query = type == 'assessment' ? DbAssessmentOrCsrp.assessmentQuery(crn, wip) : DbAssessmentOrCsrp.csrpQuery(crn)
         const assessmentData = await this.oasysDb.getData(query)
 
         if (assessmentData.length == 0) {

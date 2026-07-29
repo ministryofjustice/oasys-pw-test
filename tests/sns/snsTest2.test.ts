@@ -15,7 +15,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
 
         // First RoSHA
         await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' })
-        await assessment.populateMinimal({ layer: 'Layer 1V2', populate1_38: { days: -5 } })
+        await assessment.populateMinimal({ layer: 'Layer 1V2', populate1_38: { days: -5 }, probationCrn: offender1.probationCrn })
 
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
@@ -30,8 +30,10 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         await sections.offendingInformation.count.setValue(1)
         await sections.offendingInformation.sentence.setValue('Fine')
         await sections.offendingInformation.sentenceDate.setValue({})
+        await sections.saveAndCheckSns(offender1.probationCrn, false, true)
 
         await sections.layer1Section2.populateMinimal()
+        await sections.saveAndCheckSns(offender1.probationCrn, false, true)
         await sections.selfAssessmentForm.populateMinimal()
 
         await signing.signAndLock({ page: 'spService' })
@@ -40,7 +42,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         // Second RoSHA
         await oasys.history(offender1)
         await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' }, 'Yes')
-        await sections.roshaPredictors.populateMinimal({ populate1_38: { days: -1 } }, false)
+        await sections.roshaPredictors.populateMinimal({ populate1_38: { days: -1 }, probationCrn: offender1.probationCrn }, false)
 
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
@@ -55,10 +57,11 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         await sections.offendingInformation.count.setValue(1)
         await sections.offendingInformation.sentence.setValue('Fine')
         await sections.offendingInformation.sentenceDate.setValue({})
+        await sections.saveAndCheckSns(offender1.probationCrn, false, true)
         await sections.predictors.goto()
         await sections.predictors.o1_32.setValue(2)
+        await sections.saveAndCheckSns(offender1.probationCrn, false, true)
 
-        // await sections.layer1Section2.populateMinimal()
         await sections.selfAssessmentForm.populateMinimal()
 
         await sentencePlan.populateMinimal()
@@ -75,10 +78,11 @@ test('Countersigning required', async ({ oasys, user, offender, assessment, sns,
     const offender1 = await offender.createProbFromStandardOffender()
 
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Basic (Layer 1)' })
-    await assessment.populateMinimal({ layer: 'Layer 1' })
+    await assessment.populateMinimal({ layer: 'Layer 1', probationCrn: offender1.probationCrn })
 
-    // Set to Medium risk to get countersigner
-    await risk.populateWithSpecificRiskLevel('High')
+    // Set to High risk to get countersigner
+    await risk.populateWithSpecificRiskLevel('High', offender1.probationCrn)
+    await risk.saveAndCheckSns(offender1.probationCrn, true, false)
 
     // Sign assessment and send for countersigning, then check SNS messages
     await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probHeadPdu })
@@ -97,6 +101,7 @@ test('Countersigning required', async ({ oasys, user, offender, assessment, sns,
     await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Basic (Layer 1)' })
     await sections.offendingInformation.populateMinimal()
     await sections.layer1Section2.populateMinimal()
+    await sections.saveAndCheckSns(offender1.probationCrn, false, true)
     await sections.selfAssessmentForm.populateMinimal()
 
     // Sign assessment, then check SNS messages

@@ -140,7 +140,9 @@ export class DbAssessmentOrRsr {
         }
     }
 
-    static assessmentQuery(crn: string): string {
+    static assessmentQuery(crn: string, wip = false): string {
+
+        const statusCondition = wip ? `and s.assessment_status_elm = 'OPEN'` : `and s.assessment_status_elm in ('COMPLETE', 'SIGNED', 'LOCKED_INCOMPLETE')`
 
         return `select s.oasys_set_pk, s.assessment_status_elm, o.cms_event_number, 
                     to_char(s.initiation_date, '${oasysDateTime.oracleTimestampFormat}'), to_char(s.date_completed, '${oasysDateTime.oracleTimestampFormat}'), 
@@ -162,7 +164,8 @@ export class DbAssessmentOrRsr {
                     from eor.offender o, eor.oasys_assessment_group g, eor.oasys_set s, eor.ref_element r 
                     where o.cms_prob_number = '${crn}'
                     and o.offender_pk = g.offender_PK and g.oasys_assessment_group_PK = s.oasys_assessment_group_PK 
-                    and s.assessment_status_elm in ('COMPLETE', 'SIGNED', 'LOCKED_INCOMPLETE') and s.deleted_date is null 
+                    ${statusCondition} 
+                    and s.deleted_date is null 
                     and r.ref_element_code = s.purpose_assessment_elm and r.ref_category_code = 'PURPOSE_OF_ASSESSMENT_REASON' 
                     order by s.initiation_date desc`
     }

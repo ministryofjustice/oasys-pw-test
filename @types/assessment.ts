@@ -119,6 +119,7 @@ declare type PopulateAssessmentParams = {
     o6_7PrePopulated?: boolean,
     populate6_11?: 'Yes' | 'No',
     populate1_38?: OasysDate,
+    probationCrn? : string,
 }
 
 declare type SigningPage = 'spService' | 'rmp' | 'riskScreening' | 'psr'

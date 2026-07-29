@@ -114,18 +114,18 @@ export const test = base.extend<OasysFixtures>({
         await use(offender)
     },
 
-    sections: async ({ page }, use: Function) => {
-        const sections = new Sections(page)
+    sections: async ({ page, sns }, use: Function) => {
+        const sections = new Sections(page, sns)
         await use(sections)
     },
 
-    san: async ({ page, oasys, user, oasysDb }, use: Function) => {
+    san: async ({ page, oasys, oasysDb }, use: Function) => {
         const san = new San(page, oasys, oasysDb)
         await use(san)
     },
 
-    risk: async ({ page, oasys, user, sara }, use: Function) => {
-        const risk = new Risk(page, oasys, sara)
+    risk: async ({ page, oasys, sara, sns }, use: Function) => {
+        const risk = new Risk(page, oasys, sara, sns)
         await use(risk)
     },
 
@@ -144,7 +144,7 @@ export const test = base.extend<OasysFixtures>({
         await use(assessment)
     },
 
-    sns: async ({ page, oasys, user, oasysDb }, use: Function) => {
+    sns: async ({ page, oasys, oasysDb }, use: Function) => {
         const sns = new Sns(page, oasys, oasysDb)
         await use(sns)
     },

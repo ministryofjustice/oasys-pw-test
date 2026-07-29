@@ -133,7 +133,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
     await risk.screeningSection2to4.r4_6.setValue('No')
     await risk.screeningSection2to4.r4_4.setValue('No')
 
-    await risk.populateWithSpecificRiskLevel('High', false, 'pris')
+    await risk.populateWithSpecificRiskLevel('High', null, false, 'pris')
 
     log(`Navigate out to the 'Sentence Plan Service' 
         Ensure that the OTL sends the correct data for the new 'criminogenicNeedsData' parameter (check to the Summary Sheet in OASys)

@@ -24,7 +24,10 @@ test('Create assessments', async ({ oasysDb, oasys, user, offender, assessment, 
 
     test.setTimeout(0)
 
+    // Get CRNs with test scenarios
     const crnData = (await readSheet(filename, crnSheetName)) as string[][]
+
+    // Get scenario details for male and female offenders
     const maleData = (await readSheet(filename, maleWorksheetName)) as string[][]
     const femaleData = (await readSheet(filename, femaleWorksheetName)) as string[][]
     const standaloneScenariosMale = getTestData(maleData, 'standalone')
@@ -44,18 +47,19 @@ test('Create assessments', async ({ oasysDb, oasys, user, offender, assessment, 
         const scenarioName = crnData[i][2]
         const userName = crnData[i][3]
 
-        // Delete previous assessments and CSRP
-        await user.admin.login(providers.prob.nonSan)
-        await offender.searchAndSelectByCrn(probationCrn)
-        await offender.deleteAllStandalone(probationCrn)
-        await assessment.deleteAllByCrn(probationCrn)
-        await user.logout()
+        // Add this section back in to delete any existing assessments.  Requires a suitable admin user.
+        // await user.admin.login(providers.prob.nonSan)
+        // await offender.searchAndSelectByCrn(probationCrn)
+        // await offender.deleteAllStandalone(probationCrn)
+        // await assessment.deleteAllByCrn(probationCrn)
+        // await user.logout()
 
-        // Find offender and create assessment/standalone
+        // Find offender
         await user.adhocLogin(userName, passwordLookup[userName])
         await offender.searchAndSelectByCrn(probationCrn)
         const male = (await offender.offenderDetails.gender.getValue()) == 'Male'
 
+        // Create and populate the assessment and/or standalone CSRP
         let pk: number
         switch (assessmentType) {
             case 'standalone':
@@ -72,6 +76,7 @@ test('Create assessments', async ({ oasysDb, oasys, user, offender, assessment, 
                 break
         }
 
+        // Get the calculated predictor values and calculate the tier, write details to the log file
         const scoreQuery = assessmentType == 'standalone'
             ? `select ogp2_calculated, ogrs4g_percentage_2yr, ogp2_percentage_2yr, rsr_static_or_dynamic, rsr_percentage_score from eor.offender_rsr_scores where offender_rsr_scores_pk = ${pk}`
             : `select ogp2_calculated, ogrs4g_percentage_2yr, ogp2_percentage_2yr, rsr_static_or_dynamic, rsr_percentage_score from eor.oasys_set where oasys_set_pk = ${pk}`

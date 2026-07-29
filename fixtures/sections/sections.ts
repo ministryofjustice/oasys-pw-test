@@ -119,7 +119,7 @@ export class Sections {
                 await this.selfAssessmentForm.populateFull()
                 break
             case 'Layer 1V2':
-                await this.roshaPredictors.populateFull()
+                await this.roshaPredictors.populateFull(params)
                 break
             case 'Layer 3':
                 await this.offendingInformation.populateFull(params)

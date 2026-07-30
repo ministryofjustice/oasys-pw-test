@@ -5,12 +5,12 @@ import { test } from 'fixtures'
  */
 
 const testCases = [
-    // ['ZABUOBO', null],    // fully populated L3/L1v2/L1v1
-    // ['H923484', null],    // SARA
-    // ['X450397', null],    // SUM
-    // ['ZLHECUL', null],       // OASys-SP layer 1
-    // ['ZUHJFAA', null],      // SAN assessments
-    // ['X743137', null],
+    ['ZABUOBO', null],    // fully populated L3/L1v2/L1v1
+    ['H923484', null],    // SARA
+    ['X450397', null],    // SUM
+    ['ZLHECUL', null],       // OASys-SP layer 1
+    ['ZUHJFAA', null],      // SAN assessments
+    ['X743137', null],
     ['ZWMCLZB', null],      // Obscure PNI defect (NOD-1284)
 
     // Pre-prod cases for PNI
@@ -32,8 +32,8 @@ const testCases = [
     // ['R414385', null],
 ]
 
-// const limitEndpoints: Endpoint[] = []
-const limitEndpoints: Endpoint[] = ['pni']
+const limitEndpoints: Endpoint[] = []
+// const limitEndpoints: Endpoint[] = ['pni']
 
 const excludeEndpoints: Endpoint[] = []
 // const excludeEndpoints: Endpoint[] = ['pni']

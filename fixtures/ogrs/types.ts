@@ -308,7 +308,7 @@ export type OgrsOutputParams = {
     OSP_DC_SCORE: Decimal,
     OSP_DC_PERCENTAGE: Decimal,
     OSP_DC_BAND: ScoreBand,
-    OSP_DC_RISK_REDUCTION: Decimal,
+    OSP_DC_RISK_REDUCTION: 'Y' | 'N',
     OSP_DC_MISSING_QUESTIONS: string,
     OSP_DC_MISSING_COUNT: number,
     OSP_IIC_CALCULATED: ScoreStatus,

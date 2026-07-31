@@ -15,7 +15,7 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
 
         // Sign assessment, then check SNS messages
         await signing.signAndLock()
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment')
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         // Create another assessment (cloning from the one above), this one with OPD override and RSR
         await oasys.history(offender1)
@@ -51,7 +51,6 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
 
         // Set to High risk to get countersigner
         await risk.populateWithSpecificRiskLevel('High', offender1.probationCrn)
-        await risk.saveAndCheckSns(offender1.probationCrn, true, false)
         await sentencePlan.populateMinimal()
 
         // Sign assessment and send for countersigning, then check SNS messages

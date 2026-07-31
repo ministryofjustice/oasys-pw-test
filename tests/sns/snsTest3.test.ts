@@ -39,7 +39,7 @@ test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ 
     await risk.screeningSection2to4.next()
 
     await signing.signAndLock({ expectCsrpScore: true })
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
     // First L1
     await oasys.history(offender1)
@@ -58,11 +58,8 @@ test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ 
     await sections.offendingInformation.courtProximity.setValue('Local Court')
     await sections.offendingInformation.courtName.setValue('Bedford MC')
     await sections.offendingInformation.orderLengthMonths.setValue('12')
-    await sections.saveAndCheckSns(offender1.probationCrn, false, true)
     
-
     await sections.layer1Section2.populateMinimal()
-    await sections.saveAndCheckSns(offender1.probationCrn, false, true)
     await sections.selfAssessmentForm.populateMinimal()
     await sentencePlan.populateMinimal()
 

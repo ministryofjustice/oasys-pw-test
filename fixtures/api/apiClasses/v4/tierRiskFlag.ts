@@ -5,15 +5,17 @@ import * as common from '../common'
 
 export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {
 
-    const assessment = offenderData.assessments[offenderData.assessments.map((ass) => ass.assessmentPk).indexOf(parameters.assessmentPk)]
+    const relevantAssessments = offenderData.assessments.filter((ass) => !(['SARA', 'RM2000', 'BCS', 'TR_BCS', 'STANDALONE'].includes(ass.assessmentType)))
 
-    if (assessment == null) {
+    if (relevantAssessments.length == 0) {
         return env.restErrorResults.noAssessments
 
     } else {
+        const assessment = relevantAssessments[relevantAssessments.length - 1]
         const result = new TierRiskFlagAssEndpointResponse(offenderData, parameters)
         result.addAssessment(assessment)
         delete result.timeline
+        delete result.prisNumber
 
         return result
     }
@@ -40,28 +42,16 @@ export class TierRiskFlagAssEndpointResponse extends v4Common.V4EndpointResponse
 
 export class TierRiskFlagAssessment extends v4Common.V4AssessmentCommon {
 
-    riskScoreLevel: string
+    riskLevel: {
+        riskScoreLevel: string
+    }
 
     addDetails(dbAssessment: dbClasses.DbAssessment) {
 
         // Remove standard stuff not included in this endpoint
-        delete this.dateCompleted
-        delete this.assessorSignedDate
-        delete this.initiationDate
-        delete this.superStatus
-        delete this.laterWIPAssessmentExists
-        delete this.latestWIPDate
-        delete this.laterSignLockAssessmentExists
-        delete this.latestSignLockDate
-        delete this.laterPartCompSignedAssessmentExists
-        delete this.latestPartCompSignedDate
-        delete this.laterPartCompUnsignedAssessmentExists
-        delete this.latestPartCompUnsignedDate
-        delete this.laterCompleteAssessmentExists
-        delete this.latestCompleteDate
         delete this.assessor
 
-        this.riskScoreLevel = common.riskLabel(dbAssessment.tierRiskLevel)
+        this.riskLevel = { riskScoreLevel: common.riskLabel(dbAssessment.tierRiskLevel) }
     }
 }
 

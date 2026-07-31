@@ -18,8 +18,7 @@ export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssess
         const result = new AssSummNeedsEndpointResponse(offenderData, parameters)
         result.processTimeline(timelineAssessments, offenderData.assessments)
         result.addAssessment(assessment)
-        result.assessments[0].offender = new Offender(offenderData)
-
+        result.assessments[0].offender = new Offender(offenderData, assessment as dbClasses.DbAssessment)
         return result
     }
 }
@@ -284,11 +283,13 @@ class Offender {
 
     riskToOthers: string
     offenderPk: number
+    riskScoreLevel: string
 
-    constructor(offender: dbClasses.DbOffenderWithAssessments) {
+    constructor(offender: dbClasses.DbOffenderWithAssessments, dbAssessment: dbClasses.DbAssessment) {
 
         this.riskToOthers = offender.riskToOthers
         this.offenderPk = offender.offenderPk
+        this.riskScoreLevel = common.riskLabel(dbAssessment.tierRiskLevel)
     }
 }
 

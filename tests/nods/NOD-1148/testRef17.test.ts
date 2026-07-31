@@ -104,7 +104,7 @@ test('NOD 1148 OGRS regression - test ref 17', async ({ oasys, user, offender, a
         OGRS msg - ensure the MESSAGE_DATA field is now including the new fields as per the specification							
         RSR msg - ensure the MESSAGE_DATA field is not including the new fields as per the specification							
         AssSumm msg - MESSAGE_DATA field remains as is providing the 'detailUrl'`, 'Test step')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
     log(`Check that there is a record in the new table 'PREDICTOR_FEATURE_LINES' for this OASYS_SET_PK and it has stored ALL the fields coming back from the new Predictor calculator as at the last time it run								
             Check the OASYS_SET record has the existing OGRS 3, OGP and OVP fields populated and the new predictor fields populated correctly including original OSP-DC, OSP-IIC and RSR fields								

@@ -52,14 +52,17 @@ export class V4EndpointResponse extends common.EndpointResponse {
             this.probNumber = offenderData.probationCrn
         }
         // Remove standard properties in the v1-3 endpoints that are not used in v4
-        if (!['v4AssList', 'pni'].includes(parameters.endpoint)) {
+        if (!['v4AssList', 'pni', 'tierRiskFlag'].includes(parameters.endpoint)) {
             delete this.inputs['crn']
         }
-        delete this['crn-deprecated']
-        delete this['crn']
+        if (!['tierRiskFlag', 'tierPredictors'].includes(parameters.endpoint)) {
+            delete this['crn-deprecated']
+            delete this['crn']
+        }
         delete this.inputs['expectedStatus']
 
-        let includeRsr = ['v4AssList', 'v4RiskScoresRsr'].includes(parameters.endpoint)
+        // Timeline calcs include standalone CSRPs for some endpoints
+        let includeRsr = ['v4AssList', 'v4RiskScoresRsr', 'tierPredictors'].includes(parameters.endpoint)
         this.processTimeline(offenderData.assessments.filter(includeRsr ? timelineAssessmentWithRsrFilter : timelineAssessmentFilter))
     }
 

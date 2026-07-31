@@ -11,7 +11,7 @@ const testCases = [
     ['ZLHECUL', null],       // OASys-SP layer 1
     ['ZUHJFAA', null],      // SAN assessments
     ['X743137', null],
-    ['ZWMCLZB', null],      // Obscure PNI defect (NOD-1284)
+    ['ZEPCYUR', null],      // Defect 1313 incorrect OGP2/OVP2 status
 
     // Pre-prod cases for PNI
     // ['V217229', null],
@@ -32,11 +32,8 @@ const testCases = [
     // ['R414385', null],
 ]
 
-const limitEndpoints: Endpoint[] = []
-// const limitEndpoints: Endpoint[] = ['pni']
-
-const excludeEndpoints: Endpoint[] = []
-// const excludeEndpoints: Endpoint[] = ['pni']
+const limitEndpoints: Endpoint[] = []  // Only test these ones (all if none specified)
+const excludeEndpoints: Endpoint[] = [] // Ignore these ones
 
 test('All endpoint regression tests - extra test for specific cases', async ({ api }) => {
 

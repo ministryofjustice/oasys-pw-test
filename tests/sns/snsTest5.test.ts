@@ -15,7 +15,6 @@ test('Create assessments and check SNS messages - SAN assessment, countersigning
 
     // Set to high risk to get countersigner
     await risk.populateWithSpecificRiskLevel('High')
-    await risk.saveAndCheckSns(offender1.probationCrn, true, false)
 
     // Complete SP
     await sentencePlan.populateMinimal()

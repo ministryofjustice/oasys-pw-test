@@ -136,7 +136,7 @@ export class Sns {
             if (expectPredictors) {
                 expectedSnsMessages.push(new SnsMessage(assessment, probationCrn, 'TierPredictors'))
             }
-            
+
             for (let expectedSnsMessage of expectedSnsMessages) {
 
                 const actualSnsMessage = this.getLastActualSnsMessage(actualSnsMessages, expectedSnsMessage.messageType)
@@ -185,7 +185,7 @@ export class Sns {
         }
     }
 
-    private buildExpectedMessages(assessment: DbAssessmentOrCsrp, crn: string, expectedMessages: SnsMessageType[]): SnsMessage[] {
+    private buildExpectedMessages(assessment: DbAssessmentOrCsrp, crn: string, expectingMessages: SnsMessageType[]): SnsMessage[] {
 
         const expectedSnsMessages: SnsMessage[] = []
         const excludedAssessmentTypes = ['TSP Assessment', 'RSR Only']
@@ -201,6 +201,9 @@ export class Sns {
         }
         if (assessment.rsrScore != null && (assessment.status == 'SIGNED' || assessment.countersignedDate == null)) {  // RSR message on signing or completion if no countersigning required
             expectedSnsMessages.push(new SnsMessage(assessment, crn, 'RSR'))
+        }
+        if (expectingMessages?.includes('TierRiskFlag')) {
+            expectedSnsMessages.push(new SnsMessage(assessment, crn, 'TierRiskFlag'))
         }
 
         return expectedSnsMessages

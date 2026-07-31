@@ -57,6 +57,9 @@ export class DbAssessmentOrRsr {
     snsvDynamicYr2Band: string
     rsrAlgorithmVersion: number
 
+    roshLevelElm: string
+    tierRoshLevel: string
+
     constructor(assessmentData: string[], type: AssessmentOrCsrp) {
 
         const tzOffset = oasysDateTime.timeZoneOffset()
@@ -121,6 +124,8 @@ export class DbAssessmentOrRsr {
             this.snsvDynamicYr2Band = assessmentData[36]
             this.rsrAlgorithmVersion = Number.parseInt(assessmentData[37])
             this.ogrs2yrBand = assessmentData[38]
+            this.roshLevelElm = assessmentData[40]
+            this.tierRoshLevel = assessmentData[41]
         } else {
             this.assessmentDate = this.completedDate
             this.ogrs4gYr2 = fixDp(assessmentData[18])
@@ -160,7 +165,7 @@ export class DbAssessmentOrRsr {
                     s.snsv_percentage_2yr_static, s.snsv_stat_band_risk_recon_elm, 
                     s.snsv_percentage_2yr_dynamic, s.snsv_dyn_band_risk_recon_elm,
                     s.rsr_algorithm_version, s.ogrs3_risk_recon_elm,
-                    s.arns_sp_only_linked_ind
+                    s.arns_sp_only_linked_ind, s.rosh_level_elm, s.tiering_rosh_level_elm
                     from eor.offender o, eor.oasys_assessment_group g, eor.oasys_set s, eor.ref_element r 
                     where o.cms_prob_number = '${crn}'
                     and o.offender_pk = g.offender_PK and g.oasys_assessment_group_PK = s.oasys_assessment_group_PK 

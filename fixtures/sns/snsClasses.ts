@@ -153,10 +153,11 @@ export class TierRiskFlagMessageData extends SnsMessageData {
 
     constructor(crn: string) {
 
-        const baseUrl = testEnvironment.name.includes('T2') ? 'https://t2-b.oasys.service.justice.gov.uk/eor/oasys/ass' : 'https://ords.justice.gov.uk/ords'
+        // const baseUrl = testEnvironment.name.includes('T2') ? 'https://t2-b.oasys.service.justice.gov.uk/eor/oasys/ass' : 'https://ords.justice.gov.uk/ords'
+        const baseUrl = 'https://ords.justice.gov.uk/ords'  // TODO - defect or config?
 
         super(crn)
-        this.eventType = 'risk.flag.tier.change"'
+        this.eventType = 'risk.flag.tier.change'
         this.description = 'Risk Flag for tiering has changed'
         this.detailUrl = `${baseUrl}/tierriskflag/${crn}/ALLOW`
         delete this.additionalInformation

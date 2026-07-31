@@ -78,7 +78,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     log(`Check the correct SNS messages have been created, OGRS3, RSR and an ASSSUMMSAN (maybe OPD, depends on the data entered)
         Check the assessments tab for the offender - this latest completed PSR assessment shows an icon of SP against it (meaning it includes an ARNS sentence plan)`, 'Test step')
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
     await oasys.history(offender1)
     const sanIcons = await assessment.assessmentsTab.assessments.san.getValues()
     expect(sanIcons[0]).toBe('Includes Sentence Plan Service')

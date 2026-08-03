@@ -13,8 +13,9 @@ test('Example test - create a probation offender and a layer 1 assessment - mini
 
     await signing.signAndLock()
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR','TierRiskFlag'])
-    await api.testOneOffender(offender1.probationCrn, 'prob', false, false)
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
+    const failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, false)
+    expect(failed).toBeFalsy()
     await ogrs.checkOgrsInOasysSet(pk1)
 
     await user.logout()
@@ -32,7 +33,8 @@ test('Example test - create a probation offender and a layer 1 assessment - full
     await signing.signAndLock()
 
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment')
-    await api.testOneOffender(offender1.probationCrn, 'prob', false, false)
+    const failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, false)
+    expect(failed).toBeFalsy()
     await ogrs.checkOgrsInOasysSet(pk1)
 
     await user.logout()

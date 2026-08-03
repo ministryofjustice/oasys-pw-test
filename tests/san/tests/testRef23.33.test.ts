@@ -119,7 +119,7 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, as
 
     await signing.signAndLock({ page: 'spService' })
     await san.queries.checkSanSigningCall(pk1, user.prob.probSanHeadPdu, 'SELF')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
 
     log(`Still logged in as the Assessor open up the SAN Assessment from the offender records 'Open S&N' button.
         This should have invoked a new version of the SAN Assessment in their database - Change some of the data and set a couple of the section

@@ -41,7 +41,7 @@ export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
         // Complete SP, then sign and lock
         await sentencePlan.populateMinimal()
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(mergeTestData.offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(mergeTestData.offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         log('Merge tests part 2 - create and complete two 3.2 assessments on offender 2, delete the second', 'Test step')
         await offender.createProb(mergeTestData.offender2)
@@ -78,7 +78,7 @@ export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
         await sentencePlan.populateMinimal()
 
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(mergeTestData.offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(mergeTestData.offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         // Deleted assessment added for testing of SAN defect ARN-2427
         await oasys.history(mergeTestData.offender2)

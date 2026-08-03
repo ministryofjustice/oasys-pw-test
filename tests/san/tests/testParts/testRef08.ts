@@ -83,7 +83,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
 
         const sectionCount1 = await san.queries.getSanSectionsCount(pk1)
         expect(sectionCount1).toBe(1)   // expect SSP but not SAN
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
         await user.logout()
 
         // Test 8 part 2

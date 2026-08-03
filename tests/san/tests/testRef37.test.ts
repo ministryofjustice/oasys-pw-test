@@ -119,7 +119,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await signing.countersign({ page: 'spService', comment: 'Test 37 part 2 countersigning' })
     await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
     await user.logout()
 
     log('Roll back the assessment and check API calls and assessment status, then sign again', 'Test step')

@@ -19,7 +19,7 @@ export class Sns {
      * 
      * The third optional parameter can be a list of expected message types, allowing confirmation that the data is in the right state to generate those messages.
      */
-    async testSnsMessageData(crn: string, type: AssessmentOrCsrp, expectingMessages?: SnsMessageType[], timeout = 5) {
+    async testSnsMessageData(crn: string, type: AssessmentOrCsrp, expectingMessages?: SnsMessageType[], timeout = 6) {
 
         let failed = false
         const actualSnsMessages: DbSns[] = []

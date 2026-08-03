@@ -100,7 +100,7 @@ const csrpColumns: Columns = {
     r1_2_past_kidnapping: { name: 'r1_2_past_kidnapping', type: 'string' },
     r1_2_past_robbery: { name: 'r1_2_past_robbery', type: 'string' },
     r1_2_past_weapon: { name: 'r1_2_past_weapon', type: 'string' },
-    prison_ind: { name: 'prison_ind', type: 'string' },
+    prisonInd: { name: 'prison_ind', type: 'string' },
 }
 
 export class OgrsRsr {
@@ -185,7 +185,7 @@ export class OgrsRsr {
     r1_2_past_kidnapping: string
     r1_2_past_robbery: string
     r1_2_past_weapon: string
-    prison_ind: string
+    prisonInd: string
 
     constructor(rsrData: string[]) {
 

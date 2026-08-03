@@ -222,9 +222,6 @@ export class Api {
                 if (filteredParamsList[i].endpoint == 'apAsslist' || filteredParamsList[i].endpoint == 'v4AssList') {
                     delete actualValues[i].result['assessments']  // spurious empty array object gets added to the asslist and allasslist endpoints, ignore for this test
                 }
-                if (filteredParamsList[i].endpoint == 'tierPredictors' && actualValues[i].result != null) {  // TODO deleting RSR errors for now due to sorting issue
-                    delete actualValues[i].result['tierPredictors']['rsr']['rsrExceptionError']
-                }
 
                 if (filteredParamsList[i].assessmentPk && (filteredParamsList[i].assessmentPk != lastPkReported)) {
                     // Write some assessment details to the log, including OASys version at initiation date

@@ -118,21 +118,24 @@ class Rsr {
     rsrStaticOrDynamic: string
     rsrPercentageScore: number
     rsrScoreLevel: string
-    // rsrExceptionError: string[]   // TODO
+    rsrExceptionError: string[]
 
     constructor(ogrs: OgrsOutputParams) {
 
         this.rsrStaticOrDynamic = ogrs.RSR_CALCULATED == 'Y' ? (ogrs.RSR_DYNAMIC == 'Y' ? 'DYNAMIC' : 'STATIC') : null
         this.rsrPercentageScore = formatDecimal(ogrs.RSR_PERCENTAGE)
         this.rsrScoreLevel = ogrs.RSR_BAND ? ogrs.RSR_BAND[0] : null
-        // if (ogrs.RSR_MISSING_COUNT == 0) {  // TODO
-        //     this.rsrExceptionError = null
-        // } else {
-        //     this.rsrExceptionError = []
-        //     for (const missing of ogrs.RSR_MISSING_QUESTIONS.replaceAll(`'`,'').split('\n')) {
-        //         this.rsrExceptionError.push(missing)
-        //     }
-        // }
+
+        this.rsrExceptionError = []
+        for (let missing of ogrs.RSR_MISSING_QUESTIONS.slice(1, -1).split('\n')) { // Remove quotes
+            missing = missing
+            if (missing != '') {
+                this.rsrExceptionError.push(missing)
+            }
+        }
+        if (this.rsrExceptionError.length == 0) {
+            this.rsrExceptionError = null
+        }
     }
 }
 

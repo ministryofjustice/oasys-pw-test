@@ -42,7 +42,9 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
         DATE_RECENT_SEXUAL_OFFENCE: oasysDateTime.stringToDate(utils.lookupString('1.33', assessment.qaData)),
         CURR_SEX_OFF_MOTIVATION: q141(utils.lookupString('1.30', assessment.qaData), utils.lookupString('1.41', assessment.qaData), assessment.offence),
         MOST_RECENT_OFFENCE: oasysDateTime.stringToDate(utils.lookupString('1.43', assessment.qaData)),
-        COMMUNITY_DATE: oasysDateTime.stringToDate(utils.lookupString('1.38', assessment.qaData)),
+        COMMUNITY_DATE: assessment.prisonInd == 'C'
+            ? oasysDateTime.testStartDate
+            : oasysDateTime.stringToDate(utils.lookupString('1.38', assessment.qaData)),
         ONE_POINT_THIRTY: utils.lookupString('1.30', assessment.qaData, utils.yesNoToYNLookup),
         TWO_POINT_TWO: q22(utils.lookupString('2.2_V2_WEAPON', assessment.qaData), utils.lookupString('2.2', assessment.qaData), after6_35),
         THREE_POINT_FOUR: utils.lookupInteger('3.4', assessment.qaData),

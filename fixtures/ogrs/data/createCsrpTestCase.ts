@@ -22,7 +22,9 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         DATE_RECENT_SEXUAL_OFFENCE: csrp.s1_33_date_recent_sex_offence,
         CURR_SEX_OFF_MOTIVATION: csrp.s1_41_current_sexual_mot,
         MOST_RECENT_OFFENCE: csrp.s1_43_last_offence_date,
-        COMMUNITY_DATE: csrp.s1_38_community_date,
+        COMMUNITY_DATE: csrp.prisonInd == 'C'
+            ? oasysDateTime.testStartDate
+            : csrp.s1_38_community_date,
         ONE_POINT_THIRTY: lookupValue(csrp.s1_30_sexual_element, utils.yesNoToYNLookup),
         TWO_POINT_TWO: getNumericAnswer(csrp.s2_2_weapon),
         THREE_POINT_FOUR: getNumericAnswer(csrp.s3_q4_suitable_accom),
@@ -69,7 +71,7 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         KIDNAP: getNumericAnswer(csrp.r1_2_past_kidnapping),
         ROBBERY: getNumericAnswer(csrp.r1_2_past_robbery),
         WEAPONS_NOT_FIREARMS: getNumericAnswer(csrp.r1_2_past_weapon),
-        CUSTODY_IND: csrp.prison_ind == 'C' ? 'Y' : 'N',
+        CUSTODY_IND: csrp.prisonInd == 'C' ? 'Y' : 'N',
     }
 
     addCalculatedInputParameters(p)

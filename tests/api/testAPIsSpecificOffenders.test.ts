@@ -12,6 +12,10 @@ const testCases = [
     ['ZUHJFAA', null],      // SAN assessments
     ['X743137', null],
     ['ZEPCYUR', null],      // Defect 1313 incorrect OGP2/OVP2 status
+    ['X370804', null],
+    ['ZCOOBHK', null],
+    ['X781699', null],
+    ['X360849', null],
 
     // Pre-prod cases for PNI
     // ['V217229', null],

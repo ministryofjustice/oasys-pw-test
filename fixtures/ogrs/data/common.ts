@@ -39,7 +39,7 @@ export function q141(q130: string, q141: string, offence: string): string {
     if (q130 != 'YES' || sexualOffence || (q130 == 'YES' && sexualOffence)) {
         return 'O'
     } else if (q130 == 'YES' && q141 == null) {
-        return 'O'
+        return null
     }
     return q141
 }

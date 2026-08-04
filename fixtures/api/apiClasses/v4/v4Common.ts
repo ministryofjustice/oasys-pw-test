@@ -226,6 +226,11 @@ export class V4AssessmentCommon {
         this.laterCompleteAssessmentExists = lastCompleteIndex > assessmentIndex
         this.latestCompleteDate = latestCompleteDate
 
+        // Handle sequencing of overlapping assessment/CSRP
+        if (this.latestCompleteDate && this.dateCompleted && (this.dateCompleted > this.latestCompleteDate)) {
+            this.laterCompleteAssessmentExists = false
+        }
+
         this.assessor.name = (assessment as dbClasses.DbAssessment).assessorName
     }
 }

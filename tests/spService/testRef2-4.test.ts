@@ -276,12 +276,12 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
 
     await signing.signAndLock()
     await san.queries.checkSanSigningCall(pk3, user.prob.probHeadPdu, 'SELF')
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
     const spVersion3 = await oasysDb.getSingleNumericValue(`select SSP_PLAN_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk3}`)
     expect(spVersion3).not.toBe(spVersion2)
     const sanVersion2 = await oasysDb.getSingleNumericValue(`select SAN_ASSESSMENT_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk3}`)
     expect(sanVersion2).toBe('')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment')
     await assessment.queries.checkCountOfQuestionsInSection(pk3, 'RSP', 1)
     await assessment.queries.checkSingleAnswer(pk3, 'RSP', 'RP.3', 'refAnswer', 'REVIEW')
     await oasys.history(offender1)

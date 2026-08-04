@@ -32,7 +32,7 @@ test('Example test - create a probation offender and a layer 1 assessment - full
     await assessment.populateFull({ layer: 'Layer 1', probationCrn: offender1.probationCrn })
     await signing.signAndLock()
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment')
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
     const failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, false)
     expect(failed).toBeFalsy()
     await ogrs.checkOgrsInOasysSet(pk1)

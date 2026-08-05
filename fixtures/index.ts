@@ -75,7 +75,7 @@ export const test = base.extend<OasysFixtures>({
 
         const oasysDb = new OasysDb()
         if (noDatabaseConnection) {
-            appConfig = { currentVersion: 'No Db', probForceCrn: false, offences: null, appVersions: null }
+            appConfig = { currentVersion: 'No Db', probForceCrn: testEnvironment.url.includes('t2.oasys'), offences: null, appVersions: null }
         } else {
             appConfig = await oasysDb.getAppConfig()
             await oasysDb.getLatestElogAndUnprocEventTime('store')

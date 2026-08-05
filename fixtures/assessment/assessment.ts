@@ -5,6 +5,7 @@ import * as pages from './pages'
 import { BaseAssessmentPage } from 'classes'
 import { TaskManager } from 'fixtures/tasks/pages/taskManager'
 import { Queries } from './queries'
+import { noDatabaseConnection } from 'localSettings'
 
 
 export class Assessment {
@@ -57,8 +58,12 @@ export class Assessment {
             await this.oasys.clickButton(clonePreviousHistoric)
         }
 
-        const pnc = await this.baseAssessmentPage.getPncFromScreenContext()
-        const pk = await this.getLatestSetPkByPnc(pnc)
+        let pk = 0
+
+        if (!noDatabaseConnection) {
+            const pnc = await this.baseAssessmentPage.getPncFromScreenContext()
+            pk = await this.getLatestSetPkByPnc(pnc)
+        }
 
         log(`Created assessment PK ${pk}: ${JSON.stringify(assessmentDetails)}`, 'Assessment')
         return pk

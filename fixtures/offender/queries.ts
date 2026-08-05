@@ -1,6 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill'
 
 import { OasysDb } from 'fixtures'
+import { noDatabaseConnection } from 'localSettings'
 
 
 export class Queries {
@@ -9,6 +10,9 @@ export class Queries {
 
     async getLatestStandaloneCsrpPk(probationCrn: string): Promise<number> {
 
+        if (noDatabaseConnection) {
+            return 0
+        }
         const query = `select offender_rsr_scores_pk from eor.offender_rsr_scores where cms_prob_number = '${probationCrn}' and deleted_date is null order by initiation_date desc`
 
         const data = await this.oasysDb.getData(query)

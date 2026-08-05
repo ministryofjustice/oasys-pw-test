@@ -1,7 +1,7 @@
 import { readSheet } from 'read-excel-file/node'
 
 import { test, Oasys, Assessment, Sections, Risk, Offender, SentencePlan } from 'fixtures'
-import { passwordLookup } from 'localSettings'
+import { noDatabaseConnection, passwordLookup } from 'localSettings'
 
 
 const filename = 'tests/supervisionPackages/data/OGRS4 test inputs.xlsx'
@@ -47,12 +47,12 @@ test('Create assessments', async ({ oasysDb, oasys, user, offender, assessment, 
         const scenarioName = crnData[i][2]
         const userName = crnData[i][3]
 
-        // Add this section back in to delete any existing assessments.  Requires a suitable admin user.
-        // await user.admin.login(providers.prob.nonSan)
-        // await offender.searchAndSelectByCrn(probationCrn)
+        // Add this section back in to delete any existing assessments.  Requires a suitable admin user, and database connection for the standalone deletion.
+        await user.admin.login(providers.prob.nonSan)
+        await offender.searchAndSelectByCrn(probationCrn)
         // await offender.deleteAllStandalone(probationCrn)
-        // await assessment.deleteAllByCrn(probationCrn)
-        // await user.logout()
+        await assessment.deleteAllByCrn(probationCrn)
+        await user.logout()
 
         // Find offender
         await user.adhocLogin(userName, passwordLookup[userName])
@@ -76,20 +76,22 @@ test('Create assessments', async ({ oasysDb, oasys, user, offender, assessment, 
                 break
         }
 
-        // Get the calculated predictor values and calculate the tier, write details to the log file
-        const scoreQuery = assessmentType == 'standalone'
-            ? `select ogp2_calculated, ogrs4g_percentage_2yr, ogp2_percentage_2yr, rsr_static_or_dynamic, rsr_percentage_score from eor.offender_rsr_scores where offender_rsr_scores_pk = ${pk}`
-            : `select ogp2_calculated, ogrs4g_percentage_2yr, ogp2_percentage_2yr, rsr_static_or_dynamic, rsr_percentage_score from eor.oasys_set where oasys_set_pk = ${pk}`
-        const scoreData = await oasysDb.getData(scoreQuery)
-        const arp = utils.stringToFloat(scoreData[0][0] == 'Y' ? scoreData[0][2] : scoreData[0][1])
-        const arpDynamic = arp ? scoreData[0][0] == 'Y' : null
-        const csrp = utils.stringToFloat(scoreData[0][4])
-        const csrpDynamic = csrp ? scoreData[0][3] == 'DYNAMIC' : null
-        log(`arpDynamic: ${arpDynamic}, arp: ${arp}, csrpDynamic: ${csrpDynamic}, csrp: ${csrp}`)
-        const predictorTier = ogrs.tiering.calculateArpCsrp(arp, csrp)
-        const provisional = predictorTier ? !arpDynamic || !csrpDynamic : null
-        log(`Tier: ${predictorTier}, provisional: ${provisional}`)
-        fileLog(`${probationCrn}\t${assessmentType}\t${scenarioName}\t${arp}\t${arpDynamic}\t${csrp}\t${csrpDynamic}\t${predictorTier}\t${provisional}`, 'tierResults.csv')
+        if (!noDatabaseConnection) {
+            // Get the calculated predictor values and calculate the tier, write details to the log file
+            const scoreQuery = assessmentType == 'standalone'
+                ? `select ogp2_calculated, ogrs4g_percentage_2yr, ogp2_percentage_2yr, rsr_static_or_dynamic, rsr_percentage_score from eor.offender_rsr_scores where offender_rsr_scores_pk = ${pk}`
+                : `select ogp2_calculated, ogrs4g_percentage_2yr, ogp2_percentage_2yr, rsr_static_or_dynamic, rsr_percentage_score from eor.oasys_set where oasys_set_pk = ${pk}`
+            const scoreData = await oasysDb.getData(scoreQuery)
+            const arp = utils.stringToFloat(scoreData[0][0] == 'Y' ? scoreData[0][2] : scoreData[0][1])
+            const arpDynamic = arp ? scoreData[0][0] == 'Y' : null
+            const csrp = utils.stringToFloat(scoreData[0][4])
+            const csrpDynamic = csrp ? scoreData[0][3] == 'DYNAMIC' : null
+            log(`arpDynamic: ${arpDynamic}, arp: ${arp}, csrpDynamic: ${csrpDynamic}, csrp: ${csrp}`)
+            const predictorTier = ogrs.tiering.calculateArpCsrp(arp, csrp)
+            const provisional = predictorTier ? !arpDynamic || !csrpDynamic : null
+            log(`Tier: ${predictorTier}, provisional: ${provisional}`)
+            fileLog(`${probationCrn}\t${assessmentType}\t${scenarioName}\t${arp}\t${arpDynamic}\t${csrp}\t${csrpDynamic}\t${predictorTier}\t${provisional}`, 'tierResults.csv')
+        }
 
         await user.logout()
     }

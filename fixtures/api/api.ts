@@ -72,10 +72,6 @@ export class Api {
             'v4RiskScoresRsr',
         ]
 
-        // TODO restore this when defect fixed
-        // if (crnSource == 'prob') {
-        //     v4RsrEndpoints.push('tierPredictors')
-        // }
 
         let failed = false
 
@@ -174,17 +170,16 @@ export class Api {
                 standaloneRsrs.forEach((assessment) => {
                     this.addAssessment(v4RsrEndpoints, apiParams, offenderData.probationCrn, assessment)
 
-                    // TODO add this back in
                     // Add tier predictors - only if initiated after 2024 to avoid incompatible data
-                    // if (assessment.initiationDate > '2024' && crnSource == 'prob') {
-                    //     const tierPredictorsParams: EndpointParams = {
-                    //         endpoint: 'tierPredictors',
-                    //         assessmentPk: assessment.assessmentPk,
-                    //         recordType: 'R',
-                    //         laoPrivilege: 'ALLOW'
-                    //     }
-                    //     apiParams.push(tierPredictorsParams)
-                    // }
+                    if (assessment.initiationDate > '2024' && crnSource == 'prob') {
+                        const tierPredictorsParams: EndpointParams = {
+                            endpoint: 'tierPredictors',
+                            assessmentPk: assessment.assessmentPk,
+                            recordType: 'R',
+                            laoPrivilege: 'ALLOW'
+                        }
+                        apiParams.push(tierPredictorsParams)
+                    }
                 })
 
             }

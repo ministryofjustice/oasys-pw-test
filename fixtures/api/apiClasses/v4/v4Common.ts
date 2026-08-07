@@ -55,10 +55,8 @@ export class V4EndpointResponse extends common.EndpointResponse {
         if (!['v4AssList', 'pni', 'tierRiskFlag'].includes(parameters.endpoint)) {
             delete this.inputs['crn']
         }
-        if (!['tierRiskFlag', 'tierPredictors'].includes(parameters.endpoint)) {
-            delete this['crn-deprecated']
-            delete this['crn']
-        }
+        delete this['crn-deprecated']
+        delete this['crn']
         delete this.inputs['expectedStatus']
 
         // Timeline calcs include standalone CSRPs for some endpoints
@@ -202,11 +200,11 @@ export class V4AssessmentCommon {
 
         this.assessmentPk = assessment.assessmentPk
         this.assessmentType = assessment.assessmentType
-        if (this.assessmentType == 'STANDALONE') {
-            delete this.assessmentVersion
-        } else {
+        // if (this.assessmentType == 'STANDALONE') {
+        //     delete this.assessmentVersion
+        // } else {
             this.assessmentVersion = assessment.assessmentVersion
-        }
+        // }
         this.dateCompleted = assessment.completedDate
         this.assessorSignedDate = assessment.signedDate
         this.initiationDate = assessment.initiationDate

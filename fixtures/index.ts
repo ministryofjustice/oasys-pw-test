@@ -6,7 +6,7 @@
 import { test as base, TestInfo } from '@playwright/test'
 
 import { OasysDb } from './oasysDb/oasysDb'
-import { testEnvironment } from 'localSettings'
+import { noDatabaseConnection, testEnvironment } from 'localSettings'
 import { Oasys } from './oasys/oasys'
 import { User } from './user/user'
 import { Cms } from './cms/cms'
@@ -74,13 +74,19 @@ export const test = base.extend<OasysFixtures>({
     oasysDb: async ({ }, use: Function) => {
 
         const oasysDb = new OasysDb()
-        appConfig = await oasysDb.getAppConfig()
-        await oasysDb.getLatestElogAndUnprocEventTime('store')
+        if (noDatabaseConnection) {
+            appConfig = { currentVersion: 'No Db', probForceCrn: testEnvironment.url.includes('t2.oasys'), offences: null, appVersions: null }
+        } else {
+            appConfig = await oasysDb.getAppConfig()
+            await oasysDb.getLatestElogAndUnprocEventTime('store')
+        }
         log(`OASys ${appConfig.currentVersion} (${testEnvironment.name})`, 'Environment')
 
         await use(oasysDb)
 
-        await oasysDb.getLatestElogAndUnprocEventTime('check')
+        if (!noDatabaseConnection) {
+            await oasysDb.getLatestElogAndUnprocEventTime('check')
+        }
     },
 
     oasys: async ({ page }, use, testInfo) => {

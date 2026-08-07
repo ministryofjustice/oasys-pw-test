@@ -1,7 +1,7 @@
 import { readSheet } from 'read-excel-file/node'
 
 import { test, Oasys, Assessment, Sections, Risk, Offender, SentencePlan } from 'fixtures'
-import { passwordLookup } from 'localSettings'
+import { noDatabaseConnection, passwordLookup } from 'localSettings'
 
 
 const filename = 'tests/supervisionPackages/data/OGRS4 test inputs.xlsx'
@@ -47,51 +47,57 @@ test('Create assessments', async ({ oasysDb, oasys, user, offender, assessment, 
         const scenarioName = crnData[i][2]
         const userName = crnData[i][3]
 
-        // Add this section back in to delete any existing assessments.  Requires a suitable admin user.
-        // await user.admin.login(providers.prob.nonSan)
-        // await offender.searchAndSelectByCrn(probationCrn)
-        // await offender.deleteAllStandalone(probationCrn)
-        // await assessment.deleteAllByCrn(probationCrn)
-        // await user.logout()
+        if (probationCrn && assessmentType && scenarioName && userName) {
 
-        // Find offender
-        await user.adhocLogin(userName, passwordLookup[userName])
-        await offender.searchAndSelectByCrn(probationCrn)
-        const male = (await offender.offenderDetails.gender.getValue()) == 'Male'
+            // Find offender
+            await user.adhocLogin(userName, passwordLookup[userName].password, passwordLookup[userName].provider)
+            await offender.searchAndSelectByCrn(probationCrn)
+            const male = (await offender.offenderDetails.gender.getValue()) == 'Male'
 
-        // Create and populate the assessment and/or standalone CSRP
-        let pk: number
-        switch (assessmentType) {
-            case 'standalone':
-                pk = await standaloneCsrp(male ? standaloneScenariosMale : standaloneScenariosFemale, scenarioName, probationCrn, offender)
-                break
-            case 'rosha':
-                pk = await roshaAssessment(male ? roshaScenariosMale : roshaScenariosFemale, scenarioName, oasys, assessment, sections, risk)
-                break
-            case 'layer1':
-                pk = await layer1Assessment(male ? layer1ScenariosMale : layer1ScenariosFemale, scenarioName, oasys, assessment, sections, risk)
-                break
-            case 'layer3':
-                pk = await layer3Assessment(male ? layer3ScenariosMale : layer3ScenariosFemale, scenarioName, oasys, assessment, sections, risk, sentencePlan)
-                break
+            // Lock incomplete if there is a WIP assessment
+            if (assessmentType != 'standalone') {
+                const wip = await assessment.assessmentsTab.assessments.lockAssessment.getValues()
+                if (wip.includes('Lock Incomplete')) {
+                    await assessment.lockIncomplete()
+                }
+            }
+
+            // Create and populate the assessment and/or standalone CSRP
+            let pk: number
+            switch (assessmentType) {
+                case 'standalone':
+                    pk = await standaloneCsrp(male ? standaloneScenariosMale : standaloneScenariosFemale, scenarioName, probationCrn, offender)
+                    break
+                case 'rosha':
+                    pk = await roshaAssessment(male ? roshaScenariosMale : roshaScenariosFemale, scenarioName, oasys, assessment, sections, risk)
+                    break
+                case 'layer1':
+                    pk = await layer1Assessment(male ? layer1ScenariosMale : layer1ScenariosFemale, scenarioName, oasys, assessment, sections, risk)
+                    break
+                case 'layer3':
+                    pk = await layer3Assessment(male ? layer3ScenariosMale : layer3ScenariosFemale, scenarioName, oasys, assessment, sections, risk, sentencePlan)
+                    break
+            }
+
+            if (!noDatabaseConnection) {
+                // Get the calculated predictor values and calculate the tier, write details to the log file
+                const scoreQuery = assessmentType == 'standalone'
+                    ? `select ogp2_calculated, ogrs4g_percentage_2yr, ogp2_percentage_2yr, rsr_static_or_dynamic, rsr_percentage_score from eor.offender_rsr_scores where offender_rsr_scores_pk = ${pk}`
+                    : `select ogp2_calculated, ogrs4g_percentage_2yr, ogp2_percentage_2yr, rsr_static_or_dynamic, rsr_percentage_score from eor.oasys_set where oasys_set_pk = ${pk}`
+                const scoreData = await oasysDb.getData(scoreQuery)
+                const arp = utils.stringToFloat(scoreData[0][0] == 'Y' ? scoreData[0][2] : scoreData[0][1])
+                const arpDynamic = arp ? scoreData[0][0] == 'Y' : null
+                const csrp = utils.stringToFloat(scoreData[0][4])
+                const csrpDynamic = csrp ? scoreData[0][3] == 'DYNAMIC' : null
+                log(`arpDynamic: ${arpDynamic}, arp: ${arp}, csrpDynamic: ${csrpDynamic}, csrp: ${csrp}`)
+                const predictorTier = ogrs.tiering.calculateArpCsrp(arp, csrp)
+                const provisional = predictorTier ? !arpDynamic || !csrpDynamic : null
+                log(`Tier: ${predictorTier}, provisional: ${provisional}`)
+                fileLog(`${probationCrn}\t${assessmentType}\t${scenarioName}\t${arp}\t${arpDynamic}\t${csrp}\t${csrpDynamic}\t${predictorTier}\t${provisional}`, 'tierResults.csv')
+            }
+
+            await user.logout()
         }
-
-        // Get the calculated predictor values and calculate the tier, write details to the log file
-        const scoreQuery = assessmentType == 'standalone'
-            ? `select ogp2_calculated, ogrs4g_percentage_2yr, ogp2_percentage_2yr, rsr_static_or_dynamic, rsr_percentage_score from eor.offender_rsr_scores where offender_rsr_scores_pk = ${pk}`
-            : `select ogp2_calculated, ogrs4g_percentage_2yr, ogp2_percentage_2yr, rsr_static_or_dynamic, rsr_percentage_score from eor.oasys_set where oasys_set_pk = ${pk}`
-        const scoreData = await oasysDb.getData(scoreQuery)
-        const arp = utils.stringToFloat(scoreData[0][0] == 'Y' ? scoreData[0][2] : scoreData[0][1])
-        const arpDynamic = arp ? scoreData[0][0] == 'Y' : null
-        const csrp = utils.stringToFloat(scoreData[0][4])
-        const csrpDynamic = csrp ? scoreData[0][3] == 'DYNAMIC' : null
-        log(`arpDynamic: ${arpDynamic}, arp: ${arp}, csrpDynamic: ${csrpDynamic}, csrp: ${csrp}`)
-        const predictorTier = ogrs.tiering.calculateArpCsrp(arp, csrp)
-        const provisional = predictorTier ? !arpDynamic || !csrpDynamic : null
-        log(`Tier: ${predictorTier}, provisional: ${provisional}`)
-        fileLog(`${probationCrn}\t${assessmentType}\t${scenarioName}\t${arp}\t${arpDynamic}\t${csrp}\t${csrpDynamic}\t${predictorTier}\t${provisional}`, 'tierResults.csv')
-
-        await user.logout()
     }
 })
 
@@ -269,14 +275,34 @@ async function layer1Assessment(scenarioData: ScenarioTestData, scenarioName: st
 
 async function layer3Assessment(scenarioData: ScenarioTestData, scenarioName: string, oasys: Oasys, assessment: Assessment, sections: Sections, risk: Risk, sentencePlan: SentencePlan): Promise<number> {
 
-    const pk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    // Create layer 3 assessment, ensure non-SAN if that option is presented
+    await assessment.getToCreateAssessmentPage(true)
+
+    await assessment.createAssessmentPage.setValues({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' }, true)
+    const san = await assessment.createAssessmentPage.includeSanSections.getStatusAndValue()
+    if (san.status == 'enabled') {
+        await assessment.createAssessmentPage.includeSanSections.setValue('No')
+    }
+    await assessment.createAssessmentPage.create.click()
+
+    let pk = 0
+
+    if (!noDatabaseConnection) {
+        const pnc = await assessment.baseAssessmentPage.getPncFromScreenContext()
+        pk = await assessment.getLatestSetPkByPnc(pnc)
+    }
+
+    log(`Created assessment PK ${pk}: ${JSON.stringify({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })}`, 'Assessment')
 
     // Complete minimal assessment to allow sign and lock
     await sections.offendingInformation.populateMinimal()
     await sections.sections2To13NoIssues()
     await sections.selfAssessmentForm.populateMinimal()
     await risk.screeningNoRisks()
-    await sentencePlan.populateMinimal()
+    const sentencePlanComplete = await sentencePlan.sentencePlanService.getCompletionStatus()
+    if (!sentencePlanComplete) {
+        await sentencePlan.populateMinimal()
+    }
 
     const testData = scenarioData.find((s) => s.name == scenarioName).testData
 

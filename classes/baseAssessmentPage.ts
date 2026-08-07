@@ -51,6 +51,17 @@ export class BaseAssessmentPage extends OasysPage {
      */
     async checkCompletionStatus(expectedStatus: boolean) {
 
+        const complete = await this.getCompletionStatus()
+
+        expect(complete).toBe(expectedStatus)
+        log(`${this.name} - completion status: ${complete}.`)
+    }
+
+    /**
+     * Gets the completion status on the floating menu.
+     */
+    async getCompletionStatus(): Promise<boolean> {
+
         let imageTitle: string
         await this.waitForAnimation(this.floatingMenu)
 
@@ -73,9 +84,7 @@ export class BaseAssessmentPage extends OasysPage {
         }
 
         const complete = imageTitle == 'Section Complete'
-
-        expect(complete).toBe(expectedStatus)
-        log(`${this.name} - completion status: ${complete}.`)
+        return complete
     }
 
     async getPncFromScreenContext(): Promise<string> {

@@ -15,7 +15,6 @@ export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssess
         const result = new TierRiskFlagAssEndpointResponse(offenderData, parameters)
         result.addAssessment(assessment)
         delete result.timeline
-        delete result.prisNumber
 
         return result
     }

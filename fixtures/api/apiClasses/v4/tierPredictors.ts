@@ -1,5 +1,6 @@
 import { Ogrs } from 'fixtures'
 import * as v4Common from './v4Common'
+import * as common from '../common'
 import * as dbClasses from 'fixtures/api/data/dbClasses'
 import * as env from '../../endpointUrls'
 import { OgrsInputParams, OgrsOutputParams } from 'fixtures/ogrs/types'
@@ -19,7 +20,6 @@ export async function getExpectedResponse(offenderData: dbClasses.DbOffenderWith
         result.addAssessment(assessment)
         await result.addPredictors(assessment, ogrs)
         delete result.timeline
-        delete result.prisNumber
 
         return result
     }
@@ -60,9 +60,18 @@ export class TierPredictorsAssessment extends v4Common.V4AssessmentCommon {
         delete this.assessor
 
         if (dbAssessment.assessmentType == 'STANDALONE') {
-            this.everCommittedSexualOffence = (dbAssessment as dbClasses.DbRsr).everCommittedSexualOffence // TODO convert to Yes/No?
-        } else {
-            this.everCommittedSexualOffence = (dbAssessment as dbClasses.DbAssessment).qaData.getString('1.30')
+            this.everCommittedSexualOffence = (dbAssessment as dbClasses.DbRsr).everCommittedSexualOffence
+            if (this.everCommittedSexualOffence == 'YES') {
+                this.everCommittedSexualOffence = 'Yes'
+            } else if (this.everCommittedSexualOffence == 'NO') {
+                this.everCommittedSexualOffence = 'No'
+            }
+        } else {  //  Workaround for tag missing if the question is not present in the database
+            if (Object.hasOwn((dbAssessment as dbClasses.DbAssessment).qaData.data, '1.30')) {
+                this.everCommittedSexualOffence = (dbAssessment as dbClasses.DbAssessment).qaData.data['1.30']
+            } else {
+                delete this.everCommittedSexualOffence
+            }
         }
     }
 }
@@ -105,10 +114,10 @@ class RecalculatedNewActuarialPredictors {
     constructor(ogrs: OgrsOutputParams) {
 
         this.ogrs4gYr2 = formatDecimal(ogrs.OGRS4G_PERCENTAGE)
-        this.ogrs4gBand = ogrs.OGRS4G_BAND ? ogrs.OGRS4G_BAND[0] : null
+        this.ogrs4gBand = ogrs.OGRS4G_BAND
         this.ogrs4gCalculated = ogrs.OGRS4G_CALCULATED
         this.ogp2Yr2 = formatDecimal(ogrs.OGP2_PERCENTAGE)
-        this.ogp2Band = ogrs.OGP2_BAND ? ogrs.OGP2_BAND[0] : null
+        this.ogp2Band = ogrs.OGP2_BAND
         this.ogp2Calculated = ogrs.OGP2_CALCULATED
     }
 }
@@ -124,7 +133,7 @@ class Rsr {
 
         this.rsrStaticOrDynamic = ogrs.RSR_CALCULATED == 'Y' ? (ogrs.RSR_DYNAMIC == 'Y' ? 'DYNAMIC' : 'STATIC') : null
         this.rsrPercentageScore = formatDecimal(ogrs.RSR_PERCENTAGE)
-        this.rsrScoreLevel = ogrs.RSR_BAND ? ogrs.RSR_BAND[0] : null
+        this.rsrScoreLevel = ogrs.RSR_BAND
 
         this.rsrExceptionError = []
         for (let missing of ogrs.RSR_MISSING_QUESTIONS.slice(1, -1).split('\n')) { // Remove quotes
@@ -148,7 +157,7 @@ class Osp {
     constructor(ogrs: OgrsOutputParams) {
 
         this.ospDirectContactPercentageScore = formatDecimal(ogrs.OSP_DC_PERCENTAGE)
-        this.ospDirectContactScoreLevel = ogrs.OSP_DC_CALCULATED == 'A' ? 'NA' : ogrs.OSP_DC_BAND ? ogrs.OSP_DC_BAND[0] : null
+        this.ospDirectContactScoreLevel = ogrs.OSP_DC_CALCULATED == 'A' ? 'Not Applicable' : ogrs.OSP_DC_BAND
         this.ospDirectContactRiskReduction = ogrs.OSP_DC_RISK_REDUCTION
     }
 }

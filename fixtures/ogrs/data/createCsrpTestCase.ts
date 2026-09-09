@@ -28,7 +28,7 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         ONE_POINT_THIRTY: lookupValue(csrp.s1_30_sexual_element, utils.yesNoToYNLookup),
         TWO_POINT_TWO: getNumericAnswer(csrp.s2_2_weapon),
         THREE_POINT_FOUR: getNumericAnswer(csrp.s3_q4_suitable_accom),
-        FOUR_POINT_TWO: getNumericAnswer(csrp.s4_q2_unemployed),
+        FOUR_POINT_TWO: getNumericAnswer(csrp.s4_q2_unemployed) * 2,
         SIX_POINT_FOUR: getNumericAnswer(csrp.s6_q4_partner_relationship),
         SIX_POINT_SEVEN: da(csrp),
         SIX_POINT_EIGHT: getNumericAnswer(csrp.s6_q8_cur_rel_status),

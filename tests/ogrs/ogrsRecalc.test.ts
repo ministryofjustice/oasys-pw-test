@@ -1,12 +1,13 @@
 import { test, Ogrs } from 'fixtures'
 import { OgrsAssessment } from 'fixtures/ogrs/data/dbClasses'
 
-const count = 1000
+const count = 10000
 
 
 test(`OGRS recalculation test`, async ({ ogrs }) => {
 
-    const whereClause = `deleted_date is null and ref_ass_version_code in ('LAYER3', 'LAYER1') and assessment_status_elm = 'COMPLETE'`
+    test.setTimeout(0)
+    const whereClause = `deleted_date is null and ref_ass_version_code in ('LAYER3', 'LAYER1') and initiation_date > to_date('01-MAR-2026') and assessment_status_elm = 'COMPLETE' `
     await ogrsRecalcTest('assessment', count, whereClause, ogrs)
 })
 

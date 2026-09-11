@@ -123,6 +123,22 @@ export class PredictorQuestions extends BaseAssessmentPage {
      */
     o12_1 = new Element.Select<ProblemsAnswer>(this.page, '#P5_QU_12_1')
 
+    async populateMinimal() {
+
+        log('Minimally populating Predictor Questions page')
+        await this.goto(true)
+        await this.o3_4.setValue('0-No problems')
+        await this.o4_2.setValue('0-No')
+        await this.o6_4.setValue('0-No problems')
+        await this.o6_7.setValue('No')
+        await this.o7_2.setValue('0-No problems')
+        await this.o8_1.setValue('No')
+        await this.o9_1.setValue('0-No problems')
+        await this.o9_2.setValue('0-No problems')
+        await this.o11_2.setValue('0-No problems')
+        await this.o11_4.setValue('0-No problems')
+        await this.o12_1.setValue('0-No problems')
+    }
 
     async populateFull(o6_7PrePopulated: boolean = false) {
 

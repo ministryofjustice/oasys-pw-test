@@ -91,6 +91,7 @@ export class Sections {
                     await this.saveAndCheckSns(params.probationCrn, false, true)
                 }
                 await this.layer1Section2.populateMinimal()
+                await this.predictorQuestions.populateMinimal()
                 await this.selfAssessmentForm.populateMinimal()
                 if (params?.probationCrn) {
                     await this.saveAndCheckSns(params.probationCrn, false, false)

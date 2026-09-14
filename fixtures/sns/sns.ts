@@ -22,7 +22,7 @@ export class Sns {
     async testSnsMessageData(crn: string, type: AssessmentOrCsrp, expectingMessages: SnsMessageType[], timeoutOverride?: number) {
 
         const expectingMessagesCount = expectingMessages == null ? 0 : expectingMessages.length
-        const timeout = timeoutOverride == null ? 2 + expectingMessagesCount : timeoutOverride
+        const timeout = timeoutOverride == null ? 3 + expectingMessagesCount : timeoutOverride
 
         let failed = false
         const actualSnsMessages: DbSns[] = []

@@ -60,18 +60,18 @@ export function da(qaData: {}, after6_30: boolean): number {
         if (q67 == 'NO') {
             return 0
         } else if (q67 == null) {
-            return null
+            return 0
         } else {
             const q67da = utils.lookupString('6.7.2.1da', qaData)
-            return q67da == 'YES' ? 1 : q67da == 'NO' ? 0 : null
+            return q67da == 'YES' ? 1 : 0
         }
     } else {
         const q67 = utils.lookupString('6.7', qaData)
         if (q67 != 'YES') {
-            return null
+            return 0
         } else {
             const q671 = utils.lookupString('6.7.1', qaData)
-            return q671 == null ? null : q671.includes('PERPETRATOR') ? 1 : null
+            return q671 == null ? 0 : q671.includes('PERPETRATOR') ? 1 : 0
         }
     }
 }
@@ -94,7 +94,7 @@ export function dailyDrugUser(q81: string, drugs: { [key: string]: string }): 'Y
 
 export function q88(q81: string, q88: number): number {
 
-    return q81 == 'YES' ? q88 : q81 == 'NO' ? 0 : null
+    return q81 == 'YES' ? q88 : 0
 }
 
 export function getDrugUsed(drug: string, drugs: { [key: string]: string }): 'Y' {
@@ -149,6 +149,7 @@ export const q4_2Lookup = {
     'YES': 2,
     'NO': 0,
     'NA': 0,
+    'M': 0,
 }
 
 const offenceCats: { [keys: string]: OgrsOffenceCat } = {

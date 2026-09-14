@@ -28,7 +28,7 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         ONE_POINT_THIRTY: lookupValue(csrp.s1_30_sexual_element, utils.yesNoToYNLookup),
         TWO_POINT_TWO: getNumericAnswer(csrp.s2_2_weapon),
         THREE_POINT_FOUR: getNumericAnswer(csrp.s3_q4_suitable_accom),
-        FOUR_POINT_TWO: getNumericAnswer(csrp.s4_q2_unemployed) * 2,
+        FOUR_POINT_TWO: getNumericAnswer(csrp.s4_q2_unemployed) == null ? null : getNumericAnswer(csrp.s4_q2_unemployed) * 2,
         SIX_POINT_FOUR: getNumericAnswer(csrp.s6_q4_partner_relationship),
         SIX_POINT_SEVEN: da(csrp),
         SIX_POINT_EIGHT: getNumericAnswer(csrp.s6_q8_cur_rel_status),
@@ -80,13 +80,13 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
 
 function getNumericAnswer(value: string): number {
 
-    return !value ? null : value == 'YES' ? 1 : value == 'NO' || value == 'NA' ? 0 : value == 'M' ? null : Number.parseInt(value)
+    return !value ? null : value == 'YES' ? 1 : value == 'NO' || value == 'NA' ? 0 : value == 'M' ? 0 : Number.parseInt(value)
 }
 
 function da(rsr: OgrsCsrp): number {
 
-    const q67 = getNumericAnswer(rsr.s6_q7_dom_abuse)
-    return q67 == 1 ? getNumericAnswer(rsr.s6_q7_perpetrator_partner) : q67
+    const q67 = getNumericAnswer(rsr.s6_q7_dom_abuse) ?? 0
+    return q67 == 1 ? (getNumericAnswer(rsr.s6_q7_perpetrator_partner) ?? 0) : q67
 }
 
 function lookupValue(value: string, lookup: { [key: string]: string }): string {

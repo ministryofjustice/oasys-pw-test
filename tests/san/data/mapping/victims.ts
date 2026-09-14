@@ -38,6 +38,7 @@ export const script: SanScript = {
             steps: [
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
+                { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
                 { item: 'offenceElements', value: `hatred` },
                 { item: 'reason', value: `Reason` },
@@ -71,6 +72,7 @@ export const script: SanScript = {
         {
             name: '3 - ',
             steps: [
+                { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
@@ -109,6 +111,7 @@ export const script: SanScript = {
             steps: [
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
+                { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
                 { item: 'offenceElements', value: `hatred,victimTargeted` },
                 { item: 'victimTargetedDetails', value: `Victim targeted details` },
@@ -143,6 +146,7 @@ export const script: SanScript = {
         {
             name: '5 - ',
             steps: [
+                { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
@@ -180,6 +184,7 @@ export const script: SanScript = {
             steps: [
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
+                { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
                 { item: 'offenceElements', value: `hatred` },
                 { item: 'reason', value: `Reason` },
@@ -213,6 +218,7 @@ export const script: SanScript = {
         {
             name: '7 - ',
             steps: [
+                { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
@@ -249,6 +255,7 @@ export const script: SanScript = {
         {
             name: '8 - ',
             steps: [
+                { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
@@ -288,6 +295,7 @@ export const script: SanScript = {
             steps: [
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
+                { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
                 { item: 'offenceElements', value: `hatred` },
                 { item: 'reason', value: `Reason` },
@@ -323,6 +331,7 @@ export const script: SanScript = {
             steps: [
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
+                { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
                 { item: 'offenceElements', value: `hatred` },
                 { item: 'reason', value: `Reason` },
@@ -356,6 +365,7 @@ export const script: SanScript = {
         {
             name: '11 - ',
             steps: [
+                { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
@@ -394,6 +404,7 @@ export const script: SanScript = {
             steps: [
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
+                { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
                 { item: 'offenceElements', value: `hatred,victimTargeted` },
                 { item: 'victimTargetedDetails', value: `Victim targeted details` },
@@ -428,6 +439,7 @@ export const script: SanScript = {
         {
             name: '13 - ',
             steps: [
+                { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
@@ -465,6 +477,7 @@ export const script: SanScript = {
             steps: [
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
+                { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
                 { item: 'offenceElements', value: `hatred` },
                 { item: 'reason', value: `Reason` },
@@ -498,6 +511,7 @@ export const script: SanScript = {
         {
             name: '15 - ',
             steps: [
+                { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
@@ -534,6 +548,7 @@ export const script: SanScript = {
         {
             name: '16 - ',
             steps: [
+                { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
@@ -579,6 +594,7 @@ export const script: SanScript = {
             steps: [
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
+                { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
                 { item: 'offenceElements', value: `none` },
                 { item: 'reason', value: `Reason` },
@@ -618,6 +634,7 @@ export const script: SanScript = {
         {
             name: '18 - ',
             steps: [
+                { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },
@@ -665,6 +682,7 @@ export const script: SanScript = {
         {
             name: '19 - ',
             steps: [
+                { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'backIfVisible' },
                 { item: 'offenceDescription', value: `Description` },

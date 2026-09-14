@@ -15,7 +15,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
 
         // First RoSHA
         await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' })
-        await assessment.populateMinimal({ layer: 'Layer 1V2', populate1_38: { days: -5 }, probationCrn: offender1.probationCrn })
+        await assessment.populateMinimal({ layer: 'Layer 1V2', populate1_38: { days: -5 } })
 
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
@@ -31,18 +31,18 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         await sections.offendingInformation.sentence.setValue('Fine')
         await sections.offendingInformation.sentenceDate.setValue({})
         await sections.saveAndCheckSns(offender1.probationCrn, false, true)
-        
+
         await sections.layer1Section2.populateMinimal()
+        await sections.predictorQuestions.populateMinimal()
         await sections.selfAssessmentForm.populateMinimal()
-        
+
         await signing.signAndLock({ page: 'spService' })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
-        
+
         // Second RoSHA
         await oasys.history(offender1)
         await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' }, 'Yes')
         await sections.roshaPredictors.populateMinimal({ populate1_38: { days: -1 }, probationCrn: offender1.probationCrn }, false)
-        await sections.saveAndCheckSns(offender1.probationCrn, false, true)
 
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
@@ -62,6 +62,8 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         await sections.predictors.o1_32.setValue(2)
         await sections.saveAndCheckSns(offender1.probationCrn, false, true)
 
+        await sections.layer1Section2.populateMinimal()
+        await sections.predictorQuestions.populateMinimal()
         await sections.selfAssessmentForm.populateMinimal()
 
         await sentencePlan.populateMinimal()

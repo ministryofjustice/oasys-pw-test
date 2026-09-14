@@ -60,6 +60,7 @@ test('Create assessments and check SNS messages - RoSHA plus layer 1', async ({ 
     await sections.offendingInformation.orderLengthMonths.setValue('12')
     
     await sections.layer1Section2.populateMinimal()
+    await sections.predictorQuestions.populateMinimal()
     await sections.selfAssessmentForm.populateMinimal()
     await sentencePlan.populateMinimal()
 

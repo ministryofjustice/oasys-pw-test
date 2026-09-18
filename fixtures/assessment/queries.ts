@@ -133,7 +133,7 @@ export class Queries {
             if (!match) { failed = true }
         }
 
-        if (failed) {
+        if (failed && !suppressLog) {
             console.log(`Section ${section} failed`)
         }
         return failed

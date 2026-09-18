@@ -12,6 +12,7 @@ import * as exampleTest from './exampleTest'
 import { Queries } from './queries'
 import { Predictors } from 'fixtures/sections/pages/predictors'
 import { Queries as AssessmentQueries } from 'fixtures/assessment/queries'
+import { BaseSanEditPage } from './pages/baseSanEditPage'
 
 
 export class San {
@@ -19,10 +20,13 @@ export class San {
     constructor(private readonly page: Page, private readonly oasys: Oasys, private readonly oasysDb: OasysDb) { }
 
     readonly sanSections = new pages.SanSections(this.page)
+    readonly baseSanEditPage = new BaseSanEditPage(this.page)
     readonly landingPage = new pages.LandingPage(this.page)
     readonly accommodation1 = new pages.Accommodation1(this.page)
     readonly accommodation2 = new pages.Accommodation2(this.page)
     readonly accommodationPractitionerAnalysis = new pages.PractitionerAnalysis(this.page, 'Accommodation', 'accommodation')
+    readonly alcohol1 = new pages.Alcohol1(this.page)
+    readonly alcohol2 = new pages.Alcohol2(this.page)
     readonly drugs1 = new pages.Drugs1(this.page)
     readonly drugs2 = new pages.Drugs2(this.page)
     readonly drugs3 = new pages.Drugs3(this.page)
@@ -32,12 +36,38 @@ export class San {
     readonly relationships2 = new pages.Relationships2(this.page)
     readonly employment1 = new pages.Employment1(this.page)
     readonly employment2 = new pages.Employment2(this.page)
+    readonly finance = new pages.Finance(this.page)
     readonly informationSummary = new pages.InformationSummary(this.page)
     readonly offenceAnalysis1 = new pages.OffenceAnalysis1(this.page)
     readonly offenceAnalysis2 = new pages.OffenceAnalysis2(this.page)
     readonly offenceAnalysis3 = new pages.OffenceAnalysis3(this.page)
 
     readonly queries = new Queries(this.oasysDb)
+
+    async previous() {
+
+        await this.baseSanEditPage.previous.click()
+    }
+
+    async saveAndContinue() {
+
+        await this.baseSanEditPage.saveAndContinue.click()
+    }
+
+    async practitionerAnalysis() {
+
+        await this.page.locator('#tab_practitioner-analysis').first().click()
+    }
+
+    async change() {
+
+        await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).first().click()
+    }
+
+    async markAsComplete() {
+
+        await this.page.getByText('Mark as complete').first().click()
+    }
 
     async populateMinimal(from: 'assessment' | 'offender' = 'assessment') {
 
@@ -105,6 +135,7 @@ export class San {
     async returnToOASys() {
 
         await this.page.locator('#return-to-oasys').click()
+        await waitForPageUpdate(this.page)
     }
 
     /**

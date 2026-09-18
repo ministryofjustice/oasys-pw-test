@@ -93,7 +93,7 @@ declare type RestErrorResults = {
     forbidden: RestErrorResult,
 }
 
-declare type OasysAnswer = { section: string, q: string, a: string }
+declare type OasysAnswer = { section?: string, q: string, a: string }
 declare type AnswerType = 'refAnswer' | 'freeFormat' | 'additionalNote' | 'multipleRefAnswer'
 declare type Victim = { age: string, gender: string, ethnicCat: string, relationship: string }
 declare type CheckDbSectionResponse = { failed: boolean, report: string[] }

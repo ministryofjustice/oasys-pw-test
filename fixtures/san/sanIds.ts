@@ -1,3 +1,23 @@
+// Generic
+export const sanYesNoOptions: SanYesNo[] = ['yes', 'no']
+export const sanYesNoConcernsOptions: SanYesNoConcerns[] = ['yes', 'yesWithConcerns', 'no']
+export const sanYesNoUnknownOptions: SanYesNoUnknown[] = ['yes', 'no', 'unknown']
+export const sanYesNoSomeOptions: SanYesNoSome[] = ['yes', 'some', 'no']
+export const sanSignificantSomeOptions: SanSignificantSome[] = ['significant', 'some']
+export const sanExperienceOptions: SanExperience[] = ['positive', 'mostlyPositive', 'positiveNegative', 'mostlyNegative', 'negative', 'unknown']
+export const sanWantChangesOptions: (SanWantChanges | '-')[] = ['madeChanges', 'makingChanges', 'wantToChange', 'needHelp', 'thinking', 'notWanted', 'notAnswering', '-', 'notPresent', 'notApplicable']
+
+// Employment
+export const employmentStatusOptions: EmploymentStatus[] = ['employed', 'selfEmployed', 'retired', 'unavailable', 'unemployedLooking', 'unemployedNotLooking']
+export const employmentTypeOptions: EmploymentType[] = ['fullTime', 'partTime', 'temporary', 'apprenticeship']
+export const employmentHistoryOptions: EmploymentHistory[] = ['continuous', 'generallyEmployed', 'unstable', 'unknown']
+export const highestQualOptions: (HighestQual | '-')[] = ['entryLevel', 'level1', 'level2', 'level3', 'level4', 'level5', 'level6', 'level7', 'level8', '-', 'none', 'unknown']
+
+// Finance
+export const incomeSourceOptions: (IncomeSource | '-')[] = ['carersAllowance', 'disabilityBenefits', 'employment', 'family', 'offending', 'pension', 'studentLoan', 'undeclared', 'workBenefits', 'other', 'unknown', '-', 'noMoney']
+export const howGoodManagingOptions: HowGoodManaging[] = ['ableStrength', 'able', 'unable', 'unableProblems']
+
+
 export const sanIds: SanIds = {
 
     // Accommodation
@@ -324,7 +344,7 @@ export const sanIds: SanIds = {
     highestQual: {
         type: 'radio',
         id: '#education_highest_level_completed',
-        options: ['entryLevel', 'level1', 'level2', 'level3', 'level4', 'level5', 'level6', 'level7', 'level8', '-', 'none', 'notSure'],
+        options: ['entryLevel', 'level1', 'level2', 'level3', 'level4', 'level5', 'level6', 'level7', 'level8', '-', 'none', 'unknown'],
     },
     professionalQual: {
         type: 'radio',

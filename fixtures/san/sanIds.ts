@@ -5,6 +5,7 @@ export const sanYesNoUnknownOptions: SanYesNoUnknown[] = ['yes', 'no', 'unknown'
 export const sanYesNoSomeOptions: SanYesNoSome[] = ['yes', 'some', 'no']
 export const sanSignificantSomeOptions: SanSignificantSome[] = ['significant', 'some']
 export const sanExperienceOptions: SanExperience[] = ['positive', 'mostlyPositive', 'positiveNegative', 'mostlyNegative', 'negative', 'unknown']
+export const sanPositiveMixedNegativeOptions: SanPositiveMixedNegative[] =[ 'positive' , 'mixed' , 'negative']
 export const sanWantChangesOptions: (SanWantChanges | '-')[] = ['madeChanges', 'makingChanges', 'wantToChange', 'needHelp', 'thinking', 'notWanted', 'notAnswering', '-', 'notPresent', 'notApplicable']
 
 // Employment
@@ -17,6 +18,9 @@ export const highestQualOptions: (HighestQual | '-')[] = ['entryLevel', 'level1'
 export const incomeSourceOptions: (IncomeSource | '-')[] = ['carersAllowance', 'disabilityBenefits', 'employment', 'family', 'offending', 'pension', 'studentLoan', 'undeclared', 'workBenefits', 'other', 'unknown', '-', 'noMoney']
 export const howGoodManagingOptions: HowGoodManaging[] = ['ableStrength', 'able', 'unable', 'unableProblems']
 
+// Health
+export const mentalHealthProblemsOptions: MentalHealthProblems[] = ['yesOngoingSevere', 'yesOngoing', 'yesPast', 'no', 'unknown']
+export const psychTreatmentOptions: PsychTreatment[] =  ['yes', 'pending', 'no', 'unknown']
 
 export const sanIds: SanIds = {
 

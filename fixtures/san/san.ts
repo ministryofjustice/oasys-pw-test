@@ -37,6 +37,8 @@ export class San {
     readonly employment1 = new pages.Employment1(this.page)
     readonly employment2 = new pages.Employment2(this.page)
     readonly finance = new pages.Finance(this.page)
+    readonly health1 = new pages.Health1(this.page)
+    readonly health2 = new pages.Health2(this.page)
     readonly informationSummary = new pages.InformationSummary(this.page)
     readonly offenceAnalysis1 = new pages.OffenceAnalysis1(this.page)
     readonly offenceAnalysis2 = new pages.OffenceAnalysis2(this.page)

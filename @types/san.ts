@@ -30,6 +30,7 @@ declare type SanYesNoUnknown = 'yes' | 'no' | 'unknown'
 declare type SanYesNoSome = 'yes' | 'some' | 'no'
 declare type SanSignificantSome = 'significant' | 'some'
 declare type SanExperience = 'positive' | 'mostlyPositive' | 'positiveNegative' | 'mostlyNegative' | 'negative' | 'unknown'
+declare type SanPositiveMixedNegative = 'positive' | 'mixed' | 'negative'
 declare type SanWantChanges = 'madeChanges' | 'makingChanges' | 'wantToChange' | 'needHelp' | 'thinking' | 'notWanted' | 'notAnswering' | 'notPresent' | 'notApplicable'
 
 // Accommodation
@@ -58,3 +59,7 @@ declare type SanDifficulties = 'reading' | 'writing' | 'numeracy' | 'none'
 // Finance
 declare type IncomeSource = 'carersAllowance' | 'disabilityBenefits' | 'employment' | 'family' | 'offending' | 'pension' | 'studentLoan' | 'undeclared' | 'workBenefits' | 'other' | 'unknown' | 'noMoney'
 declare type HowGoodManaging = 'ableStrength' | 'able' | 'unable' | 'unableProblems'
+
+// Health
+declare type MentalHealthProblems = 'yesOngoingSevere' | 'yesOngoing' | 'yesPast' | 'no' | 'unknown'
+declare type PsychTreatment = 'yes' | 'pending' | 'no' | 'unknown'

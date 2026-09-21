@@ -5,7 +5,7 @@ import { employmentHistoryOptions, highestQualOptions, sanExperienceOptions, san
 export class Employment2 extends BaseSanEditPage {
 
     name = 'Employment2'
-    title = 'Employment and Education - Strengths and Needs'
+    title = 'Employment and education - Strengths and Needs'
 
     employmentHistory = new Element.Radiogroup<EmploymentHistory>(this.page, '#employment_history', employmentHistoryOptions)
     additionalCommitments = new Element.CheckboxGroup<'caring' | 'child' | 'studying' | 'volunteering' | 'other' | 'unknown' | 'none'>(this.page, '#employment_other_responsibilities', ['caring', 'child', 'studying', 'volunteering', 'other', 'unknown', '-', 'none'])

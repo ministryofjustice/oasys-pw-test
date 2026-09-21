@@ -5,7 +5,7 @@ import { employmentStatusOptions, employmentTypeOptions, sanYesNoOptions } from 
 export class Employment1 extends BaseSanEditPage {
 
     name = 'Employment1'
-    title = 'Employment and Education - Strengths and Needs'
+    title = 'Employment and education - Strengths and Needs'
 
     employmentStatus = new Element.Radiogroup<EmploymentStatus>(this.page, '#employment_status', employmentStatusOptions)
     employmentType = new Element.Radiogroup<EmploymentType>(this.page, '#employment_type', employmentTypeOptions)

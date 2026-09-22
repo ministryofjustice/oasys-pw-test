@@ -31,7 +31,7 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         FOUR_POINT_TWO: getNumericAnswer(csrp.s4_q2_unemployed) == null ? null : getNumericAnswer(csrp.s4_q2_unemployed) * 2,
         SIX_POINT_FOUR: getNumericAnswer(csrp.s6_q4_partner_relationship),
         SIX_POINT_SEVEN: da(csrp),
-        SIX_POINT_EIGHT: getNumericAnswer(csrp.s6_q8_cur_rel_status),
+        SIX_POINT_EIGHT: getNumericAnswer(csrp.s6_q8_cur_rel_status) ?? 3,
         SEVEN_POINT_TWO: getNumericAnswer(csrp.s7_q2_reg_activities),
         DAILY_DRUG_USER: dailyDrugUser(csrp),
         AMPHETAMINES: drugUsed(csrp.amphetamines_curr_use),

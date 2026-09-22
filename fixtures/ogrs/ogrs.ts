@@ -110,38 +110,52 @@ export class Ogrs {
      * Checks the calculation stored in oasys_set for a given pk.
      * Returns an true/false failure status
      */
-    async checkOgrsInOasysSetReturnStatus(assessmentPk: number, dateParam: Temporal.PlainDate): Promise<Boolean> {
+    async checkOgrsInOasysSetReturnStatus(assessment: OgrsAssessment): Promise<OgrsRecalcResult> {
 
-        const assessment = await this.data.getOneAssessment(assessmentPk)
-        const calculatorParams = createAssessmentInputParams(assessment, dateParam)
-
-        const result: Ogrs4CalcResult = {
-            outputParams: this.calculate(calculatorParams),
+        const calculatorParams = createAssessmentInputParams(assessment, assessment.signedDate)
+        if (calculatorParams.CUSTODY_IND == 'Y') {
+            calculatorParams.COMMUNITY_DATE = calculatorParams.ASSESSMENT_DATE
         }
 
-        this.compileAndCheckResult(result)
+        const calcResult = this.calculate(calculatorParams)
 
-        log('', 'Checking OGRS4 calculations')
-        let failed = false
-        failed = checkScore('ARP static score', result.outputParams.OGRS4G_PERCENTAGE?.toNumber() ?? null, assessment.ogrs4gYr2) || failed
-        failed = checkScore('ARP static band', result.outputParams.OGRS4G_BAND?.substring(0, 1) ?? null, assessment.ogrs4gBand) || failed
-        failed = checkScore('ARP dynamic score', result.outputParams.OGP2_PERCENTAGE?.toNumber() ?? null, assessment.ogp2Yr2) || failed
-        failed = checkScore('ARP dynamic band', result.outputParams.OGP2_BAND?.substring(0, 1) ?? null, assessment.ogp2Band) || failed
-        failed = checkScore('VRP static score', result.outputParams.OGRS4V_PERCENTAGE?.toNumber() ?? null, assessment.ogrs4vYr2) || failed
-        failed = checkScore('VRP static band', result.outputParams.OGRS4V_BAND?.substring(0, 1) ?? null, assessment.ogrs4vBand) || failed
-        failed = checkScore('VRP dynamic score', result.outputParams.OVP2_PERCENTAGE?.toNumber() ?? null, assessment.ovp2Yr2) || failed
-        failed = checkScore('VRP dynamic band', result.outputParams.OVP2_BAND?.substring(0, 1) ?? null, assessment.ovp2Band) || failed
-        failed = checkScore('SVRP static score', result.outputParams.SNSV_PERCENTAGE_STATIC?.toNumber() ?? null, assessment.snsvStaticYr2) || failed
-        failed = checkScore('SVRP static band', result.outputParams.SNSV_BAND_STATIC?.substring(0, 1) ?? null, assessment.snsvStaticYr2Band) || failed
-        failed = checkScore('SVRP dynamic score', result.outputParams.SNSV_PERCENTAGE_DYNAMIC?.toNumber() ?? null, assessment.snsvDynamicYr2) || failed
-        failed = checkScore('SVRP dynamic band', result.outputParams.SNSV_BAND_DYNAMIC?.substring(0, 1) ?? null, assessment.snsvDynamicYr2Band) || failed
+        // this.compileAndCheckResult(result)
 
-        if (failed) {
-            log(`PK failed: ${assessmentPk}`)
-            log(JSON.stringify(calculatorParams))
-            log(JSON.stringify(result))
+        let testResult: OgrsRecalcResult = { arpScore: false, arpBand: false, vrpScore: false, vrpBand: false, svrpScore: false, svrpBand: false, tier: false }
+        testResult.arpScore = (calcResult.OGRS4G_PERCENTAGE?.toNumber() ?? null) != assessment.ogrs4gYr2
+        testResult.arpBand = (calcResult.OGRS4G_BAND?.substring(0, 1) ?? null) != assessment.ogrs4gBand
+        testResult.vrpScore = (calcResult.OGRS4V_PERCENTAGE?.toNumber() ?? null) != assessment.ogrs4vYr2
+        testResult.vrpBand = (calcResult.OGRS4V_BAND?.substring(0, 1) ?? null) != assessment.ogrs4vBand
+        testResult.svrpScore = (calcResult.SNSV_PERCENTAGE_STATIC?.toNumber() ?? null) != assessment.snsvStaticYr2
+        testResult.svrpBand = (calcResult.SNSV_BAND_STATIC?.substring(0, 1) ?? null) != assessment.snsvStaticYr2Band
+        testResult.arpScore = (calcResult.OGP2_PERCENTAGE?.toNumber() ?? null) != assessment.ogp2Yr2 || testResult.arpScore
+        testResult.arpBand = (calcResult.OGP2_BAND?.substring(0, 1) ?? null) != assessment.ogp2Band || testResult.arpBand
+        testResult.vrpScore = (calcResult.OVP2_PERCENTAGE?.toNumber() ?? null) != assessment.ovp2Yr2 || testResult.vrpScore
+        testResult.vrpBand = (calcResult.OVP2_BAND?.substring(0, 1) ?? null) != assessment.ovp2Band || testResult.vrpBand
+        testResult.svrpScore = (calcResult.SNSV_PERCENTAGE_DYNAMIC?.toNumber() ?? null) != assessment.snsvDynamicYr2 || testResult.svrpScore
+        testResult.svrpBand = (calcResult.SNSV_BAND_DYNAMIC?.substring(0, 1) ?? null) != assessment.snsvDynamicYr2Band || testResult.svrpBand
+
+        const oasysArpScore = assessment.ogp2Yr2 == null ? assessment.ogrs4gYr2 : assessment.ogp2Yr2
+        const oasysSvrpScore = assessment.snsvDynamicYr2 == null ? assessment.snsvStaticYr2 : assessment.snsvDynamicYr2
+        const recalcArpScore = calcResult.OGP2_PERCENTAGE == null ? calcResult.OGRS4G_PERCENTAGE?.toNumber() : calcResult.OGP2_PERCENTAGE?.toNumber()
+
+        const recalcSvrpScore = calcResult.SNSV_PERCENTAGE_DYNAMIC == null ? calcResult.SNSV_PERCENTAGE_STATIC?.toNumber() : calcResult.SNSV_PERCENTAGE_DYNAMIC?.toNumber()
+        const recalcCsrpScore = assessment.csrpScore == null ? null : assessment.csrpScore - oasysSvrpScore + recalcSvrpScore
+
+        const oasysArpCsrpTier = this.tiering.calculateArpCsrp(oasysArpScore, assessment.csrpScore)
+        const recalcArpCsrpTier = this.tiering.calculateArpCsrp(recalcArpScore, recalcCsrpScore)
+
+        testResult.tier = oasysArpCsrpTier != recalcArpCsrpTier
+
+        if (testResult.arpBand || testResult.vrpBand || testResult.svrpBand || testResult.tier) {
+            log(`PK failed: ${assessment.pk}`)
+            log(`OASys tier: ${oasysArpCsrpTier}, recalcTier: ${recalcArpCsrpTier}`)
+            fileLog(`PK failed: ${assessment.pk}`)
+            fileLog(JSON.stringify(assessment))
+            fileLog(JSON.stringify(calculatorParams))
+            fileLog(JSON.stringify(calcResult))
         }
-        return failed
+        return testResult
     }
 
     /**

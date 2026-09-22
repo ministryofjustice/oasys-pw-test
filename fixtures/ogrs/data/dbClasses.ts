@@ -228,6 +228,7 @@ export class OgrsAssessment {
     snsvDynamicYr2: number
     snsvDynamicYr2Band: string
     snsvDynamicCalculated: string
+    csrpScore: number
 
     offence: string
     qaData: { [key: string]: any }
@@ -263,6 +264,7 @@ export class OgrsAssessment {
         this.snsvDynamicYr2 = utils.stringToFloat(assessmentData[i++])
         this.snsvDynamicYr2Band = assessmentData[i++]
         this.snsvDynamicCalculated = assessmentData[i++]
+        this.csrpScore = utils.stringToFloat(assessmentData[i++])
     }
 
     static query(rows: number, whereClause: string): string {
@@ -275,10 +277,10 @@ export class OgrsAssessment {
                         ogp2_percentage_2yr, ogp2_band_risk_recon_elm, ogp2_calculated, 
                         ovp2_percentage_2yr, ovp2_band_risk_recon_elm, ovp2_calculated, 
                         snsv_percentage_2yr_static, snsv_stat_band_risk_recon_elm, snsv_calculated_static, 
-                        snsv_percentage_2yr_dynamic, snsv_dyn_band_risk_recon_elm, snsv_calculated_dynamic
+                        snsv_percentage_2yr_dynamic, snsv_dyn_band_risk_recon_elm, snsv_calculated_dynamic, rsr_percentage_score
                     from eor.oasys_set 
                     where ${whereClause}
-                    order by create_date desc fetch first ${rows} rows only`
+                    fetch first ${rows} rows only`
     }
 
     static offenceQuery(assessmentPk: number | string): string {

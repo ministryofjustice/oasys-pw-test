@@ -27,6 +27,12 @@ declare type SanSection = 'Accommodation' | 'Employment and education' | 'Financ
 declare type SanYesNo = 'yes' | 'no'
 declare type SanYesNoConcerns = 'yes' | 'yesWithConcerns' | 'no'
 declare type SanYesNoUnknown = 'yes' | 'no' | 'unknown'
+declare type SanYesSometimesNo = 'yes' | 'sometimes' | 'no'
+declare type SanYesPartlyNo = 'yes' | 'partly' | 'no'
+declare type SanYesHasBeenNo = 'yes' | 'hasBeen' | 'no'
+declare type SanYesUnsureNo = 'yes' | 'unsure' | 'no'
+declare type SanYesLimitedNo = 'yes' | 'limited' | 'no'
+declare type SanYesSometimesNoUnknown = 'yes' | 'sometimes' | 'no' | 'unknown'
 declare type SanYesNoSome = 'yes' | 'some' | 'no'
 declare type SanSignificantSome = 'significant' | 'some'
 declare type SanExperience = 'positive' | 'mostlyPositive' | 'positiveNegative' | 'mostlyNegative' | 'negative' | 'unknown'
@@ -63,3 +69,10 @@ declare type HowGoodManaging = 'ableStrength' | 'able' | 'unable' | 'unableProbl
 // Health
 declare type MentalHealthProblems = 'yesOngoingSevere' | 'yesOngoing' | 'yesPast' | 'no' | 'unknown'
 declare type PsychTreatment = 'yes' | 'pending' | 'no' | 'unknown'
+
+// Relationships
+declare type AnyChildren = 'yesLiveWith' | 'yesLiveElsewhere' | 'yesVisitRegularly' | 'no'
+declare type ImportantPeople = 'partner' | 'ownChildren' | 'otherChildren' | 'family' | 'friends' | 'other'
+declare type HappyWithStatus = 'happy' | 'someConcerns' | 'unhappy'
+declare type RelationshipHistory = 'stable' | 'mixed' | 'unstable'
+declare type CurrentFamilyRelationship = 'stable' | 'mixed' | 'unstable' | 'unknown'

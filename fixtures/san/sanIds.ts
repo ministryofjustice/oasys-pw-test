@@ -2,10 +2,17 @@
 export const sanYesNoOptions: SanYesNo[] = ['yes', 'no']
 export const sanYesNoConcernsOptions: SanYesNoConcerns[] = ['yes', 'yesWithConcerns', 'no']
 export const sanYesNoUnknownOptions: SanYesNoUnknown[] = ['yes', 'no', 'unknown']
+export const sanYesSometimesNoOptions: SanYesSometimesNo[] = ['yes', 'sometimes', 'no']
+export const sanNoSometimesYesOptions: SanYesSometimesNo[] = ['no', 'sometimes', 'yes']
+export const sanYesPartlyNoOptions: SanYesPartlyNo[] = ['yes', 'partly', 'no']
+export const sanYesHasBeenNoOptions: SanYesHasBeenNo[] = ['yes', 'hasBeen', 'no']
+export const sanYesUnsureNoOptions: SanYesUnsureNo[] = ['yes', 'unsure', 'no']
+export const sanYesLimitedNoOptions: SanYesLimitedNo[] = ['yes', 'limited', 'no']
+export const sanYesSometimesNoUnknownOptions: SanYesSometimesNoUnknown[] = ['yes', 'sometimes', 'no', 'unknown']
 export const sanYesNoSomeOptions: SanYesNoSome[] = ['yes', 'some', 'no']
 export const sanSignificantSomeOptions: SanSignificantSome[] = ['significant', 'some']
 export const sanExperienceOptions: SanExperience[] = ['positive', 'mostlyPositive', 'positiveNegative', 'mostlyNegative', 'negative', 'unknown']
-export const sanPositiveMixedNegativeOptions: SanPositiveMixedNegative[] =[ 'positive' , 'mixed' , 'negative']
+export const sanPositiveMixedNegativeOptions: SanPositiveMixedNegative[] = ['positive', 'mixed', 'negative']
 export const sanWantChangesOptions: (SanWantChanges | '-')[] = ['madeChanges', 'makingChanges', 'wantToChange', 'needHelp', 'thinking', 'notWanted', 'notAnswering', '-', 'notPresent', 'notApplicable']
 
 // Employment
@@ -20,7 +27,12 @@ export const howGoodManagingOptions: HowGoodManaging[] = ['ableStrength', 'able'
 
 // Health
 export const mentalHealthProblemsOptions: MentalHealthProblems[] = ['yesOngoingSevere', 'yesOngoing', 'yesPast', 'no', 'unknown']
-export const psychTreatmentOptions: PsychTreatment[] =  ['yes', 'pending', 'no', 'unknown']
+export const psychTreatmentOptions: PsychTreatment[] = ['yes', 'pending', 'no', 'unknown']
+
+// Relationships
+export const anyChildrenOptions: (AnyChildren | '-')[] = ['yesLiveWith', 'yesLiveElsewhere', 'yesVisitRegularly', '-', 'no']
+export const importantPeopleOptions: ImportantPeople[] = ['partner', 'ownChildren', 'otherChildren', 'family', 'friends', 'other']
+
 
 export const sanIds: SanIds = {
 

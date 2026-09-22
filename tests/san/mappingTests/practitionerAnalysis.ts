@@ -141,13 +141,34 @@ async function checkAnswers(assessmentPk: number, sanSection: SanSection, test: 
         { q: `${oasysSection}${issuesQuestion}`, a: text },
         { q: `${oasysSection}${harmQuestion}`, a: test.riskOfHarm == null ? null : test.riskOfHarm ? 'YES' : 'NO' },
         { q: `${oasysSection}${reoffendingQuestion}`, a: test.riskOfReoffending == null ? null : test.riskOfReoffending ? 'YES' : 'NO' },
-        { q: `${oasysSection}_SAN_STRENGTH`, a: test.strengths == null ? null : test.strengths ? 'YES' : 'NO' },
     ]
     const expectedSanSectionAnswers: OasysAnswer[] = [
         { q: `${sanCompletionPrefixLookup[sanSection]}_SAN_SECTION_COMP`, a: 'YES' },
     ]
 
-    const sectionFailed = await assessment.queries.checkSectionAnswers(assessmentPk, oasysSection, expectedSectionAnswers, true)
+    if (sanSection == 'Thinking, behaviours and attitudes') {
+        expectedSanSectionAnswers.push({ q: `TBA_SAN_STRENGTH`, a: test.strengths == null ? null : test.strengths ? 'YES' : 'NO' })
+    } else {
+        expectedSectionAnswers.push({ q: `${oasysSection}_SAN_STRENGTH`, a: test.strengths == null ? null : test.strengths ? 'YES' : 'NO' })
+    }
+
+    let sectionFailed = await assessment.queries.checkSectionAnswers(assessmentPk, oasysSection, expectedSectionAnswers, true)
+    if (sanSection == 'Thinking, behaviours and attitudes') {
+        const expectedSection11Answers: OasysAnswer[] = [
+            { q: `11${issuesQuestion}`, a: text },
+            { q: `11${harmQuestion}`, a: test.riskOfHarm == null ? null : test.riskOfHarm ? 'YES' : 'NO' },
+            { q: `11${reoffendingQuestion}`, a: test.riskOfReoffending == null ? null : test.riskOfReoffending ? 'YES' : 'NO' },
+        ]
+        const expectedSection12Answers: OasysAnswer[] = [
+            { q: `12${issuesQuestion}`, a: text },
+            { q: `12${harmQuestion}`, a: test.riskOfHarm == null ? null : test.riskOfHarm ? 'YES' : 'NO' },
+            { q: `12${reoffendingQuestion}`, a: test.riskOfReoffending == null ? null : test.riskOfReoffending ? 'YES' : 'NO' },
+        ]
+        const section11Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '11', expectedSection11Answers, true)
+        const section12Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '12', expectedSection12Answers, true)
+        sectionFailed = sectionFailed || section11Failed || section12Failed
+    }
+
     const sanSectionFailed = await assessment.queries.checkSectionAnswers(assessmentPk, 'SAN', expectedSanSectionAnswers, true)
     return sectionFailed || sanSectionFailed
 }

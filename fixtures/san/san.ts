@@ -32,8 +32,6 @@ export class San {
     readonly drugs3 = new pages.Drugs3(this.page)
     readonly drugs4 = new pages.Drugs4(this.page)
     readonly drugsPractitionerAnalysis = new pages.DrugsPractitionerAnalysis(this.page)
-    readonly relationships1 = new pages.Relationships1(this.page)
-    readonly relationships2 = new pages.Relationships2(this.page)
     readonly employment1 = new pages.Employment1(this.page)
     readonly employment2 = new pages.Employment2(this.page)
     readonly finance = new pages.Finance(this.page)
@@ -43,6 +41,12 @@ export class San {
     readonly offenceAnalysis1 = new pages.OffenceAnalysis1(this.page)
     readonly offenceAnalysis2 = new pages.OffenceAnalysis2(this.page)
     readonly offenceAnalysis3 = new pages.OffenceAnalysis3(this.page)
+    readonly relationships1 = new pages.Relationships1(this.page)
+    readonly relationships2 = new pages.Relationships2(this.page)
+    readonly relationships3 = new pages.Relationships3(this.page)
+    readonly thinking1 = new pages.Thinking1(this.page)
+    readonly thinking2 = new pages.Thinking2(this.page)
+    readonly thinking3 = new pages.Thinking3(this.page)
 
     readonly queries = new Queries(this.oasysDb)
 

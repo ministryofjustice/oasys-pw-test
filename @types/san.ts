@@ -25,6 +25,7 @@ declare type SanSection = 'Accommodation' | 'Employment and education' | 'Financ
 
 // Generic
 declare type SanYesNo = 'yes' | 'no'
+declare type SanYesNoNa = 'yes' | 'no' | 'na'
 declare type SanYesNoConcerns = 'yes' | 'yesWithConcerns' | 'no'
 declare type SanYesNoUnknown = 'yes' | 'no' | 'unknown'
 declare type SanYesSometimesNo = 'yes' | 'sometimes' | 'no'
@@ -76,3 +77,10 @@ declare type ImportantPeople = 'partner' | 'ownChildren' | 'otherChildren' | 'fa
 declare type HappyWithStatus = 'happy' | 'someConcerns' | 'unhappy'
 declare type RelationshipHistory = 'stable' | 'mixed' | 'unstable'
 declare type CurrentFamilyRelationship = 'stable' | 'mixed' | 'unstable' | 'unknown'
+
+// Offence analysis
+declare type OffenceElements = 'arson' | 'domesticAbuse' | 'excessiveViolence' | 'hatred' | 'physicalDamage' | 'sexualElement' | 'victimTargeted' | 'violence' | 'weapon' | 'none'
+declare type Motivations = 'addictions' | 'pressure' | 'emotional' | 'financial' | 'hatred' | 'power' | 'sexual' | 'thrill' | 'other'
+declare type VictimType = 'people' | 'other'
+declare type HowManyOthers = '0' | '1' | '2' | '3' | '4' | '5' | '6to10' | '11to15' | 'more'
+declare type FamilyPartnerBoth = 'family' | 'partner' | 'both'

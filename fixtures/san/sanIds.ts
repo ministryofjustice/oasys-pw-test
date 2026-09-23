@@ -1,5 +1,6 @@
 // Generic
 export const sanYesNoOptions: SanYesNo[] = ['yes', 'no']
+export const sanYesNoNaOptions: SanYesNoNa[] = ['yes', 'no', 'na']
 export const sanYesNoConcernsOptions: SanYesNoConcerns[] = ['yes', 'yesWithConcerns', 'no']
 export const sanYesNoUnknownOptions: SanYesNoUnknown[] = ['yes', 'no', 'unknown']
 export const sanYesSometimesNoOptions: SanYesSometimesNo[] = ['yes', 'sometimes', 'no']
@@ -32,6 +33,12 @@ export const psychTreatmentOptions: PsychTreatment[] = ['yes', 'pending', 'no', 
 // Relationships
 export const anyChildrenOptions: (AnyChildren | '-')[] = ['yesLiveWith', 'yesLiveElsewhere', 'yesVisitRegularly', '-', 'no']
 export const importantPeopleOptions: ImportantPeople[] = ['partner', 'ownChildren', 'otherChildren', 'family', 'friends', 'other']
+
+// Offence analysis
+export const offenceElementsOptions: (OffenceElements | '-')[] = ['arson', 'domesticAbuse', 'excessiveViolence', 'hatred', 'physicalDamage', 'sexualElement', 'victimTargeted', 'violence', 'weapon', '-', 'none']
+export const motivationsOptions: Motivations[] = ['addictions', 'pressure', 'emotional', 'financial', 'hatred', 'power', 'sexual', 'thrill', 'other']
+export const howManyOthersOptions: HowManyOthers[] = ['0', '1', '2', '3', '4', '5', '6to10', '11to15', 'more']
+export const familyPartnerBothOptions: FamilyPartnerBoth[] = ['family', 'partner', 'both']
 
 
 export const sanIds: SanIds = {

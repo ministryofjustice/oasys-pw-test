@@ -1,6 +1,6 @@
 import { OgrsInputParams } from 'fixtures/ogrs/types'
 import { OgrsRsr as OgrsCsrp } from './dbClasses'
-import { addCalculatedInputParameters, q88 } from './common'
+import { addCalculatedInputParameters, q141, q88 } from './common'
 
 export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
 
@@ -20,7 +20,7 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         AGE_AT_FIRST_SANCTION: csrp.s1_8_age_at_first_sanction,
         LAST_SANCTION_DATE: csrp.s1_29_date_current_conviction,
         DATE_RECENT_SEXUAL_OFFENCE: csrp.s1_33_date_recent_sex_offence,
-        CURR_SEX_OFF_MOTIVATION: csrp.s1_41_current_sexual_mot,
+        CURR_SEX_OFF_MOTIVATION: q141(csrp.s1_30_sexual_element, csrp.s1_41_current_sexual_mot, csrp.offence),
         MOST_RECENT_OFFENCE: csrp.s1_43_last_offence_date,
         COMMUNITY_DATE: csrp.prisonInd == 'C'
             ? oasysDateTime.testStartDate

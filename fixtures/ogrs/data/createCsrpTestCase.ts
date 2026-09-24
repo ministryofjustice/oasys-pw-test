@@ -34,22 +34,22 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         SIX_POINT_EIGHT: getNumericAnswer(csrp.s6_q8_cur_rel_status) ?? 3,
         SEVEN_POINT_TWO: getNumericAnswer(csrp.s7_q2_reg_activities),
         DAILY_DRUG_USER: dailyDrugUser(csrp),
-        AMPHETAMINES: drugUsed(csrp.amphetamines_curr_use),
-        BENZODIAZIPINES: drugUsed(csrp.benzodiazepines_curr_use),
-        CANNABIS: drugUsed(csrp.cannabis_curr_use),
-        CRACK_COCAINE: drugUsed(csrp.crack_cocaine_curr_use),
-        ECSTASY: drugUsed(csrp.ecstasy_curr_use),
-        HALLUCINOGENS: drugUsed(csrp.hallucinogens_curr_use),
-        HEROIN: drugUsed(csrp.heroin_curr_use),
-        KETAMINE: drugUsed(csrp.ketamine_curr_use),
-        METHADONE: drugUsed(csrp.methadone_curr_use),
-        MISUSED_PRESCRIBED: drugUsed(csrp.misused_prescribed_curr_use),
-        OTHER_DRUGS: drugUsed(csrp.other_curr_use),
-        OTHER_OPIATE: drugUsed(csrp.other_opiate_curr_use),
-        POWDER_COCAINE: drugUsed(csrp.cocaine_hydrochloride_curr_use),
-        SOLVENTS: drugUsed(csrp.solvents_curr_use),
-        SPICE: drugUsed(csrp.spice_curr_use),
-        STEROIDS: drugUsed(csrp.steroids_curr_use),
+        AMPHETAMINES: drugUsed(csrp.s8_q1_drugs_misused, csrp.amphetamines_curr_use),
+        BENZODIAZIPINES: drugUsed(csrp.s8_q1_drugs_misused, csrp.benzodiazepines_curr_use),
+        CANNABIS: drugUsed(csrp.s8_q1_drugs_misused, csrp.cannabis_curr_use),
+        CRACK_COCAINE: drugUsed(csrp.s8_q1_drugs_misused, csrp.crack_cocaine_curr_use),
+        ECSTASY: drugUsed(csrp.s8_q1_drugs_misused, csrp.ecstasy_curr_use),
+        HALLUCINOGENS: drugUsed(csrp.s8_q1_drugs_misused, csrp.hallucinogens_curr_use),
+        HEROIN: drugUsed(csrp.s8_q1_drugs_misused, csrp.heroin_curr_use),
+        KETAMINE: drugUsed(csrp.s8_q1_drugs_misused, csrp.ketamine_curr_use),
+        METHADONE: drugUsed(csrp.s8_q1_drugs_misused, csrp.methadone_curr_use),
+        MISUSED_PRESCRIBED: drugUsed(csrp.s8_q1_drugs_misused, csrp.misused_prescribed_curr_use),
+        OTHER_DRUGS: drugUsed(csrp.s8_q1_drugs_misused, csrp.other_curr_use),
+        OTHER_OPIATE: drugUsed(csrp.s8_q1_drugs_misused, csrp.other_opiate_curr_use),
+        POWDER_COCAINE: drugUsed(csrp.s8_q1_drugs_misused, csrp.cocaine_hydrochloride_curr_use),
+        SOLVENTS: drugUsed(csrp.s8_q1_drugs_misused, csrp.solvents_curr_use),
+        SPICE: drugUsed(csrp.s8_q1_drugs_misused, csrp.spice_curr_use),
+        STEROIDS: drugUsed(csrp.s8_q1_drugs_misused, csrp.steroids_curr_use),
         EIGHT_POINT_EIGHT: q88(csrp.s8_q1_drugs_misused, getNumericAnswer(csrp.s8_q8_motiv_drug_misuse)),
         NINE_POINT_ONE: getNumericAnswer(csrp.s9_q1_alcohol),
         NINE_POINT_TWO: getNumericAnswer(csrp.s9_q2_binge_drink),
@@ -95,9 +95,9 @@ function lookupValue(value: string, lookup: { [key: string]: string }): string {
     return result == undefined ? value : result
 }
 
-function drugUsed(drugUse: string) {
+function drugUsed(s8_q1: string, drugUse: string) {
 
-    return drugUse == null ? null : 'Y'
+    return (s8_q1 != 'YES' || drugUse == null) ? null : 'Y'
 }
 
 function dailyDrugUser(csrp: OgrsCsrp) {

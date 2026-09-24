@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test'
 
 import { test, Oasys, User, Offender, Assessment, San } from 'fixtures'
-import { getMappingTestOffender } from './xMappingTest'
+import { getMappingTestOffender } from './mappingTestOffender'
 
 type TestCase = { ref: number, lastSix: boolean, frequency: DrugsFrequency, injectedLastSix: boolean, injectedMoreThanSix: boolean }
 

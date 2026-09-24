@@ -1,5 +1,5 @@
 import { test, Oasys, Assessment, San } from 'fixtures'
-import { getMappingTestOffender } from './xMappingTest'
+import { getMappingTestOffender } from './mappingTestOffender'
 
 
 type AccommodationOptions = 'family' | 'friends' | 'partner' | 'child' | 'other' | 'unknown' | 'alone'

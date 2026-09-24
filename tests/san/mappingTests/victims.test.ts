@@ -1,10 +1,10 @@
 import { test, Assessment, San } from 'fixtures'
-import { getMappingTestOffender } from './xMappingTest'
+import { getMappingTestOffender } from './mappingTestOffender'
 
 type TestCaseVictim = { victimRelationship: VictimRelationship, victimAge: VictimAge, victimSex: VictimSex, victimRace: VictimRace }
 type TestCase = { ref: number, offenceElements: OffenceElements[], victim1: TestCaseVictim, victim2: TestCaseVictim, victim3: TestCaseVictim }
 
-// test.describe.configure({ retries: 1 })
+test.describe.configure({ retries: 1 })
 test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()

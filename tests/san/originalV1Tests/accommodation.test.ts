@@ -1,5 +1,5 @@
 import { test } from 'fixtures'
-import { mappingTest } from '../mappingTests/xMappingTest'
+import { mappingTest } from './xMappingTest'
 import * as data from '../data/mapping'
 
 // Ensure tests/data/local/mappingTestsOffender.txt has been updated by running tests/setup/sanMappingTestOffender first.

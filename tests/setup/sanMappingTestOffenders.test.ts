@@ -2,7 +2,7 @@ import * as fs from 'fs-extra'
 
 import { test } from 'fixtures'
 import { userSuffixes } from 'localSettings'
-import { mappingTestOffenderFile } from 'tests/san/mappingTests/xMappingTest'
+import { mappingTestOffenderFile } from 'tests/san/originalV1Tests/xMappingTest'
 
 /**
  * Creates an offender and writes the details to a local file.  This should be run before running any of the mapping tests.

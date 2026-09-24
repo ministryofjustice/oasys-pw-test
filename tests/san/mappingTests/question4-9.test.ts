@@ -1,5 +1,5 @@
 import { test, Oasys, Assessment, San } from 'fixtures'
-import { getMappingTestOffender } from './xMappingTest'
+import { getMappingTestOffender } from './mappingTestOffender'
 
 
 type HighestQualOptions = 'entryLevel' | 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'level6' | 'level7' | 'level8' | 'none' | 'unknown'

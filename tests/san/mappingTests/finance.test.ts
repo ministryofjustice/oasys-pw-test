@@ -1,5 +1,5 @@
 import { test, Assessment, San } from 'fixtures'
-import { getMappingTestOffender } from './xMappingTest'
+import { getMappingTestOffender } from './mappingTestOffender'
 import { paTest } from './practitionerAnalysis'
 
 type TestCase = { ref: number, incomeSource: IncomeSource[], overReliant: SanYesNoUnknown, howGoodManaging: HowGoodManaging }

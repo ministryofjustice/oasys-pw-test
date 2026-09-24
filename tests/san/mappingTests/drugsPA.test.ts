@@ -1,5 +1,5 @@
 import { test, Oasys, User, Offender, Assessment, San } from 'fixtures'
-import { getMappingTestOffender } from './xMappingTest'
+import { getMappingTestOffender } from './mappingTestOffender'
 
 type TextType = 'normal' | 'max' | 'empty'
 type Motivation = 'noMotivation' | 'someMotivation' | 'motivated' | 'unknown'

@@ -170,8 +170,8 @@ export class Api {
                 standaloneRsrs.forEach((assessment) => {
                     this.addAssessment(v4RsrEndpoints, apiParams, offenderData.probationCrn, assessment)
 
-                    // Add tier predictors - only if initiated after 2024 to avoid incompatible data
-                    if (assessment.initiationDate > '2024' && crnSource == 'prob') {
+                    // Add tier predictors - only if initiated after 2026 to avoid incompatible data
+                    if (assessment.initiationDate > '2026' && crnSource == 'prob') {
                         const tierPredictorsParams: EndpointParams = {
                             endpoint: 'tierPredictors',
                             assessmentPk: assessment.assessmentPk,

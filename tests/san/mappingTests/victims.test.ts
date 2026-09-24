@@ -239,7 +239,7 @@ function mappingVictimRace(race: VictimRace): string {
         case 'White - Gypsy or Irish Traveller':
             return 'W4'
         case 'White - Roma':
-            return 'WS'
+            return 'W5'
         case 'White - Any other White background':
             return 'W9'
         case 'Mixed - White and Black Caribbean':
@@ -273,7 +273,7 @@ function mappingVictimRace(race: VictimRace): string {
         case 'Not stated':
             return null
         case 'Unknown':
-            return 'O9'
+            return 'NS'
         default:
             return null
     }

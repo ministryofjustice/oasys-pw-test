@@ -29,4 +29,11 @@ export class PractitionerAnalysis extends OasysPage {
     markAsComplete = new Element.Button(this.page, `button[value='YES']`)
     returnToOASys = new Element.Link(this.page, 'Return to OASys')
 
+
+    async populateMinimal() {
+
+        await this.strengths.setValue('no')
+        await this.riskOfHarm.setValue('no')
+        await this.riskOfReoffending.setValue('no')
+    }
 }

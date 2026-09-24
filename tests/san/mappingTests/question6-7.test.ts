@@ -85,15 +85,15 @@ test('Mapping test for question 6.7', async ({ oasys, user, offender, assessment
             assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 
             await san.gotoSan('Offence analysis', true)
-            await san.offenceAnalysis1.offenceDescription.setValue('Offence')
-            await san.offenceAnalysis1.offenceElements.setValue(['none'])
-            await san.offenceAnalysis1.reason.setValue('Reason')
-            await san.offenceAnalysis1.motivations.setValue(['addictions'])
-            await san.offenceAnalysis1.victimType.setValue(['other'])
-            await san.offenceAnalysis1.victimTypeDetails.setValue('Victim details')
-            await san.offenceAnalysis1.saveAndContinue.click()
-            await san.offenceAnalysis2.howManyOthers.setValue('0')
-            await san.offenceAnalysis2.saveAndContinue.click()
+            await san.offenceAnalysis.page1.offenceDescription.setValue('Offence')
+            await san.offenceAnalysis.page1.offenceElements.setValue(['none'])
+            await san.offenceAnalysis.page1.reason.setValue('Reason')
+            await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
+            await san.offenceAnalysis.page1.victimType.setValue(['other'])
+            await san.offenceAnalysis.page1.victimTypeDetails.setValue('Victim details')
+            await san.offenceAnalysis.page1.saveAndContinue.click()
+            await san.offenceAnalysis.page2.howManyOthers.setValue('0')
+            await san.offenceAnalysis.page2.saveAndContinue.click()
         } else {
             await san.gotoSan('Offence analysis', true)
         }
@@ -115,13 +115,13 @@ test('Mapping test for question 6.7', async ({ oasys, user, offender, assessment
 
 async function setOptions(perp: AbuseOptions, perpType: AbuseTypeOptions, victim: AbuseOptions, victimType: AbuseTypeOptions, san: San) {
 
-    await san.offenceAnalysis3.domesticAbusePerpetrator.setValue(perp)
+    await san.offenceAnalysis.page3.domesticAbusePerpetrator.setValue(perp)
     if (perp == 'yes') {
-        await san.offenceAnalysis3.domesticAbusePerpetratorType.setValue(perpType)
+        await san.offenceAnalysis.page3.domesticAbusePerpetratorType.setValue(perpType)
     }
-    await san.offenceAnalysis3.domesticAbuseVictim.setValue(victim)
+    await san.offenceAnalysis.page3.domesticAbuseVictim.setValue(victim)
     if (victim == 'yes') {
-        await san.offenceAnalysis3.domesticAbuseVictimType.setValue(victimType)
+        await san.offenceAnalysis.page3.domesticAbuseVictimType.setValue(victimType)
     }
 }
 

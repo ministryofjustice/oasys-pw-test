@@ -1,7 +1,8 @@
 import { Page } from '@playwright/test'
 
 import { Oasys, Assessment, San } from 'fixtures'
-import { PractitionerAnalysis, SanSections } from 'fixtures/san/pages'
+import { PractitionerAnalysis } from 'fixtures/san/pages'
+import { sanIdPrefixLookup } from 'fixtures/san/sanIds'
 
 type TextType = 'normal' | 'max' | 'empty'
 type TestCase = {
@@ -191,19 +192,6 @@ function answerText(question: 'strengths' | 'riskOfHarm' | 'riskOfReoffending', 
         : `${test[question]
             ? yesPrefix[question]
             : noPrefix[question]}${getText(question, test[question], test[`${question}Text`])}`
-}
-
-const sanIdPrefixLookup: { [key in SanSection]: string } = {
-    'Accommodation': 'accommodation',
-    'Employment and education': 'employment_education',
-    'Finances': 'finance',
-    'Drug use': 'drug_use',
-    'Alcohol use': 'alcohol_use',
-    'Health and wellbeing': 'health_wellbeing',
-    'Personal relationships and community': 'personal_relationships_community',
-    'Thinking, behaviours and attitudes': 'thinking_behaviours_attitudes',
-    'Offence analysis': '',
-    'Sentence plan': '',
 }
 
 const sanCompletionPrefixLookup: { [key in SanSection]: string } = {

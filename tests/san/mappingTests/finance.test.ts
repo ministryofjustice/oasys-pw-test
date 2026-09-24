@@ -65,12 +65,12 @@ test('Mapping test V2: finance', async ({ page, oasys, user, offender, assessmen
 
     // Complete everything needed for PA
     await san.gotoSan('Finances', true)
-    await san.finance.incomeSource.setValue(['carersAllowance'])
-    await san.finance.ownAccount.setValue('unknown')
-    await san.finance.howGoodManaging.setValue('able')
-    await san.finance.gambling.setValue(['no'])
-    await san.finance.debt.setValue(['no'])
-    await san.finance.wantChangesFinance.setValue('madeChanges')
+    await san.finance.page1.incomeSource.setValue(['carersAllowance'])
+    await san.finance.page1.ownAccount.setValue('unknown')
+    await san.finance.page1.howGoodManaging.setValue('able')
+    await san.finance.page1.gambling.setValue(['no'])
+    await san.finance.page1.debt.setValue(['no'])
+    await san.finance.page1.wantChangesFinance.setValue('madeChanges')
     await san.saveAndContinue()
     await san.returnToOASys()
 
@@ -81,11 +81,11 @@ test('Mapping test V2: finance', async ({ page, oasys, user, offender, assessmen
 
 async function scenario(test: TestCase, san: San) {
 
-    await san.finance.incomeSource.setValue(test.incomeSource)
+    await san.finance.page1.incomeSource.setValue(test.incomeSource)
     if (test.incomeSource?.includes('family')) {
-        await san.finance.overReliant.setValue(test.overReliant)
+        await san.finance.page1.overReliant.setValue(test.overReliant)
     }
-    await san.finance.howGoodManaging.setValue(test.howGoodManaging)
+    await san.finance.page1.howGoodManaging.setValue(test.howGoodManaging)
 }
 
 async function checkAnswers(assessmentPk: number, test: TestCase, assessment: Assessment): Promise<boolean> {

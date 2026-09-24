@@ -7,7 +7,7 @@ declare type ElementStatus = 'notVisible' | 'enabled' | 'readonly' | 'visible'
 declare type ElementStatusAndValue = { status: ElementStatus, value: string }
 
 declare type Menu = {
-    type: 'Floating' | 'Main' | 'Subform' | 'San',
+    type: 'Floating' | 'Main' | 'Subform',
     level1: string,
     level2?: string
 }

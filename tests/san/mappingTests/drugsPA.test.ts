@@ -53,24 +53,24 @@ async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: 
 
         if (test.ref == 1) {
             await san.gotoSan('Drug use', true)
-            await san.drugs1.everUsed.setValue('yes')  // Need to set this otherwise the motivation question doesn't get returned
-            await san.drugs1.saveAndContinue.click()
-            await san.drugs2.drugType.setValue(['cannabis'])
-            await san.drugs2.cannabisLastSixMonths.setValue('no')
-            await san.drugs2.saveAndContinue.click()
-            await san.drugs3.detailsNotLastSixMonths.setValue('details')
-            await san.drugs3.treatment.setValue('no')
-            await san.drugs3.saveAndContinue.click()
-            await san.drugs4.whyStarted.setValue(['cultural'])
-            await san.drugs4.impactDrugs.setValue(['behavioural'])
-            await san.drugs4.wantChanges.setValue('madeChanges')
-            await san.drugs4.saveAndContinue.click()
-            await san.informationSummary.analysis.click()
+            await san.drugs.page1.everUsed.setValue('yes')  // Need to set this otherwise the motivation question doesn't get returned
+            await san.drugs.page1.saveAndContinue.click()
+            await san.drugs.page2.drugType.setValue(['cannabis'])
+            await san.drugs.page2.cannabisLastSixMonths.setValue('no')
+            await san.drugs.page2.saveAndContinue.click()
+            await san.drugs.page3.detailsNotLastSixMonths.setValue('details')
+            await san.drugs.page3.treatment.setValue('no')
+            await san.drugs.page3.saveAndContinue.click()
+            await san.drugs.page4.whyStarted.setValue(['cultural'])
+            await san.drugs.page4.impactDrugs.setValue(['behavioural'])
+            await san.drugs.page4.wantChanges.setValue('madeChanges')
+            await san.drugs.page4.saveAndContinue.click()
+            await san.practitionerAnalysis()
         } else {
             await san.gotoSan('Drug use', true)
-            await san.informationSummary.analysis.click()
+            await san.practitionerAnalysis()
             if (test.ref > 2) {
-                await san.drugsPractitionerAnalysis.change.click()
+                await san.drugs.practitionerAnalysis.change.click()
             }
         }
 
@@ -93,21 +93,21 @@ async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: 
 
 async function scenario(test: TestCase, san: San) {
 
-    await san.drugsPractitionerAnalysis.motivatedToStop.setValue(test.motivated)
+    await san.drugs.practitionerAnalysis.motivatedToStop.setValue(test.motivated)
     await setValues('strengths', test, san)
     await setValues('riskOfHarm', test, san)
     await setValues('riskOfReoffending', test, san)
-    await san.drugsPractitionerAnalysis.saveAndContinue.click()
+    await san.drugs.practitionerAnalysis.saveAndContinue.click()
 }
 
 async function setValues(question: 'strengths' | 'riskOfHarm' | 'riskOfReoffending', test: TestCase, san: San) {
 
     if (test[question]) {
-        await san.drugsPractitionerAnalysis[question].setValue('yes')
-        await san.drugsPractitionerAnalysis[`${question}YesDetails`].setValue(getText(question, true, test[`${question}Text`]))
+        await san.drugs.practitionerAnalysis[question].setValue('yes')
+        await san.drugs.practitionerAnalysis[`${question}YesDetails`].setValue(getText(question, true, test[`${question}Text`]))
     } else {
-        await san.drugsPractitionerAnalysis[question].setValue('no')
-        await san.drugsPractitionerAnalysis[`${question}NoDetails`].setValue(getText(question, false, test[`${question}Text`]))
+        await san.drugs.practitionerAnalysis[question].setValue('no')
+        await san.drugs.practitionerAnalysis[`${question}NoDetails`].setValue(getText(question, false, test[`${question}Text`]))
     }
 }
 

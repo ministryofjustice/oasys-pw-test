@@ -34,14 +34,14 @@ test('Mapping test V2: control characters', async ({ oasys, user, offender, asse
         if (test.ref > 1) {
             await san.previous()
         }
-        await san.offenceAnalysis1.offenceElements.setValue(['arson'])
-        await san.offenceAnalysis1.reason.setValue('Reason')
-        await san.offenceAnalysis1.motivations.setValue(['addictions'])
-        await san.offenceAnalysis1.victimType.setValue(['other'])
-        await san.offenceAnalysis1.victimTypeDetails.setValue('Some details')
+        await san.offenceAnalysis.page1.offenceElements.setValue(['arson'])
+        await san.offenceAnalysis.page1.reason.setValue('Reason')
+        await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
+        await san.offenceAnalysis.page1.victimType.setValue(['other'])
+        await san.offenceAnalysis.page1.victimTypeDetails.setValue('Some details')
 
         // Set values on SAN, return to OASys and check the results
-        await san.offenceAnalysis1.offenceDescription.setValue(test.offenceDescription)
+        await san.offenceAnalysis.page1.offenceDescription.setValue(test.offenceDescription)
         await san.saveAndContinue()
         await san.returnToOASys()
         await oasys.clickButton('Previous', true)

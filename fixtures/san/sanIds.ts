@@ -45,7 +45,19 @@ export const victimRelationshipOptions: VictimRelationship[] = ['stranger', 'sta
 export const victimAgeOptions: VictimAge[] = ['0to4', '5to11', '12to15', '16to17', '18to20', '21to25', '26to49', '50to64', '65plus']
 export const victimSexOptions: VictimSex[] = ['male', 'female', 'intersex', 'unknown']
 
-
+// Practitioner analysis
+export const sanIdPrefixLookup: { [key in SanSection]: string } = {
+    'Accommodation': 'accommodation',
+    'Employment and education': 'employment_education',
+    'Finances': 'finance',
+    'Drug use': 'drug_use',
+    'Alcohol use': 'alcohol_use',
+    'Health and wellbeing': 'health_wellbeing',
+    'Personal relationships and community': 'personal_relationships_community',
+    'Thinking, behaviours and attitudes': 'thinking_behaviours_attitudes',
+    'Offence analysis': '',
+    'Sentence plan': '',
+}
 
 export const sanIds: SanIds = {
 

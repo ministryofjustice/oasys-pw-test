@@ -8,46 +8,39 @@ import { Element } from 'classes'
 import { Oasys, OasysDb, Risk, Sections } from 'fixtures'
 import * as pages from './pages'
 import { sanIds } from './sanIds'
-import * as exampleTest from './exampleTest'
 import { Queries } from './queries'
 import { Predictors } from 'fixtures/sections/pages/predictors'
 import { Queries as AssessmentQueries } from 'fixtures/assessment/queries'
 import { BaseSanEditPage } from './pages/baseSanEditPage'
+import { Accommodation } from './accommodation/accommodation'
+import { Employment } from './employment/employment'
+import { Finance } from './finance/finance'
+import { Drugs } from './drugs/drugs'
+import { Alcohol } from './alcohol/alcohol'
+import { Health } from './health/health'
+import { Relationships } from './relationships/relationships'
+import { Thinking } from './thinking/thinking'
+import { OffenceAnalysis } from './offenceAnalysis/offenceAnalysis'
 
 
 export class San {
 
     constructor(private readonly page: Page, private readonly oasys: Oasys, private readonly oasysDb: OasysDb) { }
 
+    readonly accommodation = new Accommodation(this.page, this)
+    readonly employment = new Employment(this.page, this)
+    readonly finance = new Finance(this.page, this)
+    readonly drugs = new Drugs(this.page, this)
+    readonly alcohol = new Alcohol(this.page, this)
+    readonly health = new Health(this.page, this)
+    readonly relationships = new Relationships(this.page, this)
+    readonly thinking = new Thinking(this.page, this)
+    readonly offenceAnalysis = new OffenceAnalysis(this.page, this)
+
     readonly sanSections = new pages.SanSections(this.page)
     readonly baseSanEditPage = new BaseSanEditPage(this.page)
     readonly landingPage = new pages.LandingPage(this.page)
-    readonly accommodation1 = new pages.Accommodation1(this.page)
-    readonly accommodation2 = new pages.Accommodation2(this.page)
     readonly accommodationPractitionerAnalysis = new pages.PractitionerAnalysis(this.page, 'Accommodation', 'accommodation')
-    readonly alcohol1 = new pages.Alcohol1(this.page)
-    readonly alcohol2 = new pages.Alcohol2(this.page)
-    readonly drugs1 = new pages.Drugs1(this.page)
-    readonly drugs2 = new pages.Drugs2(this.page)
-    readonly drugs3 = new pages.Drugs3(this.page)
-    readonly drugs4 = new pages.Drugs4(this.page)
-    readonly drugsPractitionerAnalysis = new pages.DrugsPractitionerAnalysis(this.page)
-    readonly employment1 = new pages.Employment1(this.page)
-    readonly employment2 = new pages.Employment2(this.page)
-    readonly finance = new pages.Finance(this.page)
-    readonly health1 = new pages.Health1(this.page)
-    readonly health2 = new pages.Health2(this.page)
-    readonly informationSummary = new pages.InformationSummary(this.page)
-    readonly offenceAnalysis1 = new pages.OffenceAnalysis1(this.page)
-    readonly offenceAnalysis2 = new pages.OffenceAnalysis2(this.page)
-    readonly offenceAnalysis3 = new pages.OffenceAnalysis3(this.page)
-    readonly relationships1 = new pages.Relationships1(this.page)
-    readonly relationships2 = new pages.Relationships2(this.page)
-    readonly relationships3 = new pages.Relationships3(this.page)
-    readonly thinking1 = new pages.Thinking1(this.page)
-    readonly thinking2 = new pages.Thinking2(this.page)
-    readonly thinking3 = new pages.Thinking3(this.page)
-    readonly victims = new pages.Victims(this.page)
 
     readonly queries = new Queries(this.oasysDb)
 
@@ -83,7 +76,16 @@ export class San {
         } else {
             await this.gotoSanFromOffender()
         }
-        await this.populateSanSections('Minimally populate SAN sections', exampleTest.minimal, true)
+        log('Minimally populating SAN sections')
+        await this.accommodation.populateMinimal()
+        await this.employment.populateMinimal()
+        await this.finance.populateMinimal()
+        await this.drugs.populateMinimal()
+        await this.alcohol.populateMinimal()
+        await this.health.populateMinimal()
+        await this.relationships.populateMinimal()
+        await this.thinking.populateMinimal()
+        await this.offenceAnalysis.populateMinimal()
         await this.returnToOASys()
     }
 
@@ -133,7 +135,10 @@ export class San {
      */
     async goto(section: SanSection, supressLog: boolean = false) {
 
-        await new pages.SectionLandingPage(this.page, section).goto(supressLog)
+        if (!supressLog) {
+            log(`Go to SAN section: ${section}`)
+        }
+        await this.page.locator('.moj-side-navigation__item a').filter({ hasText: section }).first().click()
     }
 
     /**

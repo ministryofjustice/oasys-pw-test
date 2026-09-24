@@ -1,1 +1,0 @@
-export * as ExampleTest from './exampleTest'

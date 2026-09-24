@@ -106,8 +106,8 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
                 await san.previous()
             }
             startPage = 1
-            await san.offenceAnalysis1.offenceElements.setValue(['arson'])
-            await san.offenceAnalysis1.motivations.setValue(['addictions'])
+            await san.offenceAnalysis.page1.offenceElements.setValue(['arson'])
+            await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
             await san.returnToOASys()
             await sections.predictors.goto()
             await sections.predictors.o1_30.setValue('')
@@ -123,57 +123,57 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
 
 async function scenario(test: TestCase, san: San) {
 
-    await san.offenceAnalysis1.offenceDescription.setValue(test.page1.offenceDescription)
-    await san.offenceAnalysis1.offenceElements.setValue(test.page1.offenceElements)
-    await san.offenceAnalysis1.reason.setValue(test.page1.reason)
-    await san.offenceAnalysis1.motivations.setValue(test.page1.motivations)
+    await san.offenceAnalysis.page1.offenceDescription.setValue(test.page1.offenceDescription)
+    await san.offenceAnalysis.page1.offenceElements.setValue(test.page1.offenceElements)
+    await san.offenceAnalysis.page1.reason.setValue(test.page1.reason)
+    await san.offenceAnalysis.page1.motivations.setValue(test.page1.motivations)
     if (test.page1.motivations.includes('other')) {
-        await san.offenceAnalysis1.motivationOther.setValue(test.page1.motivationOther)
+        await san.offenceAnalysis.page1.motivationOther.setValue(test.page1.motivationOther)
     }
 
     if (test.page2) {
         if (test.page1.offenceElements.includes('victimTargeted')) {
-            await san.offenceAnalysis1.victimTargetedDetails.setValue('Some details')
+            await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Some details')
         }
-        await san.offenceAnalysis1.victimType.setValue(['other'])
-        await san.offenceAnalysis1.victimTypeDetails.setValue('Some details')
+        await san.offenceAnalysis.page1.victimType.setValue(['other'])
+        await san.offenceAnalysis.page1.victimTypeDetails.setValue('Some details')
         await san.saveAndContinue()
-        await san.offenceAnalysis2.howManyOthers.setValue(test.page2.howManyOthers
+        await san.offenceAnalysis.page2.howManyOthers.setValue(test.page2.howManyOthers
 
         )
         if (test.page3) {
             await san.saveAndContinue()
 
             if (test.page3.leader) {
-                await san.offenceAnalysis3.leader.setValue(test.page3.leader)
+                await san.offenceAnalysis.page3.leader.setValue(test.page3.leader)
                 if (test.page3.leader == 'yes') {
-                    await san.offenceAnalysis3.leaderYesDetails.setValue(test.page3.leaderYesDetails)
+                    await san.offenceAnalysis.page3.leaderYesDetails.setValue(test.page3.leaderYesDetails)
                 } else if (test.page3.leader == 'no') {
-                    await san.offenceAnalysis3.leaderNoDetails.setValue(test.page3.leaderNoDetails)
+                    await san.offenceAnalysis.page3.leaderNoDetails.setValue(test.page3.leaderNoDetails)
                 }
             }
-            await san.offenceAnalysis3.impact.setValue(test.page3.impact)
-            await san.offenceAnalysis3.responsibility.setValue(test.page3.responsibility)
+            await san.offenceAnalysis.page3.impact.setValue(test.page3.impact)
+            await san.offenceAnalysis.page3.responsibility.setValue(test.page3.responsibility)
             if (test.page3.responsibility == 'yes') {
-                await san.offenceAnalysis3.responsibilityYesDetails.setValue(test.page3.responsibilityYesDetails)
+                await san.offenceAnalysis.page3.responsibilityYesDetails.setValue(test.page3.responsibilityYesDetails)
             } else if (test.page3.responsibility == 'no') {
-                await san.offenceAnalysis3.responsibilityNoDetails.setValue(test.page3.responsibilityNoDetails)
+                await san.offenceAnalysis.page3.responsibilityNoDetails.setValue(test.page3.responsibilityNoDetails)
             }
-            await san.offenceAnalysis3.patterns.setValue(test.page3.patterns)
-            await san.offenceAnalysis3.escalation.setValue(test.page3.escalation)
-            await san.offenceAnalysis3.domesticAbusePerpetrator.setValue(test.page3.domesticAbusePerpetrator)
+            await san.offenceAnalysis.page3.patterns.setValue(test.page3.patterns)
+            await san.offenceAnalysis.page3.escalation.setValue(test.page3.escalation)
+            await san.offenceAnalysis.page3.domesticAbusePerpetrator.setValue(test.page3.domesticAbusePerpetrator)
             if (test.page3.domesticAbusePerpetrator == 'yes') {
-                await san.offenceAnalysis3.domesticAbusePerpetratorType.setValue(test.page3.domesticAbusePerpetratorType)
+                await san.offenceAnalysis.page3.domesticAbusePerpetratorType.setValue(test.page3.domesticAbusePerpetratorType)
             }
-            await san.offenceAnalysis3.domesticAbuseVictim.setValue(test.page3.domesticAbuseVictim)
+            await san.offenceAnalysis.page3.domesticAbuseVictim.setValue(test.page3.domesticAbuseVictim)
             if (test.page3.domesticAbuseVictim == 'yes') {
-                await san.offenceAnalysis3.domesticAbuseVictimType.setValue(test.page3.domesticAbuseVictimType)
+                await san.offenceAnalysis.page3.domesticAbuseVictimType.setValue(test.page3.domesticAbuseVictimType)
             }
-            await san.offenceAnalysis3.riskSeriousHarm.setValue(test.page3.riskSeriousHarm)
+            await san.offenceAnalysis.page3.riskSeriousHarm.setValue(test.page3.riskSeriousHarm)
             if (test.page3.riskSeriousHarm == 'yes') {
-                await san.offenceAnalysis3.riskSeriousHarmYesDetails.setValue(test.page3.riskSeriousHarmYesDetails)
+                await san.offenceAnalysis.page3.riskSeriousHarmYesDetails.setValue(test.page3.riskSeriousHarmYesDetails)
             } else if (test.page3.riskSeriousHarm == 'no') {
-                await san.offenceAnalysis3.riskSeriousHarmNoDetails.setValue(test.page3.riskSeriousHarmNoDetails)
+                await san.offenceAnalysis.page3.riskSeriousHarmNoDetails.setValue(test.page3.riskSeriousHarmNoDetails)
             }
 
             startPage = 3

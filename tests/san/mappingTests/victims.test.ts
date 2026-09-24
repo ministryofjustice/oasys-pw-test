@@ -50,20 +50,20 @@ test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san
         // Get to the right starting screen
         await san.gotoSan('Offence analysis', true)
         if (test.ref == 1) {
-            await san.offenceAnalysis1.offenceDescription.setValue('Description')
-            await san.offenceAnalysis1.offenceElements.setValue(test.offenceElements)
+            await san.offenceAnalysis.page1.offenceDescription.setValue('Description')
+            await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
             if (test.offenceElements.includes('victimTargeted')) {
-                await san.offenceAnalysis1.victimTargetedDetails.setValue('Victim targeted details')
+                await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Victim targeted details')
             }
-            await san.offenceAnalysis1.reason.setValue('Reason')
-            await san.offenceAnalysis1.motivations.setValue(['addictions'])
-            await san.offenceAnalysis1.victimType.setValue(['people'])
+            await san.offenceAnalysis.page1.reason.setValue('Reason')
+            await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
+            await san.offenceAnalysis.page1.victimType.setValue(['people'])
             await san.saveAndContinue()
         } else {
             await san.previous()
-            await san.offenceAnalysis1.offenceElements.setValue(test.offenceElements)
+            await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
             if (test.offenceElements.includes('victimTargeted')) {
-                await san.offenceAnalysis1.victimTargetedDetails.setValue('Victim targeted details')
+                await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Victim targeted details')
             }
             await san.saveAndContinue()
             await san.change()
@@ -93,14 +93,14 @@ async function scenario(test: TestCase, san: San) {
     await setVictimDetails(test.victim1, san)
     if (test.victim2) {
         if (test.ref == 16) {
-            await san.victims.addAnotherVictim.click()
+            await san.offenceAnalysis.victims.addAnotherVictim.click()
         } else {
             await san.change(2)
         }
         await setVictimDetails(test.victim2, san)
         if (test.victim3) {
             if (test.ref == 18) {
-                await san.victims.addAnotherVictim.click()
+                await san.offenceAnalysis.victims.addAnotherVictim.click()
             } else {
                 await san.change(3)
             }
@@ -111,13 +111,13 @@ async function scenario(test: TestCase, san: San) {
 
 async function setVictimDetails(victim: TestCaseVictim, san: San) {
 
-    await san.victims.victimRelationship.setValue(victim.victimRelationship)
+    await san.offenceAnalysis.victims.victimRelationship.setValue(victim.victimRelationship)
     if (victim.victimRelationship == 'other') {
-        await san.victims.victimRelationshipOtherDetails.setValue('Other details')
+        await san.offenceAnalysis.victims.victimRelationshipOtherDetails.setValue('Other details')
     }
-    await san.victims.victimAge.setValue(victim.victimAge)
-    await san.victims.victimSex.setValue(victim.victimSex)
-    await san.victims.victimRace.setValue(victim.victimRace)
+    await san.offenceAnalysis.victims.victimAge.setValue(victim.victimAge)
+    await san.offenceAnalysis.victims.victimSex.setValue(victim.victimSex)
+    await san.offenceAnalysis.victims.victimRace.setValue(victim.victimRace)
     await san.saveAndContinue()
 }
 

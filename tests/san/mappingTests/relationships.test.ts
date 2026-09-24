@@ -59,7 +59,7 @@ test('Mapping test V2: relationships', async ({ page, oasys, user, offender, ass
         await san.gotoSan('Personal relationships and community', true)
         // Back to the start (page 2), depending where the previous scenario ended
         if (startPage == 1) {
-            await san.relationships1.anyChildren.setValue(['no'])
+            await san.relationships.page1.anyChildren.setValue(['no'])
             await san.saveAndContinue()
         } else {
             for (let i = 2; i < startPage; i++) {
@@ -85,8 +85,8 @@ test('Mapping test V2: relationships', async ({ page, oasys, user, offender, ass
 
     // Complete everything needed for PA
     await san.gotoSan('Personal relationships and community', true)
-    await san.relationships3.resolveChallenges.setValue('Testing')
-    await san.relationships3.wantChangesRelationships.setValue('madeChanges')
+    await san.relationships.page3.resolveChallenges.setValue('Testing')
+    await san.relationships.page3.wantChangesRelationships.setValue('madeChanges')
     await san.saveAndContinue()
     await san.returnToOASys()
 
@@ -97,19 +97,19 @@ test('Mapping test V2: relationships', async ({ page, oasys, user, offender, ass
 
 async function scenario(test: TestCase, san: San) {
 
-    await san.relationships2.importantPeople.setValue(test.page2.importantPeople)
+    await san.relationships.page2.importantPeople.setValue(test.page2.importantPeople)
     if (test.page2.importantPeople.includes('other')) {
-        await san.relationships2.importantOtherDetails.setValue('Other people details')
+        await san.relationships.page2.importantOtherDetails.setValue('Other people details')
     }
 
     if (test.page3) {
         await san.saveAndContinue()
-        await san.relationships3.happyWithStatus.setValue(test.page3.happyWithStatus)
-        await san.relationships3.history.setValue(test.page3.history)
-        await san.relationships3.manageParenting.setValue(test.page3.manageParenting)
-        await san.relationships3.currentFamilyRelationship.setValue(test.page3.currentFamilyRelationship)
-        await san.relationships3.childhoodExperience.setValue(test.page3.childhoodExperience)
-        await san.relationships3.behaviouralProblems.setValue(test.page3.behaviouralProblems)
+        await san.relationships.page3.happyWithStatus.setValue(test.page3.happyWithStatus)
+        await san.relationships.page3.history.setValue(test.page3.history)
+        await san.relationships.page3.manageParenting.setValue(test.page3.manageParenting)
+        await san.relationships.page3.currentFamilyRelationship.setValue(test.page3.currentFamilyRelationship)
+        await san.relationships.page3.childhoodExperience.setValue(test.page3.childhoodExperience)
+        await san.relationships.page3.behaviouralProblems.setValue(test.page3.behaviouralProblems)
         startPage = 3
     } else {
         startPage = 2

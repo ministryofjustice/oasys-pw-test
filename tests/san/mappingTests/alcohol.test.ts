@@ -92,15 +92,15 @@ test('Mapping test V2: alcohol', async ({ page, oasys, user, offender, assessmen
 
     // Complete everything needed for PA
     await san.gotoSan('Alcohol use', true)
-    await san.alcohol2.howOftenLast3.setValue('1PerMonth')
-    await san.alcohol2.typicalUnits.setValue('10orMore')
-    await san.alcohol2.had8OrMore.setValue('no')
-    await san.alcohol2.bingeDrinking.setValue('noEvidence')
-    await san.alcohol2.pastIssues.setValue('no')
-    await san.alcohol2.whyDrink.setValue(['cultural'])
-    await san.alcohol2.impactAlcohol.setValue(['behavioural'])
-    await san.alcohol2.anythingHelpedAlcohol.setValue('no')
-    await san.alcohol2.wantChangesAlcohol.setValue('madeChanges')
+    await san.alcohol.page2.howOftenLast3.setValue('1PerMonth')
+    await san.alcohol.page2.typicalUnits.setValue('10orMore')
+    await san.alcohol.page2.had8OrMore.setValue('no')
+    await san.alcohol.page2.bingeDrinking.setValue('noEvidence')
+    await san.alcohol.page2.pastIssues.setValue('no')
+    await san.alcohol.page2.whyDrink.setValue(['cultural'])
+    await san.alcohol.page2.impactAlcohol.setValue(['behavioural'])
+    await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
+    await san.alcohol.page2.wantChangesAlcohol.setValue('madeChanges')
     await san.saveAndContinue()
     await san.returnToOASys()
 
@@ -111,14 +111,14 @@ test('Mapping test V2: alcohol', async ({ page, oasys, user, offender, assessmen
 
 async function scenario(test: TestCase, san: San) {
 
-    await san.alcohol1.everDrank.setValue(test.page1.everDrank)
+    await san.alcohol.page1.everDrank.setValue(test.page1.everDrank)
     if (test.page2) {
         await san.saveAndContinue()
         if (test.page1.everDrank == 'yesIncLast3') {
-            await san.alcohol2.howOftenLast3.setValue(test.page2.howOftenLast3)
-            await san.alcohol2.typicalUnits.setValue(test.page2.typicalUnits)
+            await san.alcohol.page2.howOftenLast3.setValue(test.page2.howOftenLast3)
+            await san.alcohol.page2.typicalUnits.setValue(test.page2.typicalUnits)
         }
-        await san.alcohol2.bingeDrinking.setValue(test.page2.bingeDrinking)
+        await san.alcohol.page2.bingeDrinking.setValue(test.page2.bingeDrinking)
         startPage = 2
     } else {
         startPage = 1

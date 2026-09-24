@@ -140,10 +140,10 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
             await page.waitForTimeout(5000)  // TODO see if this makes any difference to SAN reliability
             await san.gotoSan('Drug use', true)
             if (firstRun) {
-                await san.drugs1.everUsed.setValue('yes')
-                await san.drugs1.saveAndContinue.click()
+                await san.drugs.page1.everUsed.setValue('yes')
+                await san.drugs.page1.saveAndContinue.click()
             } else {
-                await san.drugs3.previous.click()
+                await san.drugs.page3.previous.click()
             }
             // Set values on SAN, return to OASys and check the results
             await scenario(drugType, test, san)
@@ -167,20 +167,20 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
 
 async function scenario(drugType: DrugType, test: TestCase, san: San) {
 
-    await san.drugs2.drugType.setValue([drugType])
+    await san.drugs.page2.drugType.setValue([drugType])
     if (drugType == 'other') {
-        await san.drugs2.drugTypeOther.setValue(otherDrugName)
+        await san.drugs.page2.drugTypeOther.setValue(otherDrugName)
     }
-    await san.drugs2[`${drugType}LastSixMonths`].setValue(test.lastSix ? 'yes' : 'no')
-    await san.drugs2.saveAndContinue.click()
+    await san.drugs.page2[`${drugType}LastSixMonths`].setValue(test.lastSix ? 'yes' : 'no')
+    await san.drugs.page2.saveAndContinue.click()
     if (test.lastSix && test.frequency != null) {
-        await san.drugs3[`${drugType}Frequency`].setValue(test.frequency)
+        await san.drugs.page3[`${drugType}Frequency`].setValue(test.frequency)
     }
     if (injectableDrug(drugType)) {
         if (test.injectedLastSix == null && test.injectedMoreThanSix == null) {
-            await san.drugs3.injected.setValue(['none'])
+            await san.drugs.page3.injected.setValue(['none'])
         } else {
-            await san.drugs3.injected.setValue([drugType as InjectableDrugType])
+            await san.drugs.page3.injected.setValue([drugType as InjectableDrugType])
             if (test.lastSix) {
                 const injectedValues: ('lastSix' | 'moreThanSix')[] = []
                 if (test.injectedLastSix) injectedValues.push('lastSix')

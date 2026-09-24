@@ -82,16 +82,16 @@ test('Mapping test V2: health and wellbeing', async ({ page, oasys, user, offend
 
     // Complete everything needed for PA
     await san.gotoSan('Health and wellbeing', true)
-    await san.health2.psychTreatment.setValue('no')
-    await san.health2.headInjury.setValue('no')
-    await san.health2.neurodiverse.setValue('no')
-    await san.health2.learningDifficulties.setValue('no')
-    await san.health2.coping.setValue('no')
-    await san.health2.attitude.setValue('positive')
-    await san.health2.selfHarmed.setValue('no')
-    await san.health2.suicide.setValue('no')
-    await san.health2.optimistic.setValue('optimistic')
-    await san.health2.wantChangesHealth.setValue('madeChanges')
+    await san.health.page2.psychTreatment.setValue('no')
+    await san.health.page2.headInjury.setValue('no')
+    await san.health.page2.neurodiverse.setValue('no')
+    await san.health.page2.learningDifficulties.setValue('no')
+    await san.health.page2.coping.setValue('no')
+    await san.health.page2.attitude.setValue('positive')
+    await san.health.page2.selfHarmed.setValue('no')
+    await san.health.page2.suicide.setValue('no')
+    await san.health.page2.optimistic.setValue('optimistic')
+    await san.health.page2.wantChangesHealth.setValue('madeChanges')
 
     await san.saveAndContinue()
     await san.returnToOASys()
@@ -103,17 +103,17 @@ test('Mapping test V2: health and wellbeing', async ({ page, oasys, user, offend
 
 async function scenario(test: TestCase, san: San) {
 
-    await san.health1.physicalHealthConditions.setValue('yes')
-    await san.health1.mentalHealthProblems.setValue(test.page1.mentalHealthProblems)
+    await san.health.page1.physicalHealthConditions.setValue('yes')
+    await san.health.page1.mentalHealthProblems.setValue(test.page1.mentalHealthProblems)
     if (test.page2) {
         await san.saveAndContinue()
-        await san.health2.psychTreatment.setValue(test.page2.psychTreatment)
-        await san.health2.headInjury.setValue(test.page2.headInjury)
-        await san.health2.learningDifficulties.setValue(test.page2.learningDifficulties)
-        await san.health2.coping.setValue(test.page2.coping)
-        await san.health2.attitude.setValue(test.page2.attitude)
-        await san.health2.selfHarmed.setValue(test.page2.selfHarmed)
-        await san.health2.suicide.setValue(test.page2.suicide)
+        await san.health.page2.psychTreatment.setValue(test.page2.psychTreatment)
+        await san.health.page2.headInjury.setValue(test.page2.headInjury)
+        await san.health.page2.learningDifficulties.setValue(test.page2.learningDifficulties)
+        await san.health.page2.coping.setValue(test.page2.coping)
+        await san.health.page2.attitude.setValue(test.page2.attitude)
+        await san.health.page2.selfHarmed.setValue(test.page2.selfHarmed)
+        await san.health.page2.suicide.setValue(test.page2.suicide)
         startPage = 2
     } else {
         startPage = 1

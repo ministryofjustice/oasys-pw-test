@@ -96,15 +96,15 @@ test('Mapping test V2: employment and education', async ({ page, oasys, user, of
 
     // Complete everything needed for PA
     await san.gotoSan('Employment and education', true)
-    await san.employment2.employmentHistory.setValue('continuous')
-    await san.employment2.additionalCommitments.setValue(['none'])
-    await san.employment2.highestQual.setValue('entryLevel')
-    await san.employment2.professionalQual.setValue('no')
-    await san.employment2.skills.setValue('no')
-    await san.employment2.difficulties.setValue(['none'])
-    await san.employment2.employmentExperience.setValue('unknown')
-    await san.employment2.educationExperience.setValue('unknown')
-    await san.employment2.wantChangesEmployment.setValue('madeChanges')
+    await san.employment.page2.employmentHistory.setValue('continuous')
+    await san.employment.page2.additionalCommitments.setValue(['none'])
+    await san.employment.page2.highestQual.setValue('entryLevel')
+    await san.employment.page2.professionalQual.setValue('no')
+    await san.employment.page2.skills.setValue('no')
+    await san.employment.page2.difficulties.setValue(['none'])
+    await san.employment.page2.employmentExperience.setValue('unknown')
+    await san.employment.page2.educationExperience.setValue('unknown')
+    await san.employment.page2.wantChangesEmployment.setValue('madeChanges')
     await san.saveAndContinue()
     await san.returnToOASys()
 
@@ -115,41 +115,41 @@ test('Mapping test V2: employment and education', async ({ page, oasys, user, of
 
 async function scenario(test: TestCase, san: San) {
 
-    await san.employment1.employmentStatus.setValue(test.page1.employmentStatus)
+    await san.employment.page1.employmentStatus.setValue(test.page1.employmentStatus)
     switch (test.page1.employmentStatus) {
         case 'employed':
-            await san.employment1.employmentType.setValue(test.page1.employmentType)
+            await san.employment.page1.employmentType.setValue(test.page1.employmentType)
             break
         case 'unavailable':
-            await san.employment1.unavailableEmployedBefore.setValue(test.page1.unavailableEmployedBefore)
+            await san.employment.page1.unavailableEmployedBefore.setValue(test.page1.unavailableEmployedBefore)
             break
         case 'unemployedLooking':
-            await san.employment1.lookingEmployedBefore.setValue(test.page1.lookingEmployedBefore)
+            await san.employment.page1.lookingEmployedBefore.setValue(test.page1.lookingEmployedBefore)
             break
         case 'unemployedNotLooking':
-            await san.employment1.notLookingEmployedBefore.setValue(test.page1.notLookingEmployedBefore)
+            await san.employment.page1.notLookingEmployedBefore.setValue(test.page1.notLookingEmployedBefore)
             break
     }
     if (test.page2) {
         await san.saveAndContinue()
-        await san.employment2.employmentHistory.setValue(test.page2.employmentHistory)
-        await san.employment2.highestQual.setValue(test.page2.highestQual)
-        await san.employment2.professionalQual.setValue(test.page2.professionalQual)
+        await san.employment.page2.employmentHistory.setValue(test.page2.employmentHistory)
+        await san.employment.page2.highestQual.setValue(test.page2.highestQual)
+        await san.employment.page2.professionalQual.setValue(test.page2.professionalQual)
         if (test.page2.professionalQual == 'yes') {
-            await san.employment2.professionalQualDetails.setValue(test.page2.professionalQualDetails)
+            await san.employment.page2.professionalQualDetails.setValue(test.page2.professionalQualDetails)
         }
-        await san.employment2.skills.setValue(test.page2.skills)
-        await san.employment2.difficulties.setValue(test.page2.difficulties)
+        await san.employment.page2.skills.setValue(test.page2.skills)
+        await san.employment.page2.difficulties.setValue(test.page2.difficulties)
         if (test.page2.difficulties.includes('reading')) {
-            await san.employment2.readingLevel.setValue(test.page2.readingLevel)
+            await san.employment.page2.readingLevel.setValue(test.page2.readingLevel)
         }
         if (test.page2.difficulties.includes('writing')) {
-            await san.employment2.writingLevel.setValue(test.page2.writingLevel)
+            await san.employment.page2.writingLevel.setValue(test.page2.writingLevel)
         }
         if (test.page2.difficulties.includes('numeracy')) {
-            await san.employment2.numeracyLevel.setValue(test.page2.numeracyLevel)
+            await san.employment.page2.numeracyLevel.setValue(test.page2.numeracyLevel)
         }
-        await san.employment2.educationExperience.setValue(test.page2.educationExperience)
+        await san.employment.page2.educationExperience.setValue(test.page2.educationExperience)
         startPage = 2
     } else {
         startPage = 1

@@ -80,8 +80,8 @@ test('Mapping test V2: accommodation', async ({ page, oasys, user, offender, ass
 
     // Complete everything needed for PA
     await san.gotoSan('Accommodation', true)
-    await san.accommodation2.livingWith.setValue(['alone'])
-    await san.accommodation2.wantChanges.setValue('madeChanges')
+    await san.accommodation.page2.livingWith.setValue(['alone'])
+    await san.accommodation.page2.wantChanges.setValue('madeChanges')
     await san.saveAndContinue()
     await san.returnToOASys()
 
@@ -92,18 +92,18 @@ test('Mapping test V2: accommodation', async ({ page, oasys, user, offender, ass
 
 async function scenario(test: TestCase, san: San) {
 
-    await san.accommodation1.currentAccommodation.setValue(test.page1.currentAccommodation)
+    await san.accommodation.page1.currentAccommodation.setValue(test.page1.currentAccommodation)
     if (test.page1.currentAccommodation == 'temporary') {
-        await san.accommodation1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
+        await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
     }
     if (test.page2) {
         if (test.page1.currentAccommodation == 'settled') {
-            await san.accommodation1.settledAccommodationType.setValue('homeowner')
+            await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
         }
         await san.saveAndContinue()
-        await san.accommodation2.livingWith.setValue(test.page2.livingWith)
-        await san.accommodation2.accommodationSuitable.setValue(test.page2.accommodationSuitable)
-        await san.accommodation2.locationSuitable.setValue(test.page2.locationSuitable)
+        await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
+        await san.accommodation.page2.accommodationSuitable.setValue(test.page2.accommodationSuitable)
+        await san.accommodation.page2.locationSuitable.setValue(test.page2.locationSuitable)
         startPage = 2
     } else {
         startPage = 1

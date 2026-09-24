@@ -114,29 +114,29 @@ test('Mapping test V2: thinking', async ({ page, oasys, user, offender, assessme
 
 async function scenario(test: TestCase, san: San) {
 
-    await san.thinking1.awareConsequences.setValue(test.page1.awareConsequences)
-    await san.thinking1.stableBehaviour.setValue(test.page1.stableBehaviour)
-    await san.thinking1.activitiesLinkedOffending.setValue(test.page1.activitiesLinkedOffending)
-    await san.thinking1.resilient.setValue(test.page1.resilient)
-    await san.thinking1.ableSolveProblems.setValue(test.page1.ableSolveProblems)
-    await san.thinking1.understandOthers.setValue(test.page1.understandOthers)
-    await san.thinking1.manipulativeBehaviour.setValue(test.page1.manipulativeBehaviour)
-    await san.thinking1.manageTemper.setValue(test.page1.manageTemper)
-    await san.thinking1.violence.setValue(test.page1.violence)
-    await san.thinking1.impulse.setValue(test.page1.impulse)
-    await san.thinking1.positiveAttitude.setValue(test.page1.positiveAttitude)
-    await san.thinking1.hostileOrientation.setValue(test.page1.hostileOrientation)
-    await san.thinking1.acceptSupervision.setValue(test.page1.acceptSupervision)
-    await san.thinking1.supportCriminalBehaviour.setValue(test.page1.supportCriminalBehaviour)
+    await san.thinking.page1.awareConsequences.setValue(test.page1.awareConsequences)
+    await san.thinking.page1.stableBehaviour.setValue(test.page1.stableBehaviour)
+    await san.thinking.page1.activitiesLinkedOffending.setValue(test.page1.activitiesLinkedOffending)
+    await san.thinking.page1.resilient.setValue(test.page1.resilient)
+    await san.thinking.page1.ableSolveProblems.setValue(test.page1.ableSolveProblems)
+    await san.thinking.page1.understandOthers.setValue(test.page1.understandOthers)
+    await san.thinking.page1.manipulativeBehaviour.setValue(test.page1.manipulativeBehaviour)
+    await san.thinking.page1.manageTemper.setValue(test.page1.manageTemper)
+    await san.thinking.page1.violence.setValue(test.page1.violence)
+    await san.thinking.page1.impulse.setValue(test.page1.impulse)
+    await san.thinking.page1.positiveAttitude.setValue(test.page1.positiveAttitude)
+    await san.thinking.page1.hostileOrientation.setValue(test.page1.hostileOrientation)
+    await san.thinking.page1.acceptSupervision.setValue(test.page1.acceptSupervision)
+    await san.thinking.page1.supportCriminalBehaviour.setValue(test.page1.supportCriminalBehaviour)
     if (test.page2) {
-        await san.thinking1.wantChangesThinking.setValue('madeChanges')
+        await san.thinking.page1.wantChangesThinking.setValue('madeChanges')
         await san.saveAndContinue()
-        await san.thinking2.riskOfSexualHarm.setValue(test.page2.riskOfSexualHarm)
+        await san.thinking.page2.riskOfSexualHarm.setValue(test.page2.riskOfSexualHarm)
         if (test.page3) {
             await san.saveAndContinue()
-            await san.thinking3.sexualPreoccupation.setValue(test.page3.sexualPreoccupation)
-            await san.thinking3.sexualInterests.setValue(test.page3.sexualInterests)
-            await san.thinking3.emotionalIntimacy.setValue(test.page3.emotionalIntimacy)
+            await san.thinking.page3.sexualPreoccupation.setValue(test.page3.sexualPreoccupation)
+            await san.thinking.page3.sexualInterests.setValue(test.page3.sexualInterests)
+            await san.thinking.page3.emotionalIntimacy.setValue(test.page3.emotionalIntimacy)
             startPage = 3
         } else {
             startPage = 2

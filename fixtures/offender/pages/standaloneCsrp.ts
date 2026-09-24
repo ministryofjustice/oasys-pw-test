@@ -268,7 +268,8 @@ export class StandaloneCsrp extends OasysPage {
     }
 
     async populateAllDynamicQuestions() {
-
+        
+        await this.o1_39.setValue('Yes')
         await this.o2_2Weapon.setValue('Yes')
         await this.o2_2SpecifyWeapon.setValue('A dagger')
         await this.o3_4.setValue('2-Significant problems')

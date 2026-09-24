@@ -114,10 +114,10 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
         }
 
     }
+    await user.logout()
 
     expect(failed).toBe(0)
 
-    await user.logout()
 })
 
 
@@ -261,12 +261,10 @@ function mapping2_3(test: TestCase): string {
 
     let result = ''
     if (test.page1.offenceElements.includes('victimTargeted')) {
-        'VICTIM_TARGETED'
         result = 'DIRECTCONT,'
     }
 
     if (test.page1.offenceElements.includes('hatred')) {
-        'HATRED_OF_IDENTIFIABLE_GROUPS'
         result = `${result}HATE,`
     }
     return result == '' ? null : result

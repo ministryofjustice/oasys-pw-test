@@ -47,6 +47,7 @@ export class San {
     readonly thinking1 = new pages.Thinking1(this.page)
     readonly thinking2 = new pages.Thinking2(this.page)
     readonly thinking3 = new pages.Thinking3(this.page)
+    readonly victims = new pages.Victims(this.page)
 
     readonly queries = new Queries(this.oasysDb)
 
@@ -65,9 +66,9 @@ export class San {
         await this.page.locator('#tab_practitioner-analysis').first().click()
     }
 
-    async change() {
+    async change(i = 1) {
 
-        await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).first().click()
+        await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).nth(i - 1).click()
     }
 
     async markAsComplete() {

@@ -84,3 +84,30 @@ declare type Motivations = 'addictions' | 'pressure' | 'emotional' | 'financial'
 declare type VictimType = 'people' | 'other'
 declare type HowManyOthers = '0' | '1' | '2' | '3' | '4' | '5' | '6to10' | '11to15' | 'more'
 declare type FamilyPartnerBoth = 'family' | 'partner' | 'both'
+
+// Victims
+declare type VictimRelationship = 'stranger' | 'staff' | 'parent' | 'partner' | 'exPartner' | 'child' | 'otherFamily' | 'other'
+declare type VictimAge = '0to4' | '5to11' | '12to15' | '16to17' | '18to20' | '21to25' | '26to49' | '50to64' | '65plus'
+declare type VictimSex = 'male' | 'female' | 'intersex' | 'unknown'
+declare type VictimRace =
+    'White - English, Welsh, Scottish, Northern Irish or British' |
+    'White - Irish' |
+    'White - Gypsy or Irish Traveller' |
+    'White - Roma' |
+    'White - Any other White background' |
+    'Mixed - White and Black Caribbean' |
+    'Mixed - White and Black African' |
+    'Mixed - White and Asian' |
+    'Mixed - Any other mixed or multiple ethnic background background' |
+    'Asian or Asian British - Indian' |
+    'Asian or Asian British - Pakistani' |
+    'Asian or Asian British - Bangladeshi' |
+    'Asian or Asian British - Chinese' |
+    'Asian or Asian British - Any other Asian background' |
+    'Black or Black British - Caribbean' |
+    'Black or Black British - African' |
+    'Black or Black British - Any other Black background' |
+    'Arab' |
+    'Any other ethnic group' |
+    'Not stated' |
+    'Unknown'

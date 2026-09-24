@@ -40,6 +40,12 @@ export const motivationsOptions: Motivations[] = ['addictions', 'pressure', 'emo
 export const howManyOthersOptions: HowManyOthers[] = ['0', '1', '2', '3', '4', '5', '6to10', '11to15', 'more']
 export const familyPartnerBothOptions: FamilyPartnerBoth[] = ['family', 'partner', 'both']
 
+// Victims
+export const victimRelationshipOptions: VictimRelationship[] = ['stranger', 'staff', 'parent', 'partner', 'exPartner', 'child', 'otherFamily', 'other']
+export const victimAgeOptions: VictimAge[] = ['0to4', '5to11', '12to15', '16to17', '18to20', '21to25', '26to49', '50to64', '65plus']
+export const victimSexOptions: VictimSex[] = ['male', 'female', 'intersex', 'unknown']
+
+
 
 export const sanIds: SanIds = {
 

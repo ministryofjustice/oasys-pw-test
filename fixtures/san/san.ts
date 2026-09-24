@@ -163,48 +163,6 @@ export class San {
     }
 
     /**
-     * Run the specified script to enter values in the SAN assessment, return to OASys and check values in the database.
-     * Parameters are:
-     *   - assessmentPk: the oasys_set_pk used to check values in the database
-     *   - a SanScript test script object (includes selection ids and one or more scenarios including test steps and expected OASys database values)
-     *   - a result alias to return a boolean status - true if the script failed on one or more of the OASys values
-     *   - reset130 (optional) - if true, the value of question 1.30 on the Predictors page will be reset between scenarios.
-     */
-    async runScript(assessmentPk: number, script: SanScript, reset130: boolean = false, predictors?: Predictors): Promise<boolean> {
-
-        let failed = false
-
-        for (let scenario of script.scenarios) { // Loop through scenarios in the script
-
-            await this.gotoSan(script.section, true)
-            await this.runScenario(scenario.name, scenario.steps, true)
-            await this.returnToOASys()
-            await this.oasys.clickButton('Previous', true)
-
-            const updateTimeFailed = await this.queries.checkLastUpdateTime(assessmentPk)
-            const getAssessmentCallFailed = await this.queries.checkSanGetAssessmentCall(assessmentPk, 0, true)
-            const answersFailed = await new AssessmentQueries(this.oasysDb).checkAnswers(assessmentPk, scenario.oasysAnswers, true)
-
-            if (updateTimeFailed || getAssessmentCallFailed || answersFailed) {
-                failed = true
-                log('', `Scenario ${scenario.name} FAILED`)
-            } else (
-                log('', `Scenario ${scenario.name} passed`)
-            )
-
-            if (reset130) {  // OA testing requires 1.30 to be reset between scenarios because a YES will not be overwritten
-                await this.gotoSan()
-                await this.populateSanSections('Reset 1.30', reset)  // Change OA details to allow 1.30 to be editable
-                await this.returnToOASys()
-                await predictors.goto()
-                await predictors.o1_30.setValue('')
-            }
-        }
-
-        return failed
-    }
-
-    /**
      * Populate one or more sections of a SAN assessment.
      *  - name: text for reporting purposes
      *  - script: a SanPopulation object defining questions/values/button clicks for one or more sections.

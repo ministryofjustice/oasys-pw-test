@@ -6,7 +6,6 @@ import { Page2 } from './page2'
 import { Page3 } from './page3'
 import { Page4 } from './page4'
 import { DrugsPractitionerAnalysis } from './drugsPractitionerAnalysis'
-import { sanIdPrefixLookup } from '../sanIds'
 
 const section: SanSection = 'Drug use'
 

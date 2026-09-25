@@ -137,13 +137,12 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
     for (const test of testCases) {
         if (injectableDrug(drugType) || (test.injectedLastSix == null && test.injectedMoreThanSix == null)) {  // skip injection tests for non-injectable drugs
             // Get to the right starting screen
-            await page.waitForTimeout(5000)  // TODO see if this makes any difference to SAN reliability
             await san.gotoSan('Drug use', true)
             if (firstRun) {
                 await san.drugs.page1.everUsed.setValue('yes')
-                await san.drugs.page1.saveAndContinue.click()
+                await san.saveAndContinue()
             } else {
-                await san.drugs.page3.previous.click()
+                await san.previous()
             }
             // Set values on SAN, return to OASys and check the results
             await scenario(drugType, test, san)
@@ -172,7 +171,7 @@ async function scenario(drugType: DrugType, test: TestCase, san: San) {
         await san.drugs.page2.drugTypeOther.setValue(otherDrugName)
     }
     await san.drugs.page2[`${drugType}LastSixMonths`].setValue(test.lastSix ? 'yes' : 'no')
-    await san.drugs.page2.saveAndContinue.click()
+    await san.saveAndContinue()
     if (test.lastSix && test.frequency != null) {
         await san.drugs.page3[`${drugType}Frequency`].setValue(test.frequency)
     }
@@ -186,7 +185,7 @@ async function scenario(drugType: DrugType, test: TestCase, san: San) {
                 if (test.injectedLastSix) injectedValues.push('lastSix')
                 if (test.injectedMoreThanSix) injectedValues.push('moreThanSix')
                 // @ts-expect-error // hide type error for non-injectable drugs
-                await san.drugs3[`${drugType}InjectedLastSixMonths`].setValue(injectedValues)
+                await san.drugs.page3[`${drugType}InjectedLastSixMonths`].setValue(injectedValues)
             }
         }
     }

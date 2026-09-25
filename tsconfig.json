@@ -27,30 +27,4 @@
         "test-results",
         "archivedCypressCode"
     ],
-    "typedocOptions": {
-        "entryPointStrategy": "expand",
-        "entryPoints": [
-            "@types/**/*.ts",
-            "classes/**/*.ts",
-            "fixtures/**/*.ts",
-            "lib/**/*.ts",
-        ],
-        "excludeExternals": true,
-        "excludeReferences": true,
-        "disableGit": true,
-        "sourceLinkTemplate": "../../{path}",
-        "router": "kind",
-        "plugin": [
-            "typedoc-plugin-missing-exports"
-        ],
-        "highlightLanguages": [
-            "javascript",
-            "json",
-            "jsonc",
-            "json5",
-            "tsx",
-            "typescript",
-            "markdown"
-        ]
-    }
 }

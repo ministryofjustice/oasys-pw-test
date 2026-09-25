@@ -9,8 +9,6 @@ import { Oasys, OasysDb, Risk, Sections } from 'fixtures'
 import * as pages from './pages'
 import { sanIds } from './sanIds'
 import { Queries } from './queries'
-import { Predictors } from 'fixtures/sections/pages/predictors'
-import { Queries as AssessmentQueries } from 'fixtures/assessment/queries'
 import { BaseSanEditPage } from './pages/baseSanEditPage'
 import { Accommodation } from './accommodation/accommodation'
 import { Employment } from './employment/employment'
@@ -54,7 +52,7 @@ export class San {
         await this.baseSanEditPage.saveAndContinue.click()
     }
 
-    async practitionerAnalysis() {
+    async openPractitionerAnalysis() {
 
         await this.page.locator('#tab_practitioner-analysis').first().click()
     }
@@ -69,12 +67,12 @@ export class San {
         await this.page.getByText('Mark as complete').first().click()
     }
 
-    async populateMinimal(from: 'assessment' | 'offender' = 'assessment') {
+    async populateMinimal(params?: SanPopulationParams) {
 
-        if (from == 'assessment') {
-            await this.gotoSan()
-        } else {
+        if (params?.from == 'offender') {
             await this.gotoSanFromOffender()
+        } else {
+            await this.gotoSan()
         }
         log('Minimally populating SAN sections')
         await this.accommodation.populateMinimal()
@@ -84,8 +82,51 @@ export class San {
         await this.alcohol.populateMinimal()
         await this.health.populateMinimal()
         await this.relationships.populateMinimal()
-        await this.thinking.populateMinimal()
+        await this.thinking.populateMinimal(params)
         await this.offenceAnalysis.populateMinimal()
+        await this.returnToOASys()
+    }
+
+    async populateForLst(params?: SanPopulationParams) {
+
+        if (params?.from == 'offender') {
+            await this.gotoSanFromOffender()
+        } else {
+            await this.gotoSan()
+        }
+        log('Populating SAN questions for LST')
+
+        await this.accommodation.populateNoAccommodation()
+        await this.employment.populateForLst()
+        await this.finance.populateForLst()
+        await this.health.populateForLst()
+        await this.relationships.populateForLst()
+        await this.thinking.populateForLst(params)
+        await this.offenceAnalysis.populateForLst()
+
+        await this.returnToOASys()
+    }
+
+
+    async populateForFemaleOpd(params?: SanPopulationParams) {
+
+        if (params?.from == 'offender') {
+            await this.gotoSanFromOffender()
+        } else {
+            await this.gotoSan()
+        }
+        log('Populating SAN questions for female')
+
+        await this.accommodation.populateForOpd()
+        await this.employment.populateMinimal()
+        await this.finance.populateMinimal()
+        await this.drugs.populateMinimal()
+        await this.alcohol.populateMinimal()
+        await this.health.populateForOpd()
+        await this.relationships.populateForOpd()
+        await this.thinking.populateForOpd()
+        await this.offenceAnalysis.populateForOpd()
+
         await this.returnToOASys()
     }
 
@@ -351,18 +392,3 @@ export class San {
     }
 
 }
-
-// Change SAN values to allow 1.30 to be editable in OASys
-const reset: SanPopulation = [
-    {
-        section: 'Offence analysis',
-        steps: [
-            { item: 'changeIfVisible' },
-            { item: 'backIfVisible' },
-            { item: 'backIfVisible' },
-            { item: 'offenceElements', value: `arson` },
-            { item: 'motivations', value: `addictions` },
-            { item: 'saveAndContinue' },
-        ],
-    }
-]

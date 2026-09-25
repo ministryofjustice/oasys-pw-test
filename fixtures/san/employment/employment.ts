@@ -1,30 +1,39 @@
-import { Page } from '@playwright/test'
-
-import { San } from 'fixtures'
+import { BaseSanSection } from '../sanSection'
 import { Page1 } from './page1'
 import { Page2 } from './page2'
 import { PractitionerAnalysis } from '../pages'
 import { sanIdPrefixLookup } from '../sanIds'
 
-const section: SanSection = 'Employment and education'
 
-export class Employment {
+export class Employment extends BaseSanSection {
 
-    constructor(private readonly page: Page, private readonly san: San) { }
+    override readonly section: SanSection = 'Employment and education'
 
     readonly page1 = new Page1(this.page)
     readonly page2 = new Page2(this.page)
-    readonly practitionerAnalysis = new PractitionerAnalysis(this.page, section, sanIdPrefixLookup[section])
+    readonly practitionerAnalysis = new PractitionerAnalysis(this.page, this.section, sanIdPrefixLookup[this.section])
 
     async populateMinimal() {
 
-        await this.san.goto(section, true)
+        await this.goto()
         await this.page1.populateMinimal()
-        await this.san.saveAndContinue()
+        await this.saveAndContinue()
         await this.page2.populateMinimal()
-        await this.san.saveAndContinue()
-        await this.san.practitionerAnalysis()
+        await this.saveAndContinue()
+        await this.openPractitionerAnalysis()
         await this.practitionerAnalysis.populateMinimal()
-        await this.san.markAsComplete()
+        await this.markAsComplete()
+    }
+
+    async populateForLst() {
+
+        await this.goto()
+        await this.page1.populateMinimal()
+        await this.saveAndContinue()
+        await this.page2.highestQual.setValue('entryLevel')
+        await this.page2.skills.setValue('no')
+        await this.page2.difficulties.setValue(['reading', 'numeracy'])
+        await this.page2.readingLevel.setValue('some')
+        await this.page2.numeracyLevel.setValue('some')
     }
 }

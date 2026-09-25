@@ -36,4 +36,12 @@ export class PractitionerAnalysis extends OasysPage {
         await this.riskOfHarm.setValue('no')
         await this.riskOfReoffending.setValue('no')
     }
+
+    async populateWithRiskOfHarm() {
+
+        await this.strengths.setValue('no')
+        await this.riskOfHarm.setValue('yes')
+        await this.riskOfHarmYesDetails.setValue(`Risk details for ${this.title}`)
+        await this.riskOfReoffending.setValue('no')
+    }
 }

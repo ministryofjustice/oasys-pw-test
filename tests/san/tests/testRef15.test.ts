@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef15'
 
 
 test.describe.configure({ retries: 1 })
@@ -107,7 +106,6 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
 
 
     await san.gotoSan()
-    // await san.populateSanSections('Test ref 15', testData.sanPopulation, true)
     await san.accommodation.populateMinimal()
     await san.employment.populateMinimal()
     await san.finance.populateMinimal()
@@ -116,29 +114,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
     await san.relationships.populateMinimal()
     await san.thinking.populateMinimal()
     await san.offenceAnalysis.populateMinimal()
-
-    await san.goto('Drug use')
-    await san.drugs.page1.everUsed.setValue('yes')
-    await san.saveAndContinue()
-    await san.drugs.page2.drugType.setValue(['amphetamines', 'other'])
-    await san.drugs.page2.amphetaminesLastSixMonths.setValue('yes')
-    await san.drugs.page2.drugTypeOther.setValue(utils.oasysString(200))
-    await san.drugs.page2.otherLastSixMonths.setValue('yes')
-    await san.saveAndContinue()
-    await san.drugs.page3.amphetaminesFrequency.setValue('daily')
-    await san.drugs.page3.otherFrequency.setValue('occasionally')
-    await san.drugs.page3.injected.setValue(['amphetamines', 'other'])
-    await san.drugs.page3.amphetaminesInjectedLastSixMonths.setValue(['lastSix', 'moreThanSix'])
-    await san.drugs.page3.otherInjectedLastSixMonths.setValue(['lastSix', 'moreThanSix'])
-    await san.drugs.page3.treatment.setValue('no')
-    await san.saveAndContinue()
-    await san.drugs.page4.whyStarted.setValue(['cultural'])
-    await san.drugs.page4.impactDrugs.setValue(['behavioural'])
-    await san.drugs.page4.wantChanges.setValue('madeChanges')
-    await san.saveAndContinue()
-    await san.practitionerAnalysis()
-    await san.drugs.practitionerAnalysis.populateMinimal()
-    await san.markAsComplete()
+    await san.drugs.populateWithSomeDrugs()
 
     await san.returnToOASys()
     await oasys.clickButton('Next')
@@ -172,7 +148,71 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
         Return back to the OASys assessment.`, 'Test step')
 
     await sentencePlan.populateMinimal()
-
+    const otlCrimNeeds = {
+        'accommodation': {
+            'accLinkedToHarm': 'NO',
+            'accLinkedToReoffending': 'NO',
+            'accStrengths': 'NO',
+            'accOtherWeightedScore': '0',
+            'accThreshold': 'NO'
+        },
+        'educationTrainingEmployability': {
+            'eteLinkedToHarm': 'NO',
+            'eteLinkedToReoffending': 'NO',
+            'eteStrengths': 'NO',
+            'eteOtherWeightedScore': '0',
+            'eteThreshold': 'NO'
+        },
+        'finance': {
+            'financeLinkedToHarm': 'NO',
+            'financeLinkedToReoffending': 'NO',
+            'financeStrengths': 'NO',
+            'financeOtherWeightedScore': 'N/A',
+            'financeThreshold': 'N/A'
+        },
+        'drugMisuse': {
+            'drugLinkedToHarm': 'NO',
+            'drugLinkedToReoffending': 'NO',
+            'drugStrengths': 'NO',
+            'drugOtherWeightedScore': '4',
+            'drugThreshold': 'YES'
+        },
+        'alcoholMisuse': {
+            'alcoholLinkedToHarm': 'NO',
+            'alcoholLinkedToReoffending': 'NO',
+            'alcoholStrengths': 'NO',
+            'alcoholOtherWeightedScore': '0',
+            'alcoholThreshold': 'NO'
+        },
+        'healthAndWellbeing': {
+            'emoLinkedToHarm': 'NO',
+            'emoLinkedToReoffending': 'NO',
+            'emoStrengths': 'NO',
+            'emoOtherWeightedScore': 'N/A',
+            'emoThreshold': 'N/A'
+        },
+        'personalRelationshipsAndCommunity': {
+            'relLinkedToHarm': 'NO',
+            'relLinkedToReoffending': 'NO',
+            'relStrengths': 'NO',
+            'relOtherWeightedScore': '1',
+            'relThreshold': 'NO'
+        },
+        'thinkingBehaviourAndAttitudes': {
+            'thinkLinkedToHarm': 'NO',
+            'thinkLinkedToReoffending': 'NO',
+            'thinkStrengths': 'NO',
+            'thinkOtherWeightedScore': '0',
+            'thinkThreshold': 'NO'
+        },
+        'lifestyleAndAssociates': {
+            'lifestyleLinkedToHarm': 'N/A',
+            'lifestyleLinkedToReoffending': 'N/A',
+            'lifestyleStrengths': 'N/A',
+            'lifestyleOtherWeightedScore': '0',
+            'lifestyleThreshold': 'NO'
+        }
+    }
     await san.queries.checkSanOtlCall(pk1, {
         'crn': null,
         'pnc': offender1.pnc,
@@ -187,7 +227,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
         'displayName': user.pris.prisSanUnappr.forenameSurname,
         'planAccessMode': 'READ_WRITE',
     },
-        'sp', 'assessment', testData.otlCrimNeeds
+        'sp', 'assessment', otlCrimNeeds
     )
 
     log(`For each of the OASys assessment sections, apart from Case ID and Summary Sheet, click on the 'Mark as Complete' flag.

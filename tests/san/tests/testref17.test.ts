@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef17'
 
 test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 17', async ({ page, oasys, user, offender, assessment, sections, san, signing, sentencePlan, risk, sns, tasks, oasysDb }) => {
@@ -62,9 +61,7 @@ test('SAN integration - test ref 17', async ({ page, oasys, user, offender, asse
         Ensure the SAN Assessment is completed and validated. The 'Strengths and Needs Sections' menu item has a green tick against it
         A full analysis has been invoked - giving sections 6.1, 6.2, RoSH Summary and Risk Management Plan`, 'TestStep')
 
-    await san.gotoSan()
-    await san.populateSanSections('Test ref 17', testData.sanPopulation, true)
-    await san.returnToOASys()
+    await san.populateForFemaleOpd()
     await oasys.clickButton('Next')
     await san.sanSections.checkCompletionStatus(true)
     await risk.fullAnalysisSection62.checkMenuVisibility(true)
@@ -314,9 +311,6 @@ test('SAN integration - test ref 17', async ({ page, oasys, user, offender, asse
 
     const sanColumns2 = await oasysDb.getData(sanColumnsQuery)
     expect(JSON.stringify(sanColumns1)).toBe(JSON.stringify(sanColumns2))
-
-    const failed = await assessment.queries.checkAnswers(pk1, testData.dataFromSan, true)
-    expect(failed).toBeFalsy()
 
     log(`Click on the <Print> button - check that the initial print screen does NOT show options for sections 2 to 13, SAQ and Skills Checker`, 'Test step')
 

@@ -13,6 +13,11 @@ declare type SanScenario = {
     steps: SanStep[],
     oasysAnswers: OasysAnswer[],
 }
+declare type SanPopulationParams = {
+
+    from?: 'assessment' | 'offender',
+    o1_30Yes?: boolean,
+}
 
 declare type SanPopulation = { section: SanSection, steps: SanStep[] }[]
 

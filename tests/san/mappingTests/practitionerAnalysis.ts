@@ -39,7 +39,7 @@ export async function paTest(assessmentPk: number, sanSection: SanSection, page:
 
         // Get to the right starting screen
         await san.gotoSan(sanSection, true)
-        await san.practitionerAnalysis()
+        await san.openPractitionerAnalysis()
         if (test.ref > 1) {
             await san.change()
         }

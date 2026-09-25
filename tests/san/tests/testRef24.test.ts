@@ -38,7 +38,7 @@ test('SAN integration - test ref 24', async ({ oasys, user, offender, assessment
         Complete entry of the SAN assessment with whatever you want
         Return back to the Offender record`, 'Test step')
 
-    await san.populateMinimal('offender')
+    await san.populateMinimal({ from: 'offender' })
 
     log(`Click on the <Open SSP> button from the offender record - uses the OTL to open up the Sentence Plan Service
         Complete entry of the Sentence Plan with whatever you want but ensure you agree the plan

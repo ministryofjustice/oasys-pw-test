@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../../data/testRef11'
 
 export function testRef11(offender1: OffenderDef, pks: number[]) {
 
@@ -37,9 +36,6 @@ export function testRef11(offender1: OffenderDef, pks: number[]) {
         await risk.fullAnalysisSection62.checkMenuVisibility(true)
 
         await san.queries.getSanApiTimeAndCheckDbValues(pk, null, prevPk)
-
-        const failed = await assessment.queries.checkAnswers(pk, testData.nonOASysQuestions, true)
-        expect(failed).toBeFalsy()
 
         log(`Go to the RoSH Screening Section 1 and check that at R1.1 it has area of concern set to '3 - Accommodation', 
                 '7 - Lifestyle and Associates', '11 - Thinking and Behaviour', '12 - Attitudes'

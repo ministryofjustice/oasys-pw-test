@@ -1,10 +1,9 @@
 import { test } from 'fixtures'
-import * as testData from '../../data/testRef10'
 
 
 export function testRef10(offender1: OffenderDef, pks: number[]) {
 
-    test('SAN integration - test ref 10 - second SAN assessment', async ({ oasysDb, oasys, user, assessment, sections, san, risk, sentencePlan, signing }) => {
+    test('SAN integration - test ref 10 - second SAN assessment', async ({ oasysDb, oasys, user, assessment, sections, san, risk, sentencePlan, signing, ogrs }) => {
 
         log(`Log in as the same assessor as that in Test Ref 9
             Open up the offender record from Test Ref 9
@@ -38,25 +37,32 @@ export function testRef10(offender1: OffenderDef, pks: number[]) {
             The SAN 'Strengths and Needs Sections' menu option has a green tick against it for the data being complete.`, 'Test step')
 
         await san.queries.getSanApiTimeAndCheckDbValues(pk, 'Y', prevPk)
-        await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk}`, {
-            RSR_PERCENTAGE_SCORE: '9.93',
-            RSR_STATIC_OR_DYNAMIC: 'DYNAMIC',
-            RSR_ERROR_COUNT: '0',
-            OSP_IIC_PERCENTAGE_SCORE: '3.33',
-            OSP_DC_PERCENTAGE_SCORE: '6.18',
-        })
+        await ogrs.checkOgrsInOasysSet(pk)
 
         await risk.fullAnalysisSection62.checkMenuVisibility(false)
         await risk.rmp.checkMenuVisibility(false)
         await san.sanSections.checkCompletionStatus(true)
 
-        log(`Go to the SAN assessment, change data in the ''accommodation' and 'thinking, behaviours and attitudes' sections to state 
+        log(`Go to the SAN assessment, change data in the 'accommodation' and 'thinking, behaviours and attitudes' sections to state 
             they are linked to risk of serious harm (ensure the data is validated).
             Return to OASys, a Full analysis is now showing with sections 6.1 and 6.2 in it.  
             The 'Strengths and Needs Sections' menu option remains showing with a green tick`, 'Test step')
 
         await san.gotoSan()
-        await san.populateSanSections('TestRef10 modify SAN', testData.modifySan, true)
+        await san.accommodation.goto()
+        await san.openPractitionerAnalysis()
+        await san.accommodation.change()
+        await san.accommodation.practitionerAnalysis.riskOfHarm.setValue('yes')
+        await san.accommodation.practitionerAnalysis.riskOfHarmYesDetails.setValue('Now a risk')
+        await san.accommodation.markAsComplete()
+        
+        await san.thinking.goto()
+        await san.openPractitionerAnalysis()
+        await san.thinking.change()
+        await san.thinking.practitionerAnalysis.riskOfHarm.setValue('yes')
+        await san.thinking.practitionerAnalysis.riskOfHarmYesDetails.setValue('Now a risk')
+        await san.thinking.markAsComplete()
+
         await san.returnToOASys()
         await oasys.clickButton('Next')
         await risk.fullAnalysisSection62.checkMenuVisibility(true)

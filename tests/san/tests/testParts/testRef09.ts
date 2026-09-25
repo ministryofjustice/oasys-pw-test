@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../../data/testRef9'
 
 
 export function testRef9(offender1: OffenderDef, pks: number[]) {
@@ -33,7 +32,47 @@ export function testRef9(offender1: OffenderDef, pks: number[]) {
             'accessMode': 'READ_WRITE',
         }, 'san', 'offender'
         )
-        await san.populateSanSections('TestRef9 modify SAN', testData.modifySan, true)
+
+        await san.accommodation.goto()
+        await san.accommodation.change()
+        await san.accommodation.page1.currentAccommodation.setValue('temporary')
+        await san.accommodation.page1.temporaryAccommodationType.setValue('approvedPremises')
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.page2.accommodationSuitable.setValue('yesWithConcerns')
+        await san.accommodation.page2.futurePlanned.setValue('yes')
+        await san.accommodation.page2.futureType.setValue('privateRent')
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.openPractitionerAnalysis()
+        await san.accommodation.markAsComplete()
+
+        await san.employment.goto()
+        await san.employment.change()
+        await san.employment.page1.employmentStatus.setValue('retired')
+        await san.employment.saveAndContinue()
+        await san.employment.page2.employmentHistory.setValue('continuous')
+        await san.employment.page2.additionalCommitments.setValue(['volunteering'])
+        await san.employment.page2.highestQual.setValue('level1')
+        await san.employment.saveAndContinue()
+        await san.employment.openPractitionerAnalysis()
+        await san.employment.markAsComplete()
+
+        await san.finance.goto()
+        await san.finance.change()
+        await san.finance.page1.incomeSource.setValue(['offending', 'pension'])
+        await san.finance.saveAndContinue()
+        await san.finance.openPractitionerAnalysis()
+        await san.finance.markAsComplete()
+
+        await san.relationships.goto()
+        await san.relationships.change()
+        await san.relationships.saveAndContinue()
+        await san.relationships.saveAndContinue()
+        await san.relationships.page3.happyWithStatus.setValue('unhappy')
+        await san.relationships.page3.history.setValue('stable')
+        await san.relationships.saveAndContinue()
+        await san.relationships.openPractitionerAnalysis()
+        await san.relationships.markAsComplete()
+
         await san.checkSanSectionsCompletionStatus(9)
         await san.returnToOASys()
 

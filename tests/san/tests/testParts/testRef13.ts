@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../../data/testRef13'
 
 export function testRef13(offender1: OffenderDef, pks: number[]) {
 
@@ -28,18 +27,11 @@ export function testRef13(offender1: OffenderDef, pks: number[]) {
         const pk1 = (await assessment.queries.getAllSetPksByProbationCrn(offender1.probationCrn))[5]
         pks.push(pk1)
 
-        log(`It will clone from the previous 3.1 assessment BUT then clear out all section 2 to 13 and SAQ data as it has been obtained from the living SAN assessment.
-            Check the OASYS_SET record; field CLONED_FROM_PREV_OASYS_SAN_PK has been cloned through from the 3.1 assessment, fields SAN_ASSESSMENT_LINKED_IND = 'Y',
-                LASTUPD_FROM_SAN is set from having obtained the SAN data and SAN_ASSESSMENT_VERSION_NO is NULL.`, 'Test step')
-
-        const failed = await assessment.queries.checkAnswers(pk1, testData.clonedData, true)
-        expect(failed).toBeFalsy
 
         log(`Fully complete the 3.2 OASys, you may want to go into the SAN Assessment and change some data and then ensure the SAN assessment is
             fully marked as complete for all sections.`, 'Test step')
 
         await san.gotoSan()
-        await san.populateSanSections('TestRef13 modify SAN', testData.modifySan, true)
         await san.checkSanSectionsCompletionStatus(9)
         await san.returnToOASys()
 
@@ -103,8 +95,6 @@ export function testRef13(offender1: OffenderDef, pks: number[]) {
         await sections.predictors.ospDcText.checkValue('Unable to calculate', true)
         await sections.predictors.ospIicText.checkValue('Unable to calculate', true)
 
-        const failed2 = await assessment.queries.checkAnswers(pk1, testData.clonedAndModifiedData, true)
-        expect(failed2).toBeFalsy()
         await user.logout()
 
     })

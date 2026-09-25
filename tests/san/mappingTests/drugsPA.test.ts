@@ -65,10 +65,10 @@ async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: 
             await san.drugs.page4.impactDrugs.setValue(['behavioural'])
             await san.drugs.page4.wantChanges.setValue('madeChanges')
             await san.drugs.page4.saveAndContinue.click()
-            await san.practitionerAnalysis()
+            await san.openPractitionerAnalysis()
         } else {
             await san.gotoSan('Drug use', true)
-            await san.practitionerAnalysis()
+            await san.openPractitionerAnalysis()
             if (test.ref > 2) {
                 await san.drugs.practitionerAnalysis.change.click()
             }

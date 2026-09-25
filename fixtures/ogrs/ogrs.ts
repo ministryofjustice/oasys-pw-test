@@ -381,7 +381,7 @@ export class Ogrs {
             await this.risk.summary.iicSrpBand.checkValue(ogrsResult.iicSrpBand)
         }
     }
-
+    
     async checkNonMFResultOnPredictorsPage() {
 
         await this.sections.predictors.goto()

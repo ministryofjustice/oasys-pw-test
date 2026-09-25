@@ -1,17 +1,14 @@
-import { Page } from '@playwright/test'
-
-import { San } from 'fixtures'
+import { BaseSanSection } from '../sanSection'
 import { Page1 } from './page1'
 import { Page2 } from './page2'
 import { Page3 } from './page3'
 import { Page4 } from './page4'
 import { DrugsPractitionerAnalysis } from './drugsPractitionerAnalysis'
 
-const section: SanSection = 'Drug use'
 
-export class Drugs {
+export class Drugs extends BaseSanSection {
 
-    constructor(private readonly page: Page, private readonly san: San) { }
+    override readonly section: SanSection = 'Drug use'
 
     readonly page1 = new Page1(this.page)
     readonly page2 = new Page2(this.page)
@@ -21,11 +18,37 @@ export class Drugs {
 
     async populateMinimal() {
 
-        await this.san.goto(section, true)
+        await this.goto()
         await this.page1.populateMinimal()
-        await this.san.saveAndContinue()
-        await this.san.practitionerAnalysis()
+        await this.saveAndContinue()
+        await this.openPractitionerAnalysis()
         await this.practitionerAnalysis.populateMinimal()
-        await this.san.markAsComplete()
+        await this.markAsComplete()
+    }
+
+    async populateWithSomeDrugs() {
+
+        await this.goto()
+        await this.page1.everUsed.setValue('yes')
+        await this.saveAndContinue()
+        await this.page2.drugType.setValue(['amphetamines', 'other'])
+        await this.page2.amphetaminesLastSixMonths.setValue('yes')
+        await this.page2.drugTypeOther.setValue(utils.oasysString(200))
+        await this.page2.otherLastSixMonths.setValue('yes')
+        await this.saveAndContinue()
+        await this.page3.amphetaminesFrequency.setValue('daily')
+        await this.page3.otherFrequency.setValue('occasionally')
+        await this.page3.injected.setValue(['amphetamines', 'other'])
+        await this.page3.amphetaminesInjectedLastSixMonths.setValue(['lastSix', 'moreThanSix'])
+        await this.page3.otherInjectedLastSixMonths.setValue(['lastSix', 'moreThanSix'])
+        await this.page3.treatment.setValue('no')
+        await this.saveAndContinue()
+        await this.page4.whyStarted.setValue(['cultural'])
+        await this.page4.impactDrugs.setValue(['behavioural'])
+        await this.page4.wantChanges.setValue('madeChanges')
+        await this.saveAndContinue()
+        await this.openPractitionerAnalysis()
+        await this.practitionerAnalysis.populateMinimalWithMotivation()
+        await this.markAsComplete()
     }
 }

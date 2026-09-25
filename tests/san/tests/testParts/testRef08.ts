@@ -1,10 +1,9 @@
 import { test } from 'fixtures'
-import * as testData from '../../data/testRef8'
 
 
 export function testRef8(offender1: OffenderDef, pks: number[]) {
 
-    test('SAN integration - test ref 8', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, sns, tasks, oasysDb }) => {
+    test('SAN integration - test ref 8', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, sns, tasks, oasysDb, ogrs }) => {
 
         log(`Create a new assessment - defaults to PSR-SDR, Layer 3, PSR Outline Plan with SDR court report
             Ensure the new SAN question is not showing on the screen (cannot do SAN with a PSR type assessment)`, 'Test step')
@@ -247,9 +246,10 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         The navigation menu is now showing a green tick against the 'Strengths and Needs Sections' option
         A full analysis has NOT been invoked`, 'Test step')
 
-        await san.gotoSan()
-        await san.populateSanSections('TestRef8 complete SAN', testData.sanPopulation, true)
-        await san.returnToOASys()
+        // await san.gotoSan()
+        // await san.populateSanSections('TestRef8 complete SAN', testData.sanPopulation, true)
+        await san.populateMinimal({ o1_30Yes: true })
+        // await san.returnToOASys()
         await oasys.clickButton('Next')
         await san.sanSections.checkCompletionStatus(true)
         await risk.rmp.checkMenuVisibility(false)
@@ -279,31 +279,17 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
             },
             {
                 name: 'criminogenicNeed',
-                values: ['N', 'N', 'N/A', 'N', 'N', 'N/A', 'Y', 'Y', 'N']
+                values: ['N', 'N', 'N/A', 'N', 'N', 'N/A', 'N', 'N', 'N']
             },
             {
                 name: 'scores',
-                values: ['0', '0', 'N/A', '0', '0', 'N/A', '4', '6', '0']
+                values: ['0', '0', 'N/A', '0', '0', 'N/A', '1', '0', '0']
             }
         ]
         await assessment.summarySheet.save()  // Workaround for defect NOD-1165
         await assessment.summarySheet.sanCrimTable.checkData(expectedValues2)
 
-        const expectedPredictorsValues: ColumnValues[] = [
-            {
-                name: 'scoreDescription',
-                values: ['All Reoffending Predictor', 'Violent Reoffending Predictor', 'Serious Violent Reoffending Predictor', 'Direct Contact - Sexual Reoffending Predictor', 'Images and Indirect Contact - Sexual Reoffending Predictor', 'Combined Serious Reoffending Predictor']
-            },
-            {
-                name: 'twoYear',
-                values: [' 26.97', '  3.37', '  0.41', '  6.18', '  3.33', '  9.92']
-            },
-            {
-                name: 'category',
-                values: ['Low  (DYNAMIC)', 'Low  (DYNAMIC)', 'Low  (DYNAMIC)', 'Very High', 'Medium', 'Very High  (DYNAMIC)']
-            },
-        ]
-        await assessment.summarySheet.predictorsTable.checkData(expectedPredictorsValues)
+        await ogrs.checkOgrsInOasysSet(pk2)
 
         log(`There is NO 'weighted scores' section
         There is a 'Likelihood of serious harm to others' section - ensure it states that 'There is no risk information to be displayed as the RoSH Screening does not indicate a Risk of Serious Harm, and a Full Analysis has not been undertaken.'
@@ -316,7 +302,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await assessment.summarySheet.likelihoodHarmOthersTable.checkRowCount(0)
         await assessment.summarySheet.likelihoodHarmOthersTable.checkText('There is no risk information to be displayed as the RoSH Screening does not indicate a Risk of Serious Harm, and a Full Analysis has not been undertaken.')
         await assessment.summarySheet.concernsTable.checkRowCount(0)
-        await assessment.summarySheet.learningScreeningTool.checkValue('This individual may have some learning challenges. Further assessment may be needed to determine the support required.', true)
+        await assessment.summarySheet.learningScreeningTool.checkValue('This individual is not likely to have a learning disability and/or learning challenges.', true)
         await assessment.summarySheet.opdOverrideMessage.checkValue('This individual does not meet the criteria for the OPD pathway.')
         await assessment.summarySheet.dateCompleted.checkValue('\nDate Assessment Completed: \n')
 

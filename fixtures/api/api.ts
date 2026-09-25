@@ -153,7 +153,7 @@ export class Api {
                     this.addAssessment(v4AssessmentEndpoints, apiParams, offenderData.probationCrn, assessment)
 
                     // Add tier predictors - only if initiated 2026 or later to avoid incompatible data
-                    if (assessment.initiationDate > '2026' && crnSource == 'prob') {
+                    if (assessment.initiationDate > '2026-08' && crnSource == 'prob') {
                         const tierPredictorsParams: EndpointParams = {
                             endpoint: 'tierPredictors',
                             assessmentPk: assessment.assessmentPk,
@@ -171,7 +171,7 @@ export class Api {
                     this.addAssessment(v4RsrEndpoints, apiParams, offenderData.probationCrn, assessment)
 
                     // Add tier predictors - only if initiated after 2026 to avoid incompatible data
-                    if (assessment.initiationDate > '2026' && crnSource == 'prob') {
+                    if (assessment.initiationDate > '2026-08' && crnSource == 'prob') {
                         const tierPredictorsParams: EndpointParams = {
                             endpoint: 'tierPredictors',
                             assessmentPk: assessment.assessmentPk,

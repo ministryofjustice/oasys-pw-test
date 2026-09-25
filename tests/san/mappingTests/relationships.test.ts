@@ -86,7 +86,7 @@ test('Mapping test V2: relationships', async ({ page, oasys, user, offender, ass
     // Complete everything needed for PA
     await san.gotoSan('Personal relationships and community', true)
     await san.relationships.page3.resolveChallenges.setValue('Testing')
-    await san.relationships.page3.wantChangesRelationships.setValue('madeChanges')
+    await san.relationships.page3.wantChanges.setValue('madeChanges')
     await san.saveAndContinue()
     await san.returnToOASys()
 

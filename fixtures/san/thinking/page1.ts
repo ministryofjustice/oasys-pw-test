@@ -21,7 +21,7 @@ export class Page1 extends BaseSanEditPage {
     hostileOrientation = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#thinking_behaviours_attitudes_hostile_orientation', sanNoSometimesYesOptions)
     acceptSupervision = new Element.Radiogroup<SanYesUnsureNo>(this.page, '#thinking_behaviours_attitudes_supervision', sanYesUnsureNoOptions)
     supportCriminalBehaviour = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#thinking_behaviours_attitudes_criminal_behaviour', sanNoSometimesYesOptions)
-    wantChangesThinking = new Element.Radiogroup<SanWantChanges>(this.page, '#thinking_behaviours_attitudes_changes', sanWantChangesOptions)
+    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#thinking_behaviours_attitudes_changes', sanWantChangesOptions)
 
 
     async populateMinimal() {
@@ -40,7 +40,7 @@ export class Page1 extends BaseSanEditPage {
         await this.hostileOrientation.setValue('no')
         await this.acceptSupervision.setValue('yes')
         await this.supportCriminalBehaviour.setValue('no')
-        await this.wantChangesThinking.setValue('madeChanges')
+        await this.wantChanges.setValue('madeChanges')
     }
 }
 

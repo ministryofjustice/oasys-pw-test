@@ -49,7 +49,7 @@ export class Thinking extends BaseSanSection {
         await this.page1.hostileOrientation.setValue('no')
         await this.page1.acceptSupervision.setValue('no')
         await this.page1.supportCriminalBehaviour.setValue('no')
-        await this.page1.wantChangesThinking.setValue('madeChanges')
+        await this.page1.wantChanges.setValue('madeChanges')
         await this.saveAndContinue()
         if (!params?.o1_30Yes) {
             await this.page2.riskOfSexualHarm.setValue('yes')
@@ -78,12 +78,46 @@ export class Thinking extends BaseSanSection {
         await this.page1.hostileOrientation.setValue('no')
         await this.page1.acceptSupervision.setValue('no')
         await this.page1.supportCriminalBehaviour.setValue('no')
-        await this.page1.wantChangesThinking.setValue('madeChanges')
+        await this.page1.wantChanges.setValue('madeChanges')
         await this.saveAndContinue()
         await this.page2.riskOfSexualHarm.setValue('no')
         await this.saveAndContinue()
         await this.openPractitionerAnalysis()
         await this.practitionerAnalysis.populateWithRiskOfHarm()
         await this.markAsComplete()
+    }
+
+    async populateForSara(params?: SanPopulationParams) {
+
+        await this.goto()
+
+        await this.page1.awareConsequences.setValue('yes')
+        await this.page1.stableBehaviour.setValue('yes')
+        await this.page1.activitiesLinkedOffending.setValue('no')
+        await this.page1.resilient.setValue('yes')
+        await this.page1.ableSolveProblems.setValue('yes')
+        await this.page1.understandOthers.setValue('no')
+        await this.page1.manipulativeBehaviour.setValue('some')
+        await this.page1.manageTemper.setValue('no')
+        await this.page1.violence.setValue('yes')
+        await this.page1.impulse.setValue('sometimes')
+        await this.page1.positiveAttitude.setValue('no')
+        await this.page1.hostileOrientation.setValue('yes')
+        await this.page1.acceptSupervision.setValue('no')
+        await this.page1.supportCriminalBehaviour.setValue('yes')
+        await this.page1.wantChanges.setValue('madeChanges')
+        await this.saveAndContinue()
+        if (!params?.o1_30Yes) {
+            await this.page2.riskOfSexualHarm.setValue('yes')
+        }
+        await this.saveAndContinue()
+        await this.page3.emotionalIntimacy.setValue('yes')
+        await this.page3.sexualPreoccupation.setValue('yes')
+        await this.page3.sexualInterests.setValue('yes')
+        await this.saveAndContinue()
+        await this.openPractitionerAnalysis()
+        await this.practitionerAnalysis.populateMinimal()
+        await this.markAsComplete()
+
     }
 }

@@ -129,7 +129,7 @@ async function scenario(test: TestCase, san: San) {
     await san.thinking.page1.acceptSupervision.setValue(test.page1.acceptSupervision)
     await san.thinking.page1.supportCriminalBehaviour.setValue(test.page1.supportCriminalBehaviour)
     if (test.page2) {
-        await san.thinking.page1.wantChangesThinking.setValue('madeChanges')
+        await san.thinking.page1.wantChanges.setValue('madeChanges')
         await san.saveAndContinue()
         await san.thinking.page2.riskOfSexualHarm.setValue(test.page2.riskOfSexualHarm)
         if (test.page3) {

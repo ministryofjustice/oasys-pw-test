@@ -51,4 +51,28 @@ export class Drugs extends BaseSanSection {
         await this.practitionerAnalysis.populateMinimalWithMotivation()
         await this.markAsComplete()
     }
+
+    async populateForSara() {
+
+        await this.goto()
+
+        await this.page1.everUsed.setValue('yes')
+        await this.saveAndContinue()
+        await this.page2.drugType.setValue(['heroin'])
+        await this.page2.heroinLastSixMonths.setValue('yes')
+        await this.saveAndContinue()
+        await this.page3.heroinFrequency.setValue('weekly')
+        await this.page3.injected.setValue(['heroin'])
+        await this.page3.heroinInjectedLastSixMonths.setValue(['lastSix'])
+        await this.page3.treatment.setValue('no')
+        await this.saveAndContinue()
+        await this.page4.whyStarted.setValue(['cultural'])
+        await this.page4.impactDrugs.setValue(['behavioural'])
+        await this.page4.wantChanges.setValue('notAnswering')
+        await this.saveAndContinue()
+        await this.openPractitionerAnalysis()
+        await this.practitionerAnalysis.motivatedToStop.setValue('someMotivation')
+        await this.practitionerAnalysis.populateMinimal()
+        await this.markAsComplete()
+    }
 }

@@ -15,7 +15,7 @@ export class Page3 extends BaseSanEditPage {
     currentFamilyRelationship = new Element.Radiogroup<CurrentFamilyRelationship>(this.page, '#personal_relationships_community_family_relationship', ['stable', 'mixed', 'unstable', 'unknown'])
     childhoodExperience = new Element.Radiogroup<SanPositiveMixedNegative>(this.page, '#personal_relationships_community_childhood', sanPositiveMixedNegativeOptions)
     behaviouralProblems = new Element.Radiogroup<SanYesNo>(this.page, '#personal_relationships_community_childhood_behaviour', sanYesNoOptions)
-    wantChangesRelationships = new Element.Radiogroup<SanWantChanges>(this.page, '#personal_relationships_community_changes', sanWantChangesOptions)
+    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#personal_relationships_community_changes', sanWantChangesOptions)
 
 
     async populateMinimal() {
@@ -26,6 +26,6 @@ export class Page3 extends BaseSanEditPage {
         await this.currentFamilyRelationship.setValue('stable')
         await this.childhoodExperience.setValue('positive')
         await this.behaviouralProblems.setValue('no')
-        await this.wantChangesRelationships.setValue('wantToChange')
+        await this.wantChanges.setValue('wantToChange')
     }
 }

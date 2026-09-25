@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef20'
 
 /**
     Male Probation offender aged >18
@@ -47,24 +46,6 @@ test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment
     await sections.predictors.o1_38.setValue({ months: -1 })
     await sections.predictors.o1_37.setValue(1)
 
-    await san.gotoSan()
-    await san.queries.checkSanOtlCall(pk1, {
-        'crn': offender1.probationCrn,
-        'pnc': offender1.pnc,
-        'nomisId': null,
-        'givenName': offender1.forename1,
-        'familyName': offender1.surname,
-        'dateOfBirth': offender1.dateOfBirth,
-        'gender': '1',
-        'location': 'COMMUNITY',
-        'sexuallyMotivatedOffenceHistory': 'YES',
-    }, {
-        'displayName': user.prob.probSanPo.forenameSurname,
-        'accessMode': 'READ_WRITE',
-    },
-        'san', 'assessment'
-    )
-
     log(`Complete the SAN Assessment questions as below to be used for the SARA in OASys:	
             - in the Offence Analysis section select 'Yes' to 'Is there any evidence of domestic abuse?' and 'perpetrator - against intimate partner' 
                 and then 'Yes' at 'linked to risk of serious harm'
@@ -90,7 +71,24 @@ test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment
     Complete the remaining questions in the SAN Assessment however you like but answer all other SAN sections 'Linked to risk…' questions as 
         'No' and say Yes to risk of sexual harm and answer the questions because ARNS haven't coded the user journey yet`, 'Test step')
 
-    await san.populateSanSections('TestRef20 complete SAN', testData.sanPopulation, true)
+    await san.populateForSara({ o1_30Yes: true })
+    
+    await san.queries.checkSanOtlCall(pk1, {
+        'crn': offender1.probationCrn,
+        'pnc': offender1.pnc,
+        'nomisId': null,
+        'givenName': offender1.forename1,
+        'familyName': offender1.surname,
+        'dateOfBirth': offender1.dateOfBirth,
+        'gender': '1',
+        'location': 'COMMUNITY',
+        'sexuallyMotivatedOffenceHistory': 'YES',
+    }, {
+        'displayName': user.prob.probSanPo.forenameSurname,
+        'accessMode': 'READ_WRITE',
+    },
+        'san', 'assessment'
+    )
 
     log(`Return back to the OASys assessment - the 'Strengths and Needs' has a green tick against it	
         Need to navigate away for the data to be picked up from SAN	
@@ -99,7 +97,6 @@ test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment
         Navigate to the next RoSH Screen - will be asked if want to create a SARA - this will be prompted via the Section 6 questions populated from the SAN Assessment
         - Create the SARA`, 'Test step')
 
-    await san.returnToOASys()
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await oasys.clickButton('Next')
     await san.sanSections.checkCompletionStatus(true)

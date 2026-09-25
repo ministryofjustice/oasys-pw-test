@@ -19,9 +19,9 @@ export class Page2 extends BaseSanEditPage {
     numeracyLevel = new Element.Radiogroup<SanSignificantSome>(this.page, '#education_difficulties_numeracy_severity', sanSignificantSomeOptions)
     employmentExperience = new Element.Radiogroup<SanExperience>(this.page, '#employment_experience', sanExperienceOptions)
     educationExperience = new Element.Radiogroup<SanExperience>(this.page, '#education_experience', sanExperienceOptions)
-    wantChangesEmployment = new Element.Radiogroup<SanWantChanges>(this.page, '#employment_education_changes', sanWantChangesOptions)
+    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#employment_education_changes', sanWantChangesOptions)
 
-    
+
     async populateMinimal() {
 
         await this.employmentHistory.setValue('continuous')
@@ -32,6 +32,6 @@ export class Page2 extends BaseSanEditPage {
         await this.difficulties.setValue(['none'])
         await this.employmentExperience.setValue('positive')
         await this.educationExperience.setValue('positive')
-        await this.wantChangesEmployment.setValue('madeChanges')
+        await this.wantChanges.setValue('madeChanges')
     }
 }

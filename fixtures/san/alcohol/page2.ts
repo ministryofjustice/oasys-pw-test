@@ -17,5 +17,5 @@ export class Page2 extends BaseSanEditPage {
     whyDrink = new Element.CheckboxGroup<'cultural' | 'curiosity' | 'enjoyment' | 'stress' | 'occasions' | 'peerPressure' | 'selfMedication' | 'socially' | 'other'>(this.page, '#alcohol_reasons_for_use', ['cultural', 'curiosity', 'enjoyment', 'stress', 'occasions', 'peerPressure', 'selfMedication', 'socially', 'other'])
     impactAlcohol = new Element.CheckboxGroup<'behavioural' | 'community' | 'finance' | 'offending' | 'health' | 'relationships' | 'other' | 'noImpact'>(this.page, '#alcohol_impact_of_use', ['behavioural', 'community', 'finance', 'offending', 'health', 'relationships', 'other', '-', 'noImpact'])
     anythingHelpedAlcohol = new Element.Radiogroup<SanYesNo>(this.page, '#alcohol_stopped_or_reduced', ['yes', 'no'])
-    wantChangesAlcohol = new Element.Radiogroup<SanWantChanges>(this.page, '#alcohol_use_changes', sanWantChangesOptions)
+    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#alcohol_use_changes', sanWantChangesOptions)
 }

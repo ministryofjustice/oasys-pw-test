@@ -67,4 +67,31 @@ export class OffenceAnalysis extends BaseSanSection {
         await this.page3.domesticAbuseVictim.setValue('no')
         await this.markAsComplete()
     }
+
+    async populateForSara() {
+
+        await this.goto()
+
+        await this.page1.offenceDescription.setValue('Offence description')
+        await this.page1.offenceElements.setValue(['weapon'])
+        await this.page1.reason.setValue('Why it happened')
+        await this.page1.motivations.setValue(['other'])
+        await this.page1.motivationOther.setValue('Some reason')
+        await this.page1.victimType.setValue(['other'])
+        await this.page1.victimTypeDetails.setValue('Victim details')
+        await this.saveAndContinue()
+        await this.page2.howManyOthers.setValue('0')
+        await this.saveAndContinue()
+        await this.page3.impact.setValue('yes')
+        await this.page3.responsibility.setValue('yes')
+        await this.page3.patterns.setValue('Patterns')
+        await this.page3.escalation.setValue('no')
+        await this.page3.riskSeriousHarm.setValue('yes')
+        await this.page3.riskSeriousHarmYesDetails.setValue('No risk')
+        await this.page3.domesticAbusePerpetrator.setValue('yes')
+        await this.page3.domesticAbusePerpetratorType.setValue('partner')
+        await this.page3.partnerPerpetratorDetails.setValue('Some details about domestic abuse')
+        await this.page3.domesticAbuseVictim.setValue('no')
+        await this.markAsComplete()
+    }
 }

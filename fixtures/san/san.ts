@@ -25,15 +25,15 @@ export class San {
 
     constructor(private readonly page: Page, private readonly oasys: Oasys, private readonly oasysDb: OasysDb) { }
 
-    readonly accommodation = new Accommodation(this.page, this)
-    readonly employment = new Employment(this.page, this)
-    readonly finance = new Finance(this.page, this)
-    readonly drugs = new Drugs(this.page, this)
-    readonly alcohol = new Alcohol(this.page, this)
-    readonly health = new Health(this.page, this)
-    readonly relationships = new Relationships(this.page, this)
-    readonly thinking = new Thinking(this.page, this)
-    readonly offenceAnalysis = new OffenceAnalysis(this.page, this)
+    readonly accommodation = new Accommodation(this.page)
+    readonly employment = new Employment(this.page)
+    readonly finance = new Finance(this.page)
+    readonly drugs = new Drugs(this.page)
+    readonly alcohol = new Alcohol(this.page)
+    readonly health = new Health(this.page)
+    readonly relationships = new Relationships(this.page)
+    readonly thinking = new Thinking(this.page)
+    readonly offenceAnalysis = new OffenceAnalysis(this.page)
 
     readonly sanSections = new pages.SanSections(this.page)
     readonly baseSanEditPage = new BaseSanEditPage(this.page)
@@ -115,7 +115,7 @@ export class San {
         } else {
             await this.gotoSan()
         }
-        log('Populating SAN questions for female')
+        log('Populating SAN questions for female OPD')
 
         await this.accommodation.populateForOpd()
         await this.employment.populateMinimal()
@@ -126,6 +126,28 @@ export class San {
         await this.relationships.populateForOpd()
         await this.thinking.populateForOpd()
         await this.offenceAnalysis.populateForOpd()
+
+        await this.returnToOASys()
+    }
+
+    async populateForSara(params?: SanPopulationParams) {
+
+        if (params?.from == 'offender') {
+            await this.gotoSanFromOffender()
+        } else {
+            await this.gotoSan()
+        }
+        log('Populating SAN questions for SARA')
+
+        await this.accommodation.populateMinimal()
+        await this.employment.populateForSara()
+        await this.finance.populateMinimal()
+        await this.drugs.populateForSara()
+        await this.alcohol.populateForSara()
+        await this.health.populateForSara()
+        await this.relationships.populateForSara()
+        await this.thinking.populateForSara(params)
+        await this.offenceAnalysis.populateForSara()
 
         await this.returnToOASys()
     }

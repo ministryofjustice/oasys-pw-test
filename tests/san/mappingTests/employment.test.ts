@@ -104,7 +104,7 @@ test('Mapping test V2: employment and education', async ({ page, oasys, user, of
     await san.employment.page2.difficulties.setValue(['none'])
     await san.employment.page2.employmentExperience.setValue('unknown')
     await san.employment.page2.educationExperience.setValue('unknown')
-    await san.employment.page2.wantChangesEmployment.setValue('madeChanges')
+    await san.employment.page2.wantChanges.setValue('madeChanges')
     await san.saveAndContinue()
     await san.returnToOASys()
 

@@ -53,10 +53,33 @@ export class Relationships extends BaseSanSection {
         await this.page3.currentFamilyRelationship.setValue('mixed')
         await this.page3.childhoodExperience.setValue('mixed')
         await this.page3.behaviouralProblems.setValue('yes')
-        await this.page3.wantChangesRelationships.setValue('wantToChange')
+        await this.page3.wantChanges.setValue('wantToChange')
         await this.saveAndContinue()
         await this.openPractitionerAnalysis()
         await this.practitionerAnalysis.populateWithRiskOfHarm()
         await this.markAsComplete()
+    }
+
+    async populateForSara() {
+
+        await this.goto()
+
+        await this.page1.anyChildren.setValue(['no'])
+        await this.saveAndContinue()
+        await this.page2.importantPeople.setValue(['partner', 'otherChildren', 'family', 'friends', 'other'])
+        await this.page2.importantOtherDetails.setValue('Other person details')
+        await this.saveAndContinue()
+        await this.page3.happyWithStatus.setValue('someConcerns')
+        await this.page3.history.setValue('unstable')
+        await this.page3.resolveChallenges.setValue('Challenges text')
+        await this.page3.currentFamilyRelationship.setValue('mixed')
+        await this.page3.childhoodExperience.setValue('mixed')
+        await this.page3.behaviouralProblems.setValue('yes')
+        await this.page3.wantChanges.setValue('wantToChange')
+        await this.saveAndContinue()
+        await this.openPractitionerAnalysis()
+        await this.practitionerAnalysis.populateMinimal()
+        await this.markAsComplete()
+
     }
 }

@@ -100,7 +100,7 @@ test('Mapping test V2: alcohol', async ({ page, oasys, user, offender, assessmen
     await san.alcohol.page2.whyDrink.setValue(['cultural'])
     await san.alcohol.page2.impactAlcohol.setValue(['behavioural'])
     await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
-    await san.alcohol.page2.wantChangesAlcohol.setValue('madeChanges')
+    await san.alcohol.page2.wantChanges.setValue('madeChanges')
     await san.saveAndContinue()
     await san.returnToOASys()
 

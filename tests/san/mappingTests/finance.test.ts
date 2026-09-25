@@ -70,7 +70,7 @@ test('Mapping test V2: finance', async ({ page, oasys, user, offender, assessmen
     await san.finance.page1.howGoodManaging.setValue('able')
     await san.finance.page1.gambling.setValue(['no'])
     await san.finance.page1.debt.setValue(['no'])
-    await san.finance.page1.wantChangesFinance.setValue('madeChanges')
+    await san.finance.page1.wantChanges.setValue('madeChanges')
     await san.saveAndContinue()
     await san.returnToOASys()
 

@@ -91,7 +91,7 @@ test('Mapping test V2: health and wellbeing', async ({ page, oasys, user, offend
     await san.health.page2.selfHarmed.setValue('no')
     await san.health.page2.suicide.setValue('no')
     await san.health.page2.optimistic.setValue('optimistic')
-    await san.health.page2.wantChangesHealth.setValue('madeChanges')
+    await san.health.page2.wantChanges.setValue('madeChanges')
 
     await san.saveAndContinue()
     await san.returnToOASys()

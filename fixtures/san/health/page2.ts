@@ -19,7 +19,7 @@ export class Page2 extends BaseSanEditPage {
     suicide = new Element.Radiogroup<SanYesNo>(this.page, '#health_wellbeing_attempted_suicide_or_suicidal_thoughts', sanYesNoOptions)
     suicideDetails = new Element.Textbox(this.page, '#health_wellbeing_attempted_suicide_or_suicidal_thoughts_yes_details')
     optimistic = new Element.Radiogroup<'optimistic' | 'notSure' | 'notOptimistic' | 'notAnswering' | 'notPresent'>(this.page, '#health_wellbeing_outlook', ['optimistic', 'notSure', 'notOptimistic', '-', 'notAnswering', 'notPresent'])
-    wantChangesHealth = new Element.Radiogroup<SanWantChanges>(this.page, '#health_wellbeing_changes', sanWantChangesOptions)
+    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#health_wellbeing_changes', sanWantChangesOptions)
 
 
     async populateMinimal() {
@@ -31,7 +31,7 @@ export class Page2 extends BaseSanEditPage {
         await this.selfHarmed.setValue('no')
         await this.suicide.setValue('no')
         await this.optimistic.setValue('optimistic')
-        await this.wantChangesHealth.setValue('madeChanges')
+        await this.wantChanges.setValue('madeChanges')
     }
 
 }

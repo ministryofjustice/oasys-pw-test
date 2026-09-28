@@ -118,6 +118,32 @@ export class Thinking extends BaseSanSection {
         await this.openPractitionerAnalysis()
         await this.practitionerAnalysis.populateMinimal()
         await this.markAsComplete()
-
     }
+
+    async populateForMaturityFlag() {
+        
+        await this.goto()
+        await this.page1.awareConsequences.setValue('no')
+        await this.page1.stableBehaviour.setValue('sometimes')
+        await this.page1.activitiesLinkedOffending.setValue('no')
+        await this.page1.resilient.setValue('hasBeen')
+        await this.page1.ableSolveProblems.setValue('limited')
+        await this.page1.understandOthers.setValue('no')
+        await this.page1.manipulativeBehaviour.setValue('some')
+        await this.page1.manageTemper.setValue('sometimes')
+        await this.page1.violence.setValue('yes')
+        await this.page1.impulse.setValue('yes')
+        await this.page1.positiveAttitude.setValue('no')
+        await this.page1.hostileOrientation.setValue('yes')
+        await this.page1.acceptSupervision.setValue('no')
+        await this.page1.supportCriminalBehaviour.setValue('yes')
+        await this.page1.wantChanges.setValue('madeChanges')
+        await this.saveAndContinue()
+        await this.page2.riskOfSexualHarm.setValue('no')
+        await this.saveAndContinue()
+        await this.openPractitionerAnalysis()
+        await this.practitionerAnalysis.populateMinimal()
+        await this.markAsComplete()
+    }
+
 }

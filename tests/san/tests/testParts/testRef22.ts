@@ -42,12 +42,12 @@ export function testRef22(offender1: OffenderDef, offender2: OffenderDef, offend
 
         // 3rd assessment
         await assessment.assessmentsTab.assessments.clickNthRow(5)
-        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[2], 'Homeowner', page, san, sentencePlan)
+        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[2], 'Living with friends or family', page, san, sentencePlan)
         await oasys.clickButton('Close')
 
         // 4th assessment
         await assessment.assessmentsTab.assessments.clickNthRow(3)
-        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[4], 'Living with friends or family', page, san, sentencePlan)
+        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[4], 'Homeowner', page, san, sentencePlan)
         await oasys.clickButton('Close')
 
         // 6th assessment

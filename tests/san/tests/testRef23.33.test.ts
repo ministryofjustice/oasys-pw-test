@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef23'
 
 /**
     ROLLBACK - ensure ROLLBACK API is sent with the parameters set correctly
@@ -7,7 +6,7 @@ import * as testData from '../data/testRef23'
     alcohol sections questions 9.1 and 9.2
  */
 
-test.describe.configure({ retries: 1 })
+// test.describe.configure({ retries: 1 })
 test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, assessment, sections, sentencePlan, san, risk, signing, sns }) => {
 
     await user.prob.probSanHeadPdu.login()  // No countersigning for this test
@@ -23,7 +22,30 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, as
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
 
     await san.gotoSan()
-    await san.populateSanSections('Test ref 23', testData.sanPopulation1, true)
+    await san.accommodation.populateMinimal()
+    await san.employment.populateMinimal()
+    await san.finance.populateMinimal()
+    await san.drugs.populateMinimal()
+    await san.alcohol.goto()
+    await san.alcohol.page1.everDrank.setValue('yesIncLast3')
+    await san.saveAndContinue()
+    await san.alcohol.page2.howOftenLast3.setValue(`1PerMonth`)
+    await san.alcohol.page2.typicalUnits.setValue(`1To2`)
+    await san.alcohol.page2.had8OrMore.setValue(`no`)
+    await san.alcohol.page2.bingeDrinking.setValue('noEvidence')
+    await san.alcohol.page2.pastIssues.setValue('no')
+    await san.alcohol.page2.whyDrink.setValue(['enjoyment'])
+    await san.alcohol.page2.impactAlcohol.setValue(['noImpact'])
+    await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
+    await san.alcohol.page2.wantChanges.setValue('madeChanges')
+    await san.saveAndContinue()
+    await san.alcohol.openPractitionerAnalysis()
+    await san.alcohol.practitionerAnalysis.populateMinimal()
+    await san.markAsComplete()
+    await san.health.populateMinimal()
+    await san.relationships.populateMinimal()
+    await san.thinking.populateMinimal()
+    await san.offenceAnalysis.populateMinimal()
     await san.returnToOASys()
 
     await sections.offendingInformation.populateMinimal()
@@ -36,7 +58,7 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, as
     await sections.predictors.o1_30.setValue('No')
     await sections.predictors.o1_38.setValue({})
 
-    await risk.screeningNoRisks(true)
+    await risk.screeningNoRisks()
 
     log(`Check in the database to see what questions have been set for section 9 - interested to know how SAN have treated an Offender who is NOT male or female
             for the alcohol questions
@@ -82,11 +104,11 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, as
         },
         {
             name: 'criminogenicNeed',
-            values: ['N', 'N', 'N/A', 'N', 'N', 'N/A', 'Y', 'Y', 'N']
+            values: ['N', 'N', 'N/A', 'N', 'N', 'N/A', 'N', 'N', 'N']
         },
         {
             name: 'scores',
-            values: ['0', '0', 'N/A', '0', '0', 'N/A', '4', '6', '0']
+            values: ['0', '0', 'N/A', '0', '0', 'N/A', '1', '0', '0']
         }
     ]
     await assessment.summarySheet.sanCrimTable.checkData(expectedValues)
@@ -129,7 +151,24 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, as
     await oasys.history(offender1)
 
     await san.gotoSanFromOffender()
-    await san.populateSanSections('Test ref 23 modification', testData.modifySan, true)
+    await san.accommodation.goto()
+    await san.accommodation.openPractitionerAnalysis()
+    await san.accommodation.change()
+    await san.accommodation.practitionerAnalysis.riskOfHarm.setValue('yes')
+    await san.accommodation.practitionerAnalysis.riskOfHarmYesDetails.setValue('Accommodation serious harm details')
+    await san.accommodation.markAsComplete()
+    await san.thinking.goto()
+    await san.thinking.openPractitionerAnalysis()
+    await san.thinking.change()
+    await san.thinking.practitionerAnalysis.riskOfHarm.setValue('yes')
+    await san.thinking.practitionerAnalysis.riskOfHarmYesDetails.setValue('TBA serious harm details')
+    await san.thinking.markAsComplete()
+    await san.alcohol.goto()
+    await san.alcohol.change()
+    await san.alcohol.page1.everDrank.setValue('no')
+    await san.alcohol.saveAndContinue()
+    await san.alcohol.openPractitionerAnalysis()
+    await san.alcohol.markAsComplete()
     await san.returnToOASys()
 
     log(`Now open up the Sentence Plan from the offender records 'Open SP' button

@@ -1,6 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef36'
-import * as testData38 from '../data/testRef38'
 
 const offender1: OffenderDef = {
 
@@ -51,7 +49,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await sections.predictors.o1_38.setValue({})
 
     // Populate SAN sections, check API calls
-    await san.gotoSan()
+    await san.populateMinimal()
     await san.queries.checkSanOtlCall(pk1, {
         'crn': offender1.probationCrn,
         'pnc': offender1.pnc,
@@ -69,12 +67,10 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
         'san', null
     )
 
-    await san.populateSanSections('TestRef37 complete SAN', testData.sanPopulation, true)
-    await san.returnToOASys()
     await oasys.clickButton('Next')
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
 
-    await risk.screeningNoRisks(true)
+    await risk.screeningNoRisks(false)
 
     // Complete SP
     await sentencePlan.populateMinimal()
@@ -281,7 +277,19 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     )
 
     // Modify SAN, these changes will trigger FA in this assessment
-    await san.populateSanSections('TestRef38 modify SAN', testData38.modifySan, true)
+    await san.accommodation.openPractitionerAnalysis()
+    await san.accommodation.change()
+    await san.accommodation.practitionerAnalysis.riskOfHarm.setValue('yes')
+    await san.accommodation.practitionerAnalysis.riskOfHarmYesDetails.setValue('Some text')
+    await san.accommodation.markAsComplete()
+
+    await san.thinking.goto()
+    await san.thinking.openPractitionerAnalysis()
+    await san.thinking.change()
+    await san.thinking.practitionerAnalysis.riskOfHarm.setValue('yes')
+    await san.thinking.practitionerAnalysis.riskOfHarmYesDetails.setValue('Some text')
+    await san.thinking.markAsComplete()
+
     await san.returnToOASys()
     await oasys.clickButton('Next')
     await risk.rmp.checkMenuVisibility(true)
@@ -353,7 +361,17 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
         'san', null
     )
     await san.checkSanEditMode(true)
-    await san.populateSanSections('Test ref 38 part 2', testData38.modifySan2, true)
+    // await san.populateSanSections('Test ref 38 part 2', testData38.modifySan2, true)
+    await san.accommodation.openPractitionerAnalysis()
+    await san.accommodation.change()
+    await san.accommodation.practitionerAnalysis.riskOfHarm.setValue('no')
+    await san.accommodation.markAsComplete()
+
+    await san.thinking.goto()
+    await san.thinking.openPractitionerAnalysis()
+    await san.thinking.change()
+    await san.thinking.practitionerAnalysis.riskOfHarm.setValue('no')
+    await san.thinking.markAsComplete()
     await san.returnToOASys()
     await oasys.clickButton('Next')
     await san.queries.checkSanGetAssessmentCall(pk1, 2)

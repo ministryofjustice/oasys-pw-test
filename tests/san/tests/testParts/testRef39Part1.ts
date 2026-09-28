@@ -1,6 +1,5 @@
 import { test } from 'fixtures'
 import { MergeTestData } from '../testRef39.40.test'
-import * as testData from '../../data/mergeTest'
 
 export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
 
@@ -32,11 +31,9 @@ export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
         await sections.predictors.o1_30.setValue('No')
         await sections.predictors.o1_38.setValue({})
 
-        await san.gotoSan()
-        await san.populateSanSections('Merge test', testData.sanPopulation, true)
-        await san.returnToOASys()
+        await san.populateMinimal({offenceDescription: 'Offence description for assessment 1'})
 
-        await risk.screeningNoRisks(true)
+        await risk.screeningNoRisks()
 
         // Complete SP, then sign and lock
         await sentencePlan.populateMinimal()
@@ -67,12 +64,9 @@ export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
         await sections.predictors.o1_30.setValue('No')
         await sections.predictors.o1_38.setValue({})
 
-        await san.gotoSan()
-        await san.populateSanSections('Merge test', testData.sanPopulation, true)
-        await san.populateSanSections('Merge test', testData.modifySanForAssessment2, true)
-        await san.returnToOASys()
+        await san.populateMinimal({offenceDescription: 'Offence description modified for offender 2'})
 
-        await risk.screeningNoRisks(true)
+        await risk.screeningNoRisks()
 
         // Complete SP, then sign and lock
         await sentencePlan.populateMinimal()

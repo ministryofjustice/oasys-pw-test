@@ -1,5 +1,5 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef35'
+import { OasysDateTime } from 'lib/oasysDateTime'
 
 /**
     Check the cloning of a standalone RSR into an OASys-SAN 3.2 assessment
@@ -16,9 +16,7 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
 
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
 
-    await san.gotoSan()
-    await san.populateSanSections('Test ref 35', testData.sanPopulation1, true)
-    await san.returnToOASys()
+    await san.populateForMaturityFlag()
 
     await sentencePlan.populateMinimal()
 
@@ -27,7 +25,7 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
 
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
-        MATURITY_SCORE: '14',
+        MATURITY_SCORE: '10',
         MATURITY_FLAG: '1',
     })
 
@@ -45,7 +43,7 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
     await risk.screeningNoRisks(true)
     await signing.signAndLock({ page: 'spService' })
 
-    let failed = await assessment.queries.checkAnswers(pk1, testData.preRsrDataCheck, true)
+    let failed = await assessment.queries.checkAnswers(pk1, preRsrDataCheck, true)
     expect(failed).toBeFalsy()
 
     log(`Then create a standalone RSR changing some data for the section 1 parameters and R1.2 fields.  
@@ -65,7 +63,7 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
     await offender.standaloneCsrp.o2_2Weapon.setValue('Yes')
     await offender.standaloneCsrp.o3_4.checkValue('0-No problems')
     await offender.standaloneCsrp.o4_2.checkValue('0-No')
-    await offender.standaloneCsrp.o6_4.checkValue('2-Significant problems')
+    await offender.standaloneCsrp.o6_4.checkValue('0-No problems')
     await offender.standaloneCsrp.o9_1.checkValue('0-No problems')
     await offender.standaloneCsrp.o11_2.checkValue('2-Significant problems')
     await offender.standaloneCsrp.o11_4.checkValue('1-Some problems')
@@ -96,7 +94,7 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
     await offender.standaloneCsrp.close.click()
 
     const pk2 = await assessment.createProb({ purposeOfAssessment: 'Review', includeSanSections: 'Yes' })
-    failed = await assessment.queries.checkAnswers(pk2, testData.postRsrDataCheck, true)
+    failed = await assessment.queries.checkAnswers(pk2, postRsrDataCheck, true)
     expect(failed).toBeFalsy()
     await oasys.clickButton('Close')
 
@@ -169,3 +167,41 @@ test('SAN integration - test refs 35 and 45', async ({ oasys, user, offender, as
 
     await user.logout()
 })
+
+
+const oasysDateTime = new OasysDateTime()
+const preRsrDataCheck: OasysAnswer[] = [
+
+    { section: '1', q: '1.32', a: `2` },
+    { section: '1', q: '1.40', a: `0` },
+    { section: '1', q: '1.29', a: oasysDateTime.oasysDateAsString({ months: -1 }) },
+    { section: '1', q: '1.38', a: oasysDateTime.oasysDateAsString() },
+    { section: '3', q: '3.4', a: `0` },
+    { section: '4', q: '4.2', a: `NO` },
+    { section: '6', q: '6.4', a: `0` },
+    { section: '9', q: '9.1', a: `0` },
+    { section: '11', q: '11.2', a: `2` },
+    { section: '11', q: '11.4', a: `1` },
+    { section: '12', q: '12.1', a: `2` },
+    { section: 'ROSH', q: 'R1.2.6.2_V2', a: 'NO' },   // Burglary previous
+    { section: 'ROSH', q: 'R1.2.13.2_V2', a: 'NO' },  // Weapon previous
+
+]
+
+const postRsrDataCheck: OasysAnswer[] = [
+
+    { section: '1', q: '1.32', a: `4` },
+    { section: '1', q: '1.40', a: `1` },
+    { section: '1', q: '1.29', a: oasysDateTime.oasysDateAsString() },
+    { section: '1', q: '1.38', a: oasysDateTime.oasysDateAsString({ days: -10 }) },
+    { section: '3', q: '3.4', a: `0` },
+    { section: '4', q: '4.2', a: `NO` },
+    { section: '6', q: '6.4', a: `0` },
+    { section: '9', q: '9.1', a: `0` },
+    { section: '11', q: '11.2', a: `2` },
+    { section: '11', q: '11.4', a: `1` },
+    { section: '12', q: '12.1', a: `2` },
+    { section: 'ROSH', q: 'R1.2.6.2_V2', a: 'YES' },   // Burglary previous
+    { section: 'ROSH', q: 'R1.2.13.2_V2', a: 'YES' },  // Weapon previous
+
+]

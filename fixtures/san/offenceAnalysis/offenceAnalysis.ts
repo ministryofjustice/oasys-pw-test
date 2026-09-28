@@ -17,10 +17,10 @@ export class OffenceAnalysis extends BaseSanSection {
     readonly practitionerAnalysis = new PractitionerAnalysis(this.page, this.section, sanIdPrefixLookup[this.section])
     readonly victims = new Victims(this.page)
 
-    async populateMinimal() {
+    async populateMinimal(params?: SanPopulationParams) {
 
         await this.goto()
-        await this.page1.populateMinimal()
+        await this.page1.populateMinimal(params)
         await this.saveAndContinue()
         await this.page2.populateMinimal()
         await this.saveAndContinue()

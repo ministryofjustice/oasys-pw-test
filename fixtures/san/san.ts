@@ -83,7 +83,7 @@ export class San {
         await this.health.populateMinimal()
         await this.relationships.populateMinimal()
         await this.thinking.populateMinimal(params)
-        await this.offenceAnalysis.populateMinimal()
+        await this.offenceAnalysis.populateMinimal(params)
         await this.returnToOASys()
     }
 
@@ -148,6 +148,28 @@ export class San {
         await this.relationships.populateForSara()
         await this.thinking.populateForSara(params)
         await this.offenceAnalysis.populateForSara()
+
+        await this.returnToOASys()
+    }
+
+    async populateForMaturityFlag(params?: SanPopulationParams) {
+        
+        if (params?.from == 'offender') {
+            await this.gotoSanFromOffender()
+        } else {
+            await this.gotoSan()
+        }
+        log('Populating SAN questions for Maturity Flag')
+
+        await this.accommodation.populateMinimal()
+        await this.employment.populateMinimal()
+        await this.finance.populateMinimal()
+        await this.drugs.populateMinimal()
+        await this.alcohol.populateMinimal()
+        await this.health.populateMinimal()
+        await this.relationships.populateMinimal()
+        await this.thinking.populateForMaturityFlag()
+        await this.offenceAnalysis.populateMinimal()
 
         await this.returnToOASys()
     }

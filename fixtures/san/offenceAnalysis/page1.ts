@@ -17,9 +17,9 @@ export class Page1 extends BaseSanEditPage {
     victimTypeDetails = new Element.Textbox(this.page, '#offence_analysis_who_was_the_victim_other_details')
 
 
-    async populateMinimal() {
+    async populateMinimal(params?: SanPopulationParams) {
 
-        await this.offenceDescription.setValue('Offence description')
+        await this.offenceDescription.setValue(params?.offenceDescription ?? 'Offence description')
         await this.offenceElements.setValue(['none'])
         await this.reason.setValue('Why it happened')
         await this.motivations.setValue(['other'])

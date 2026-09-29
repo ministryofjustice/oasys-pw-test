@@ -1,7 +1,6 @@
 export * from './button'
 export * from './checkbox'
 export * from './checkboxGroup'
-export * from './combo'
 export * from './dropdown'
 export * from './iconContainer'
 export * from './link'

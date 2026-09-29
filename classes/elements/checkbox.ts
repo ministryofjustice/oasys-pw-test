@@ -65,27 +65,4 @@ export class Checkbox {
         return result
     }
 
-    /**
-     * Select any number of items in a group of checkboxes.  Parameters are:
-     *   - item: a SanId defining a San checkbox group
-     *   - item: comma-separated list of the name(s) of the item(s) to select.  Any options not included in the list will be unchecked (empty string to clear all).
-     */
-    static async sanSetValue(page: Page, item: SanId, value: string) {
-
-        const itemsToCheck = value.split(',').map((item) => item.trim())
-
-        for (let i = 0; i < item.options.length; i++) {
-            const itemSuffix = i == 0 ? '' : `-${i + 1}`
-
-            if (itemsToCheck.includes(item.options[i])) {
-                await page.locator(`${item.id}${itemSuffix}`).check()
-
-            } else if (item.options[i] != '-') {   // '-' is used as a separator in the list of IDs
-                const elementCount = await page.locator(`${item.id}${itemSuffix}:visible`).count()
-                if (elementCount == 1) {
-                    await page.locator(`${item.id}${itemSuffix}`).uncheck()
-                }
-            }
-        }
-    }
 }

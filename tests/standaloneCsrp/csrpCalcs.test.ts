@@ -36,10 +36,10 @@ test('CSRP calcs', async ({ oasys, user, offender, ogrs }) => {
     await offender.standaloneCsrp.o1_39.setValue('Yes')
     await offender.standaloneCsrp.calculateScores.click()
     await offender.standaloneCsrp.close.click()
-    
+
     ogrsResult = await ogrs.checkOgrsInStandaloneCsrp(offender1.probationCrn)
     expect(ogrsResult.outputParams.OGP2_CALCULATED).toBe('Y')
-    
+
     log('', 'Fifth CSRP - static, 6.7 validation')
     await offender.standaloneCsrp.goto()
     await offender.standaloneCsrp.o1_39.setValue('Yes')
@@ -50,9 +50,21 @@ test('CSRP calcs', async ({ oasys, user, offender, ogrs }) => {
     await offender.standaloneCsrp.calculateScores.click()
     await oasys.checkNoErrorMessage()
     await offender.standaloneCsrp.close.click()
-
+    
     ogrsResult = await ogrs.checkOgrsInStandaloneCsrp(offender1.probationCrn)
     expect(ogrsResult.outputParams.OGP2_CALCULATED).toBe('N')
+    
+    log('', 'Sixth CSRP - dynamic, 4.2 = Yes')
+    await offender.standaloneCsrp.goto()
+    await offender.standaloneCsrp.o1_39.setValue('Yes')
+    await offender.standaloneCsrp.o4_2.setValue('2-Yes')
+    await offender.standaloneCsrp.o6_7.setValue('No')
+    await offender.standaloneCsrp.calculateScores.click()
+    await oasys.checkNoErrorMessage()
+    await offender.standaloneCsrp.close.click()
+    
+    ogrsResult = await ogrs.checkOgrsInStandaloneCsrp(offender1.probationCrn)
+    expect(ogrsResult.outputParams.OGP2_CALCULATED).toBe('Y')
 
     await user.logout()
 })

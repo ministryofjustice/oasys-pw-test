@@ -1,6 +1,6 @@
 import { APIRequestContext } from '@playwright/test'
 
-import { OasysDb } from 'fixtures'
+import { OasysDb, Ogrs } from 'fixtures'
 import * as rest from './apiClasses'
 import * as dbClasses from './data/dbClasses'
 import * as restApi from './getApiResponse'
@@ -9,7 +9,8 @@ import * as restApiDb from './data/restApiDb'
 
 
 export class Api {
-    constructor(private readonly oasysDb: OasysDb, private readonly request: APIRequestContext) { }
+
+    constructor(private readonly oasysDb: OasysDb, private readonly request: APIRequestContext, private readonly ogrs: Ogrs) { }
 
     /** 
      * Tests all endpoints for all assessments for given offender CRN; returns an OffenderApisResult object including pass/fail, reporting output and timing stats.
@@ -71,6 +72,7 @@ export class Api {
             'v4RiskScoresRsr',
         ]
 
+
         let failed = false
 
         // Get all relevant data from the OASys database
@@ -130,15 +132,56 @@ export class Api {
             }
             apiParams.push(v4Asslistparams)
 
+            if (crnSource == 'prob') {
+                // Add V4 tierRiskFlag for probation only
+                const v4TierRiskFlagparams: EndpointParams = {
+                    endpoint: 'tierRiskFlag',
+                    crn: offenderData.probationCrn,
+                    laoPrivilege: 'ALLOW'
+                }
+                apiParams.push(v4TierRiskFlagparams)
+            }
+
             // Add other V4 endpoint params if the offender has assessments and if skipPkOnlyCalls parameter is false
             if (!skipPkOnlyCalls) {
+
                 // V4 timeline includes layer2 but the subsequents do not
                 const relevantAssessments = offenderData.assessments.filter(rest.V4Common.assessmentFilter).filter((ass) => ass.assessmentType != 'LAYER2')
-                relevantAssessments.forEach((assessment) => this.addAssessment(v4AssessmentEndpoints, apiParams, offenderData.probationCrn, assessment))
+
+                relevantAssessments.forEach((assessment) => {
+
+                    this.addAssessment(v4AssessmentEndpoints, apiParams, offenderData.probationCrn, assessment)
+
+                    // Add tier predictors - only if initiated 2026 or later to avoid incompatible data
+                    if (assessment.initiationDate > '2026-08' && crnSource == 'prob') {
+                        const tierPredictorsParams: EndpointParams = {
+                            endpoint: 'tierPredictors',
+                            assessmentPk: assessment.assessmentPk,
+                            recordType: 'O',
+                            laoPrivilege: 'ALLOW'
+                        }
+                        apiParams.push(tierPredictorsParams)
+                    }
+                })
 
                 // Add RSRs
                 const standaloneRsrs = offenderData.assessments.filter((ass) => ass.assessmentType == 'STANDALONE')
-                standaloneRsrs.forEach((assessment) => this.addAssessment(v4RsrEndpoints, apiParams, offenderData.probationCrn, assessment))
+
+                standaloneRsrs.forEach((assessment) => {
+                    this.addAssessment(v4RsrEndpoints, apiParams, offenderData.probationCrn, assessment)
+
+                    // Add tier predictors - only if initiated after 2026 to avoid incompatible data
+                    if (assessment.initiationDate > '2026-08' && crnSource == 'prob') {
+                        const tierPredictorsParams: EndpointParams = {
+                            endpoint: 'tierPredictors',
+                            assessmentPk: assessment.assessmentPk,
+                            recordType: 'R',
+                            laoPrivilege: 'ALLOW'
+                        }
+                        apiParams.push(tierPredictorsParams)
+                    }
+                })
+
             }
 
             // Add PNI - only if initiated after 2021 to avoid incompatible data
@@ -159,11 +202,11 @@ export class Api {
 
             // Filter to a limited list if specified, and remove anything in the exclusions list
             let filteredParamsList = limitEndpoints && limitEndpoints.length > 0 ? apiParams.filter((param) => limitEndpoints.includes(param.endpoint)) : apiParams
-            filteredParamsList = excludeEndpoints ?  filteredParamsList.filter((param) => !excludeEndpoints.includes(param.endpoint)) : filteredParamsList
+            filteredParamsList = excludeEndpoints ? filteredParamsList.filter((param) => !excludeEndpoints.includes(param.endpoint)) : filteredParamsList
 
             ///////////////////////////////////////////////////////////
             // Work out the expected responses, then call the endpoints
-            const expectedValues = await rest.GetExpectedResponses.getExpectedResponses(offenderData, filteredParamsList)
+            const expectedValues = await rest.GetExpectedResponses.getExpectedResponses(offenderData, filteredParamsList, this.ogrs)
             const actualValues = await restApi.getMultipleApiResponses(filteredParamsList, this.request)
 
             ////////////////////////////////////

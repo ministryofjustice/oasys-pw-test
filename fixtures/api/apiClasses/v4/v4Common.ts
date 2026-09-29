@@ -52,14 +52,15 @@ export class V4EndpointResponse extends common.EndpointResponse {
             this.probNumber = offenderData.probationCrn
         }
         // Remove standard properties in the v1-3 endpoints that are not used in v4
-        if (!['v4AssList', 'pni'].includes(parameters.endpoint)) {
+        if (!['v4AssList', 'pni', 'tierRiskFlag'].includes(parameters.endpoint)) {
             delete this.inputs['crn']
         }
         delete this['crn-deprecated']
         delete this['crn']
         delete this.inputs['expectedStatus']
 
-        let includeRsr = ['v4AssList', 'v4RiskScoresRsr'].includes(parameters.endpoint)
+        // Timeline calcs include standalone CSRPs for some endpoints
+        let includeRsr = ['v4AssList', 'v4RiskScoresRsr', 'tierPredictors'].includes(parameters.endpoint)
         this.processTimeline(offenderData.assessments.filter(includeRsr ? timelineAssessmentWithRsrFilter : timelineAssessmentFilter))
     }
 
@@ -199,11 +200,11 @@ export class V4AssessmentCommon {
 
         this.assessmentPk = assessment.assessmentPk
         this.assessmentType = assessment.assessmentType
-        if (this.assessmentType == 'STANDALONE') {
-            delete this.assessmentVersion
-        } else {
+        // if (this.assessmentType == 'STANDALONE') {
+        //     delete this.assessmentVersion
+        // } else {
             this.assessmentVersion = assessment.assessmentVersion
-        }
+        // }
         this.dateCompleted = assessment.completedDate
         this.assessorSignedDate = assessment.signedDate
         this.initiationDate = assessment.initiationDate
@@ -222,6 +223,11 @@ export class V4AssessmentCommon {
         this.latestPartCompUnsignedDate = lastPartcompUnsignedIndex > -1 ? timeline[lastPartcompUnsignedIndex].initiationDate : null
         this.laterCompleteAssessmentExists = lastCompleteIndex > assessmentIndex
         this.latestCompleteDate = latestCompleteDate
+
+        // Handle sequencing of overlapping assessment/CSRP
+        if (this.latestCompleteDate && this.dateCompleted && (this.dateCompleted > this.latestCompleteDate)) {
+            this.laterCompleteAssessmentExists = false
+        }
 
         this.assessor.name = (assessment as dbClasses.DbAssessment).assessorName
     }

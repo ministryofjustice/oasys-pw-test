@@ -23,7 +23,7 @@ export class Ogrs {
     constructor(private readonly oasysDb: OasysDb, private readonly offender: Offender, private readonly sections: Sections, private readonly risk: Risk) { }
 
     private readonly calculator = new Calculator()
-    private readonly data = new Data(this.oasysDb)
+    readonly data = new Data(this.oasysDb)
     readonly rescoring = new Rescoring(this.oasysDb)
     readonly tiering = new Tiering(this.oasysDb)
     readonly rescoringLic = new RescoringLic(this.oasysDb)
@@ -104,6 +104,44 @@ export class Ogrs {
         }
         expect(failed).toBeFalsy()
         return result
+    }
+
+    /**
+     * Checks the calculation stored in oasys_set for a given pk.
+     * Returns an true/false failure status
+     */
+    async checkOgrsInOasysSetReturnStatus(assessmentPk: number, dateParam: Temporal.PlainDate): Promise<Boolean> {
+
+        const assessment = await this.data.getOneAssessment(assessmentPk)
+        const calculatorParams = createAssessmentInputParams(assessment, dateParam)
+
+        const result: Ogrs4CalcResult = {
+            outputParams: this.calculate(calculatorParams),
+        }
+
+        this.compileAndCheckResult(result)
+
+        log('', 'Checking OGRS4 calculations')
+        let failed = false
+        failed = checkScore('ARP static score', result.outputParams.OGRS4G_PERCENTAGE?.toNumber() ?? null, assessment.ogrs4gYr2) || failed
+        failed = checkScore('ARP static band', result.outputParams.OGRS4G_BAND?.substring(0, 1) ?? null, assessment.ogrs4gBand) || failed
+        failed = checkScore('ARP dynamic score', result.outputParams.OGP2_PERCENTAGE?.toNumber() ?? null, assessment.ogp2Yr2) || failed
+        failed = checkScore('ARP dynamic band', result.outputParams.OGP2_BAND?.substring(0, 1) ?? null, assessment.ogp2Band) || failed
+        failed = checkScore('VRP static score', result.outputParams.OGRS4V_PERCENTAGE?.toNumber() ?? null, assessment.ogrs4vYr2) || failed
+        failed = checkScore('VRP static band', result.outputParams.OGRS4V_BAND?.substring(0, 1) ?? null, assessment.ogrs4vBand) || failed
+        failed = checkScore('VRP dynamic score', result.outputParams.OVP2_PERCENTAGE?.toNumber() ?? null, assessment.ovp2Yr2) || failed
+        failed = checkScore('VRP dynamic band', result.outputParams.OVP2_BAND?.substring(0, 1) ?? null, assessment.ovp2Band) || failed
+        failed = checkScore('SVRP static score', result.outputParams.SNSV_PERCENTAGE_STATIC?.toNumber() ?? null, assessment.snsvStaticYr2) || failed
+        failed = checkScore('SVRP static band', result.outputParams.SNSV_BAND_STATIC?.substring(0, 1) ?? null, assessment.snsvStaticYr2Band) || failed
+        failed = checkScore('SVRP dynamic score', result.outputParams.SNSV_PERCENTAGE_DYNAMIC?.toNumber() ?? null, assessment.snsvDynamicYr2) || failed
+        failed = checkScore('SVRP dynamic band', result.outputParams.SNSV_BAND_DYNAMIC?.substring(0, 1) ?? null, assessment.snsvDynamicYr2Band) || failed
+
+        if (failed) {
+            log(`PK failed: ${assessmentPk}`)
+            log(JSON.stringify(calculatorParams))
+            log(JSON.stringify(result))
+        }
+        return failed
     }
 
     /**
@@ -343,7 +381,7 @@ export class Ogrs {
             await this.risk.summary.iicSrpBand.checkValue(ogrsResult.iicSrpBand)
         }
     }
-
+    
     async checkNonMFResultOnPredictorsPage() {
 
         await this.sections.predictors.goto()

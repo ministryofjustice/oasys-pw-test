@@ -31,6 +31,22 @@ export class Utils {
         }
     }
 
+    lookupIntegerMissingAs0(value: string, lookup: { [keys: string]: string | number }, translation: { [keys: string]: number } = null): number {
+
+        const result = lookup[value]
+        if (result == null || result == undefined) {
+            return null
+        }
+        if (translation == null) {
+            if (result == 'M') {
+                return 0
+            }
+            return typeof result == 'string' ? this.stringToInt(result) : result
+        } else {
+            return this.lookupInteger(result as string, translation)
+        }
+    }
+
     lookupFloat(value: string, lookup: { [keys: string]: string | number }): number {
 
         const result = lookup[value]

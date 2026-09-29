@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef36'
 
 /**
  * 1) Create and complete a 3.2 assessment 
@@ -43,7 +42,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await sections.predictors.o1_30.setValue('No')
     await sections.predictors.o1_38.setValue({})
 
-    await san.gotoSan()
+    await san.populateMinimal()
     await san.queries.checkSanOtlCall(pk1, {
         'crn': offender1.probationCrn,
         'pnc': offender1.pnc,
@@ -61,12 +60,10 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
         'san', 'assessment'
     )
 
-    await san.populateSanSections('TestRef36 complete SAN', testData.sanPopulation, true)
-    await san.returnToOASys()
     await oasys.clickButton('Next')
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
 
-    await risk.screeningNoRisks(true)
+    await risk.screeningNoRisks()
 
     // Complete SP
     await sentencePlan.populateMinimal()
@@ -88,7 +85,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
     await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
     await user.logout()
 
     await user.prob.probSanUnappr.login()
@@ -124,7 +121,49 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     },
         'san', 'assessment'
     )
-    await san.populateSanSections('TestRef36 modify SAN', testData.modifySan, true)
+    await san.accommodation.goto()
+    await san.accommodation.change()
+    await san.accommodation.page1.currentAccommodation.setValue('noAccommodation')
+    await san.accommodation.page1.noAccommodationType.setValue('campsite')
+    await san.accommodation.saveAndContinue()
+    await san.employment.goto()
+    await san.employment.change()
+    await san.employment.page1.employmentStatus.setValue('retired')
+    await san.employment.saveAndContinue()
+    await san.employment.page2.employmentHistory.setValue('unstable')
+    await san.employment.saveAndContinue()
+    await san.finance.goto()
+    await san.finance.change()
+    await san.finance.page1.incomeSource.setValue(['family'])
+    await san.finance.page1.overReliant.setValue('yes')
+    await san.finance.saveAndContinue()
+    await san.drugs.goto()
+    await san.drugs.change()
+    await san.drugs.page1.everUsed.setValue('yes')
+    await san.drugs.saveAndContinue()
+    await san.alcohol.goto()
+    await san.alcohol.change()
+    await san.alcohol.page1.everDrank.setValue('yesIncLast3')
+    await san.alcohol.saveAndContinue()
+    await san.health.goto()
+    await san.health.change()
+    await san.health.page1.physicalHealthConditions.setValue('yes')
+    await san.health.page1.mentalHealthProblems.setValue('no')
+    await san.health.saveAndContinue()
+    await san.relationships.goto()
+    await san.relationships.change()
+    await san.relationships.saveAndContinue()
+    await san.relationships.page2.importantPeople.setValue(['friends'])
+    await san.relationships.saveAndContinue()
+    await san.thinking.goto()
+    await san.thinking.change()
+    await san.thinking.page1.awareConsequences.setValue('sometimes')
+    await san.thinking.page1.stableBehaviour.setValue('no')
+    await san.thinking.saveAndContinue()
+    await san.offenceAnalysis.goto()
+    await san.offenceAnalysis.change()
+    await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
+    await san.offenceAnalysis.saveAndContinue()
     await san.returnToOASys()
     await oasys.clickButton('Next')
 

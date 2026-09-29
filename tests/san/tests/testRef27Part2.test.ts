@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef27'
 
 test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 27 part 2', async ({ oasys, user, cms, offender, assessment, san, sentencePlan }) => {
@@ -37,7 +36,11 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, user, cms, offender
 
     await oasys.clickButton('Close')
     await san.gotoSanFromOffender()
-    await san.populateSanSections('Test 27 part 4 SAN Alcohol', testData.test4ModifyAlcohol, true)
+    await san.alcohol.goto()
+    await san.alcohol.change()
+    await san.alcohol.page1.everDrank.setValue('yesNotLast3')
+    await san.alcohol.saveAndContinue()
+    await san.alcohol.page2.bingeDrinking.setValue('evidence')
     await san.returnToOASys()
 
     log(`From the offender record click on the <Open SSP> button - taken into the Sentence Plan Service in EDIT mode

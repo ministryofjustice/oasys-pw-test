@@ -5,6 +5,7 @@ import * as pages from './pages'
 import { BaseAssessmentPage } from 'classes'
 import { TaskManager } from 'fixtures/tasks/pages/taskManager'
 import { Queries } from './queries'
+import { noDatabaseConnection } from 'localSettings'
 
 
 export class Assessment {
@@ -57,8 +58,12 @@ export class Assessment {
             await this.oasys.clickButton(clonePreviousHistoric)
         }
 
-        const pnc = await this.baseAssessmentPage.getPncFromScreenContext()
-        const pk = await this.getLatestSetPkByPnc(pnc)
+        let pk = 0
+
+        if (!noDatabaseConnection) {
+            const pnc = await this.baseAssessmentPage.getPncFromScreenContext()
+            pk = await this.getLatestSetPkByPnc(pnc)
+        }
 
         log(`Created assessment PK ${pk}: ${JSON.stringify(assessmentDetails)}`, 'Assessment')
         return pk
@@ -130,7 +135,7 @@ export class Assessment {
             // await this.san.populateFull()  // TODO
         }
         if (params.layer != 'Layer 1V2') {
-            await this.sentencePlan.populateFull()
+            await this.sentencePlan.populateTwoGoals()
         }
 
         log(`Fully populated assessment: ${JSON.stringify(params)}`)
@@ -150,6 +155,23 @@ export class Assessment {
             await this.deleteAssessment.reasonForDeletion.setValue('Testing')
             await this.deleteAssessment.ok.click()
             await this.oasys.history(surname, forename)
+        }
+        log(`Deleted ${count} assessment(s)`)
+    }
+
+    /**
+     * Select any existing assessments and delete them.  Assumes you have the appropriate rights and are on the OffenderDetails page with the assessments tab visible.
+     */
+    async deleteAllByCrn(probationCrn: string) {
+
+        const count = await this.assessmentsTab.assessments.purposeOfAssessment.getCount()
+
+        for (let i = 0; i < count; i++) {
+            await this.assessmentsTab.assessments.purposeOfAssessment.clickFirstRow()
+            await this.deleteAssessment.goto(true)
+            await this.deleteAssessment.reasonForDeletion.setValue('Testing')
+            await this.deleteAssessment.ok.click()
+            await this.offender.searchAndSelectByCrn(probationCrn)
         }
         log(`Deleted ${count} assessment(s)`)
     }

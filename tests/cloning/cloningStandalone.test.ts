@@ -24,7 +24,7 @@ test('Cloning test - standalone CSRP', async ({ oasys, user, offender, assessmen
 
     await oasys.history(offender1)
     await offender.standaloneCsrp.goto()
-    await offender.standaloneCsrp.o1_8Age.checkValue('23')
+    await offender.standaloneCsrp.ageFirstSanction.checkValue('23')
     await offender.standaloneCsrp.o1_32.checkValue(2)
     await offender.standaloneCsrp.o1_40.checkValue(0)
 

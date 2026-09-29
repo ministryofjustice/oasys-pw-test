@@ -6,7 +6,7 @@
 import { test as base, TestInfo } from '@playwright/test'
 
 import { OasysDb } from './oasysDb/oasysDb'
-import { testEnvironment } from 'localSettings'
+import { noDatabaseConnection, testEnvironment } from 'localSettings'
 import { Oasys } from './oasys/oasys'
 import { User } from './user/user'
 import { Cms } from './cms/cms'
@@ -74,13 +74,19 @@ export const test = base.extend<OasysFixtures>({
     oasysDb: async ({ }, use: Function) => {
 
         const oasysDb = new OasysDb()
-        appConfig = await oasysDb.getAppConfig()
-        await oasysDb.getLatestElogAndUnprocEventTime('store')
+        if (noDatabaseConnection) {
+            appConfig = { currentVersion: 'No Db', probForceCrn: testEnvironment.url.includes('t2.oasys'), offences: null, appVersions: null }
+        } else {
+            appConfig = await oasysDb.getAppConfig()
+            await oasysDb.getLatestElogAndUnprocEventTime('store')
+        }
         log(`OASys ${appConfig.currentVersion} (${testEnvironment.name})`, 'Environment')
 
         await use(oasysDb)
 
-        await oasysDb.getLatestElogAndUnprocEventTime('check')
+        if (!noDatabaseConnection) {
+            await oasysDb.getLatestElogAndUnprocEventTime('check')
+        }
     },
 
     oasys: async ({ page }, use, testInfo) => {
@@ -114,18 +120,18 @@ export const test = base.extend<OasysFixtures>({
         await use(offender)
     },
 
-    sections: async ({ page }, use: Function) => {
-        const sections = new Sections(page)
+    sections: async ({ page, sns }, use: Function) => {
+        const sections = new Sections(page, sns)
         await use(sections)
     },
 
-    san: async ({ page, oasys, user, oasysDb }, use: Function) => {
+    san: async ({ page, oasys, oasysDb }, use: Function) => {
         const san = new San(page, oasys, oasysDb)
         await use(san)
     },
 
-    risk: async ({ page, oasys, user, sara }, use: Function) => {
-        const risk = new Risk(page, oasys, sara)
+    risk: async ({ page, oasys, sara, sns }, use: Function) => {
+        const risk = new Risk(page, oasys, sara, sns)
         await use(risk)
     },
 
@@ -144,7 +150,7 @@ export const test = base.extend<OasysFixtures>({
         await use(assessment)
     },
 
-    sns: async ({ page, oasys, user, oasysDb }, use: Function) => {
+    sns: async ({ page, oasys, oasysDb }, use: Function) => {
         const sns = new Sns(page, oasys, oasysDb)
         await use(sns)
     },
@@ -154,8 +160,8 @@ export const test = base.extend<OasysFixtures>({
         await use(sara)
     },
 
-    api: async ({ oasysDb, request }, use: Function) => {
-        const api = new Api(oasysDb, request)
+    api: async ({ oasysDb, request, ogrs }, use: Function) => {
+        const api = new Api(oasysDb, request, ogrs)
         await use(api)
     },
 

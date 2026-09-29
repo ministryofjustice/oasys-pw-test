@@ -17,7 +17,7 @@ test.describe('NOD-980: Test for RA cloning', () => {
 
         await assessment.populateMinimal({ layer: 'Layer 1V2' })
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         // Second RoSHA
         await oasys.history(offender1)
@@ -26,9 +26,9 @@ test.describe('NOD-980: Test for RA cloning', () => {
         expect(failed).toBeFalsy()
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
 
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
         failed = await assessment.queries.checkAnswers(pk2, [{ section: 'RSR', q: 'RA', a: 'YES' }, { section: 'RSR', q: '1.39', a: 'NO' }], true)
         expect(failed).toBeFalsy()
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
     })
 
@@ -56,9 +56,9 @@ test.describe('NOD-980: Test for RA cloning', () => {
         failed = await assessment.queries.checkAnswers(pk2, [{ section: 'RSR', q: 'RA', a: 'YES' }, { section: 'RSR', q: '1.39', a: 'NO' }], true)
         expect(failed).toBeFalsy()
         await signing.signAndLock({ page: 'rmp', expectCsrpScore: true })
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
         failed = await assessment.queries.checkAnswers(pk2, [{ section: 'RSR', q: 'RA', a: 'YES' }, { section: 'RSR', q: '1.39', a: 'NO' }], true)
         expect(failed).toBeFalsy()
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
     })
 })

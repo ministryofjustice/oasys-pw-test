@@ -1,14 +1,13 @@
 import { Page } from '@playwright/test'
-import { OasysPage, Element } from 'classes'
+import { Element } from 'classes'
+import { BaseSanEditPage } from './baseSanEditPage'
 
-export class PractitionerAnalysis extends OasysPage {
+export class PractitionerAnalysis extends BaseSanEditPage {
 
-    name = 'PractitionerAnalysis'
-    title = 'Strengths and needs'
 
-    constructor(page: Page, section: SanSection, readonly idPrefix: string) {
+    constructor(page: Page, readonly idPrefix: string) {
+
         super(page)
-        this.title = `${section} - Strengths and needs`
     }
 
     change = new Element.Link(this.page, 'a[href*="summary#practitioner-analysis"]')
@@ -29,4 +28,19 @@ export class PractitionerAnalysis extends OasysPage {
     markAsComplete = new Element.Button(this.page, `button[value='YES']`)
     returnToOASys = new Element.Link(this.page, 'Return to OASys')
 
+
+    async populateMinimal() {
+
+        await this.strengths.setValue('no')
+        await this.riskOfHarm.setValue('no')
+        await this.riskOfReoffending.setValue('no')
+    }
+
+    async populateWithRiskOfHarm() {
+
+        await this.strengths.setValue('no')
+        await this.riskOfHarm.setValue('yes')
+        await this.riskOfHarmYesDetails.setValue(`Risk details for ${this.idPrefix}`)
+        await this.riskOfReoffending.setValue('no')
+    }
 }

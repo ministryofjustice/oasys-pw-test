@@ -1,6 +1,5 @@
 import { test } from 'fixtures'
 import { MergeTestData } from '../testRef39.40.test'
-import * as testData from '../../data/mergeTest'
 
 export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
 
@@ -32,16 +31,14 @@ export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
         await sections.predictors.o1_30.setValue('No')
         await sections.predictors.o1_38.setValue({})
 
-        await san.gotoSan()
-        await san.populateSanSections('Merge test', testData.sanPopulation, true)
-        await san.returnToOASys()
+        await san.populateMinimal({offenceDescription: 'Offence description for assessment 1'})
 
-        await risk.screeningNoRisks(true)
+        await risk.screeningNoRisks()
 
         // Complete SP, then sign and lock
         await sentencePlan.populateMinimal()
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(mergeTestData.offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(mergeTestData.offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         log('Merge tests part 2 - create and complete two 3.2 assessments on offender 2, delete the second', 'Test step')
         await offender.createProb(mergeTestData.offender2)
@@ -67,18 +64,15 @@ export function createOffendersAndAssessments(mergeTestData: MergeTestData) {
         await sections.predictors.o1_30.setValue('No')
         await sections.predictors.o1_38.setValue({})
 
-        await san.gotoSan()
-        await san.populateSanSections('Merge test', testData.sanPopulation, true)
-        await san.populateSanSections('Merge test', testData.modifySanForAssessment2, true)
-        await san.returnToOASys()
+        await san.populateMinimal({offenceDescription: 'Offence description modified for offender 2'})
 
-        await risk.screeningNoRisks(true)
+        await risk.screeningNoRisks()
 
         // Complete SP, then sign and lock
         await sentencePlan.populateMinimal()
 
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(mergeTestData.offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(mergeTestData.offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         // Deleted assessment added for testing of SAN defect ARN-2427
         await oasys.history(mergeTestData.offender2)

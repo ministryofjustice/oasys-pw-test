@@ -57,6 +57,9 @@ export class DbAssessmentOrRsr {
     snsvDynamicYr2Band: string
     rsrAlgorithmVersion: number
 
+    roshLevelElm: string
+    tierRoshLevel: string
+
     constructor(assessmentData: string[], type: AssessmentOrCsrp) {
 
         const tzOffset = oasysDateTime.timeZoneOffset()
@@ -121,6 +124,8 @@ export class DbAssessmentOrRsr {
             this.snsvDynamicYr2Band = assessmentData[36]
             this.rsrAlgorithmVersion = Number.parseInt(assessmentData[37])
             this.ogrs2yrBand = assessmentData[38]
+            this.roshLevelElm = assessmentData[40]
+            this.tierRoshLevel = assessmentData[41]
         } else {
             this.assessmentDate = this.completedDate
             this.ogrs4gYr2 = fixDp(assessmentData[18])
@@ -140,7 +145,9 @@ export class DbAssessmentOrRsr {
         }
     }
 
-    static assessmentQuery(crn: string): string {
+    static assessmentQuery(crn: string, wip = false): string {
+
+        const statusCondition = wip ? `and s.assessment_status_elm = 'OPEN'` : `and s.assessment_status_elm in ('COMPLETE', 'SIGNED', 'LOCKED_INCOMPLETE')`
 
         return `select s.oasys_set_pk, s.assessment_status_elm, o.cms_event_number, 
                     to_char(s.initiation_date, '${oasysDateTime.oracleTimestampFormat}'), to_char(s.date_completed, '${oasysDateTime.oracleTimestampFormat}'), 
@@ -158,11 +165,12 @@ export class DbAssessmentOrRsr {
                     s.snsv_percentage_2yr_static, s.snsv_stat_band_risk_recon_elm, 
                     s.snsv_percentage_2yr_dynamic, s.snsv_dyn_band_risk_recon_elm,
                     s.rsr_algorithm_version, s.ogrs3_risk_recon_elm,
-                    s.arns_sp_only_linked_ind
+                    s.arns_sp_only_linked_ind, s.rosh_level_elm, s.tiering_rosh_level_elm
                     from eor.offender o, eor.oasys_assessment_group g, eor.oasys_set s, eor.ref_element r 
                     where o.cms_prob_number = '${crn}'
                     and o.offender_pk = g.offender_PK and g.oasys_assessment_group_PK = s.oasys_assessment_group_PK 
-                    and s.assessment_status_elm in ('COMPLETE', 'SIGNED', 'LOCKED_INCOMPLETE') and s.deleted_date is null 
+                    ${statusCondition} 
+                    and s.deleted_date is null 
                     and r.ref_element_code = s.purpose_assessment_elm and r.ref_category_code = 'PURPOSE_OF_ASSESSMENT_REASON' 
                     order by s.initiation_date desc`
     }

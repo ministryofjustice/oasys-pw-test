@@ -4,49 +4,144 @@
 
 import { Page } from '@playwright/test'
 
-import { Element } from 'classes'
 import { Oasys, OasysDb, Risk, Sections } from 'fixtures'
 import * as pages from './pages'
-import { sanIds } from './sanIds'
-import * as exampleTest from './exampleTest'
 import { Queries } from './queries'
-import { Predictors } from 'fixtures/sections/pages/predictors'
-import { Queries as AssessmentQueries } from 'fixtures/assessment/queries'
+import { Accommodation } from './accommodation/accommodation'
+import { Employment } from './employment/employment'
+import { Finance } from './finance/finance'
+import { Drugs } from './drugs/drugs'
+import { Alcohol } from './alcohol/alcohol'
+import { Health } from './health/health'
+import { Relationships } from './relationships/relationships'
+import { Thinking } from './thinking/thinking'
+import { OffenceAnalysis } from './offenceAnalysis/offenceAnalysis'
 
 
 export class San {
 
     constructor(private readonly page: Page, private readonly oasys: Oasys, private readonly oasysDb: OasysDb) { }
 
-    readonly sanSections = new pages.SanSections(this.page)
+    readonly accommodation = new Accommodation(this.page)
+    readonly employment = new Employment(this.page)
+    readonly finance = new Finance(this.page)
+    readonly drugs = new Drugs(this.page)
+    readonly alcohol = new Alcohol(this.page)
+    readonly health = new Health(this.page)
+    readonly relationships = new Relationships(this.page)
+    readonly thinking = new Thinking(this.page)
+    readonly offenceAnalysis = new OffenceAnalysis(this.page)
+
+    readonly oasysSanSections = new pages.OasysSanSections(this.page)
     readonly landingPage = new pages.LandingPage(this.page)
-    readonly accommodation1 = new pages.Accommodation1(this.page)
-    readonly accommodation2 = new pages.Accommodation2(this.page)
-    readonly accommodationPractitionerAnalysis = new pages.PractitionerAnalysis(this.page, 'Accommodation', 'accommodation')
-    readonly drugs1 = new pages.Drugs1(this.page)
-    readonly drugs2 = new pages.Drugs2(this.page)
-    readonly drugs3 = new pages.Drugs3(this.page)
-    readonly drugs4 = new pages.Drugs4(this.page)
-    readonly drugsPractitionerAnalysis = new pages.DrugsPractitionerAnalysis(this.page)
-    readonly relationships1 = new pages.Relationships1(this.page)
-    readonly relationships2 = new pages.Relationships2(this.page)
-    readonly employment1 = new pages.Employment1(this.page)
-    readonly employment2 = new pages.Employment2(this.page)
-    readonly informationSummary = new pages.InformationSummary(this.page)
-    readonly offenceAnalysis1 = new pages.OffenceAnalysis1(this.page)
-    readonly offenceAnalysis2 = new pages.OffenceAnalysis2(this.page)
-    readonly offenceAnalysis3 = new pages.OffenceAnalysis3(this.page)
 
     readonly queries = new Queries(this.oasysDb)
 
-    async populateMinimal(from: 'assessment' | 'offender' = 'assessment') {
 
-        if (from == 'assessment') {
-            await this.gotoSan()
-        } else {
+    async populateMinimal(params?: SanPopulationParams) {
+
+        if (params?.from == 'offender') {
             await this.gotoSanFromOffender()
+        } else {
+            await this.gotoSan()
         }
-        await this.populateSanSections('Minimally populate SAN sections', exampleTest.minimal, true)
+        log('Minimally populating SAN sections')
+        await this.accommodation.populateMinimal()
+        await this.employment.populateMinimal()
+        await this.finance.populateMinimal()
+        await this.drugs.populateMinimal()
+        await this.alcohol.populateMinimal()
+        await this.health.populateMinimal()
+        await this.relationships.populateMinimal()
+        await this.thinking.populateMinimal(params)
+        await this.offenceAnalysis.populateMinimal(params)
+        await this.returnToOASys()
+    }
+
+    async populateForLst(params?: SanPopulationParams) {
+
+        if (params?.from == 'offender') {
+            await this.gotoSanFromOffender()
+        } else {
+            await this.gotoSan()
+        }
+        log('Populating SAN questions for LST')
+
+        await this.accommodation.populateNoAccommodation()
+        await this.employment.populateForLst()
+        await this.finance.populateForLst()
+        await this.health.populateForLst()
+        await this.relationships.populateForLst()
+        await this.thinking.populateForLst(params)
+        await this.offenceAnalysis.populateForLst()
+
+        await this.returnToOASys()
+    }
+
+
+    async populateForFemaleOpd(params?: SanPopulationParams) {
+
+        if (params?.from == 'offender') {
+            await this.gotoSanFromOffender()
+        } else {
+            await this.gotoSan()
+        }
+        log('Populating SAN questions for female OPD')
+
+        await this.accommodation.populateForOpd()
+        await this.employment.populateMinimal()
+        await this.finance.populateMinimal()
+        await this.drugs.populateMinimal()
+        await this.alcohol.populateMinimal()
+        await this.health.populateForOpd()
+        await this.relationships.populateForOpd()
+        await this.thinking.populateForOpd()
+        await this.offenceAnalysis.populateForOpd()
+
+        await this.returnToOASys()
+    }
+
+    async populateForSara(params?: SanPopulationParams) {
+
+        if (params?.from == 'offender') {
+            await this.gotoSanFromOffender()
+        } else {
+            await this.gotoSan()
+        }
+        log('Populating SAN questions for SARA')
+
+        await this.accommodation.populateMinimal()
+        await this.employment.populateForSara()
+        await this.finance.populateMinimal()
+        await this.drugs.populateForSara()
+        await this.alcohol.populateForSara()
+        await this.health.populateForSara()
+        await this.relationships.populateForSara()
+        await this.thinking.populateForSara(params)
+        await this.offenceAnalysis.populateForSara()
+
+        await this.returnToOASys()
+    }
+
+    async populateForMaturityFlag(params?: SanPopulationParams) {
+
+        if (params?.from == 'offender') {
+            await this.gotoSanFromOffender()
+        } else {
+            await this.gotoSan()
+        }
+        log('Populating SAN questions for Maturity Flag')
+
+        await this.accommodation.populateMinimal()
+        await this.employment.populateMinimal()
+        await this.finance.populateMinimal()
+        await this.drugs.populateMinimal()
+        await this.alcohol.populateMinimal()
+        await this.health.populateMinimal()
+        await this.relationships.populateMinimal()
+        await this.thinking.populateForMaturityFlag()
+        await this.offenceAnalysis.populateMinimal()
+
         await this.returnToOASys()
     }
 
@@ -57,8 +152,8 @@ export class San {
      */
     async gotoSan(section: SanSection = null, supressLog: boolean = false) {
 
-        await this.sanSections.goto(true)
-        await this.sanSections.openSan.click()
+        await this.oasysSanSections.goto(true)
+        await this.oasysSanSections.openSan.click()
 
         await this.landingPage.confirmCheck.setValue(true)
         await this.landingPage.confirm.click()
@@ -76,6 +171,7 @@ export class San {
             await this.landingPage.confirm.click()
         }
     }
+    
     /**
      * Navigates to the SAN assessment in readonly mode (no landingPage), assuming you are somewhere in the OASys assessment.
      * 
@@ -83,8 +179,8 @@ export class San {
      */
     async gotoSanReadOnly(section: SanSection = null) {
 
-        await this.sanSections.goto(true)
-        await this.sanSections.openSan.click()
+        await this.oasysSanSections.goto(true)
+        await this.oasysSanSections.openSan.click()
 
         if (section) {
             await this.goto(section)
@@ -96,7 +192,10 @@ export class San {
      */
     async goto(section: SanSection, supressLog: boolean = false) {
 
-        await new pages.SectionLandingPage(this.page, section).goto(supressLog)
+        if (!supressLog) {
+            log(`Go to SAN section: ${section}`)
+        }
+        await this.page.locator('.moj-side-navigation__item a').filter({ hasText: section }).first().click()
     }
 
     /**
@@ -105,6 +204,7 @@ export class San {
     async returnToOASys() {
 
         await this.page.locator('#return-to-oasys').click()
+        await waitForPageUpdate(this.page)
     }
 
     /**
@@ -117,170 +217,6 @@ export class San {
         const count = await this.page.locator('#main-content').locator(`.govuk-summary-list__row:has-text('${label}')`).filter({ hasText: value }).count()
         expect(count).toBeGreaterThan(0)
         log(`Checked value for ${label}`)
-    }
-
-    /**
-     * Run the specified script to enter values in the SAN assessment, return to OASys and check values in the database.
-     * Parameters are:
-     *   - assessmentPk: the oasys_set_pk used to check values in the database
-     *   - a SanScript test script object (includes selection ids and one or more scenarios including test steps and expected OASys database values)
-     *   - a result alias to return a boolean status - true if the script failed on one or more of the OASys values
-     *   - reset130 (optional) - if true, the value of question 1.30 on the Predictors page will be reset between scenarios.
-     */
-    async runScript(assessmentPk: number, script: SanScript, reset130: boolean = false, predictors?: Predictors): Promise<boolean> {
-
-        let failed = false
-
-        for (let scenario of script.scenarios) { // Loop through scenarios in the script
-
-            await this.gotoSan(script.section, true)
-            await this.runScenario(scenario.name, scenario.steps, true)
-            await this.returnToOASys()
-            await this.oasys.clickButton('Previous', true)
-
-            const updateTimeFailed = await this.queries.checkLastUpdateTime(assessmentPk)
-            const getAssessmentCallFailed = await this.queries.checkSanGetAssessmentCall(assessmentPk, 0, true)
-            const answersFailed = await new AssessmentQueries(this.oasysDb).checkAnswers(assessmentPk, scenario.oasysAnswers, true)
-
-            if (updateTimeFailed || getAssessmentCallFailed || answersFailed) {
-                failed = true
-                log('', `Scenario ${scenario.name} FAILED`)
-            } else (
-                log('', `Scenario ${scenario.name} passed`)
-            )
-
-            if (reset130) {  // OA testing requires 1.30 to be reset between scenarios because a YES will not be overwritten
-                await this.gotoSan()
-                await this.populateSanSections('Reset 1.30', reset)  // Change OA details to allow 1.30 to be editable
-                await this.returnToOASys()
-                await predictors.goto()
-                await predictors.o1_30.setValue('')
-            }
-        }
-
-        return failed
-    }
-
-    /**
-     * Populate one or more sections of a SAN assessment.
-     *  - name: text for reporting purposes
-     *  - script: a SanPopulation object defining questions/values/button clicks for one or more sections.
-     */
-    async populateSanSections(name: string, script: SanPopulation, suppressLog: boolean = false) {
-
-        if (suppressLog) {  // Just log the name
-            log(name, 'Populating SAN Sections')
-        }
-        for (let section of script) {
-            if (section.section != 'Sentence plan') {
-                await this.goto(section.section, suppressLog)
-            }
-            await this.runScenario(`${name} / ${section.section}`, section.steps, suppressLog)
-        }
-    }
-
-    /**
-     * Populate the currently selected section in a SAN assessment.
-     *  - name: text for reporting purposes
-     *  - steps: a SanStep array defining all of the questions/values/button clicks required.
-     */
-    async runScenario(name: string, steps: SanStep[], suppressLog = false) {
-
-        if (!suppressLog) {
-            log(' ', '')
-            log('', `Scenario: ${name}`)
-            console.log(`Scenario: ${name}`)
-        }
-        for (let step of steps) {
-            await this.runStep(step, suppressLog)
-        }
-    }
-
-    /**
-     * Execute a single test step on a SAN or SP screen, e.g. set a value or click a button.  The SanStep parameter defines the item and value(s) required.
-     */
-    async runStep(step: SanStep, suppressLog: boolean = false) {
-        const stepItem = sanIds[step.item]
-        if (stepItem == undefined) {
-            throw new Error(`Invalid item name: ${step.item}`)
-        }
-
-        switch (stepItem.type) {
-            case 'radio':
-                await Element.Radiogroup.sanSetValue(this.page, stepItem, step.value)
-                if (!suppressLog) log(`Radio: ${step.item} - '${step.value}'`)
-                break
-            case 'checkbox':
-                await Element.Checkbox.sanSetValue(this.page, stepItem, step.value)
-                if (!suppressLog) log(`Checkbox: ${step.item} - '${step.value}'`)
-                break
-            case 'textbox':
-                await Element.Textbox.sanSetValue(this.page, stepItem, step.value)
-                if (!suppressLog) log(`Textbox: ${step.item} - '${step.value.length > 50 ? step.value.substring(0, 50) + '...' : step.value}'`)
-                break
-            case 'combo':
-                await Element.Combo.sanSetValue(this.page, stepItem, step.value)
-                if (!suppressLog) log(`Combo: ${step.item} - '${step.value}'`)
-                break
-            case 'select':
-                await Element.Select.sanSetValue(this.page, stepItem, step.value)
-                if (!suppressLog) log(`Select: ${step.item} - '${step.value}'`)
-                break
-            case 'date':
-                // await this.enterDate(stepItem, step.value)
-                // log(`Date: ${step.item} - '${step.value}'`)
-                break
-            case 'action':
-                await this.action(step.item)
-                if (!suppressLog) log(`Action: ${step.item}`)
-                break
-            case 'button':
-                await Element.Button.sanClick(this.page, stepItem)
-                if (!suppressLog) log(`Button: ${step.item}`)
-                break
-        }
-    }
-
-    /**
-     * Execute a single action-type test step (e.g. clicking a button).
-     */
-    async action(action: string) {
-
-        switch (action) {
-            case 'change':
-                await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).first().click()
-                break
-            case 'change2':
-                await this.page.locator('.govuk-link.change-entry:visible').nth(1).click()
-                break
-            case 'change3':
-                await this.page.locator('.govuk-link.change-entry:visible').nth(2).click()
-                break
-            case 'back':
-                await this.page.locator('.govuk-back-link').first().click()
-                break
-            case 'backIfVisible':
-                const backLinks = await this.page.locator('.govuk-back-link').count()
-                if (backLinks > 0) {
-                    await this.page.locator('.govuk-back-link').first().click()
-                }
-                break
-            case 'changeIfVisible':
-                const changeLinks = await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).count()
-                if (changeLinks > 0) {
-                    await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).first().click()
-                }
-                break
-            case 'practitionerAnalysis':
-                await this.page.locator('#tab_practitioner-analysis').first().click()
-                break
-            case 'changeAnalysis':
-                await this.page.locator('a[href*="-analysis"]').filter({ hasText: 'Change' }).first().click()
-                break
-            case 'continue':
-                await this.page.locator('.questiongroup-action-buttons .govuk-button').first().click()
-                break
-        }
     }
 
 
@@ -303,7 +239,7 @@ export class San {
         await sections.section12.checkMenuVisibility(!sanMode)
         await sections.section13.checkMenuVisibility(!sanMode)
         await sections.selfAssessmentForm.checkMenuVisibility(!sanMode)
-        await this.sanSections.checkMenuVisibility(sanMode)
+        await this.oasysSanSections.checkMenuVisibility(sanMode)
     }
 
     /**
@@ -315,7 +251,7 @@ export class San {
         await sections.sourcesOfInformation.checkCompletionStatus(expectedStatus)
         await sections.offendingInformation.checkCompletionStatus(expectedStatus)
         await sections.predictors.checkCompletionStatus(expectedStatus)
-        await san.sanSections.checkCompletionStatus(expectedStatus)
+        await san.oasysSanSections.checkCompletionStatus(expectedStatus)
         await risk.screeningSection1.checkCompletionStatus(expectedStatus)
         await risk.screeningSection2to4.checkCompletionStatus(expectedStatus)
         await risk.screeningSection5.checkCompletionStatus(expectedStatus)
@@ -350,18 +286,3 @@ export class San {
     }
 
 }
-
-// Change SAN values to allow 1.30 to be editable in OASys
-const reset: SanPopulation = [
-    {
-        section: 'Offence analysis',
-        steps: [
-            { item: 'changeIfVisible' },
-            { item: 'backIfVisible' },
-            { item: 'backIfVisible' },
-            { item: 'offenceElements', value: `arson` },
-            { item: 'motivations', value: `addictions` },
-            { item: 'saveAndContinue' },
-        ],
-    }
-]

@@ -251,7 +251,7 @@ class PniCalc {
         let missingFields: string[] = pniCalcResult.missingFields ? [] : null
         if (pniCalcResult.missingFields) {
             for (const missingField of pniCalcResult.missingFields) {
-                missingFields.push(after77 ? missingField : missingField?.replaceAll('ARP', 'OGRS3')?.replaceAll('VRP', 'OVP')?.replaceAll('CSRP', 'RSR'))
+                missingFields.push(after77 ? missingField : missingField?.replaceAll('ARP', 'OGRS')?.replaceAll('VRP', 'OVP')?.replaceAll('CSRP', 'RSR'))
             }
         }
 

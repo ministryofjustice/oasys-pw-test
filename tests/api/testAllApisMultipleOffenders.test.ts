@@ -17,11 +17,8 @@ const dateConditions = [
     { date: 'today', count: offenderCount },
 ]
 
-const limitEndpoints: Endpoint[] = []
-//const limitEndpoints: Endpoint[] = ['pni']
-
-const excludeEndpoints: Endpoint[] = []
-// const excludeEndpoints: Endpoint[] = ['pni']
+const limitEndpoints: Endpoint[] = []  // Only test these ones (all if none specified)
+const excludeEndpoints: Endpoint[] = [] // Ignore these ones
 
 // Hide details from the report for passes
 const reportPasses = false

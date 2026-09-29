@@ -12,9 +12,13 @@ globalThis.log = (logtext: string, type?: string) => {
     oasysLogs[utils.testProcessNumber()].push({ logText: logtext, type: type })
 }
 
-globalThis.fileLog = (logtext: string) => {
+globalThis.fileLog = (logtext: string, filename?: string) => {
 
-    fileLog[utils.testProcessNumber()].push(logtext)
+    if (filename) {
+        fs.appendFileSync(`${fileLogFolder}${filename}`, `${logtext}\n`)
+    } else {
+        fileLog[utils.testProcessNumber()].push(logtext)
+    }
 }
 
 globalThis.statsLog = (type: string, time: number) => {
@@ -53,7 +57,7 @@ export class Logs {
 /**
  * Additional logging for API test stats - allows multiple parallel tests to write to the same stats file
  */
-test.beforeAll(async ({},testInfo: TestInfo) => {
+test.beforeAll(async ({ }, testInfo: TestInfo) => {
 
     const testProcesses = testInfo.config.workers
     for (let i = 0; i < testProcesses; i++) {
@@ -62,7 +66,7 @@ test.beforeAll(async ({},testInfo: TestInfo) => {
     await fs.emptyDir(fileLogFolder)
 })
 
-test.afterAll(async ({},testInfo: TestInfo) => {
+test.afterAll(async ({ }, testInfo: TestInfo) => {
 
     const testProcesses = testInfo.config.workers
     for (let i = 0; i < testProcesses; i++) {

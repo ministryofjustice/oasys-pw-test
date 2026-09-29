@@ -19,6 +19,7 @@ test('Create assessments and check SNS messages - SAN assessment, no countersign
     await sections.predictors.o1_29.setValue({ months: -1 })
     await sections.predictors.o1_30.setValue('No')
     await sections.predictors.o1_38.setValue({})
+    await sections.saveAndCheckSns(offender1.probationCrn, false, true)
 
     await san.populateMinimal()
     await risk.screeningNoRisks()
@@ -28,7 +29,7 @@ test('Create assessments and check SNS messages - SAN assessment, no countersign
 
     // Sign assessment, then check SNS messages
     await signing.signAndLock({ page: 'spService' })
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
     // Create another assessment (cloning from the one above), this one with OPD override
     await oasys.history(offender1)

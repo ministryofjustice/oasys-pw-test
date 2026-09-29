@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef27'
 
 test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, assessment, san, sns, sentencePlan }) => {
@@ -114,7 +113,15 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
 
     await oasys.clickButton('Close')
     await san.gotoSanFromOffender()
-    await san.populateSanSections('Test 27 part 2 SAN Alcohol', testData.test2SanAlcohol, true)
+    await san.alcohol.goto()
+    await san.alcohol.page1.everDrank.setValue('yesNotLast3')
+    await san.alcohol.saveAndContinue()
+    await san.alcohol.page2.bingeDrinking.setValue('noEvidence')
+    await san.alcohol.page2.pastIssues.setValue('no')
+    await san.alcohol.page2.whyDrink.setValue(['enjoyment'])
+    await san.alcohol.page2.impactAlcohol.setValue(['noImpact'])
+    await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
+    await san.alcohol.page2.wantChanges.setValue('madeChanges')
     await san.returnToOASys()
 
     log(`From the offender record click on the <Open SSP> button - taken into the Sentence Plan Service in EDIT mode
@@ -187,7 +194,19 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     const pk3 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
 
     await san.gotoSan()
-    await san.populateSanSections('Test 27 part 3 Complete SAN', testData.part3CompleteSan, true)
+    await san.accommodation.populateMinimal()
+    await san.employment.populateMinimal()
+    await san.finance.populateMinimal()
+    await san.drugs.populateMinimal()
+    await san.alcohol.goto()
+    await san.alcohol.saveAndContinue()
+    await san.alcohol.openPractitionerAnalysis()
+    await san.alcohol.practitionerAnalysis.populateMinimal()
+    await san.alcohol.markAsComplete()
+    await san.health.populateMinimal()
+    await san.relationships.populateMinimal()
+    await san.thinking.populateMinimal()
+    await san.offenceAnalysis.populateMinimal()
     await san.returnToOASys()
     await user.logout()
 

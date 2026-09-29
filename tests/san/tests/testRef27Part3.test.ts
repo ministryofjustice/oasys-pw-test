@@ -43,7 +43,7 @@ test('SAN integration - test ref 27 part 3', async ({ oasys, user, cms, offender
     await san.populateMinimal()
     await sentencePlan.populateMinimal()
     await oasys.clickButton('Next')
-    await san.sanSections.checkCompletionStatus(true)
+    await san.oasysSanSections.checkCompletionStatus(true)
     await sentencePlan.sentencePlanService.checkCompletionStatus(true)
 
     log(`Open up the offender record

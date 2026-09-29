@@ -67,6 +67,7 @@ export class DbAssessmentOrRsr {
     cmsEventNumber: number
     appVersion: string
 
+    tierPredictorsSortIndex: string
 }
 
 /**
@@ -98,6 +99,7 @@ const assessmentColumns: Columns = {
     learningToolScore: { name: 'learning_tool_score', type: 'integer' },
     ldcSubTotal: { name: 'ldc_sub_total', type: 'integer' },
     ldcFuncProc: { name: 'ldc_func_proc', type: 'string' },
+    tierRiskLevel: { name: 'tiering_rosh_level_elm', type: 'string' },
 }
 
 export class DbAssessment extends DbAssessmentOrRsr {
@@ -120,6 +122,7 @@ export class DbAssessment extends DbAssessmentOrRsr {
     learningToolScore: number
     ldcSubTotal: number
     ldcFuncProc: string
+    tierRiskLevel: string
 
     offences: DbOffence[] = []
     victims: DbVictim[] = []
@@ -135,6 +138,8 @@ export class DbAssessment extends DbAssessmentOrRsr {
         assignValues(this, assessmentColumns, assessmentData, 0)
         this.riskDetails = new DbRiskDetails(assessmentData, Object.keys(assessmentColumns).length, 'assessment')
         this.appVersion = oasysDateTime.dateToVersion(this.initiationDate)
+
+        this.tierPredictorsSortIndex = `${this.completedDate}${this.initiationDate}`
     }
 
     static query(offenderPk: number): string {
@@ -197,9 +202,12 @@ const rsrColumns: Columns = {
     initiationDate: { name: 'initiation_date', type: 'date' },
     completedDate: { name: 'date_completed', type: 'date' },
     lastUpdatedDate: { name: 'lastupd_date', type: 'date' },
+    everCommittedSexualOffence: { name: 's1_30_sexual_element', type: 'string' },
 }
 
 export class DbRsr extends DbAssessmentOrRsr {
+
+    everCommittedSexualOffence: string
 
     constructor(assessmentData: string[]) {
 
@@ -212,6 +220,8 @@ export class DbRsr extends DbAssessmentOrRsr {
         this.cmsEventNumber = null
         this.assessmentType = 'STANDALONE'
         this.assessmentVersion = null
+
+        this.tierPredictorsSortIndex = `${this.completedDate}${this.initiationDate}`
     }
 
     static query(offenderPk: number): string {

@@ -1,6 +1,5 @@
 import { test } from 'fixtures'
 import { MergeTestData } from '../testRef39.40.test'
-import * as testData from '../../data/mergeTest'
 
 export function mergeAndCreateAssessment(mergeTestData: MergeTestData) {
 
@@ -42,7 +41,13 @@ export function mergeAndCreateAssessment(mergeTestData: MergeTestData) {
         mergeTestData.crn2AfterMergePks.push(pk1)
 
         await san.gotoSan()
-        await san.populateSanSections('Merge test', testData.modifySanForAssessment3, true)
+        await san.offenceAnalysis.goto()
+        await san.offenceAnalysis.change()
+        await san.offenceAnalysis.page1.offenceDescription.setValue('Offence description modified for 3rd assessment on merged offender')
+        await san.offenceAnalysis.page1.motivations.setValue(['financial'])
+        await san.offenceAnalysis.saveAndContinue()
+        await san.offenceAnalysis.saveAndContinue()
+        await san.offenceAnalysis.markAsComplete()
         await san.returnToOASys()
 
         // Sign and lock

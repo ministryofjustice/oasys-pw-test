@@ -58,7 +58,7 @@ test('NOD-1243', async ({ oasys, user, offender, assessment, sections, risk, sar
     expect(failed).toBeFalsy()
     await pni.checkAssessmentCalc(offender1.probationCrn, pk2)
 
-    await sections.summarySheet.close.click()
+    await sections.summarySheet.close()
     await assessment.lockIncomplete()
 
     // Create assessment 3, 2.3 not set
@@ -79,7 +79,7 @@ test('NOD-1243', async ({ oasys, user, offender, assessment, sections, risk, sar
     expect(failed).toBeFalsy()
     await pni.checkAssessmentCalc(offender1.probationCrn, pk3)
 
-    await sections.summarySheet.close.click()
+    await sections.summarySheet.close()
     await assessment.lockIncomplete()
 
     // Create assessment 4, 6.7 also not set
@@ -100,7 +100,7 @@ test('NOD-1243', async ({ oasys, user, offender, assessment, sections, risk, sar
     expect(failed).toBeFalsy()
     await pni.checkAssessmentCalc(offender1.probationCrn, pk4)
 
-    await sections.summarySheet.close.click()
+    await sections.summarySheet.close()
     await assessment.lockIncomplete()
     await user.logout()
 })

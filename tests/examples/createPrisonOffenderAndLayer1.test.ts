@@ -12,8 +12,6 @@ test('Example test - create a prison offender and a layer 1 assessment', async (
     // await oasys.Populate.fullyPopulated({ layer: 'Layer 1', provider: 'pris', maxStrings: true })
 
     await signing.signAndLock()
-
-    await cms.createDischargeEvent(offender1)
     await user.logout()
 
 })

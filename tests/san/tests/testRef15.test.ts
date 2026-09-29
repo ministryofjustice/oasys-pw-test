@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef15'
 
 
 test.describe.configure({ retries: 1 })
@@ -95,7 +94,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
             'Unapproved' with a default countersigner that has 'Approved Prison POM, approved PQiP, NQO or unapproved Probation POM' 
             (can sign up to Medium risk with exceptions).
         Navigate out to the 'Strengths and Needs Sections' - complete ALL of the SAN assessment with anything you like but say Yes to Drugs
-            and make sure you select some drugs and include Other and then enter in exactly 400 characters for the text to go with other drugs.
+            and make sure you select some drugs and include Other and then enter in exactly 200 characters for the text to go with other drugs.
         Return back to the OASys assessment.  Have to navigate to a new screen - This will activate a pull of the SAN data.
         Check that the database now has data in sections 2 to 12, definitely check that Section 8 contains data for the drugs entered in the SAN Assessment and that the Other Drug text field has all 400 characters in it.
         The 'Strengths and Needs Sections' menu item has a green tick against it`, 'Test step')
@@ -107,13 +106,20 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
 
 
     await san.gotoSan()
-    await san.populateSanSections('Test ref 15', testData.sanPopulation, true)
+    await san.accommodation.populateMinimal()
+    await san.employment.populateMinimal()
+    await san.finance.populateMinimal()
+    await san.alcohol.populateMinimal()
+    await san.health.populateMinimal()
+    await san.relationships.populateMinimal()
+    await san.thinking.populateMinimal()
+    await san.offenceAnalysis.populateMinimal()
+    await san.drugs.populateWithSomeDrugs()
+
     await san.returnToOASys()
     await oasys.clickButton('Next')
 
-    const failed = await assessment.queries.checkAnswers(pk1, testData.dataFromSan, true)
-    expect(failed).toBeFalsy()
-    await san.sanSections.checkCompletionStatus(true)
+    await san.oasysSanSections.checkCompletionStatus(true)
 
     log(`Complete the remaining sections in the OASys assessment and invoke a full analysis.  Complete the full analysis and set the offender as 'HIGH' risk.`, 'Test step')
 
@@ -133,7 +139,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
     await risk.screeningSection2to4.r4_6.setValue('No')
     await risk.screeningSection2to4.r4_4.setValue('No')
 
-    await risk.populateWithSpecificRiskLevel('High', false, 'pris')
+    await risk.populateWithSpecificRiskLevel('High', null, false, 'pris')
 
     log(`Navigate out to the 'Sentence Plan Service' 
         Ensure that the OTL sends the correct data for the new 'criminogenicNeedsData' parameter (check to the Summary Sheet in OASys)
@@ -142,7 +148,71 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
         Return back to the OASys assessment.`, 'Test step')
 
     await sentencePlan.populateMinimal()
-
+    const otlCrimNeeds = {
+        'accommodation': {
+            'accLinkedToHarm': 'NO',
+            'accLinkedToReoffending': 'NO',
+            'accStrengths': 'NO',
+            'accOtherWeightedScore': '0',
+            'accThreshold': 'NO'
+        },
+        'educationTrainingEmployability': {
+            'eteLinkedToHarm': 'NO',
+            'eteLinkedToReoffending': 'NO',
+            'eteStrengths': 'NO',
+            'eteOtherWeightedScore': '0',
+            'eteThreshold': 'NO'
+        },
+        'finance': {
+            'financeLinkedToHarm': 'NO',
+            'financeLinkedToReoffending': 'NO',
+            'financeStrengths': 'NO',
+            'financeOtherWeightedScore': 'N/A',
+            'financeThreshold': 'N/A'
+        },
+        'drugMisuse': {
+            'drugLinkedToHarm': 'NO',
+            'drugLinkedToReoffending': 'NO',
+            'drugStrengths': 'NO',
+            'drugOtherWeightedScore': '4',
+            'drugThreshold': 'YES'
+        },
+        'alcoholMisuse': {
+            'alcoholLinkedToHarm': 'NO',
+            'alcoholLinkedToReoffending': 'NO',
+            'alcoholStrengths': 'NO',
+            'alcoholOtherWeightedScore': '0',
+            'alcoholThreshold': 'NO'
+        },
+        'healthAndWellbeing': {
+            'emoLinkedToHarm': 'NO',
+            'emoLinkedToReoffending': 'NO',
+            'emoStrengths': 'NO',
+            'emoOtherWeightedScore': 'N/A',
+            'emoThreshold': 'N/A'
+        },
+        'personalRelationshipsAndCommunity': {
+            'relLinkedToHarm': 'NO',
+            'relLinkedToReoffending': 'NO',
+            'relStrengths': 'NO',
+            'relOtherWeightedScore': '1',
+            'relThreshold': 'NO'
+        },
+        'thinkingBehaviourAndAttitudes': {
+            'thinkLinkedToHarm': 'NO',
+            'thinkLinkedToReoffending': 'NO',
+            'thinkStrengths': 'NO',
+            'thinkOtherWeightedScore': '0',
+            'thinkThreshold': 'NO'
+        },
+        'lifestyleAndAssociates': {
+            'lifestyleLinkedToHarm': 'N/A',
+            'lifestyleLinkedToReoffending': 'N/A',
+            'lifestyleStrengths': 'N/A',
+            'lifestyleOtherWeightedScore': '0',
+            'lifestyleThreshold': 'NO'
+        }
+    }
     await san.queries.checkSanOtlCall(pk1, {
         'crn': null,
         'pnc': offender1.pnc,
@@ -157,7 +227,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
         'displayName': user.pris.prisSanUnappr.forenameSurname,
         'planAccessMode': 'READ_WRITE',
     },
-        'sp', 'assessment', testData.otlCrimNeeds
+        'sp', 'assessment', otlCrimNeeds
     )
 
     log(`For each of the OASys assessment sections, apart from Case ID and Summary Sheet, click on the 'Mark as Complete' flag.

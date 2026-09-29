@@ -1,4 +1,5 @@
 ﻿import { OasysPage, Element } from 'classes'
+import { Sns } from 'fixtures'
 
 /**
  * this.page is a base class for assessment pages that contain the standard navigation buttons
@@ -8,12 +9,32 @@ export class BaseAssessmentPage extends OasysPage {
     name = 'BaseAssessmentPage'
 
     context = new Element.Text(this.page, '#contextright')
-    save = new Element.Button(this.page, 'Save')
-    next = new Element.Button(this.page, 'Next')
-    previous = new Element.Button(this.page, 'Previous')
-    close = new Element.Button(this.page, 'Close')
+    private saveButton = new Element.Button(this.page, 'Save')
+    private nextButton = new Element.Button(this.page, 'Next')
+    private previousButton = new Element.Button(this.page, 'Previous')
+    private closeButton = new Element.Button(this.page, 'Close')
     print = new Element.Button(this.page, 'Print')
     markAsComplete = new Element.Button(this.page, 'Mark As Complete')
+
+    async save() {
+
+        await this.saveButton.click()
+    }
+
+    async next() {
+
+        await this.nextButton.click()
+    }
+
+    async previous() {
+
+        await this.previousButton.click()
+    }
+
+    async close() {
+
+        await this.closeButton.click()
+    }
 
     /**
      * Navigate to the page, click on Mark as Complete, and then check that the section is marked complete.
@@ -29,6 +50,17 @@ export class BaseAssessmentPage extends OasysPage {
      * Checks that a section has the expected completion status on the floating menu.  Parameter is true if expected to be complete.
      */
     async checkCompletionStatus(expectedStatus: boolean) {
+
+        const complete = await this.getCompletionStatus()
+
+        expect(complete).toBe(expectedStatus)
+        log(`${this.name} - completion status: ${complete}.`)
+    }
+
+    /**
+     * Gets the completion status on the floating menu.
+     */
+    async getCompletionStatus(): Promise<boolean> {
 
         let imageTitle: string
         await this.waitForAnimation(this.floatingMenu)
@@ -52,9 +84,7 @@ export class BaseAssessmentPage extends OasysPage {
         }
 
         const complete = imageTitle == 'Section Complete'
-
-        expect(complete).toBe(expectedStatus)
-        log(`${this.name} - completion status: ${complete}.`)
+        return complete
     }
 
     async getPncFromScreenContext(): Promise<string> {
@@ -62,6 +92,24 @@ export class BaseAssessmentPage extends OasysPage {
         await expect(this.page.locator('#contextright')).toContainText('|')
         const context = await this.context.getValue()
         return context.split('|')[3].trim()
+    }
+
+    async saveAndCheckSns(probationCrn: string, expectRosh: boolean, expectPredictors: boolean, sns: Sns) {
+
+        await this.save()
+        await sns.testWipAssessmentMessages(probationCrn, expectRosh, expectPredictors)
+    }
+
+    async nextAndCheckSns(probationCrn: string, expectRosh: boolean, expectPredictors: boolean, sns: Sns) {
+
+        await this.next()
+        await sns.testWipAssessmentMessages(probationCrn, expectRosh, expectPredictors)
+    }
+
+    async previousAndCheckSns(probationCrn: string, expectRosh: boolean, expectPredictors: boolean, sns: Sns) {
+
+        await this.previous()
+        await sns.testWipAssessmentMessages(probationCrn, expectRosh, expectPredictors)
     }
 
 }

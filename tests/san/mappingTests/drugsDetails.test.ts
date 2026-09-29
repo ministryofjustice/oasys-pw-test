@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test'
 
 import { test, Oasys, User, Offender, Assessment, San } from 'fixtures'
-import { getMappingTestOffender } from './xMappingTest'
+import { getMappingTestOffender } from './mappingTestOffender'
 
 type TestCase = { ref: number, lastSix: boolean, frequency: DrugsFrequency, injectedLastSix: boolean, injectedMoreThanSix: boolean }
 
@@ -137,13 +137,12 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
     for (const test of testCases) {
         if (injectableDrug(drugType) || (test.injectedLastSix == null && test.injectedMoreThanSix == null)) {  // skip injection tests for non-injectable drugs
             // Get to the right starting screen
-            await page.waitForTimeout(5000)  // TODO see if this makes any difference to SAN reliability
             await san.gotoSan('Drug use', true)
             if (firstRun) {
-                await san.drugs1.everUsed.setValue('yes')
-                await san.drugs1.saveAndContinue.click()
+                await san.drugs.page1.everUsed.setValue('yes')
+                await san.drugs.saveAndContinue()
             } else {
-                await san.drugs3.previous.click()
+                await san.drugs.previous()
             }
             // Set values on SAN, return to OASys and check the results
             await scenario(drugType, test, san)
@@ -167,26 +166,26 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
 
 async function scenario(drugType: DrugType, test: TestCase, san: San) {
 
-    await san.drugs2.drugType.setValue([drugType])
+    await san.drugs.page2.drugType.setValue([drugType])
     if (drugType == 'other') {
-        await san.drugs2.drugTypeOther.setValue(otherDrugName)
+        await san.drugs.page2.drugTypeOther.setValue(otherDrugName)
     }
-    await san.drugs2[`${drugType}LastSixMonths`].setValue(test.lastSix ? 'yes' : 'no')
-    await san.drugs2.saveAndContinue.click()
+    await san.drugs.page2[`${drugType}LastSixMonths`].setValue(test.lastSix ? 'yes' : 'no')
+    await san.drugs.saveAndContinue()
     if (test.lastSix && test.frequency != null) {
-        await san.drugs3[`${drugType}Frequency`].setValue(test.frequency)
+        await san.drugs.page3[`${drugType}Frequency`].setValue(test.frequency)
     }
     if (injectableDrug(drugType)) {
         if (test.injectedLastSix == null && test.injectedMoreThanSix == null) {
-            await san.drugs3.injected.setValue(['none'])
+            await san.drugs.page3.injected.setValue(['none'])
         } else {
-            await san.drugs3.injected.setValue([drugType as InjectableDrugType])
+            await san.drugs.page3.injected.setValue([drugType as InjectableDrugType])
             if (test.lastSix) {
                 const injectedValues: ('lastSix' | 'moreThanSix')[] = []
                 if (test.injectedLastSix) injectedValues.push('lastSix')
                 if (test.injectedMoreThanSix) injectedValues.push('moreThanSix')
                 // @ts-expect-error // hide type error for non-injectable drugs
-                await san.drugs3[`${drugType}InjectedLastSixMonths`].setValue(injectedValues)
+                await san.drugs.page3[`${drugType}InjectedLastSixMonths`].setValue(injectedValues)
             }
         }
     }

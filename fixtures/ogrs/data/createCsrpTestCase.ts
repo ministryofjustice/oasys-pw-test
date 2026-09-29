@@ -1,6 +1,6 @@
 import { OgrsInputParams } from 'fixtures/ogrs/types'
 import { OgrsRsr as OgrsCsrp } from './dbClasses'
-import { addCalculatedInputParameters, q88 } from './common'
+import { addCalculatedInputParameters, q141, q88 } from './common'
 
 export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
 
@@ -20,34 +20,36 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         AGE_AT_FIRST_SANCTION: csrp.s1_8_age_at_first_sanction,
         LAST_SANCTION_DATE: csrp.s1_29_date_current_conviction,
         DATE_RECENT_SEXUAL_OFFENCE: csrp.s1_33_date_recent_sex_offence,
-        CURR_SEX_OFF_MOTIVATION: csrp.s1_41_current_sexual_mot,
+        CURR_SEX_OFF_MOTIVATION: q141(csrp.s1_30_sexual_element, csrp.s1_41_current_sexual_mot, csrp.offence),
         MOST_RECENT_OFFENCE: csrp.s1_43_last_offence_date,
-        COMMUNITY_DATE: csrp.s1_38_community_date,
+        COMMUNITY_DATE: csrp.prisonInd == 'C'
+            ? oasysDateTime.testStartDate
+            : csrp.s1_38_community_date,
         ONE_POINT_THIRTY: lookupValue(csrp.s1_30_sexual_element, utils.yesNoToYNLookup),
         TWO_POINT_TWO: getNumericAnswer(csrp.s2_2_weapon),
         THREE_POINT_FOUR: getNumericAnswer(csrp.s3_q4_suitable_accom),
-        FOUR_POINT_TWO: getNumericAnswer(csrp.s4_q2_unemployed),
+        FOUR_POINT_TWO: getNumericAnswer(csrp.s4_q2_unemployed) == null ? null : getNumericAnswer(csrp.s4_q2_unemployed) * 2,
         SIX_POINT_FOUR: getNumericAnswer(csrp.s6_q4_partner_relationship),
         SIX_POINT_SEVEN: da(csrp),
-        SIX_POINT_EIGHT: getNumericAnswer(csrp.s6_q8_cur_rel_status),
+        SIX_POINT_EIGHT: getNumericAnswer(csrp.s6_q8_cur_rel_status) ?? 3,
         SEVEN_POINT_TWO: getNumericAnswer(csrp.s7_q2_reg_activities),
         DAILY_DRUG_USER: dailyDrugUser(csrp),
-        AMPHETAMINES: drugUsed(csrp.amphetamines_curr_use),
-        BENZODIAZIPINES: drugUsed(csrp.benzodiazepines_curr_use),
-        CANNABIS: drugUsed(csrp.cannabis_curr_use),
-        CRACK_COCAINE: drugUsed(csrp.crack_cocaine_curr_use),
-        ECSTASY: drugUsed(csrp.ecstasy_curr_use),
-        HALLUCINOGENS: drugUsed(csrp.hallucinogens_curr_use),
-        HEROIN: drugUsed(csrp.heroin_curr_use),
-        KETAMINE: drugUsed(csrp.ketamine_curr_use),
-        METHADONE: drugUsed(csrp.methadone_curr_use),
-        MISUSED_PRESCRIBED: drugUsed(csrp.misused_prescribed_curr_use),
-        OTHER_DRUGS: drugUsed(csrp.other_curr_use),
-        OTHER_OPIATE: drugUsed(csrp.other_opiate_curr_use),
-        POWDER_COCAINE: drugUsed(csrp.cocaine_hydrochloride_curr_use),
-        SOLVENTS: drugUsed(csrp.solvents_curr_use),
-        SPICE: drugUsed(csrp.spice_curr_use),
-        STEROIDS: drugUsed(csrp.steroids_curr_use),
+        AMPHETAMINES: drugUsed(csrp.s8_q1_drugs_misused, csrp.amphetamines_curr_use),
+        BENZODIAZIPINES: drugUsed(csrp.s8_q1_drugs_misused, csrp.benzodiazepines_curr_use),
+        CANNABIS: drugUsed(csrp.s8_q1_drugs_misused, csrp.cannabis_curr_use),
+        CRACK_COCAINE: drugUsed(csrp.s8_q1_drugs_misused, csrp.crack_cocaine_curr_use),
+        ECSTASY: drugUsed(csrp.s8_q1_drugs_misused, csrp.ecstasy_curr_use),
+        HALLUCINOGENS: drugUsed(csrp.s8_q1_drugs_misused, csrp.hallucinogens_curr_use),
+        HEROIN: drugUsed(csrp.s8_q1_drugs_misused, csrp.heroin_curr_use),
+        KETAMINE: drugUsed(csrp.s8_q1_drugs_misused, csrp.ketamine_curr_use),
+        METHADONE: drugUsed(csrp.s8_q1_drugs_misused, csrp.methadone_curr_use),
+        MISUSED_PRESCRIBED: drugUsed(csrp.s8_q1_drugs_misused, csrp.misused_prescribed_curr_use),
+        OTHER_DRUGS: drugUsed(csrp.s8_q1_drugs_misused, csrp.other_curr_use),
+        OTHER_OPIATE: drugUsed(csrp.s8_q1_drugs_misused, csrp.other_opiate_curr_use),
+        POWDER_COCAINE: drugUsed(csrp.s8_q1_drugs_misused, csrp.cocaine_hydrochloride_curr_use),
+        SOLVENTS: drugUsed(csrp.s8_q1_drugs_misused, csrp.solvents_curr_use),
+        SPICE: drugUsed(csrp.s8_q1_drugs_misused, csrp.spice_curr_use),
+        STEROIDS: drugUsed(csrp.s8_q1_drugs_misused, csrp.steroids_curr_use),
         EIGHT_POINT_EIGHT: q88(csrp.s8_q1_drugs_misused, getNumericAnswer(csrp.s8_q8_motiv_drug_misuse)),
         NINE_POINT_ONE: getNumericAnswer(csrp.s9_q1_alcohol),
         NINE_POINT_TWO: getNumericAnswer(csrp.s9_q2_binge_drink),
@@ -69,7 +71,7 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         KIDNAP: getNumericAnswer(csrp.r1_2_past_kidnapping),
         ROBBERY: getNumericAnswer(csrp.r1_2_past_robbery),
         WEAPONS_NOT_FIREARMS: getNumericAnswer(csrp.r1_2_past_weapon),
-        CUSTODY_IND: csrp.prison_ind == 'C' ? 'Y' : 'N',
+        CUSTODY_IND: csrp.prisonInd == 'C' ? 'Y' : 'N',
     }
 
     addCalculatedInputParameters(p)
@@ -78,13 +80,13 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
 
 function getNumericAnswer(value: string): number {
 
-    return !value ? null : value == 'YES' ? 1 : value == 'NO' || value == 'NA' ? 0 : value == 'M' ? null : Number.parseInt(value)
+    return !value ? null : value == 'YES' ? 1 : value == 'NO' || value == 'NA' ? 0 : value == 'M' ? 0 : Number.parseInt(value)
 }
 
 function da(rsr: OgrsCsrp): number {
 
-    const q67 = getNumericAnswer(rsr.s6_q7_dom_abuse)
-    return q67 == 1 ? getNumericAnswer(rsr.s6_q7_perpetrator_partner) : q67
+    const q67 = getNumericAnswer(rsr.s6_q7_dom_abuse) ?? 0
+    return q67 == 1 ? (getNumericAnswer(rsr.s6_q7_perpetrator_partner) ?? 0) : q67
 }
 
 function lookupValue(value: string, lookup: { [key: string]: string }): string {
@@ -93,9 +95,9 @@ function lookupValue(value: string, lookup: { [key: string]: string }): string {
     return result == undefined ? value : result
 }
 
-function drugUsed(drugUse: string) {
+function drugUsed(s8_q1: string, drugUse: string) {
 
-    return drugUse == null ? null : 'Y'
+    return (s8_q1 != 'YES' || drugUse == null) ? null : 'Y'
 }
 
 function dailyDrugUser(csrp: OgrsCsrp) {

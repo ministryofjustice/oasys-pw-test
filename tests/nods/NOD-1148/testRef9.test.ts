@@ -84,6 +84,7 @@ test('OGRS regression test ref 9', async ({ oasys, user, offender, assessment, s
     await sections.layer1Section2.o2_2ExcessiveViolence.setValue('No')
     await sections.layer1Section2.o2_2Arson.setValue('No')
     await sections.layer1Section2.impactRecognised.setValue('Yes')
+    await sections.predictorQuestions.populateMinimal()
     await sections.selfAssessmentForm.populateMinimal()
     await sentencePlan.populateMinimal()
 

@@ -1,5 +1,4 @@
 import { San, SentencePlan, test } from 'fixtures'
-import * as testData from '../../data/testRef21'
 
 export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, offender2Pks: number[]) {
 
@@ -87,9 +86,13 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
         const pk = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
         offender2Pks.push(pk)
         await san.gotoSan()
-        await san.populateSanSections('Test ref 21', testData.assessment7, true)
+        await san.accommodation.change()
+        await san.accommodation.page1.settledAccommodationType.setValue('socialRent')
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.openPractitionerAnalysis()
+        await san.accommodation.markAsComplete()
         await san.returnToOASys()
-        await risk.setRationaleText()
         await signing.signAndLock({ page: 'spService' })
 
         await user.logout()

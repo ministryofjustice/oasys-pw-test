@@ -32,8 +32,8 @@ export class RoshaPredictors extends BaseAssessmentPage {
     o1_38Audit = new Element.Textbox(this.page, '#P5_QU_1_38_T')
     o1_43 = new Element.Textbox(this.page, '#P5_QU_1_43')
     o1_39 = new Element.Select<YesNoAnswer>(this.page, '#P5_QU_1_39')
-    o2_2 = new Element.Select<YesNoAnswer>(this.page, '#P5_QU_2_2_V1')
-    o2_2Weapon = new Element.Textbox(this.page, '#P5_QU_2_2_T')
+    o2_2Weapon = new Element.Select<YesNoAnswer>(this.page, '#P5_QU_2_2_V1')
+    o2_2SpecifyWeapon = new Element.Textbox(this.page, '#P5_QU_2_2_T')
     o3_4 = new Element.Select<ProblemsMissingAnswer>(this.page, '#P5_QU_3_4')
     o4_2 = new Element.Select<'0-No' | '0-Not available for work' | '2-Yes' | 'Missing'>(this.page, '#P5_QU_4_2')
     o6_4 = new Element.Select<ProblemsMissingAnswer>(this.page, '#P5_QU_6_4')
@@ -152,10 +152,9 @@ export class RoshaPredictors extends BaseAssessmentPage {
         }
     }
 
-    async populateFull(withDateFirstSanction = true) {
+    async populateFull(params?: PopulateAssessmentParams, withDateFirstSanction = true) {
 
         log('Fully populating RoSHA Predictors page')
-        await this.goto(true)
         await this.goto(true)
         if (withDateFirstSanction) {
             await this.dateFirstSanction.setValue({ years: -2 })
@@ -171,10 +170,12 @@ export class RoshaPredictors extends BaseAssessmentPage {
         await this.o1_45.setValue('0')
         await this.o1_46.setValue('0')
         await this.o1_37.setValue('2')
-        await this.o1_38.setValue({ months: -6 })
+        if (params?.populate1_38) {
+            await this.o1_38.setValue({ months: -6 })
+        }
         await this.o1_39.setValue('Yes')
-        await this.o2_2.setValue('Yes')
-        await this.o2_2Weapon.setValue('A knife')
+        await this.o2_2Weapon.setValue('Yes')
+        await this.o2_2SpecifyWeapon.setValue('A knife')
         await this.o3_4.setValue('1-Some problems')
         await this.o4_2.setValue('2-Yes')
         await this.o6_4.setValue('2-Significant problems')

@@ -31,7 +31,7 @@ export class Select<T extends string> {
 
     async getValue(): Promise<string> {
 
-        return await this.selector.textContent()
+        return (await this.selector.evaluate((sel: HTMLSelectElement) => sel.options[sel.options.selectedIndex].textContent)).trim()
     }
 
     async checkStatus(status: ElementStatus) {

@@ -66,7 +66,7 @@ export class SelfAssessmentForm extends BaseAssessmentPage {
     s28 = new Element.Select(this.page, '#itm_SAQ28')
     why = new Element.Textbox(this.page, '#textarea_SAQD')
     whyNotCompleted = new Element.Textbox(this.page, '#textarea_SAQDE')
-    save = new Element.Button(this.page, '#P2_BT_SAVE_BOTT')
+    private bottomSaveButton = new Element.Button(this.page, '#P2_BT_SAVE_BOTT')
 
 
     async populateMinimal() {
@@ -139,7 +139,7 @@ export class SelfAssessmentForm extends BaseAssessmentPage {
         await this.s27LinkedOffending.setValue('Yes')
         await this.s28.setValue('Quite likely')
         await this.why.setValue(maxStrings ? utils.oasysString(4000) : `Because I'm a criminal`)
-        await this.save.click()
+        await this.bottomSaveButton.click()
     }
 }
 

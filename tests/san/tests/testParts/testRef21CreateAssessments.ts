@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../../data/testRef21'
 
 export function testRef21CreateAssessments(offender1: OffenderDef, offender2: OffenderDef, offender1Pks: number[], offender2Pks: number[]) {
 
@@ -18,7 +17,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         offender1Pks.push(offender1Pk1)
         await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No' })
         await signing.signAndLock()
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         await user.logout()
 
@@ -48,7 +47,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         await assessment.populateMinimal({ layer: 'Layer 1', sentencePlan: 'spService' })
         await signing.signAndLock()
-        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         // Create and complete assessment 2 (layer 3 v1)
         await oasys.history(offender2)
@@ -64,11 +63,9 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await oasys.history(offender2)
         const offender2Pk3 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
         offender2Pks.push(offender2Pk3)
-        await san.gotoSan()
-        await san.populateSanSections('Test ref 21', testData.assessment3, true)
-        await san.returnToOASys()
+        await san.populateMinimal()
 
-        await risk.setRationaleText()
+        // await risk.setRationaleText()
         await signing.signAndLock({ page: 'spService' })
         await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
         await user.logout()
@@ -112,9 +109,13 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         offender2Pks.push(offender2Pk5)
 
         await san.gotoSan()
-        await san.populateSanSections('Test ref 21', testData.assessment5, true)
+        await san.accommodation.change()
+        await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.openPractitionerAnalysis()
+        await san.accommodation.markAsComplete()
         await san.returnToOASys()
-        await risk.setRationaleText()
         await signing.signAndLock({ page: 'spService' })
         await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 
@@ -123,9 +124,13 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         const offender2Pk6 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
         offender2Pks.push(offender2Pk6)
         await san.gotoSan()
-        await san.populateSanSections('Test ref 21', testData.assessment6, true)
+        await san.accommodation.change()
+        await san.accommodation.page1.settledAccommodationType.setValue('privateRenting')
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.openPractitionerAnalysis()
+        await san.accommodation.markAsComplete()
         await san.returnToOASys()
-        await risk.setRationaleText()
         await signing.signAndLock({ page: 'spService' })
         await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
 

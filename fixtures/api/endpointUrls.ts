@@ -39,6 +39,8 @@ export const endpointUrls: EndpointUrl[] = [
     { endpoint: 'v4RiskScoresRsr', url: 'ass/riskscrrsr/{laoPrivilege}/{assessmentPk}' },
     { endpoint: 'crimNeeds', url: 'ass/crimneeds/{laoPrivilege}/{assessmentPk}' },
     { endpoint: 'pni', url: 'ass/pnildc/{crnSource}/{crn}:{additionalParameter}/{laoPrivilege}' },
+    { endpoint: 'tierRiskFlag', url: 'ass/tierriskflag/{crn}/{laoPrivilege}' },
+    { endpoint: 'tierPredictors', url: 'ass/tierpredictors/{laoPrivilege}/{assessmentPk}:{recordType}' },
 ]
 
 export const restErrorResults: RestErrorResults = {

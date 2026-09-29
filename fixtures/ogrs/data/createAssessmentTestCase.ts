@@ -5,8 +5,10 @@ import { OgrsInputParams } from '../types'
 
 export function createAssessmentInputParams(assessment: OgrsAssessment, dateParam: string | Temporal.PlainDate = null): OgrsInputParams {
 
+    const after6_26 = oasysDateTime.checkIfAfter('6.26', assessment.initiationDate)
     const after6_30 = oasysDateTime.checkIfAfter('6.30', assessment.initiationDate)
     const after6_35 = oasysDateTime.checkIfAfter('6.35', assessment.initiationDate)
+    const after6_49 = oasysDateTime.checkIfAfter('6.49', assessment.initiationDate)
 
     const drugs = getDrugsUsage(assessment.qaData)
     const q81 = utils.lookupString('8.1', assessment.qaData)
@@ -33,24 +35,26 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
         TOTAL_SANCTIONS_COUNT: utils.lookupInteger('1.32', assessment.qaData),
         TOTAL_VIOLENT_SANCTIONS: utils.lookupInteger('1.40', assessment.qaData),
         CONTACT_ADULT_SANCTIONS: utils.lookupInteger('1.34', assessment.qaData),
-        CONTACT_CHILD_SANCTIONS: utils.lookupInteger('1.45', assessment.qaData),
-        INDECENT_IMAGE_SANCTIONS: utils.lookupInteger('1.46', assessment.qaData),
+        CONTACT_CHILD_SANCTIONS: utils.lookupInteger(after6_49 ? '1.45' : '1.35', assessment.qaData),
+        INDECENT_IMAGE_SANCTIONS: utils.lookupInteger(after6_49 ? '1.46' : '1.36', assessment.qaData),
         PARAPHILIA_SANCTIONS: utils.lookupInteger('1.37', assessment.qaData),
-        STRANGER_VICTIM: utils.lookupString('1.44', assessment.qaData, utils.yesNoToYNLookup),
+        STRANGER_VICTIM: utils.lookupString(after6_49 ? '1.44' : '1.42', assessment.qaData, utils.yesNoToYNLookup),
         AGE_AT_FIRST_SANCTION: utils.lookupInteger('1.8', assessment.qaData),
         LAST_SANCTION_DATE: oasysDateTime.stringToDate(utils.lookupString('1.29', assessment.qaData)),
         DATE_RECENT_SEXUAL_OFFENCE: oasysDateTime.stringToDate(utils.lookupString('1.33', assessment.qaData)),
-        CURR_SEX_OFF_MOTIVATION: q141(utils.lookupString('1.30', assessment.qaData), utils.lookupString('1.41', assessment.qaData), assessment.offence),
+        CURR_SEX_OFF_MOTIVATION: q141(utils.lookupString('1.30', assessment.qaData), utils.lookupString(after6_26 ? '1.41' : '1.31', assessment.qaData, utils.yesNoToYNLookup), assessment.offence),
         MOST_RECENT_OFFENCE: oasysDateTime.stringToDate(utils.lookupString('1.43', assessment.qaData)),
-        COMMUNITY_DATE: oasysDateTime.stringToDate(utils.lookupString('1.38', assessment.qaData)),
+        COMMUNITY_DATE: assessment.prisonInd == 'C'
+            ? oasysDateTime.testStartDate
+            : oasysDateTime.stringToDate(utils.lookupString('1.38', assessment.qaData)),
         ONE_POINT_THIRTY: utils.lookupString('1.30', assessment.qaData, utils.yesNoToYNLookup),
         TWO_POINT_TWO: q22(utils.lookupString('2.2_V2_WEAPON', assessment.qaData), utils.lookupString('2.2', assessment.qaData), after6_35),
-        THREE_POINT_FOUR: utils.lookupInteger('3.4', assessment.qaData),
-        FOUR_POINT_TWO: utils.lookupInteger('4.2', assessment.qaData, q4_2Lookup),
-        SIX_POINT_FOUR: utils.lookupInteger('6.4', assessment.qaData),
+        THREE_POINT_FOUR: utils.lookupIntegerMissingAs0('3.4', assessment.qaData),
+        FOUR_POINT_TWO: utils.lookupIntegerMissingAs0('4.2', assessment.qaData, q4_2Lookup),
+        SIX_POINT_FOUR: utils.lookupIntegerMissingAs0('6.4', assessment.qaData),
         SIX_POINT_SEVEN: da(assessment.qaData, after6_30),
-        SIX_POINT_EIGHT: utils.lookupInteger('6.8', assessment.qaData),
-        SEVEN_POINT_TWO: utils.lookupInteger('7.2', assessment.qaData),
+        SIX_POINT_EIGHT: utils.lookupInteger('6.8', assessment.qaData) ?? 0,
+        SEVEN_POINT_TWO: utils.lookupIntegerMissingAs0('7.2', assessment.qaData),
         DAILY_DRUG_USER: dailyDrugUser(q81, drugs),
         AMPHETAMINES: getDrugUsed('AMPHETAMINES', drugs),
         BENZODIAZIPINES: getDrugUsed('BENZODIAZIPINES', drugs),
@@ -68,9 +72,9 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
         SOLVENTS: getDrugUsed('SOLVENTS', drugs),
         SPICE: getDrugUsed('SPICE', drugs),
         STEROIDS: getDrugUsed('STEROIDS', drugs),
-        EIGHT_POINT_EIGHT: q88(q81, utils.lookupInteger('8.8', assessment.qaData)),
-        NINE_POINT_ONE: utils.lookupInteger('9.1', assessment.qaData),
-        NINE_POINT_TWO: utils.lookupInteger('9.2', assessment.qaData),
+        EIGHT_POINT_EIGHT: q88(q81, utils.lookupIntegerMissingAs0('8.8', assessment.qaData)),
+        NINE_POINT_ONE: utils.lookupIntegerMissingAs0('9.1', assessment.qaData),
+        NINE_POINT_TWO: utils.lookupIntegerMissingAs0('9.2', assessment.qaData),
         ELEVEN_POINT_TWO: utils.lookupInteger('11.2', assessment.qaData),
         ELEVEN_POINT_FOUR: utils.lookupInteger('11.4', assessment.qaData),
         TWELVE_POINT_ONE: utils.lookupInteger('12.1', assessment.qaData),
@@ -93,6 +97,7 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
     }
 
     addCalculatedInputParameters(result)
+
     return result
 
 }

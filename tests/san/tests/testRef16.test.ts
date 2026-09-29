@@ -1,5 +1,4 @@
 import { test } from 'fixtures'
-import * as testData from '../data/testRef16'
 
 /*
 New Male offender in PRISON which is a SAN prison area and the CMS stub has a custodial sentence on it for when the reception event takes place.  Age is >18.
@@ -47,7 +46,6 @@ test('SAN integration - test ref 16', async ({ oasys, user, offender, assessment
     await san.checkSanEditMode(true)
     await san.returnToOASys()
 
-    // new oasys.Pages.Rosh.RoshScreeningSection1().goto().r1_2_6P.setValue('Yes')
     await risk.screeningSection1.goto()
     await risk.screeningSection1.r1_2_6P.setValue('Yes')
 
@@ -91,8 +89,6 @@ test('SAN integration - test ref 16', async ({ oasys, user, offender, assessment
     await assessment.summarySheet.opdOverrideMessage.checkValue('This individual does not meet the criteria for the OPD pathway.', true)
     await assessment.summarySheet.opdOverride.checkValue('No')
 
-    await san.gotoSan()
-
     log(`In the SAN Assessment answer the following questions as defined below:	
         The following set of SAN questions are for the Learning Screening Tool:
             In Accommodation 'What is ? current accommodation?' - select 'No accommodation'
@@ -110,7 +106,7 @@ test('SAN integration - test ref 16', async ({ oasys, user, offender, assessment
             In Thinking, behaviour… 'Does __ act on impulse?' - select 'Sometimes acts on impulse which causes significant problems'
             In Personal relationships…. 'Did ? have any childhood behavioural problems?' - select Yes`, 'Test step')
 
-    await san.populateSanSections('Test ref 16', testData.sanPopulation, true)
+    await san.populateForLst()
 
     log(`Return back to the OASys Assessment - goes back to the 'Open Strengths and Needs' screen
         Navigate to the Summary Sheet screen
@@ -119,7 +115,6 @@ test('SAN integration - test ref 16', async ({ oasys, user, offender, assessment
         Ensure that the OPD section has changed to 'This individual meets the criteria for the OPD pathway.'  
         Leave the assessment as WIP`, 'Test step')
 
-    await san.returnToOASys()
     await assessment.summarySheet.goto()
     await assessment.summarySheet.learningScreeningTool.checkValue(
         'This individual may have a learning disability and/or learning challenges. Further assessment may be needed to determine the support required. Consideration for referral for specialised assessment should be given, if appropriate.',

@@ -25,6 +25,6 @@ declare type AppConfig = {
     currentVersion: string,
 }
 
-declare type SignificantAppVersions = '6.20' | '6.30' | '6.35' | '6.49' | '7.7'
+declare type SignificantAppVersions = '6.20' | '6.26' | '6.30' | '6.35' | '6.49' | '7.7'
 
 declare type Log = { logText: string, type?: string }

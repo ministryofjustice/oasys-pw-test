@@ -64,7 +64,7 @@ export class ScreeningSection1 extends BaseAssessmentPage {
     r1_4_16 = new Element.Select<YesNoAnswer>(this.page, '#itm_R1_4_16')    //Slavery and trafficking prevention and risk orders
     r1_4_17 = new Element.Select<YesNoAnswer>(this.page, '#itm_R1_4_17')    //Stalking protection order
     r1_4_18 = new Element.Select<YesNoAnswer>(this.page, '#itm_R1_4_18')    //Violent offender order
-    save = new Element.Button(this.page, '#P2_BT_SAVE_BOTT')
+    // saveButton = new Element.Button(this.page, '#P2_BT_SAVE_BOTT')
 
 
     /**
@@ -78,10 +78,10 @@ export class ScreeningSection1 extends BaseAssessmentPage {
         await this.mark1_3AsNo.click()
         await this.r1_4.setValue('No')
     }
-    
-    
+
+
     async populateFull(params?: PopulateAssessmentParams) {
-        
+
         log('RoSH screening section 1 - fully populated')
         await this.goto(true)
         await this.r1_2_1P.setValue('Yes')

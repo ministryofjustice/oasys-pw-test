@@ -71,7 +71,7 @@ test('Mapping test V2: alcohol', async ({ page, oasys, user, offender, assessmen
         //     await san.change()
         // }
         for (let i = 1; i < startPage; i++) {
-            await san.previous()
+            await san.alcohol.previous()
         }
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
@@ -101,7 +101,7 @@ test('Mapping test V2: alcohol', async ({ page, oasys, user, offender, assessmen
     await san.alcohol.page2.impactAlcohol.setValue(['behavioural'])
     await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
     await san.alcohol.page2.wantChanges.setValue('madeChanges')
-    await san.saveAndContinue()
+    await san.alcohol.saveAndContinue()
     await san.returnToOASys()
 
     await paTest(assessmentPk, 'Alcohol use', page, oasys, assessment, san)
@@ -113,7 +113,7 @@ async function scenario(test: TestCase, san: San) {
 
     await san.alcohol.page1.everDrank.setValue(test.page1.everDrank)
     if (test.page2) {
-        await san.saveAndContinue()
+        await san.alcohol.saveAndContinue()
         if (test.page1.everDrank == 'yesIncLast3') {
             await san.alcohol.page2.howOftenLast3.setValue(test.page2.howOftenLast3)
             await san.alcohol.page2.typicalUnits.setValue(test.page2.typicalUnits)

@@ -83,7 +83,7 @@ test('Mapping test V2: thinking', async ({ page, oasys, user, offender, assessme
         await san.gotoSan('Thinking, behaviours and attitudes', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
-            await san.previous()
+            await san.thinking.previous()
         }
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
@@ -104,7 +104,7 @@ test('Mapping test V2: thinking', async ({ page, oasys, user, offender, assessme
 
     // Complete everything needed for PA
     await san.gotoSan('Thinking, behaviours and attitudes', true)
-    await san.saveAndContinue()
+    await san.thinking.saveAndContinue()
     await san.returnToOASys()
 
     await paTest(assessmentPk, 'Thinking, behaviours and attitudes', page, oasys, assessment, san)
@@ -130,10 +130,10 @@ async function scenario(test: TestCase, san: San) {
     await san.thinking.page1.supportCriminalBehaviour.setValue(test.page1.supportCriminalBehaviour)
     if (test.page2) {
         await san.thinking.page1.wantChanges.setValue('madeChanges')
-        await san.saveAndContinue()
+        await san.thinking.saveAndContinue()
         await san.thinking.page2.riskOfSexualHarm.setValue(test.page2.riskOfSexualHarm)
         if (test.page3) {
-            await san.saveAndContinue()
+            await san.thinking.saveAndContinue()
             await san.thinking.page3.sexualPreoccupation.setValue(test.page3.sexualPreoccupation)
             await san.thinking.page3.sexualInterests.setValue(test.page3.sexualInterests)
             await san.thinking.page3.emotionalIntimacy.setValue(test.page3.emotionalIntimacy)

@@ -5,10 +5,6 @@ import { sanPositiveMixedNegativeOptions, sanWantChangesOptions, sanYesNoOptions
 
 export class Page2 extends BaseSanEditPage {
 
-    name = 'HealthPage2'
-    title = 'Health and wellbeing - Strengths and Needs'
-
-
     psychTreatment = new Element.Radiogroup<PsychTreatment>(this.page, '#health_wellbeing_psychiatric_treatment', ['yes', 'pending', 'no', 'unknown'])
     headInjury = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#health_wellbeing_head_injury_or_illness', sanYesNoUnknownOptions)
     neurodiverse = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#health_wellbeing_neurodiverse_conditions', sanYesNoUnknownOptions)

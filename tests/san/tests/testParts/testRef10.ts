@@ -41,7 +41,7 @@ export function testRef10(offender1: OffenderDef, pks: number[]) {
 
         await risk.fullAnalysisSection62.checkMenuVisibility(false)
         await risk.rmp.checkMenuVisibility(false)
-        await san.sanSections.checkCompletionStatus(true)
+        await san.oasysSanSections.checkCompletionStatus(true)
 
         log(`Go to the SAN assessment, change data in the 'accommodation' and 'thinking, behaviours and attitudes' sections to state 
             they are linked to risk of serious harm (ensure the data is validated).
@@ -50,14 +50,14 @@ export function testRef10(offender1: OffenderDef, pks: number[]) {
 
         await san.gotoSan()
         await san.accommodation.goto()
-        await san.openPractitionerAnalysis()
+        await san.accommodation.openPractitionerAnalysis()
         await san.accommodation.change()
         await san.accommodation.practitionerAnalysis.riskOfHarm.setValue('yes')
         await san.accommodation.practitionerAnalysis.riskOfHarmYesDetails.setValue('Now a risk')
         await san.accommodation.markAsComplete()
-        
+
         await san.thinking.goto()
-        await san.openPractitionerAnalysis()
+        await san.thinking.openPractitionerAnalysis()
         await san.thinking.change()
         await san.thinking.practitionerAnalysis.riskOfHarm.setValue('yes')
         await san.thinking.practitionerAnalysis.riskOfHarmYesDetails.setValue('Now a risk')
@@ -66,7 +66,7 @@ export function testRef10(offender1: OffenderDef, pks: number[]) {
         await san.returnToOASys()
         await oasys.clickButton('Next')
         await risk.fullAnalysisSection62.checkMenuVisibility(true)
-        await san.sanSections.checkCompletionStatus(true)
+        await san.oasysSanSections.checkCompletionStatus(true)
 
         log(`Go to the first screen of the Risk of Serious Harm Screening and ensure it shows the TWO ARNS sections at R1.1
             Complete the full analysis flagging the offender as 'Medium' risk

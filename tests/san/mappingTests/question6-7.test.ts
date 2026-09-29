@@ -91,9 +91,9 @@ test('Mapping test for question 6.7', async ({ oasys, user, offender, assessment
             await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
             await san.offenceAnalysis.page1.victimType.setValue(['other'])
             await san.offenceAnalysis.page1.victimTypeDetails.setValue('Victim details')
-            await san.offenceAnalysis.page1.saveAndContinue.click()
+            await san.offenceAnalysis.saveAndContinue()
             await san.offenceAnalysis.page2.howManyOthers.setValue('0')
-            await san.offenceAnalysis.page2.saveAndContinue.click()
+            await san.offenceAnalysis.saveAndContinue()
         } else {
             await san.gotoSan('Offence analysis', true)
         }

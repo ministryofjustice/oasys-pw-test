@@ -58,15 +58,15 @@ test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san
             await san.offenceAnalysis.page1.reason.setValue('Reason')
             await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
             await san.offenceAnalysis.page1.victimType.setValue(['people'])
-            await san.saveAndContinue()
+            await san.offenceAnalysis.saveAndContinue()
         } else {
-            await san.previous()
+            await san.offenceAnalysis.previous()
             await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
             if (test.offenceElements.includes('victimTargeted')) {
                 await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Victim targeted details')
             }
-            await san.saveAndContinue()
-            await san.change()
+            await san.offenceAnalysis.saveAndContinue()
+            await san.offenceAnalysis.change()
         }
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
@@ -95,14 +95,14 @@ async function scenario(test: TestCase, san: San) {
         if (test.ref == 16) {
             await san.offenceAnalysis.victims.addAnotherVictim.click()
         } else {
-            await san.change(2)
+            await san.offenceAnalysis.change(2)
         }
         await setVictimDetails(test.victim2, san)
         if (test.victim3) {
             if (test.ref == 18) {
                 await san.offenceAnalysis.victims.addAnotherVictim.click()
             } else {
-                await san.change(3)
+                await san.offenceAnalysis.change(3)
             }
             await setVictimDetails(test.victim3, san)
         }
@@ -118,7 +118,7 @@ async function setVictimDetails(victim: TestCaseVictim, san: San) {
     await san.offenceAnalysis.victims.victimAge.setValue(victim.victimAge)
     await san.offenceAnalysis.victims.victimSex.setValue(victim.victimSex)
     await san.offenceAnalysis.victims.victimRace.setValue(victim.victimRace)
-    await san.saveAndContinue()
+    await san.offenceAnalysis.saveAndContinue()
 }
 
 async function checkAnswers(assessmentPk: number, test: TestCase, assessment: Assessment): Promise<boolean> {

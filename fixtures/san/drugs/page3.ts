@@ -3,9 +3,6 @@ import { BaseSanEditPage } from '../pages/baseSanEditPage'
 
 export class Page3 extends BaseSanEditPage {
 
-    name = 'DrugsPage3'
-    title = 'Drug usage - Strengths and Needs'
-
     amphetaminesFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#how_often_used_last_six_months_amphetamines', ['daily', 'weekly', 'monthly', 'occasionally'])
     benzodiazepinesFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#how_often_used_last_six_months_benzodiazepines', ['daily', 'weekly', 'monthly', 'occasionally'])
     cannabisFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#how_often_used_last_six_months_cannabis', ['daily', 'weekly', 'monthly', 'occasionally'])

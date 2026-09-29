@@ -3,8 +3,6 @@ import { BaseSanEditPage } from '../pages/baseSanEditPage'
 
 export class Page2 extends BaseSanEditPage {
 
-    name = 'DrugsPage2'
-    title = 'Drug usage - Strengths and Needs'
     drugType = new Element.CheckboxGroup<DrugType>(this.page, '#select_misused_drugs', ['amphetamines', 'benzodiazepines', 'cannabis', 'cocaine', 'crack', 'ecstasy', 'hallucinogenics', 'heroin', 'methadone', 'prescribed', 'opiates', 'solvents', 'steroids', 'spice', 'other'])
 
     amphetaminesLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_amphetamines', ['yes', 'no'])

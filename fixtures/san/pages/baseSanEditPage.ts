@@ -1,10 +1,6 @@
-import { OasysPage, Element } from 'classes'
+import { Page } from '@playwright/test'
 
-export class BaseSanEditPage extends OasysPage {
+export class BaseSanEditPage {
 
-    name = 'BaseSanEditPage'
-    idPrefix = ''
-
-    saveAndContinue = new Element.Button(this.page, `button[value='YES']`)
-    previous = new Element.Link(this.page, '.govuk-back-link')
+    constructor(public readonly page: Page) { }
 }

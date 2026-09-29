@@ -5,9 +5,6 @@ import { sanYesNoUnknownOptions, sanWantChangesOptions } from '../sanSection'
 
 export class Page1 extends BaseSanEditPage {
 
-    name = 'FinancePage1'
-    title = 'Finances - Strengths and Needs'
-
     incomeSource = new Element.CheckboxGroup<IncomeSource>(this.page, '#finance_income', ['carersAllowance', 'disabilityBenefits', 'employment', 'family', 'offending', 'pension', 'studentLoan', 'undeclared', 'workBenefits', 'other', 'unknown', '-', 'noMoney'])
     overReliant = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#family_or_friends_details', sanYesNoUnknownOptions)
     ownAccount = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#finance_bank_account', sanYesNoUnknownOptions)

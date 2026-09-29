@@ -32,7 +32,7 @@ test('Mapping test V2: control characters', async ({ oasys, user, offender, asse
         // Get to the right starting screen
         await san.gotoSan('Offence analysis', true)
         if (test.ref > 1) {
-            await san.previous()
+            await san.offenceAnalysis.previous()
         }
         await san.offenceAnalysis.page1.offenceElements.setValue(['arson'])
         await san.offenceAnalysis.page1.reason.setValue('Reason')
@@ -42,7 +42,7 @@ test('Mapping test V2: control characters', async ({ oasys, user, offender, asse
 
         // Set values on SAN, return to OASys and check the results
         await san.offenceAnalysis.page1.offenceDescription.setValue(test.offenceDescription)
-        await san.saveAndContinue()
+        await san.offenceAnalysis.saveAndContinue()
         await san.returnToOASys()
         await oasys.clickButton('Previous', true)
         await oasys.clickButton('Next', true)

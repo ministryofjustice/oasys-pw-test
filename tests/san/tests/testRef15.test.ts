@@ -119,7 +119,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
     await san.returnToOASys()
     await oasys.clickButton('Next')
 
-    await san.sanSections.checkCompletionStatus(true)
+    await san.oasysSanSections.checkCompletionStatus(true)
 
     log(`Complete the remaining sections in the OASys assessment and invoke a full analysis.  Complete the full analysis and set the offender as 'HIGH' risk.`, 'Test step')
 

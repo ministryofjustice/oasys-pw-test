@@ -103,7 +103,7 @@ async function setAccommodationOptions(options: AccommodationOptions[], firstRun
         await san.accommodation.page1.currentAccommodation.setValue('settled')
         await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
     }
-    await san.accommodation.page1.saveAndContinue.click()
+    await san.accommodation.saveAndContinue()
     await san.accommodation.page2.livingWith.setValue(options)
 }
 
@@ -112,7 +112,7 @@ async function setRelationshipOptions(options: RelationshipOptions[], firstRun: 
     await san.goto('Personal relationships and community')
     if (firstRun) {
         await san.relationships.page1.anyChildren.setValue(['no'])
-        await san.relationships.page1.saveAndContinue.click()
+        await san.relationships.saveAndContinue()
     }
     await san.relationships.page2.importantPeople.setValue(options)
 }

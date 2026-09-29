@@ -4,11 +4,8 @@ import { sanYesNoNaOptions, sanYesNoOptions } from '../sanSection'
 
 const familyPartnerBothOptions: FamilyPartnerBoth[] = ['family', 'partner', 'both']
 
-export class Page3 extends BaseSanEditPage {
-    
-    name = 'OffenceAnalysisPage3'
-    title = 'Offence analysis - Strengths and Needs'
 
+export class Page3 extends BaseSanEditPage {
     
     leader = new Element.Radiogroup<SanYesNo>(this.page, '#offence_analysis_leader', sanYesNoOptions)
     leaderYesDetails = new Element.Textbox(this.page, '#offence_analysis_leader_yes_details')

@@ -4,10 +4,6 @@ import { sanPositiveMixedNegativeOptions, sanWantChangesOptions, sanYesNoOptions
 
 export class Page3 extends BaseSanEditPage {
 
-    name = 'RelationshipsPage3'
-    title = 'Personal relationships and community - Strengths and Needs'
-
-
     happyWithStatus = new Element.Radiogroup<HappyWithStatus>(this.page, '#personal_relationships_community_current_relationship', ['happy', 'someConcerns', 'unhappy'])
     history = new Element.Radiogroup<RelationshipHistory>(this.page, '#personal_relationships_community_intimate_relationship', ['stable', 'mixed', 'unstable'])
     resolveChallenges = new Element.Textbox(this.page, '#personal_relationships_community_challenges_intimate_relationship')

@@ -61,7 +61,7 @@ test('Mapping test V2: health and wellbeing', async ({ page, oasys, user, offend
         await san.gotoSan('Health and wellbeing', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
-            await san.previous()
+            await san.health.previous()
         }
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
@@ -93,7 +93,7 @@ test('Mapping test V2: health and wellbeing', async ({ page, oasys, user, offend
     await san.health.page2.optimistic.setValue('optimistic')
     await san.health.page2.wantChanges.setValue('madeChanges')
 
-    await san.saveAndContinue()
+    await san.health.saveAndContinue()
     await san.returnToOASys()
 
     await paTest(assessmentPk, 'Health and wellbeing', page, oasys, assessment, san)
@@ -106,7 +106,7 @@ async function scenario(test: TestCase, san: San) {
     await san.health.page1.physicalHealthConditions.setValue('yes')
     await san.health.page1.mentalHealthProblems.setValue(test.page1.mentalHealthProblems)
     if (test.page2) {
-        await san.saveAndContinue()
+        await san.health.saveAndContinue()
         await san.health.page2.psychTreatment.setValue(test.page2.psychTreatment)
         await san.health.page2.headInjury.setValue(test.page2.headInjury)
         await san.health.page2.learningDifficulties.setValue(test.page2.learningDifficulties)

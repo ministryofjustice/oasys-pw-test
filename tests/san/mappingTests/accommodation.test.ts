@@ -59,7 +59,7 @@ test('Mapping test V2: accommodation', async ({ page, oasys, user, offender, ass
         await san.gotoSan('Accommodation', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
-            await san.previous()
+            await san.accommodation.previous()
         }
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
@@ -82,7 +82,7 @@ test('Mapping test V2: accommodation', async ({ page, oasys, user, offender, ass
     await san.gotoSan('Accommodation', true)
     await san.accommodation.page2.livingWith.setValue(['alone'])
     await san.accommodation.page2.wantChanges.setValue('madeChanges')
-    await san.saveAndContinue()
+    await san.accommodation.saveAndContinue()
     await san.returnToOASys()
 
     await paTest(assessmentPk, 'Accommodation', page, oasys, assessment, san)
@@ -100,7 +100,7 @@ async function scenario(test: TestCase, san: San) {
         if (test.page1.currentAccommodation == 'settled') {
             await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
         }
-        await san.saveAndContinue()
+        await san.accommodation.saveAndContinue()
         await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
         await san.accommodation.page2.accommodationSuitable.setValue(test.page2.accommodationSuitable)
         await san.accommodation.page2.locationSuitable.setValue(test.page2.locationSuitable)

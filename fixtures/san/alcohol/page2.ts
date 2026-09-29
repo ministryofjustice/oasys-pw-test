@@ -5,9 +5,6 @@ import { sanWantChangesOptions } from '../sanSection'
 
 export class Page2 extends BaseSanEditPage {
 
-    name = 'AlcoholPage2'
-    title = 'Alcohol use - Strengths and Needs'
-
     howOftenLast3 = new Element.Radiogroup<HowOftenLast3>(this.page, '#alcohol_frequency', ['1PerMonth', '2-4PerMonth', '2-3PerWeek', 'more'])
     typicalUnits = new Element.Radiogroup<TypicalUnits>(this.page, '#alcohol_units', ['1To2', '3To4', '5To6', '7To9', '10orMore'])
     had8OrMore = new Element.Radiogroup<SanYesNo>(this.page, '#alcohol_binge_drinking', ['yes', 'no'])

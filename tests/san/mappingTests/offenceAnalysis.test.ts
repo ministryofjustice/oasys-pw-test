@@ -84,7 +84,7 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
         await san.gotoSan('Offence analysis', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
-            await san.previous()
+            await san.offenceAnalysis.previous()
         }
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
@@ -103,7 +103,7 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
         if (test.ref < 22 && (test.page1.offenceElements.includes('sexualElement') || test.page1.motivations.includes('sexual'))) {
             await san.gotoSan('Offence analysis', true)
             for (let i = 1; i < startPage; i++) {
-                await san.previous()
+                await san.offenceAnalysis.previous()
             }
             startPage = 1
             await san.offenceAnalysis.page1.offenceElements.setValue(['arson'])
@@ -137,12 +137,12 @@ async function scenario(test: TestCase, san: San) {
         }
         await san.offenceAnalysis.page1.victimType.setValue(['other'])
         await san.offenceAnalysis.page1.victimTypeDetails.setValue('Some details')
-        await san.saveAndContinue()
+        await san.offenceAnalysis.saveAndContinue()
         await san.offenceAnalysis.page2.howManyOthers.setValue(test.page2.howManyOthers
 
         )
         if (test.page3) {
-            await san.saveAndContinue()
+            await san.offenceAnalysis.saveAndContinue()
 
             if (test.page3.leader) {
                 await san.offenceAnalysis.page3.leader.setValue(test.page3.leader)

@@ -115,7 +115,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     await san.gotoSanFromOffender()
     await san.alcohol.goto()
     await san.alcohol.page1.everDrank.setValue('yesNotLast3')
-    await san.saveAndContinue()
+    await san.alcohol.saveAndContinue()
     await san.alcohol.page2.bingeDrinking.setValue('noEvidence')
     await san.alcohol.page2.pastIssues.setValue('no')
     await san.alcohol.page2.whyDrink.setValue(['enjoyment'])

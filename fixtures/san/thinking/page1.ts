@@ -4,9 +4,6 @@ import { sanNoSometimesYesOptions, sanWantChangesOptions, sanYesHasBeenNoOptions
 
 export class Page1 extends BaseSanEditPage {
 
-    name = 'ThinkingPage1'
-    title = 'Thinking, behaviours and attitudes - Strengths and Needs'
-
     awareConsequences = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#thinking_behaviours_attitudes_consequences', sanYesSometimesNoOptions)
     stableBehaviour = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#thinking_behaviours_attitudes_stable_behaviour', sanYesSometimesNoOptions)
     activitiesLinkedOffending = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#thinking_behaviours_attitudes_offending_activities', sanNoSometimesYesOptions)

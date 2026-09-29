@@ -75,7 +75,7 @@ test('Mapping test V2: employment and education', async ({ page, oasys, user, of
         await san.gotoSan('Employment and education', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
-            await san.previous()
+            await san.employment.previous()
         }
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
@@ -105,7 +105,7 @@ test('Mapping test V2: employment and education', async ({ page, oasys, user, of
     await san.employment.page2.employmentExperience.setValue('unknown')
     await san.employment.page2.educationExperience.setValue('unknown')
     await san.employment.page2.wantChanges.setValue('madeChanges')
-    await san.saveAndContinue()
+    await san.employment.saveAndContinue()
     await san.returnToOASys()
 
     await paTest(assessmentPk, 'Employment and education', page, oasys, assessment, san)
@@ -131,7 +131,7 @@ async function scenario(test: TestCase, san: San) {
             break
     }
     if (test.page2) {
-        await san.saveAndContinue()
+        await san.employment.saveAndContinue()
         await san.employment.page2.employmentHistory.setValue(test.page2.employmentHistory)
         await san.employment.page2.highestQual.setValue(test.page2.highestQual)
         await san.employment.page2.professionalQual.setValue(test.page2.professionalQual)

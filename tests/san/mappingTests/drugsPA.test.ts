@@ -54,21 +54,21 @@ async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: 
         if (test.ref == 1) {
             await san.gotoSan('Drug use', true)
             await san.drugs.page1.everUsed.setValue('yes')  // Need to set this otherwise the motivation question doesn't get returned
-            await san.drugs.page1.saveAndContinue.click()
+            await san.drugs.saveAndContinue()
             await san.drugs.page2.drugType.setValue(['cannabis'])
             await san.drugs.page2.cannabisLastSixMonths.setValue('no')
-            await san.drugs.page2.saveAndContinue.click()
+            await san.drugs.saveAndContinue()
             await san.drugs.page3.detailsNotLastSixMonths.setValue('details')
             await san.drugs.page3.treatment.setValue('no')
-            await san.drugs.page3.saveAndContinue.click()
+            await san.drugs.saveAndContinue()
             await san.drugs.page4.whyStarted.setValue(['cultural'])
             await san.drugs.page4.impactDrugs.setValue(['behavioural'])
             await san.drugs.page4.wantChanges.setValue('madeChanges')
-            await san.drugs.page4.saveAndContinue.click()
-            await san.openPractitionerAnalysis()
+            await san.drugs.saveAndContinue()
+            await san.drugs.openPractitionerAnalysis()
         } else {
             await san.gotoSan('Drug use', true)
-            await san.openPractitionerAnalysis()
+            await san.drugs.openPractitionerAnalysis()
             if (test.ref > 2) {
                 await san.drugs.practitionerAnalysis.change.click()
             }

@@ -184,9 +184,9 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await sections.predictors.save()
         await sections.predictors.next()
 
-        await san.sanSections.checkCurrent()
-        await san.sanSections.markAsComplete.checkStatus('notVisible')
-        await san.sanSections.openSanLabel.checkStatus('visible')
+        await san.oasysSanSections.checkCurrent()
+        await san.oasysSanSections.markAsComplete.checkStatus('notVisible')
+        await san.oasysSanSections.openSanLabel.checkStatus('visible')
         await san.gotoSan()
 
         log(`Within the SAME browser tab the OASys screen closes and is replaced by the first screen in the SAN Assessment
@@ -217,7 +217,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
             'san', 'assessment'
         )
         await san.returnToOASys()
-        await san.sanSections.checkCurrent()
+        await san.oasysSanSections.checkCurrent()
         await san.checkSanAssessmentCompletionStatus(false, sections, san, risk)
         await assessment.summarySheet.goto()
         const expectedValues1: ColumnValues[] = [
@@ -251,7 +251,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await san.populateMinimal({ o1_30Yes: true })
         // await san.returnToOASys()
         await oasys.clickButton('Next')
-        await san.sanSections.checkCompletionStatus(true)
+        await san.oasysSanSections.checkCompletionStatus(true)
         await risk.rmp.checkMenuVisibility(false)
 
         log(`Go to the Summary Sheet screen

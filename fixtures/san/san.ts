@@ -7,7 +7,6 @@ import { Page } from '@playwright/test'
 import { Oasys, OasysDb, Risk, Sections } from 'fixtures'
 import * as pages from './pages'
 import { Queries } from './queries'
-import { BaseSanEditPage } from './pages/baseSanEditPage'
 import { Accommodation } from './accommodation/accommodation'
 import { Employment } from './employment/employment'
 import { Finance } from './finance/finance'
@@ -33,37 +32,12 @@ export class San {
     readonly thinking = new Thinking(this.page)
     readonly offenceAnalysis = new OffenceAnalysis(this.page)
 
-    readonly sanSections = new pages.SanSections(this.page)
-    readonly baseSanEditPage = new BaseSanEditPage(this.page)
+    readonly oasysSanSections = new pages.OasysSanSections(this.page)
     readonly landingPage = new pages.LandingPage(this.page)
     readonly accommodationPractitionerAnalysis = new pages.PractitionerAnalysis(this.page, 'Accommodation', 'accommodation')
 
     readonly queries = new Queries(this.oasysDb)
 
-    async previous() {
-
-        await this.baseSanEditPage.previous.click()
-    }
-
-    async saveAndContinue() {
-
-        await this.baseSanEditPage.saveAndContinue.click()
-    }
-
-    async openPractitionerAnalysis() {
-
-        await this.page.locator('#tab_practitioner-analysis').first().click()
-    }
-
-    async change(i = 1) {
-
-        await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).nth(i - 1).click()
-    }
-
-    async markAsComplete() {
-
-        await this.page.getByText('Mark as complete').first().click()
-    }
 
     async populateMinimal(params?: SanPopulationParams) {
 
@@ -151,7 +125,7 @@ export class San {
     }
 
     async populateForMaturityFlag(params?: SanPopulationParams) {
-        
+
         if (params?.from == 'offender') {
             await this.gotoSanFromOffender()
         } else {
@@ -179,8 +153,8 @@ export class San {
      */
     async gotoSan(section: SanSection = null, supressLog: boolean = false) {
 
-        await this.sanSections.goto(true)
-        await this.sanSections.openSan.click()
+        await this.oasysSanSections.goto(true)
+        await this.oasysSanSections.openSan.click()
 
         await this.landingPage.confirmCheck.setValue(true)
         await this.landingPage.confirm.click()
@@ -198,6 +172,7 @@ export class San {
             await this.landingPage.confirm.click()
         }
     }
+    
     /**
      * Navigates to the SAN assessment in readonly mode (no landingPage), assuming you are somewhere in the OASys assessment.
      * 
@@ -205,8 +180,8 @@ export class San {
      */
     async gotoSanReadOnly(section: SanSection = null) {
 
-        await this.sanSections.goto(true)
-        await this.sanSections.openSan.click()
+        await this.oasysSanSections.goto(true)
+        await this.oasysSanSections.openSan.click()
 
         if (section) {
             await this.goto(section)
@@ -265,7 +240,7 @@ export class San {
         await sections.section12.checkMenuVisibility(!sanMode)
         await sections.section13.checkMenuVisibility(!sanMode)
         await sections.selfAssessmentForm.checkMenuVisibility(!sanMode)
-        await this.sanSections.checkMenuVisibility(sanMode)
+        await this.oasysSanSections.checkMenuVisibility(sanMode)
     }
 
     /**
@@ -277,7 +252,7 @@ export class San {
         await sections.sourcesOfInformation.checkCompletionStatus(expectedStatus)
         await sections.offendingInformation.checkCompletionStatus(expectedStatus)
         await sections.predictors.checkCompletionStatus(expectedStatus)
-        await san.sanSections.checkCompletionStatus(expectedStatus)
+        await san.oasysSanSections.checkCompletionStatus(expectedStatus)
         await risk.screeningSection1.checkCompletionStatus(expectedStatus)
         await risk.screeningSection2to4.checkCompletionStatus(expectedStatus)
         await risk.screeningSection5.checkCompletionStatus(expectedStatus)

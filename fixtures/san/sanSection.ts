@@ -32,6 +32,11 @@ export class BaseSanSection {
 
         await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).nth(i - 1).click()
     }
+
+    async previous() {
+
+        await this.page.locator('.govuk-back-link').first().click()
+    }
 }
 
 

@@ -39,14 +39,14 @@ export async function paTest(assessmentPk: number, sanSection: SanSection, page:
 
         // Get to the right starting screen
         await san.gotoSan(sanSection, true)
-        await san.openPractitionerAnalysis()
+        await san.accommodation.openPractitionerAnalysis()
         if (test.ref > 1) {
-            await san.change()
+            await san.accommodation.change()
         }
 
         // Set values on SAN, return to OASys and check the results
         await scenario(test, practitionerAnalysis)
-        await san.markAsComplete()
+        await san.accommodation.markAsComplete()
         await san.returnToOASys()
         await oasys.clickButton('Previous', true)
         await oasys.clickButton('Next', true)

@@ -63,7 +63,7 @@ test('SAN integration - test ref 17', async ({ page, oasys, user, offender, asse
 
     await san.populateForFemaleOpd()
     await oasys.clickButton('Next')
-    await san.sanSections.checkCompletionStatus(true)
+    await san.oasysSanSections.checkCompletionStatus(true)
     await risk.fullAnalysisSection62.checkMenuVisibility(true)
     await risk.summary.checkMenuVisibility(true)
     await risk.rmp.checkMenuVisibility(true)

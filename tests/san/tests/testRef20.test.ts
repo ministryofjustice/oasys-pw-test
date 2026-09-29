@@ -72,7 +72,7 @@ test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment
         'No' and say Yes to risk of sexual harm and answer the questions because ARNS haven't coded the user journey yet`, 'Test step')
 
     await san.populateForSara({ o1_30Yes: true })
-    
+
     await san.queries.checkSanOtlCall(pk1, {
         'crn': offender1.probationCrn,
         'pnc': offender1.pnc,
@@ -99,7 +99,7 @@ test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment
 
     await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await oasys.clickButton('Next')
-    await san.sanSections.checkCompletionStatus(true)
+    await san.oasysSanSections.checkCompletionStatus(true)
     await risk.fullAnalysisSection62.checkMenuVisibility(true)
     await risk.summary.checkMenuVisibility(true)
     await risk.rmp.checkMenuVisibility(true)

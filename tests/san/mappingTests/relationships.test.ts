@@ -60,10 +60,10 @@ test('Mapping test V2: relationships', async ({ page, oasys, user, offender, ass
         // Back to the start (page 2), depending where the previous scenario ended
         if (startPage == 1) {
             await san.relationships.page1.anyChildren.setValue(['no'])
-            await san.saveAndContinue()
+            await san.relationships.saveAndContinue()
         } else {
             for (let i = 2; i < startPage; i++) {
-                await san.previous()
+                await san.relationships.previous()
             }
         }
         // Set values on SAN, return to OASys and check the results
@@ -87,7 +87,7 @@ test('Mapping test V2: relationships', async ({ page, oasys, user, offender, ass
     await san.gotoSan('Personal relationships and community', true)
     await san.relationships.page3.resolveChallenges.setValue('Testing')
     await san.relationships.page3.wantChanges.setValue('madeChanges')
-    await san.saveAndContinue()
+    await san.relationships.saveAndContinue()
     await san.returnToOASys()
 
     await paTest(assessmentPk, 'Personal relationships and community', page, oasys, assessment, san)
@@ -103,7 +103,7 @@ async function scenario(test: TestCase, san: San) {
     }
 
     if (test.page3) {
-        await san.saveAndContinue()
+        await san.relationships.saveAndContinue()
         await san.relationships.page3.happyWithStatus.setValue(test.page3.happyWithStatus)
         await san.relationships.page3.history.setValue(test.page3.history)
         await san.relationships.page3.manageParenting.setValue(test.page3.manageParenting)

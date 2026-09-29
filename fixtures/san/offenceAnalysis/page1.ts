@@ -4,9 +4,6 @@ import { BaseSanEditPage } from '../pages/baseSanEditPage'
 
 export class Page1 extends BaseSanEditPage {
 
-    name = 'OffenceAnalysisPage1'
-    title = 'Offence analysis - Strengths and Needs'
-
     offenceDescription = new Element.Textbox(this.page, '#offence_analysis_description_of_offence')
     offenceElements = new Element.CheckboxGroup<OffenceElements>(this.page, '#offence_analysis_elements', ['arson', 'domesticAbuse', 'excessiveViolence', 'hatred', 'physicalDamage', 'sexualElement', 'victimTargeted', 'violence', 'weapon', '-', 'none'])
     victimTargetedDetails = new Element.Textbox(this.page, '#offence_analysis_elements_victim_targeted_details')

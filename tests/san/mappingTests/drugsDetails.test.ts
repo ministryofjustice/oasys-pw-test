@@ -140,9 +140,9 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
             await san.gotoSan('Drug use', true)
             if (firstRun) {
                 await san.drugs.page1.everUsed.setValue('yes')
-                await san.saveAndContinue()
+                await san.drugs.saveAndContinue()
             } else {
-                await san.previous()
+                await san.drugs.previous()
             }
             // Set values on SAN, return to OASys and check the results
             await scenario(drugType, test, san)
@@ -171,7 +171,7 @@ async function scenario(drugType: DrugType, test: TestCase, san: San) {
         await san.drugs.page2.drugTypeOther.setValue(otherDrugName)
     }
     await san.drugs.page2[`${drugType}LastSixMonths`].setValue(test.lastSix ? 'yes' : 'no')
-    await san.saveAndContinue()
+    await san.drugs.saveAndContinue()
     if (test.lastSix && test.frequency != null) {
         await san.drugs.page3[`${drugType}Frequency`].setValue(test.frequency)
     }

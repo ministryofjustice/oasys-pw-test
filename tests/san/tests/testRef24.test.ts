@@ -56,7 +56,7 @@ test('SAN integration - test ref 24', async ({ oasys, user, offender, assessment
         Log out`, 'Test step')
 
     await assessment.openLatest()
-    await san.sanSections.checkCompletionStatus(true)
+    await san.oasysSanSections.checkCompletionStatus(true)
 
     // Complete section 1
     await sections.offendingInformation.populateMinimal()

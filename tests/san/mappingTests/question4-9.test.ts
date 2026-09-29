@@ -94,7 +94,7 @@ test('Mapping test for question 4.9', async ({ oasys, user, offender, assessment
         await san.gotoSan('Employment and education', true)
         if (first) {
             await san.employment.page1.employmentStatus.setValue('retired')
-            await san.employment.page1.saveAndContinue.click()
+            await san.employment.saveAndContinue()
             first = false
         }
         await setOptions(test.highestQual, test.professionalQual, san)

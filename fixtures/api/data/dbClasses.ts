@@ -67,6 +67,7 @@ export class DbAssessmentOrRsr {
     cmsEventNumber: number
     appVersion: string
 
+    tierPredictorsSortIndex: string
 }
 
 /**
@@ -137,6 +138,8 @@ export class DbAssessment extends DbAssessmentOrRsr {
         assignValues(this, assessmentColumns, assessmentData, 0)
         this.riskDetails = new DbRiskDetails(assessmentData, Object.keys(assessmentColumns).length, 'assessment')
         this.appVersion = oasysDateTime.dateToVersion(this.initiationDate)
+
+        this.tierPredictorsSortIndex = `${this.completedDate}${this.initiationDate}`
     }
 
     static query(offenderPk: number): string {
@@ -217,6 +220,8 @@ export class DbRsr extends DbAssessmentOrRsr {
         this.cmsEventNumber = null
         this.assessmentType = 'STANDALONE'
         this.assessmentVersion = null
+
+        this.tierPredictorsSortIndex = `${this.completedDate}${this.initiationDate}`
     }
 
     static query(offenderPk: number): string {

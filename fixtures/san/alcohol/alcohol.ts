@@ -2,7 +2,7 @@ import { BaseSanSection } from '../sanSection'
 import { Page1 } from './page1'
 import { Page2 } from './page2'
 import { PractitionerAnalysis } from '../pages'
-import { sanIdPrefixLookup } from '../sanIds'
+import { sanIdPrefixLookup } from '../pages/practitionerAnalysis'
 
 
 export class Alcohol extends BaseSanSection {

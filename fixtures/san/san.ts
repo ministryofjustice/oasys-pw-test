@@ -4,10 +4,8 @@
 
 import { Page } from '@playwright/test'
 
-import { Element } from 'classes'
 import { Oasys, OasysDb, Risk, Sections } from 'fixtures'
 import * as pages from './pages'
-import { sanIds } from './sanIds'
 import { Queries } from './queries'
 import { BaseSanEditPage } from './pages/baseSanEditPage'
 import { Accommodation } from './accommodation/accommodation'
@@ -245,128 +243,6 @@ export class San {
         const count = await this.page.locator('#main-content').locator(`.govuk-summary-list__row:has-text('${label}')`).filter({ hasText: value }).count()
         expect(count).toBeGreaterThan(0)
         log(`Checked value for ${label}`)
-    }
-
-    /**
-     * Populate one or more sections of a SAN assessment.
-     *  - name: text for reporting purposes
-     *  - script: a SanPopulation object defining questions/values/button clicks for one or more sections.
-     */
-    async populateSanSections(name: string, script: SanPopulation, suppressLog: boolean = false) {
-
-        if (suppressLog) {  // Just log the name
-            log(name, 'Populating SAN Sections')
-        }
-        for (let section of script) {
-            if (section.section != 'Sentence plan') {
-                await this.goto(section.section, suppressLog)
-            }
-            await this.runScenario(`${name} / ${section.section}`, section.steps, suppressLog)
-        }
-    }
-
-    /**
-     * Populate the currently selected section in a SAN assessment.
-     *  - name: text for reporting purposes
-     *  - steps: a SanStep array defining all of the questions/values/button clicks required.
-     */
-    async runScenario(name: string, steps: SanStep[], suppressLog = false) {
-
-        if (!suppressLog) {
-            log(' ', '')
-            log('', `Scenario: ${name}`)
-            console.log(`Scenario: ${name}`)
-        }
-        for (let step of steps) {
-            await this.runStep(step, suppressLog)
-        }
-    }
-
-    /**
-     * Execute a single test step on a SAN or SP screen, e.g. set a value or click a button.  The SanStep parameter defines the item and value(s) required.
-     */
-    async runStep(step: SanStep, suppressLog: boolean = false) {
-        const stepItem = sanIds[step.item]
-        if (stepItem == undefined) {
-            throw new Error(`Invalid item name: ${step.item}`)
-        }
-
-        switch (stepItem.type) {
-            case 'radio':
-                await Element.Radiogroup.sanSetValue(this.page, stepItem, step.value)
-                if (!suppressLog) log(`Radio: ${step.item} - '${step.value}'`)
-                break
-            case 'checkbox':
-                await Element.Checkbox.sanSetValue(this.page, stepItem, step.value)
-                if (!suppressLog) log(`Checkbox: ${step.item} - '${step.value}'`)
-                break
-            case 'textbox':
-                await Element.Textbox.sanSetValue(this.page, stepItem, step.value)
-                if (!suppressLog) log(`Textbox: ${step.item} - '${step.value.length > 50 ? step.value.substring(0, 50) + '...' : step.value}'`)
-                break
-            case 'combo':
-                await Element.Combo.sanSetValue(this.page, stepItem, step.value)
-                if (!suppressLog) log(`Combo: ${step.item} - '${step.value}'`)
-                break
-            case 'select':
-                await Element.Select.sanSetValue(this.page, stepItem, step.value)
-                if (!suppressLog) log(`Select: ${step.item} - '${step.value}'`)
-                break
-            case 'date':
-                // await this.enterDate(stepItem, step.value)
-                // log(`Date: ${step.item} - '${step.value}'`)
-                break
-            case 'action':
-                await this.action(step.item)
-                if (!suppressLog) log(`Action: ${step.item}`)
-                break
-            case 'button':
-                await Element.Button.sanClick(this.page, stepItem)
-                if (!suppressLog) log(`Button: ${step.item}`)
-                break
-        }
-    }
-
-    /**
-     * Execute a single action-type test step (e.g. clicking a button).
-     */
-    async action(action: string) {
-
-        switch (action) {
-            case 'change':
-                await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).first().click()
-                break
-            case 'change2':
-                await this.page.locator('.govuk-link.change-entry:visible').nth(1).click()
-                break
-            case 'change3':
-                await this.page.locator('.govuk-link.change-entry:visible').nth(2).click()
-                break
-            case 'back':
-                await this.page.locator('.govuk-back-link').first().click()
-                break
-            case 'backIfVisible':
-                const backLinks = await this.page.locator('.govuk-back-link').count()
-                if (backLinks > 0) {
-                    await this.page.locator('.govuk-back-link').first().click()
-                }
-                break
-            case 'changeIfVisible':
-                const changeLinks = await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).count()
-                if (changeLinks > 0) {
-                    await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).first().click()
-                }
-                break
-            case 'practitionerAnalysis':
-                await this.page.locator('#tab_practitioner-analysis').first().click()
-                break
-            case 'changeAnalysis':
-                await this.page.locator('a[href*="-analysis"]').filter({ hasText: 'Change' }).first().click()
-                break
-            case 'continue':
-                await this.page.locator('.questiongroup-action-buttons .govuk-button').first().click()
-                break
-        }
     }
 
 

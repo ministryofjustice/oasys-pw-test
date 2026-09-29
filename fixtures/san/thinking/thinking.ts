@@ -3,7 +3,7 @@ import { Page1 } from './page1'
 import { Page2 } from './page2'
 import { Page3 } from './page3'
 import { PractitionerAnalysis } from '../pages'
-import { sanIdPrefixLookup } from '../sanIds'
+import { sanIdPrefixLookup } from '../pages/practitionerAnalysis'
 
 
 export class Thinking extends BaseSanSection {
@@ -121,7 +121,7 @@ export class Thinking extends BaseSanSection {
     }
 
     async populateForMaturityFlag() {
-        
+
         await this.goto()
         await this.page1.awareConsequences.setValue('no')
         await this.page1.stableBehaviour.setValue('sometimes')

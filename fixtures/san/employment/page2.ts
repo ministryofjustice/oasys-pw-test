@@ -1,15 +1,16 @@
 import { Element } from 'classes'
 import { BaseSanEditPage } from '../pages/baseSanEditPage'
-import { employmentHistoryOptions, highestQualOptions, sanExperienceOptions, sanSignificantSomeOptions, sanWantChangesOptions, sanYesNoSomeOptions } from '../sanIds'
+import { sanExperienceOptions, sanSignificantSomeOptions, sanWantChangesOptions, sanYesNoSomeOptions } from '../sanSection'
+
 
 export class Page2 extends BaseSanEditPage {
 
     name = 'EmploymentPage2'
     title = 'Employment and education - Strengths and Needs'
 
-    employmentHistory = new Element.Radiogroup<EmploymentHistory>(this.page, '#employment_history', employmentHistoryOptions)
+    employmentHistory = new Element.Radiogroup<EmploymentHistory>(this.page, '#employment_history', ['continuous', 'generallyEmployed', 'unstable', 'unknown'])
     additionalCommitments = new Element.CheckboxGroup<'caring' | 'child' | 'studying' | 'volunteering' | 'other' | 'unknown' | 'none'>(this.page, '#employment_other_responsibilities', ['caring', 'child', 'studying', 'volunteering', 'other', 'unknown', '-', 'none'])
-    highestQual = new Element.Radiogroup<HighestQual>(this.page, '#education_highest_level_completed', highestQualOptions)
+    highestQual = new Element.Radiogroup<HighestQual>(this.page, '#education_highest_level_completed',  ['entryLevel', 'level1', 'level2', 'level3', 'level4', 'level5', 'level6', 'level7', 'level8', '-', 'none', 'unknown'])
     professionalQual = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#education_professional_or_vocational_qualifications', ['yes', 'no', '-', 'unknown'])
     professionalQualDetails = new Element.Textbox(this.page, '#education_professional_or_vocational_qualifications_yes_details')
     skills = new Element.Radiogroup<SanYesNoSome>(this.page, '#education_transferable_skills', sanYesNoSomeOptions)

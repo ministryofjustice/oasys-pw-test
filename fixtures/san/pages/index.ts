@@ -1,3 +1,3 @@
 export { LandingPage } from './landingPage'
 export { PractitionerAnalysis } from './practitionerAnalysis'
-export { SanSections } from './sanSections'
+export { OasysSanSections as SanSections } from './sanSections'

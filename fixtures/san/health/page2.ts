@@ -1,6 +1,7 @@
 import { Element } from 'classes'
 import { BaseSanEditPage } from '../pages/baseSanEditPage'
-import { psychTreatmentOptions, sanPositiveMixedNegativeOptions, sanWantChangesOptions, sanYesNoOptions, sanYesNoSomeOptions, sanYesNoUnknownOptions } from '../sanIds'
+import { sanPositiveMixedNegativeOptions, sanWantChangesOptions, sanYesNoOptions, sanYesNoSomeOptions, sanYesNoUnknownOptions } from '../sanSection'
+
 
 export class Page2 extends BaseSanEditPage {
 
@@ -8,7 +9,7 @@ export class Page2 extends BaseSanEditPage {
     title = 'Health and wellbeing - Strengths and Needs'
 
 
-    psychTreatment = new Element.Radiogroup<PsychTreatment>(this.page, '#health_wellbeing_psychiatric_treatment', psychTreatmentOptions)
+    psychTreatment = new Element.Radiogroup<PsychTreatment>(this.page, '#health_wellbeing_psychiatric_treatment', ['yes', 'pending', 'no', 'unknown'])
     headInjury = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#health_wellbeing_head_injury_or_illness', sanYesNoUnknownOptions)
     neurodiverse = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#health_wellbeing_neurodiverse_conditions', sanYesNoUnknownOptions)
     learningDifficulties = new Element.Radiogroup<SanYesNoSome>(this.page, '#health_wellbeing_learning_difficulties', sanYesNoSomeOptions)

@@ -1,6 +1,6 @@
 ﻿import { BaseAssessmentPage, Element } from 'classes'
 
-export class SanSections extends BaseAssessmentPage {
+export class OasysSanSections extends BaseAssessmentPage {
 
     name = 'SanSections'
     title = 'Strengths and Needs'

@@ -3,7 +3,7 @@ import { Page1 } from './page1'
 import { Page2 } from './page2'
 import { Page3 } from './page3'
 import { PractitionerAnalysis } from '../pages'
-import { sanIdPrefixLookup } from '../sanIds'
+import { sanIdPrefixLookup } from '../pages/practitionerAnalysis'
 import { Victims } from './victims'
 
 

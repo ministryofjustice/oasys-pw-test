@@ -1,7 +1,8 @@
 import { Page } from '@playwright/test'
 import { PractitionerAnalysis } from '../pages/practitionerAnalysis'
 import { Element } from 'classes'
-import { sanIdPrefixLookup } from '../sanIds'
+import { sanIdPrefixLookup } from '../pages/practitionerAnalysis'
+
 
 export class DrugsPractitionerAnalysis extends PractitionerAnalysis {
 
@@ -11,14 +12,14 @@ export class DrugsPractitionerAnalysis extends PractitionerAnalysis {
 
         super(page, 'Drug use', sanIdPrefixLookup['Drug use'])
     }
-    
+
     async populateMinimal() {
-        
+
         await super.populateMinimal()
     }
 
     async populateMinimalWithMotivation() {
-        
+
         await this.motivatedToStop.setValue('motivated')
         await super.populateMinimal()
     }

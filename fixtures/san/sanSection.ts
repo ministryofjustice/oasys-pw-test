@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test'
 
 
+
 export class BaseSanSection {
 
     constructor(readonly page: Page) { }
@@ -32,3 +33,22 @@ export class BaseSanSection {
         await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).nth(i - 1).click()
     }
 }
+
+
+// Generic radio/checkbox options
+export const sanYesNoOptions: SanYesNo[] = ['yes', 'no']
+export const sanYesNoNaOptions: SanYesNoNa[] = ['yes', 'no', 'na']
+export const sanYesNoConcernsOptions: SanYesNoConcerns[] = ['yes', 'yesWithConcerns', 'no']
+export const sanYesNoUnknownOptions: SanYesNoUnknown[] = ['yes', 'no', 'unknown']
+export const sanYesSometimesNoOptions: SanYesSometimesNo[] = ['yes', 'sometimes', 'no']
+export const sanNoSometimesYesOptions: SanYesSometimesNo[] = ['no', 'sometimes', 'yes']
+export const sanYesPartlyNoOptions: SanYesPartlyNo[] = ['yes', 'partly', 'no']
+export const sanYesHasBeenNoOptions: SanYesHasBeenNo[] = ['yes', 'hasBeen', 'no']
+export const sanYesUnsureNoOptions: SanYesUnsureNo[] = ['yes', 'unsure', 'no']
+export const sanYesLimitedNoOptions: SanYesLimitedNo[] = ['yes', 'limited', 'no']
+export const sanYesSometimesNoUnknownOptions: SanYesSometimesNoUnknown[] = ['yes', 'sometimes', 'no', 'unknown']
+export const sanYesNoSomeOptions: SanYesNoSome[] = ['yes', 'some', 'no']
+export const sanSignificantSomeOptions: SanSignificantSome[] = ['significant', 'some']
+export const sanExperienceOptions: SanExperience[] = ['positive', 'mostlyPositive', 'positiveNegative', 'mostlyNegative', 'negative', 'unknown']
+export const sanPositiveMixedNegativeOptions: SanPositiveMixedNegative[] = ['positive', 'mixed', 'negative']
+export const sanWantChangesOptions: (SanWantChanges | '-')[] = ['madeChanges', 'makingChanges', 'wantToChange', 'needHelp', 'thinking', 'notWanted', 'notAnswering', '-', 'notPresent', 'notApplicable']

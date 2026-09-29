@@ -1,6 +1,6 @@
 import { Element } from 'classes'
 import { BaseSanEditPage } from '../pages/baseSanEditPage'
-import { sanPositiveMixedNegativeOptions, sanWantChangesOptions, sanYesNoOptions, sanYesSometimesNoUnknownOptions } from '../sanIds'
+import { sanPositiveMixedNegativeOptions, sanWantChangesOptions, sanYesNoOptions, sanYesSometimesNoUnknownOptions } from '../sanSection'
 
 export class Page3 extends BaseSanEditPage {
 

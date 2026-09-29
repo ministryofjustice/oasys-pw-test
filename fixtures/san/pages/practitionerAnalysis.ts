@@ -45,3 +45,18 @@ export class PractitionerAnalysis extends OasysPage {
         await this.riskOfReoffending.setValue('no')
     }
 }
+
+export const sanIdPrefixLookup: {
+    [key in SanSection]: string
+} = {
+    'Accommodation': 'accommodation',
+    'Employment and education': 'employment_education',
+    'Finances': 'finance',
+    'Drug use': 'drug_use',
+    'Alcohol use': 'alcohol_use',
+    'Health and wellbeing': 'health_wellbeing',
+    'Personal relationships and community': 'personal_relationships_community',
+    'Thinking, behaviours and attitudes': 'thinking_behaviours_attitudes',
+    'Offence analysis': '',
+    'Sentence plan': '',
+}

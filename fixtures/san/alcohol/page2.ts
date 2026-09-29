@@ -1,6 +1,6 @@
 import { Element } from 'classes'
 import { BaseSanEditPage } from '../pages/baseSanEditPage'
-import { sanWantChangesOptions } from '../sanIds'
+import { sanWantChangesOptions } from '../sanSection'
 
 
 export class Page2 extends BaseSanEditPage {

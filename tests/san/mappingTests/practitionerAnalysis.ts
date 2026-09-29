@@ -2,7 +2,7 @@ import { Page } from '@playwright/test'
 
 import { Oasys, Assessment, San } from 'fixtures'
 import { PractitionerAnalysis } from 'fixtures/san/pages'
-import { sanIdPrefixLookup } from 'fixtures/san/sanIds'
+import { sanIdPrefixLookup } from 'fixtures/san/pages/practitionerAnalysis'
 
 type TextType = 'normal' | 'max' | 'empty'
 type TestCase = {

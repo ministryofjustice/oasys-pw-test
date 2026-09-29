@@ -1,6 +1,7 @@
 import { Element } from 'classes'
 import { BaseSanEditPage } from '../pages/baseSanEditPage'
-import { mentalHealthProblemsOptions, sanYesNoUnknownOptions } from '../sanIds'
+import { sanYesNoUnknownOptions } from '../sanSection'
+
 
 export class Page1 extends BaseSanEditPage {
 
@@ -8,7 +9,7 @@ export class Page1 extends BaseSanEditPage {
     title = 'Health and wellbeing - Strengths and Needs'
 
     physicalHealthConditions = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#health_wellbeing_physical_health_condition', sanYesNoUnknownOptions)
-    mentalHealthProblems = new Element.Radiogroup<MentalHealthProblems>(this.page, '#health_wellbeing_mental_health_condition', mentalHealthProblemsOptions)
+    mentalHealthProblems = new Element.Radiogroup<MentalHealthProblems>(this.page, '#health_wellbeing_mental_health_condition', ['yesOngoingSevere', 'yesOngoing', 'yesPast', 'no', 'unknown'])
 
 
     async populateMinimal() {

@@ -8,13 +8,14 @@ import { DrugsPractitionerAnalysis } from './drugsPractitionerAnalysis'
 
 export class Drugs extends BaseSanSection {
 
-    override readonly section: SanSection = 'Drug use'
+    override readonly sectionName: SanSection = 'Drug use'
+    override readonly paPrefix = 'drug_use'
 
     readonly page1 = new Page1(this.page)
     readonly page2 = new Page2(this.page)
     readonly page3 = new Page3(this.page)
     readonly page4 = new Page4(this.page)
-    readonly practitionerAnalysis = new DrugsPractitionerAnalysis(this.page)
+    override readonly practitionerAnalysis = new DrugsPractitionerAnalysis(this.page, this.paPrefix)
 
     async populateMinimal() {
 

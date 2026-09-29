@@ -34,7 +34,6 @@ export class San {
 
     readonly oasysSanSections = new pages.OasysSanSections(this.page)
     readonly landingPage = new pages.LandingPage(this.page)
-    readonly accommodationPractitionerAnalysis = new pages.PractitionerAnalysis(this.page, 'Accommodation', 'accommodation')
 
     readonly queries = new Queries(this.oasysDb)
 

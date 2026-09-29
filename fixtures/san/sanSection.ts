@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test'
+import { PractitionerAnalysis } from './pages'
 
 
 
@@ -6,11 +7,13 @@ export class BaseSanSection {
 
     constructor(readonly page: Page) { }
 
-    readonly section: SanSection = null
+    readonly sectionName: SanSection = null
+    readonly paPrefix: string = null
+    readonly practitionerAnalysis: PractitionerAnalysis = null
 
     async goto() {
 
-        await this.page.locator('.moj-side-navigation__item a').filter({ hasText: this.section }).first().click()
+        await this.page.locator('.moj-side-navigation__item a').filter({ hasText: this.sectionName }).first().click()
     }
 
     async saveAndContinue() {

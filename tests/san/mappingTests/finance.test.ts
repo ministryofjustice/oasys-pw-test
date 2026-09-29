@@ -5,7 +5,7 @@ import { paTest } from './practitionerAnalysis'
 type TestCase = { ref: number, incomeSource: IncomeSource[], overReliant: SanYesNoUnknown, howGoodManaging: HowGoodManaging }
 
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: finance', async ({ page, oasys, user, offender, assessment, san }) => {
+test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()
 
@@ -74,7 +74,7 @@ test('Mapping test V2: finance', async ({ page, oasys, user, offender, assessmen
     await san.finance.saveAndContinue()
     await san.returnToOASys()
 
-    await paTest(assessmentPk, 'Finances', page, oasys, assessment, san)
+    await paTest(assessmentPk, san.finance, oasys, assessment, san)
     await user.logout()
 })
 

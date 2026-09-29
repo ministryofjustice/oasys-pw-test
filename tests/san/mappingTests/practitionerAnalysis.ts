@@ -1,8 +1,6 @@
-import { Page } from '@playwright/test'
-
 import { Oasys, Assessment, San } from 'fixtures'
 import { PractitionerAnalysis } from 'fixtures/san/pages'
-import { sanIdPrefixLookup } from 'fixtures/san/pages/practitionerAnalysis'
+import { BaseSanSection } from 'fixtures/san/sanSection'
 
 type TextType = 'normal' | 'max' | 'empty'
 type TestCase = {
@@ -14,9 +12,8 @@ type TestCase = {
 /**
  * Run the practitioner analysis tests for any SAN section
  */
-export async function paTest(assessmentPk: number, sanSection: SanSection, page: Page, oasys: Oasys, assessment: Assessment, san: San) {
+export async function paTest(assessmentPk: number, sanSection: BaseSanSection, oasys: Oasys, assessment: Assessment, san: San) {
 
-    const practitionerAnalysis = new PractitionerAnalysis(page, sanSection, sanIdPrefixLookup[sanSection])
     let failed = false
     const testCases: TestCase[] =
         [
@@ -38,21 +35,21 @@ export async function paTest(assessmentPk: number, sanSection: SanSection, page:
     for (const test of testCases) {
 
         // Get to the right starting screen
-        await san.gotoSan(sanSection, true)
-        await san.accommodation.openPractitionerAnalysis()
+        await san.gotoSan(sanSection.sectionName, true)
+        await sanSection.openPractitionerAnalysis()
         if (test.ref > 1) {
-            await san.accommodation.change()
+            await sanSection.change()
         }
 
         // Set values on SAN, return to OASys and check the results
-        await scenario(test, practitionerAnalysis)
-        await san.accommodation.markAsComplete()
+        await scenario(test, sanSection.practitionerAnalysis)
+        await sanSection.markAsComplete()
         await san.returnToOASys()
         await oasys.clickButton('Previous', true)
         await oasys.clickButton('Next', true)
 
         log(JSON.stringify(test))
-        const scenarioFailed = await checkAnswers(assessmentPk, sanSection, test, assessment)
+        const scenarioFailed = await checkAnswers(assessmentPk, sanSection.sectionName, test, assessment)
         if (scenarioFailed) {
             failed = true
         }

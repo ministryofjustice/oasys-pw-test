@@ -1,14 +1,13 @@
 import { Page } from '@playwright/test'
-import { OasysPage, Element } from 'classes'
+import { Element } from 'classes'
+import { BaseSanEditPage } from './baseSanEditPage'
 
-export class PractitionerAnalysis extends OasysPage {
+export class PractitionerAnalysis extends BaseSanEditPage {
 
-    name = 'PractitionerAnalysis'
-    title = 'Strengths and needs'
 
-    constructor(page: Page, section: SanSection, readonly idPrefix: string) {
+    constructor(page: Page, readonly idPrefix: string) {
+
         super(page)
-        this.title = `${section} - Strengths and needs`
     }
 
     change = new Element.Link(this.page, 'a[href*="summary#practitioner-analysis"]')
@@ -41,22 +40,7 @@ export class PractitionerAnalysis extends OasysPage {
 
         await this.strengths.setValue('no')
         await this.riskOfHarm.setValue('yes')
-        await this.riskOfHarmYesDetails.setValue(`Risk details for ${this.title}`)
+        await this.riskOfHarmYesDetails.setValue(`Risk details for ${this.idPrefix}`)
         await this.riskOfReoffending.setValue('no')
     }
-}
-
-export const sanIdPrefixLookup: {
-    [key in SanSection]: string
-} = {
-    'Accommodation': 'accommodation',
-    'Employment and education': 'employment_education',
-    'Finances': 'finance',
-    'Drug use': 'drug_use',
-    'Alcohol use': 'alcohol_use',
-    'Health and wellbeing': 'health_wellbeing',
-    'Personal relationships and community': 'personal_relationships_community',
-    'Thinking, behaviours and attitudes': 'thinking_behaviours_attitudes',
-    'Offence analysis': '',
-    'Sentence plan': '',
 }

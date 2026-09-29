@@ -33,7 +33,7 @@ type TestCase = {
 let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
 
 // test.describe.configure({ retries: 1 })
-test('Mapping test V2: thinking', async ({ page, oasys, user, offender, assessment, san }) => {
+test('Mapping test V2: thinking', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()
 
@@ -107,7 +107,7 @@ test('Mapping test V2: thinking', async ({ page, oasys, user, offender, assessme
     await san.thinking.saveAndContinue()
     await san.returnToOASys()
 
-    await paTest(assessmentPk, 'Thinking, behaviours and attitudes', page, oasys, assessment, san)
+    await paTest(assessmentPk, san.thinking, oasys, assessment, san)
     await user.logout()
 })
 

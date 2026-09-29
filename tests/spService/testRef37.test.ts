@@ -78,12 +78,11 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
 
     await san.gotoSan()
     await san.accommodation.change()
-    // await san.informationSummary.change.click()
     await san.accommodation.page1.settledAccommodationType.setValue('socialRent')
     await san.accommodation.saveAndContinue()
     await san.accommodation.saveAndContinue()
     await san.accommodation.openPractitionerAnalysis()
-    await san.accommodationPractitionerAnalysis.markAsComplete.click()
+    await san.accommodation.markAsComplete()
     await san.returnToOASys()
     await sentencePlan.completeSecondGoal()
     await signing.signAndLock()

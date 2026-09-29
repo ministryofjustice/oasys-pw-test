@@ -3,17 +3,17 @@ import { Page1 } from './page1'
 import { Page2 } from './page2'
 import { Page3 } from './page3'
 import { PractitionerAnalysis } from '../pages'
-import { sanIdPrefixLookup } from '../pages/practitionerAnalysis'
 
 
 export class Thinking extends BaseSanSection {
 
-    override readonly section: SanSection = 'Thinking, behaviours and attitudes'
+    override readonly sectionName: SanSection = 'Thinking, behaviours and attitudes'
+    override readonly paPrefix = 'thinking_behaviours_attitudes'
 
     readonly page1 = new Page1(this.page)
     readonly page2 = new Page2(this.page)
     readonly page3 = new Page3(this.page)
-    readonly practitionerAnalysis = new PractitionerAnalysis(this.page, this.section, sanIdPrefixLookup[this.section])
+    override readonly practitionerAnalysis = new PractitionerAnalysis(this.page, this.paPrefix)
 
     async populateMinimal(params?: SanPopulationParams) {
 

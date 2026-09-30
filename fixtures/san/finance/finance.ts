@@ -26,5 +26,6 @@ export class Finance extends BaseSanSection {
         await this.goto()
         await this.page1.incomeSource.setValue(['family'])
         await this.page1.overReliant.setValue('yes')
+        await this.page1.overReliantDetails.setValue('Some details')
     }
 }

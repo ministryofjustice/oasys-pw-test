@@ -2,7 +2,7 @@ import { test, Assessment, San } from 'fixtures'
 import { getMappingTestOffender } from './mappingTestOffender'
 import { paTest } from './practitionerAnalysis'
 
-type TestCase = { ref: number, incomeSource: IncomeSource[], overReliant: SanYesNoUnknown, howGoodManaging: HowGoodManaging }
+type TestCase = { ref: number, incomeSource: IncomeSource[], overReliant: SanYesNoUnknown, anyIssues: SanYesNo, howGoodManaging: HowGoodManaging }
 
 test.describe.configure({ retries: 1 })
 test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san }) => {
@@ -23,22 +23,23 @@ test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 0, incomeSource: null, overReliant: null, howGoodManaging: null },
-        { ref: 1, incomeSource: ['offending'], overReliant: null, howGoodManaging: 'ableStrength' },
-        { ref: 2, incomeSource: ['carersAllowance', 'offending'], overReliant: null, howGoodManaging: 'able' },
-        { ref: 3, incomeSource: ['disabilityBenefits', 'offending'], overReliant: null, howGoodManaging: 'unable' },
-        { ref: 4, incomeSource: ['employment', 'offending'], overReliant: null, howGoodManaging: 'unableProblems' },
-        { ref: 5, incomeSource: ['family', 'offending'], overReliant: 'yes', howGoodManaging: 'ableStrength' },
-        { ref: 6, incomeSource: ['pension', 'offending'], overReliant: null, howGoodManaging: 'unable' },
-        { ref: 7, incomeSource: ['studentLoan', 'offending'], overReliant: null, howGoodManaging: 'able' },
-        { ref: 8, incomeSource: ['undeclared', 'offending'], overReliant: null, howGoodManaging: 'unable' },
-        { ref: 9, incomeSource: ['workBenefits', 'offending'], overReliant: null, howGoodManaging: 'unableProblems' },
-        { ref: 10, incomeSource: ['other', 'offending'], overReliant: null, howGoodManaging: 'ableStrength' },
-        { ref: 11, incomeSource: ['pension'], overReliant: null, howGoodManaging: 'unable' },
-        { ref: 12, incomeSource: ['noMoney'], overReliant: null, howGoodManaging: 'able' },
-        { ref: 13, incomeSource: ['family', 'offending'], overReliant: 'no', howGoodManaging: 'ableStrength' },
-        { ref: 14, incomeSource: ['unknown'], overReliant: null, howGoodManaging: 'unable' },
-        { ref: 15, incomeSource: ['family', 'offending'], overReliant: 'unknown', howGoodManaging: 'unableProblems' },
+        { ref: 0, incomeSource: null, overReliant: null, anyIssues: null, howGoodManaging: null },
+        { ref: 1, incomeSource: ['offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
+        { ref: 1, incomeSource: ['offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: null },
+        { ref: 2, incomeSource: ['carersAllowance', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
+        { ref: 3, incomeSource: ['disabilityBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
+        { ref: 4, incomeSource: ['employment', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
+        { ref: 5, incomeSource: ['family', 'offending'], overReliant: 'yes', anyIssues: 'yes', howGoodManaging: 'ableStrength' },
+        { ref: 6, incomeSource: ['pension', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
+        { ref: 7, incomeSource: ['studentLoan', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
+        { ref: 8, incomeSource: ['undeclared', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
+        { ref: 9, incomeSource: ['workBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
+        { ref: 10, incomeSource: ['other', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'ableStrength' },
+        { ref: 11, incomeSource: ['pension'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
+        { ref: 12, incomeSource: ['noMoney'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
+        { ref: 13, incomeSource: ['family', 'offending'], overReliant: 'yes', anyIssues: 'yes', howGoodManaging: 'ableStrength' },
+        { ref: 14, incomeSource: ['unknown'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
+        { ref: 15, incomeSource: ['family', 'offending'], overReliant: 'unknown', anyIssues: 'yes', howGoodManaging: 'unableProblems' },
     ]
 
 
@@ -66,9 +67,8 @@ test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san
     // Complete everything needed for PA
     await san.gotoSan('Finances', true)
     await san.finance.page1.incomeSource.setValue(['carersAllowance'])
-    await san.finance.page1.ownAccount.setValue('unknown')
+    await san.finance.page1.anyIssues.setValue('yes')
     await san.finance.page1.howGoodManaging.setValue('able')
-    await san.finance.page1.gambling.setValue(['no'])
     await san.finance.page1.debt.setValue(['no'])
     await san.finance.page1.wantChanges.setValue('madeChanges')
     await san.finance.saveAndContinue()
@@ -91,14 +91,14 @@ async function scenario(test: TestCase, san: San) {
 async function checkAnswers(assessmentPk: number, test: TestCase, assessment: Assessment): Promise<boolean> {
 
     const section5Answers: OasysAnswer[] = [
-        { q: '5.2', a: null },
+        { q: '5.2', a: mapping5_2(test) },
         { q: '5.3', a: mapping5_3(test) },
         { q: '5.4', a: mapping5_4(test) },
         { q: '5.5', a: mapping5_5(test) },
         { q: '5.6', a: mapping5_6(test) },
-        { q: '5.97', a: null },
-        { q: '5.98', a: null },
-        { q: '5.99', a: null },
+        { q: '5.97', a: mapping5_97(test) },
+        { q: '5.98', a: mapping5_98(test) },
+        { q: '5.99', a: mapping5_99(test) },
     ]
     const scAnswers: OasysAnswer[] = [
         { q: 'SC8', a: mappingSc8(test) },
@@ -112,8 +112,16 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
     return section5Failed || scFailed || sanSectionFailed
 }
 
+function mapping5_2(test: TestCase): string {
+
+    return test.anyIssues == 'no' ? '0' : null
+}
+
 function mapping5_3(test: TestCase): string {
 
+    if (test.anyIssues == 'no') {
+        return '0'
+    }
     switch (test.howGoodManaging) {
         case 'ableStrength':
         case 'able':
@@ -161,6 +169,9 @@ function mapping5_5(test: TestCase): string {
 
 function mapping5_6(test: TestCase): string {
 
+    if (test.anyIssues == 'no') {
+        return '0'
+    }
     if (test.howGoodManaging == 'able' || test.howGoodManaging == 'ableStrength') {
         return '0'
     }
@@ -180,4 +191,19 @@ function mappingSc8(test: TestCase): string {
         default:
             return null
     }
+}
+
+function mapping5_97(test: TestCase): string {
+
+    return test.anyIssues == 'no' ? 'No issues identified' : null
+}
+
+function mapping5_98(test: TestCase): string {
+
+    return test.anyIssues == 'no' ? 'NO' : null
+}
+
+function mapping5_99(test: TestCase): string {
+
+    return test.anyIssues == 'no' ? 'NO' : null
 }

@@ -19,6 +19,9 @@ export class Page2 extends BaseSanEditPage {
     wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#health_wellbeing_changes', sanWantChangesOptions)
 
 
+    
+    gambling = new Element.CheckboxGroup<'own' | 'someoneElse' | 'no' | 'unknown'>(this.page, '#finance_gambling', ['own', 'someoneElse', '-', 'no', 'unknown'])
+
     async populateMinimal() {
 
         await this.headInjury.setValue('no')
@@ -29,6 +32,10 @@ export class Page2 extends BaseSanEditPage {
         await this.suicide.setValue('no')
         await this.optimistic.setValue('optimistic')
         await this.wantChanges.setValue('madeChanges')
+
+
+        
+        await this.gambling.setValue(['no'])
     }
 
 }

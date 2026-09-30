@@ -3,7 +3,7 @@ import { BaseSanEditPage } from '../pages/baseSanEditPage'
 
 export class Page2 extends BaseSanEditPage {
 
-    drugType = new Element.CheckboxGroup<DrugType>(this.page, '#select_misused_drugs', ['amphetamines', 'benzodiazepines', 'cannabis', 'cocaine', 'crack', 'ecstasy', 'hallucinogenics', 'heroin', 'methadone', 'prescribed', 'opiates', 'solvents', 'steroids', 'spice', 'other'])
+    drugType = new Element.CheckboxGroup<DrugType>(this.page, '#select_misused_drugs', ['amphetamines', 'benzodiazepines', 'cannabis', 'cocaine', 'crack', 'ecstasy', 'hallucinogenics', 'heroin', 'ketamine', 'mephedrone', 'methadone', 'prescribed', 'opiates', 'solvents', 'steroids', 'spice', 'other'])
 
     amphetaminesLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_amphetamines', ['yes', 'no'])
     benzodiazepinesLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_benzodiazepines', ['yes', 'no'])
@@ -13,6 +13,8 @@ export class Page2 extends BaseSanEditPage {
     ecstasyLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_ecstasy', ['yes', 'no'])
     hallucinogenicsLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_hallucinogenics', ['yes', 'no'])
     heroinLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_heroin', ['yes', 'no'])
+    ketamineLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_ketamine', ['yes', 'no'])
+    mephedroneLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_mephedrone', ['yes', 'no'])
     methadoneLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_methadone_not_prescribed', ['yes', 'no'])
     prescribedLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_misused_prescribed_drugs', ['yes', 'no'])
     opiatesLastSixMonths = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_last_used_other_opiates', ['yes', 'no'])

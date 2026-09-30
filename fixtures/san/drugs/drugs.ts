@@ -3,7 +3,7 @@ import { Page1 } from './page1'
 import { Page2 } from './page2'
 import { Page3 } from './page3'
 import { Page4 } from './page4'
-import { DrugsPractitionerAnalysis } from './drugsPractitionerAnalysis'
+import { PractitionerAnalysis } from '../pages'
 
 
 export class Drugs extends BaseSanSection {
@@ -15,7 +15,7 @@ export class Drugs extends BaseSanSection {
     readonly page2 = new Page2(this.page)
     readonly page3 = new Page3(this.page)
     readonly page4 = new Page4(this.page)
-    override readonly practitionerAnalysis = new DrugsPractitionerAnalysis(this.page, this.paPrefix)
+    override readonly practitionerAnalysis = new PractitionerAnalysis(this.page, this.paPrefix)
 
     async populateMinimal() {
 
@@ -44,12 +44,11 @@ export class Drugs extends BaseSanSection {
         await this.page3.otherInjectedLastSixMonths.setValue(['lastSix', 'moreThanSix'])
         await this.page3.treatment.setValue('no')
         await this.saveAndContinue()
-        await this.page4.whyStarted.setValue(['cultural'])
-        await this.page4.impactDrugs.setValue(['behavioural'])
+        await this.page4.motivatedToStop.setValue('motivated')
         await this.page4.wantChanges.setValue('madeChanges')
         await this.saveAndContinue()
         await this.openPractitionerAnalysis()
-        await this.practitionerAnalysis.populateMinimalWithMotivation()
+        await this.practitionerAnalysis.populateMinimal()
         await this.markAsComplete()
     }
 
@@ -67,12 +66,10 @@ export class Drugs extends BaseSanSection {
         await this.page3.heroinInjectedLastSixMonths.setValue(['lastSix'])
         await this.page3.treatment.setValue('no')
         await this.saveAndContinue()
-        await this.page4.whyStarted.setValue(['cultural'])
-        await this.page4.impactDrugs.setValue(['behavioural'])
+        await this.page4.motivatedToStop.setValue('someMotivation')
         await this.page4.wantChanges.setValue('notAnswering')
         await this.saveAndContinue()
         await this.openPractitionerAnalysis()
-        await this.practitionerAnalysis.motivatedToStop.setValue('someMotivation')
         await this.practitionerAnalysis.populateMinimal()
         await this.markAsComplete()
     }

@@ -63,10 +63,8 @@ declare type DrugType = 'amphetamines' | 'benzodiazepines' | 'cannabis' | 'cocai
 declare type InjectableDrugType = 'none' | 'amphetamines' | 'benzodiazepines' | 'cocaine' | 'crack' | 'heroin' | 'methadone' | 'prescribed' | 'opiates' | 'steroids' | 'other'
 
 // Employment
-declare type EmploymentStatus = 'employed' | 'selfEmployed' | 'retired' | 'unavailable' | 'unemployedLooking' | 'unemployedNotLooking'
-declare type EmploymentType = 'fullTime' | 'partTime' | 'temporary' | 'apprenticeship'
+declare type EmploymentStatus = 'employed' | 'retired' | 'unavailable' | 'unemployed'
 declare type EmploymentHistory = 'continuous' | 'generallyEmployed' | 'unstable' | 'unknown'
-declare type HighestQual = 'entryLevel' | 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'level6' | 'level7' | 'level8' | 'none' | 'unknown'
 declare type SanDifficulties = 'reading' | 'writing' | 'numeracy' | 'none'
 
 // Finance

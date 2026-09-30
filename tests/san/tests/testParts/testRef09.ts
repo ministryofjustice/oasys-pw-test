@@ -48,7 +48,7 @@ export function testRef9(offender1: OffenderDef, pks: number[]) {
         await san.employment.saveAndContinue()
         await san.employment.page2.employmentHistory.setValue('continuous')
         await san.employment.page2.additionalCommitments.setValue(['volunteering'])
-        await san.employment.page2.highestQual.setValue('level1')
+        await san.employment.page2.anyQual.setValue('yes')
         await san.employment.saveAndContinue()
         await san.employment.openPractitionerAnalysis()
         await san.employment.markAsComplete()

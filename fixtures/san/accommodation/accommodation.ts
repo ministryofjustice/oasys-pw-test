@@ -34,7 +34,6 @@ export class Accommodation extends BaseSanSection {
     async populateForOpd() {
 
         await this.page1.currentAccommodation.setValue('settled')
-        await this.page1.settledAccommodationType.setValue('friends')
         await this.saveAndContinue()
         await this.page2.livingWith.setValue(['family', 'partner'])
         await this.page2.locationSuitable.setValue('yes')

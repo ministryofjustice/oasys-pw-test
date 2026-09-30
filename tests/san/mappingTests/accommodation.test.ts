@@ -40,11 +40,11 @@ test('Mapping test V2: accommodation', async ({ oasys, user, offender, assessmen
         { ref: 2, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: null },
         { ref: 3, page1: { currentAccommodation: 'noAccommodation', temporaryAccommodation: null }, page2: null },
         { ref: 4, page1: { currentAccommodation: 'temporary', temporaryAccommodation: null }, page2: null },
-        { ref: 5, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'approvedPremises' }, page2: null },
-        { ref: 6, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas2' }, page2: null },
-        { ref: 7, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas3' }, page2: null },
-        { ref: 8, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'immigration' }, page2: null },
-        { ref: 9, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: null },
+        // { ref: 5, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'approvedPremises' }, page2: null },  // TODO add back for custody only
+        // { ref: 6, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas2' }, page2: null },
+        // { ref: 7, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas3' }, page2: null },
+        // { ref: 8, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'immigration' }, page2: null },
+        // { ref: 9, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: null },
         { ref: 10, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'partner'], locationSuitable: null, accommodationSuitable: null } },
         { ref: 11, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'child'], locationSuitable: 'yes', accommodationSuitable: null } },
         { ref: 12, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'no', accommodationSuitable: null } },
@@ -93,13 +93,10 @@ test('Mapping test V2: accommodation', async ({ oasys, user, offender, assessmen
 async function scenario(test: TestCase, san: San) {
 
     await san.accommodation.page1.currentAccommodation.setValue(test.page1.currentAccommodation)
-    if (test.page1.currentAccommodation == 'temporary') {
-        await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
-    }
+    // if (test.page1.currentAccommodation == 'temporary') {  // TODO add this back for custody tests
+    //     await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
+    // }
     if (test.page2) {
-        if (test.page1.currentAccommodation == 'settled') {
-            await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
-        }
         await san.accommodation.saveAndContinue()
         await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
         await san.accommodation.page2.accommodationSuitable.setValue(test.page2.accommodationSuitable)

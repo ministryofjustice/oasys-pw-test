@@ -124,7 +124,6 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await san.accommodation.goto()
     await san.accommodation.change()
     await san.accommodation.page1.currentAccommodation.setValue('noAccommodation')
-    await san.accommodation.page1.noAccommodationType.setValue('campsite')
     await san.accommodation.saveAndContinue()
     await san.employment.goto()
     await san.employment.change()

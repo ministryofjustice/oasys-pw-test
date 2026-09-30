@@ -42,32 +42,32 @@ export function testRef22(offender1: OffenderDef, offender2: OffenderDef, offend
 
         // 3rd assessment
         await assessment.assessmentsTab.assessments.clickNthRow(5)
-        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[2], 'Living with friends or family', page, san, sentencePlan)
+        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[2], 'Employment', page, san, sentencePlan)
         await oasys.clickButton('Close')
 
         // 4th assessment
         await assessment.assessmentsTab.assessments.clickNthRow(3)
-        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[4], 'Homeowner', page, san, sentencePlan)
+        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[4], `Carer's allowance`, page, san, sentencePlan)
         await oasys.clickButton('Close')
 
         // 6th assessment
         await assessment.assessmentsTab.assessments.clickNthRow(2)
-        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[5], 'Renting privately', page, san, sentencePlan)
+        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[5], 'Disability benefits', page, san, sentencePlan)
         await oasys.clickButton('Close')
 
         // 7th assessment
         await assessment.assessmentsTab.assessments.clickNthRow(1)
-        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[6], 'Renting from social, local authority or other', page, san, sentencePlan)
+        await checkAssessment(user.prob.probSanHeadPdu.forenameSurname, offender2, offender2Pks[6], 'Pension', page, san, sentencePlan)
         await oasys.clickButton('Close')
 
         await user.logout()
     })
 }
 
-async function checkAssessment(user: string, offender: OffenderDef, pk: number, accommodation: string, page: Page, san: San, sentencePlan: SentencePlan) {
+async function checkAssessment(user: string, offender: OffenderDef, pk: number, incomeSource: string, page: Page, san: San, sentencePlan: SentencePlan) {
 
     log(`Checking assessment pk ${pk}`)
-    await san.gotoSanReadOnly()
+    await san.gotoSanReadOnly('Finances')
     await san.queries.checkSanOtlCall(pk,
         {
             'crn': offender.probationCrn,
@@ -85,13 +85,11 @@ async function checkAssessment(user: string, offender: OffenderDef, pk: number, 
     )
     await san.checkSanEditMode(false)
 
-    const a1 = await page.locator('#main-content').locator('.summary__answer:has-text("Settled"):visible').count()
-    const a2 = await page.locator('#main-content').locator(`.summary__answer--secondary:has-text("${accommodation}"):visible`).count()
-    expect(a1).toBe(1)
-    expect(a2).toBe(1)
+    const c = await page.locator('#main-content').locator(`.summary__answer:has-text("${incomeSource}"):visible`).count()
+    expect(c).toBe(1)
 
     await san.returnToOASys()
-    // Pass user details as they get lost in the cy.get.then structure
+
     await sentencePlan.checkReadOnly()
     await san.queries.checkSanOtlCall(pk,
         {

@@ -3,12 +3,11 @@ import { Element, OasysPage } from 'classes'
 
 export class Page1 extends OasysPage {
 
-    everDrank = new Element.Radiogroup<EverDrank>(this.page, '#alcohol_use', ['yesIncLast3', 'yesNotLast3', 'no'])
-
+    evidenceCurrentIssues = new Element.Radiogroup<EvidenceCurrentIssues>(this.page, '#alcohol_current_issues', ['significant', 'someProblems', 'noCurrentProblems', 'neverDrank'])
 
     async populateMinimal() {
 
-        await this.everDrank.setValue('no')
+        await this.evidenceCurrentIssues.setValue('neverDrank')
     }
 }
 

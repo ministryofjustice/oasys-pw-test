@@ -52,9 +52,7 @@ declare type TemporaryAccommodation = 'approvedPremises' | 'cas2' | 'cas3' | 'im
 declare type LivingWith = 'family' | 'friends' | 'partner' | 'child' | 'other' | 'unknown' | 'alone'
 
 // Alcohol
-declare type EverDrank = 'yesIncLast3' | 'yesNotLast3' | 'no'
-declare type HowOftenLast3 = '1PerMonth' | '2-4PerMonth' | '2-3PerWeek' | 'more'
-declare type TypicalUnits = '1To2' | '3To4' | '5To6' | '7To9' | '10orMore'
+declare type EvidenceCurrentIssues = 'significant' | 'someProblems' | 'noCurrentProblems' | 'neverDrank'
 declare type BingeDrinking = 'noEvidence' | 'someEvidence' | 'evidence'
 
 // Drugs

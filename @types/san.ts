@@ -70,8 +70,9 @@ declare type IncomeSource = 'carersAllowance' | 'disabilityBenefits' | 'employme
 declare type HowGoodManaging = 'ableStrength' | 'able' | 'unable' | 'unableProblems'
 
 // Health
-declare type MentalHealthProblems = 'yesOngoingSevere' | 'yesOngoing' | 'yesPast' | 'no' | 'unknown'
+declare type MentalHealthProblems = 'yesOngoingSevere' | 'yesOngoing' | 'yesPast' | 'no' | 'unknown' | 'undiagnosed'
 declare type PsychTreatment = 'yes' | 'pending' | 'no' | 'unknown'
+declare type Gambling = 'own' | 'someoneElse' | 'no' | 'unknown'
 
 // Relationships
 declare type AnyChildren = 'yesLiveWith' | 'yesLiveElsewhere' | 'yesVisitRegularly' | 'no'

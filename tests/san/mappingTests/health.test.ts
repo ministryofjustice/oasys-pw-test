@@ -9,7 +9,6 @@ type TestCase = {
     },
     page2: {
         psychTreatment: PsychTreatment,
-        headInjury: SanYesNoUnknown,
         learningDifficulties: SanYesNoSome,
         coping: SanYesNoSome,
         attitude: SanPositiveMixedNegative,
@@ -39,20 +38,30 @@ test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, as
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 0, page1: { mentalHealthProblems: null }, page2: null },
-        { ref: 1, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: null },
+        { ref: 1, page1: { mentalHealthProblems: null }, page2: null },
         { ref: 2, page1: { mentalHealthProblems: 'yesOngoing' }, page2: null },
         { ref: 3, page1: { mentalHealthProblems: 'yesPast' }, page2: null },
         { ref: 4, page1: { mentalHealthProblems: 'no' }, page2: null },
         { ref: 5, page1: { mentalHealthProblems: 'unknown' }, page2: null },
-        { ref: 6, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'yes', headInjury: 'yes', learningDifficulties: 'some', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
-        { ref: 7, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'pending', headInjury: 'no', learningDifficulties: 'no', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
-        { ref: 8, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'no', headInjury: 'unknown', learningDifficulties: 'yes', coping: 'some', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
-        { ref: 9, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'unknown', headInjury: 'yes', learningDifficulties: 'some', coping: 'no', attitude: 'mixed', selfHarmed: 'no', suicide: 'no' } },
-        { ref: 10, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'unknown', headInjury: 'no', learningDifficulties: 'no', coping: 'yes', attitude: 'negative', selfHarmed: 'yes', suicide: 'yes' } },
-        { ref: 11, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'no', headInjury: 'unknown', learningDifficulties: 'yes', coping: 'some', attitude: 'positive', selfHarmed: 'yes', suicide: 'no' } },
-        { ref: 12, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'pending', headInjury: 'yes', learningDifficulties: 'yes', coping: 'yes', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
-        { ref: 13, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'yes', headInjury: 'no', learningDifficulties: 'some', coping: 'some', attitude: 'positive', selfHarmed: 'no', suicide: 'no' } },
+        { ref: 6, page1: { mentalHealthProblems: 'undiagnosed' }, page2: null },
+        { ref: 7, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'yes', learningDifficulties: 'yes', coping: 'some', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
+        { ref: 8, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'pending', learningDifficulties: 'no', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
+        { ref: 9, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'no', learningDifficulties: 'some', coping: 'no', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
+        { ref: 10, page1: { mentalHealthProblems: 'no' }, page2: { psychTreatment: null, learningDifficulties: 'yes', coping: 'some', attitude: 'positive', selfHarmed: 'no', suicide: 'no' } },
+        { ref: 11, page1: { mentalHealthProblems: 'unknown' }, page2: { psychTreatment: null, learningDifficulties: 'no', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'yes' } },
+        { ref: 12, page1: { mentalHealthProblems: 'undiagnosed' }, page2: { psychTreatment: null, learningDifficulties: 'some', coping: 'no', attitude: 'negative', selfHarmed: 'yes', suicide: 'no' } },
+        { ref: 13, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'unknown', learningDifficulties: 'some', coping: 'some', attitude: 'mixed', selfHarmed: 'no', suicide: 'yes' } },
+        { ref: 14, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'yes', learningDifficulties: 'no', coping: 'some', attitude: 'negative', selfHarmed: 'no', suicide: 'no' } },
+        { ref: 15, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'pending', learningDifficulties: 'yes', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
+        { ref: 16, page1: { mentalHealthProblems: 'no' }, page2: { psychTreatment: null, learningDifficulties: 'some', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
+        { ref: 17, page1: { mentalHealthProblems: 'unknown' }, page2: { psychTreatment: null, learningDifficulties: 'no', coping: 'some', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
+        { ref: 18, page1: { mentalHealthProblems: 'undiagnosed' }, page2: { psychTreatment: null, learningDifficulties: 'yes', coping: 'no', attitude: 'positive', selfHarmed: 'no', suicide: 'no' } },
+        { ref: 19, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'no', learningDifficulties: 'no', coping: 'yes', attitude: 'negative', selfHarmed: 'yes', suicide: 'yes' } },
+        { ref: 20, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'unknown', learningDifficulties: 'some', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'no' } },
+        { ref: 21, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'yes', learningDifficulties: 'yes', coping: 'some', attitude: 'mixed', selfHarmed: 'no', suicide: 'yes' } },
+        { ref: 22, page1: { mentalHealthProblems: 'no' }, page2: { psychTreatment: null, learningDifficulties: 'no', coping: 'yes', attitude: 'negative', selfHarmed: 'no', suicide: 'no' } },
+        { ref: 23, page1: { mentalHealthProblems: 'unknown' }, page2: { psychTreatment: null, learningDifficulties: 'some', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
+        { ref: 24, page1: { mentalHealthProblems: 'undiagnosed' }, page2: { psychTreatment: null, learningDifficulties: 'yes', coping: 'some', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
     ]
 
 
@@ -83,14 +92,12 @@ test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, as
     // Complete everything needed for PA
     await san.gotoSan('Health and wellbeing', true)
     await san.health.page2.psychTreatment.setValue('no')
-    await san.health.page2.headInjury.setValue('no')
-    await san.health.page2.neurodiverse.setValue('no')
     await san.health.page2.learningDifficulties.setValue('no')
     await san.health.page2.coping.setValue('no')
+    await san.health.page2.gambling.setValue(['no'])
     await san.health.page2.attitude.setValue('positive')
     await san.health.page2.selfHarmed.setValue('no')
     await san.health.page2.suicide.setValue('no')
-    await san.health.page2.optimistic.setValue('optimistic')
     await san.health.page2.wantChanges.setValue('madeChanges')
 
     await san.health.saveAndContinue()
@@ -108,7 +115,6 @@ async function scenario(test: TestCase, san: San) {
     if (test.page2) {
         await san.health.saveAndContinue()
         await san.health.page2.psychTreatment.setValue(test.page2.psychTreatment)
-        await san.health.page2.headInjury.setValue(test.page2.headInjury)
         await san.health.page2.learningDifficulties.setValue(test.page2.learningDifficulties)
         await san.health.page2.coping.setValue(test.page2.coping)
         await san.health.page2.attitude.setValue(test.page2.attitude)
@@ -132,7 +138,7 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '10.4', a: mapping10_4(test) },
         { q: '10.5', a: mapping10_5(test) },
         { q: '10.6', a: mapping10_6(test) },
-        { q: '10.7_V2_HISTHEADINJ', a: mapping10_7HistHeadInj(test) },
+        { q: '10.7_V2_HISTHEADINJ', a: null },
         { q: '10.7_V2_HISTPSYCH', a: mapping10_7HistPsych(test) },
         { q: '10.7_V2_MEDICATION', a: null },
         { q: '10.7_V2_FAILEDTOCOOP', a: null },
@@ -190,6 +196,7 @@ function mapping10_2(test: TestCase): string {
         case 'yesPast':
             return '1'
         case 'no':
+        case 'undiagnosed':
             return '0'
         default:
             return null
@@ -230,20 +237,10 @@ function mapping10_6(test: TestCase): string {
         case 'yesPast':
             return '1'
         case 'no':
+        case 'undiagnosed':
             return '0'
         default:
             return null
-    }
-}
-
-function mapping10_7HistHeadInj(test: TestCase): string {
-
-    switch (test.page2?.headInjury) {
-        case 'yes':
-            return 'YES'
-        case 'no':
-            return 'NO'
-        default: null
     }
 }
 
@@ -256,6 +253,7 @@ function mapping10_7HistPsych(test: TestCase): string {
             return 'YES'
         case 'no':
         case 'unknown':
+        case 'undiagnosed':
             return 'NO'
         default:
             return null
@@ -265,7 +263,7 @@ function mapping10_7HistPsych(test: TestCase): string {
 
 function mapping10_7Psych(test: TestCase): string {
 
-    if (test.page1.mentalHealthProblems == 'no' || test.page1.mentalHealthProblems == 'unknown') {
+    if (test.page1.mentalHealthProblems == 'no' || test.page1.mentalHealthProblems == 'unknown' || test.page1.mentalHealthProblems == 'undiagnosed') {
         return 'NO'
     }
     switch (test.page2?.psychTreatment) {

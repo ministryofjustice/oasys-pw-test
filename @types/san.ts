@@ -44,6 +44,7 @@ declare type SanYesNoSome = 'yes' | 'some' | 'no'
 declare type SanSignificantSome = 'significant' | 'some'
 declare type SanExperience = 'positive' | 'mostlyPositive' | 'positiveNegative' | 'mostlyNegative' | 'negative' | 'unknown'
 declare type SanPositiveMixedNegative = 'positive' | 'mixed' | 'negative'
+declare type SanPositiveMixedNegativeUnknown = 'positive' | 'mixed' | 'negative' | 'unknown'
 declare type SanWantChanges = 'madeChanges' | 'makingChanges' | 'wantToChange' | 'needHelp' | 'thinking' | 'notWanted' | 'notAnswering' | 'notPresent' | 'notApplicable'
 
 // Accommodation
@@ -76,10 +77,10 @@ declare type Gambling = 'own' | 'someoneElse' | 'no' | 'unknown'
 
 // Relationships
 declare type AnyChildren = 'yesLiveWith' | 'yesLiveElsewhere' | 'yesVisitRegularly' | 'no'
-declare type ImportantPeople = 'partner' | 'ownChildren' | 'otherChildren' | 'family' | 'friends' | 'other'
 declare type HappyWithStatus = 'happy' | 'someConcerns' | 'unhappy'
 declare type RelationshipHistory = 'stable' | 'mixed' | 'unstable'
 declare type CurrentFamilyRelationship = 'stable' | 'mixed' | 'unstable' | 'unknown'
+declare type InARelationship = 'livingTogether' | 'notLivingTogether' | 'no'
 
 // Offence analysis
 declare type OffenceElements = 'arson' | 'domesticAbuse' | 'excessiveViolence' | 'hatred' | 'physicalDamage' | 'sexualElement' | 'victimTargeted' | 'violence' | 'weapon' | 'none'

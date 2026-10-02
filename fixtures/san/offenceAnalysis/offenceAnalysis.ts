@@ -63,8 +63,6 @@ export class OffenceAnalysis extends BaseSanSection {
         await this.page3.escalation.setValue('no')
         await this.page3.riskSeriousHarm.setValue('yes')
         await this.page3.riskSeriousHarmYesDetails.setValue('Risk of serious harm')
-        await this.page3.domesticAbusePerpetrator.setValue('no')
-        await this.page3.domesticAbuseVictim.setValue('no')
         await this.markAsComplete()
     }
 
@@ -88,10 +86,6 @@ export class OffenceAnalysis extends BaseSanSection {
         await this.page3.escalation.setValue('no')
         await this.page3.riskSeriousHarm.setValue('yes')
         await this.page3.riskSeriousHarmYesDetails.setValue('No risk')
-        await this.page3.domesticAbusePerpetrator.setValue('yes')
-        await this.page3.domesticAbusePerpetratorType.setValue('partner')
-        await this.page3.partnerPerpetratorDetails.setValue('Some details about domestic abuse')
-        await this.page3.domesticAbuseVictim.setValue('no')
         await this.markAsComplete()
     }
 }

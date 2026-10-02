@@ -58,4 +58,5 @@ export const sanYesSometimesNoUnknownOptions: SanYesSometimesNoUnknown[] = ['yes
 export const sanYesNoSomeOptions: SanYesNoSome[] = ['yes', 'some', 'no']
 export const sanSignificantSomeOptions: SanSignificantSome[] = ['significant', 'some']
 export const sanPositiveMixedNegativeOptions: SanPositiveMixedNegative[] = ['positive', 'mixed', 'negative']
+export const sanPositiveMixedNegativeUnknownOptions: SanPositiveMixedNegativeUnknown[] = ['positive', 'mixed', 'negative', 'unknown']
 export const sanWantChangesOptions: (SanWantChanges | '-')[] = ['madeChanges', 'makingChanges', 'wantToChange', 'needHelp', 'thinking', 'notWanted', 'notAnswering', '-', 'notPresent', 'notApplicable']

@@ -130,7 +130,6 @@ test('SAN integration - test ref 29/30', async ({ oasys, user, signing, offender
     await san.thinking.page1.manageTemper.setValue('no')
     await san.thinking.page1.violence.setValue('yes')
     await san.thinking.page1.impulse.setValue('sometimes')
-    await san.thinking.page1.positiveAttitude.setValue('no')
     await san.thinking.page1.hostileOrientation.setValue('yes')
     await san.thinking.page1.acceptSupervision.setValue('no')
     await san.thinking.page1.supportCriminalBehaviour.setValue('yes')

@@ -81,16 +81,16 @@ declare type HappyWithStatus = 'happy' | 'someConcerns' | 'unhappy'
 declare type RelationshipHistory = 'stable' | 'mixed' | 'unstable'
 declare type CurrentFamilyRelationship = 'stable' | 'mixed' | 'unstable' | 'unknown'
 declare type InARelationship = 'livingTogether' | 'notLivingTogether' | 'no'
+declare type FamilyPartnerBoth = 'family' | 'partner' | 'both'
 
 // Offence analysis
-declare type OffenceElements = 'arson' | 'domesticAbuse' | 'excessiveViolence' | 'hatred' | 'physicalDamage' | 'sexualElement' | 'victimTargeted' | 'violence' | 'weapon' | 'none'
+declare type OffenceElements = 'arson' | 'domesticAbuse' | 'excessiveViolence' | 'sexualElement' | 'stalking' | 'victimTargeted' | 'violence' | 'weapon' | 'none'
 declare type Motivations = 'addictions' | 'pressure' | 'emotional' | 'financial' | 'hatred' | 'power' | 'sexual' | 'thrill' | 'other'
 declare type VictimType = 'people' | 'other'
 declare type HowManyOthers = '0' | '1' | '2' | '3' | '4' | '5' | '6to10' | '11to15' | 'more'
-declare type FamilyPartnerBoth = 'family' | 'partner' | 'both'
 
 // Victims
-declare type VictimRelationship = 'stranger' | 'staff' | 'parent' | 'partner' | 'exPartner' | 'child' | 'otherFamily' | 'other'
+declare type VictimRelationship = 'stranger' | 'staff' | 'parent' | 'partner' | 'exPartner' | 'child' | 'otherFamily' | 'friend' | 'other'
 declare type VictimAge = '0to4' | '5to11' | '12to15' | '16to17' | '18to20' | '21to25' | '26to49' | '50to64' | '65plus'
 declare type VictimSex = 'male' | 'female' | 'intersex' | 'unknown'
 declare type VictimRace =

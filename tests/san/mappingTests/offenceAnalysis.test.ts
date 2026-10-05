@@ -23,10 +23,6 @@ type TestCase = {
         responsibilityNoDetails: string,
         patterns: string,
         escalation: SanYesNoNa,
-        domesticAbusePerpetrator: SanYesNo,
-        domesticAbusePerpetratorType: FamilyPartnerBoth,
-        domesticAbuseVictim: SanYesNo,
-        domesticAbuseVictimType: FamilyPartnerBoth,
         riskSeriousHarm: SanYesNo,
         riskSeriousHarmYesDetails: string,
         riskSeriousHarmNoDetails: string,
@@ -54,28 +50,38 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 1, page1: { offenceDescription: utils.oasysString(4000), offenceElements: ['none'], reason: utils.oasysString(4000), motivations: ['addictions'], motivationOther: null }, page2: null, page3: null },
-        { ref: 2, page1: { offenceDescription: 'Offence description', offenceElements: ['arson'], reason: 'Why it happened', motivations: ['addictions', 'pressure'], motivationOther: null }, page2: { howManyOthers: '0' }, page3: null },
-        { ref: 3, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse'], reason: 'Why it happened', motivations: ['addictions', 'pressure', 'financial'], motivationOther: null }, page2: { howManyOthers: '1' }, page3: null },
-        { ref: 4, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence'], reason: 'Why it happened', motivations: ['addictions', 'pressure', 'financial', 'hatred', 'emotional'], motivationOther: null }, page2: { howManyOthers: '2' }, page3: null },
-        { ref: 5, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'hatred'], reason: 'Why it happened', motivations: ['addictions', 'pressure', 'financial', 'hatred', 'power'], motivationOther: null }, page2: { howManyOthers: '3' }, page3: null },
-        { ref: 6, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'hatred', 'physicalDamage'], reason: 'Why it happened', motivations: ['addictions', 'pressure', 'financial', 'hatred', 'power', 'sexual'], motivationOther: null }, page2: { howManyOthers: '4' }, page3: null },
-        { ref: 7, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'hatred', 'physicalDamage', 'sexualElement'], reason: 'Why it happened', motivations: ['addictions', 'pressure', 'financial', 'hatred', 'power', 'sexual', 'thrill'], motivationOther: null }, page2: { howManyOthers: '5' }, page3: null },
-        { ref: 8, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'hatred', 'physicalDamage', 'sexualElement', 'victimTargeted'], reason: 'Why it happened', motivations: ['addictions', 'pressure', 'financial', 'hatred', 'power', 'sexual', 'thrill', 'other', 'emotional'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '6to10' }, page3: null },
-        { ref: 9, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'hatred', 'physicalDamage', 'sexualElement', 'victimTargeted', 'violence'], reason: 'Why it happened', motivations: ['pressure', 'financial', 'hatred', 'power', 'sexual', 'thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '11to15' }, page3: null },
-        { ref: 10, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'hatred', 'physicalDamage', 'sexualElement', 'victimTargeted', 'violence', 'weapon'], reason: 'Why it happened', motivations: ['financial', 'hatred', 'power', 'sexual', 'thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: 'more' }, page3: null },
-        { ref: 11, page1: { offenceDescription: 'Offence description', offenceElements: ['domesticAbuse', 'excessiveViolence', 'hatred', 'physicalDamage', 'sexualElement', 'victimTargeted', 'violence', 'weapon'], reason: 'Why it happened', motivations: ['hatred', 'power', 'sexual', 'thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '0' }, page3: { leader: null, leaderYesDetails: '', leaderNoDetails: '', impact: 'yes', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: '', patterns: 'Patterns', escalation: 'yes', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: utils.oasysString(4000), riskSeriousHarmNoDetails: '' } },
-        { ref: 12, page1: { offenceDescription: 'Offence description', offenceElements: ['excessiveViolence', 'hatred', 'physicalDamage', 'sexualElement', 'victimTargeted', 'violence', 'weapon'], reason: 'Why it happened', motivations: ['power', 'sexual', 'thrill', 'other', 'emotional'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '1' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: '', impact: 'yes', responsibility: 'yes', responsibilityYesDetails: utils.oasysString(400), responsibilityNoDetails: '', patterns: 'Patterns', escalation: 'no', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risky', riskSeriousHarmNoDetails: '' } },
-        { ref: 13, page1: { offenceDescription: 'Offence description', offenceElements: ['hatred', 'physicalDamage', 'sexualElement', 'victimTargeted', 'violence', 'weapon'], reason: 'Why it happened', motivations: ['sexual', 'thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '2' }, page3: { leader: 'no', leaderYesDetails: '', leaderNoDetails: 'Leader no details', impact: 'no', responsibility: 'no', responsibilityYesDetails: '', responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns', escalation: 'na', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risky', riskSeriousHarmNoDetails: '' } },
-        { ref: 14, page1: { offenceDescription: 'Offence description', offenceElements: ['physicalDamage', 'sexualElement', 'victimTargeted', 'violence', 'weapon'], reason: 'Why it happened', motivations: ['thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '3' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: '', impact: 'no', responsibility: 'no', responsibilityYesDetails: '', responsibilityNoDetails: utils.oasysString(4000), patterns: 'Patterns', escalation: 'yes', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risky', riskSeriousHarmNoDetails: '' } },
-        { ref: 15, page1: { offenceDescription: 'Offence description', offenceElements: ['sexualElement', 'victimTargeted', 'violence', 'weapon'], reason: 'Why it happened', motivations: ['other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '4' }, page3: { leader: 'no', leaderYesDetails: '', leaderNoDetails: utils.oasysString(4000), impact: 'no', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: '', patterns: 'Patterns', escalation: 'no', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'no', domesticAbuseVictimType: null, riskSeriousHarm: 'no', riskSeriousHarmYesDetails: '', riskSeriousHarmNoDetails: utils.oasysString(4000) } },
-        { ref: 16, page1: { offenceDescription: 'Offence description', offenceElements: ['victimTargeted', 'violence', 'weapon'], reason: 'Why it happened', motivations: ['other'], motivationOther: utils.oasysString(128) }, page2: { howManyOthers: '5' }, page3: { leader: 'yes', leaderYesDetails: utils.oasysString(4000), leaderNoDetails: '', impact: 'no', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: '', patterns: utils.oasysString(4000), escalation: 'na', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'no', domesticAbuseVictimType: null, riskSeriousHarm: 'no', riskSeriousHarmYesDetails: '', riskSeriousHarmNoDetails: 'Not risky' } },
-        { ref: 17, page1: { offenceDescription: 'Offence description', offenceElements: ['violence', 'weapon'], reason: 'Why it happened', motivations: ['other'], motivationOther: 'Some reason' }, page2: { howManyOthers: '6to10' }, page3: { leader: 'no', leaderYesDetails: '', leaderNoDetails: 'Leader no details', impact: 'yes', responsibility: 'no', responsibilityYesDetails: '', responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns', escalation: 'yes', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'no', domesticAbuseVictimType: null, riskSeriousHarm: 'no', riskSeriousHarmYesDetails: '', riskSeriousHarmNoDetails: 'Not risky' } },
-        { ref: 18, page1: { offenceDescription: 'Offence description', offenceElements: ['weapon'], reason: 'Why it happened', motivations: ['other'], motivationOther: 'Some reason' }, page2: { howManyOthers: '11to15' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: '', impact: 'yes', responsibility: 'no', responsibilityYesDetails: '', responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns', escalation: 'no', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'no', domesticAbuseVictimType: null, riskSeriousHarm: 'no', riskSeriousHarmYesDetails: '', riskSeriousHarmNoDetails: utils.oasysString(4000) } },
-        { ref: 19, page1: { offenceDescription: 'Offence description', offenceElements: ['weapon'], reason: 'Why it happened', motivations: ['other'], motivationOther: 'Some reason' }, page2: { howManyOthers: '0' }, page3: { leader: null, leaderYesDetails: '', leaderNoDetails: '', impact: 'yes', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: '', patterns: utils.oasysString(4000), escalation: 'na', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risky', riskSeriousHarmNoDetails: '' } },
-        { ref: 20, page1: { offenceDescription: 'Offence description', offenceElements: ['excessiveViolence', 'hatred', 'physicalDamage', 'sexualElement', 'victimTargeted', 'violence', 'weapon'], reason: 'Why it happened', motivations: ['power', 'sexual', 'thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '1' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: '', impact: 'yes', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: '', patterns: 'Patterns', escalation: 'yes', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risky', riskSeriousHarmNoDetails: '' } },
-        { ref: 21, page1: { offenceDescription: 'Offence description', offenceElements: ['hatred', 'physicalDamage', 'sexualElement', 'victimTargeted', 'violence', 'weapon'], reason: 'Why it happened', motivations: ['sexual', 'thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '2' }, page3: { leader: 'no', leaderYesDetails: '', leaderNoDetails: utils.oasysString(4000), impact: 'no', responsibility: 'no', responsibilityYesDetails: '', responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns', escalation: 'no', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: utils.oasysString(4000), riskSeriousHarmNoDetails: '' } },
-        { ref: 22, page1: { offenceDescription: 'Offence description', offenceElements: ['physicalDamage', 'sexualElement', 'victimTargeted', 'violence', 'weapon'], reason: 'Why it happened', motivations: ['thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '3' }, page3: { leader: 'yes', leaderYesDetails: utils.oasysString(4000), leaderNoDetails: '', impact: 'no', responsibility: 'no', responsibilityYesDetails: '', responsibilityNoDetails: 'Responsibility no details', patterns: utils.oasysString(4000), escalation: 'na', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risky', riskSeriousHarmNoDetails: '' } },
+        { ref: 1, page1: { offenceDescription: null, offenceElements: null, reason: null, motivations: null, motivationOther: null }, page2: null, page3: null },
+        { ref: 2, page1: { offenceDescription: utils.oasysString(4000), offenceElements: ['arson'], reason: utils.oasysString(4000), motivations: ['addictions'], motivationOther: null }, page2: null, page3: null },
+        { ref: 3, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse'], reason: 'Reason', motivations: ['addictions', 'pressure'], motivationOther: null }, page2: null, page3: null },
+        { ref: 4, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence'], reason: 'Reason', motivations: ['addictions', 'pressure', 'financial'], motivationOther: null }, page2: { howManyOthers: '0' }, page3: null },
+        { ref: 5, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement'], reason: 'Reason', motivations: ['addictions', 'pressure', 'financial', 'hatred'], motivationOther: null }, page2: { howManyOthers: '1' }, page3: null },
+        { ref: 6, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking'], reason: 'Reason', motivations: ['addictions', 'pressure', 'financial', 'hatred', 'power'], motivationOther: null }, page2: { howManyOthers: '2' }, page3: null },
+        { ref: 7, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking', 'victimTargeted'], reason: 'Reason', motivations: ['addictions', 'pressure', 'financial', 'hatred', 'power', 'sexual'], motivationOther: null }, page2: { howManyOthers: '3' }, page3: { leader: 'yes', leaderYesDetails: null, leaderNoDetails: null, impact: null, responsibility: null, responsibilityYesDetails: null, responsibilityNoDetails: null, patterns: null, escalation: null, riskSeriousHarm: null, riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 8, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking', 'victimTargeted', 'violence'], reason: 'Reason', motivations: ['addictions', 'pressure', 'financial', 'hatred', 'power', 'sexual', 'thrill'], motivationOther: null }, page2: { howManyOthers: '4' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: null, impact: null, responsibility: null, responsibilityYesDetails: null, responsibilityNoDetails: null, patterns: null, escalation: null, riskSeriousHarm: null, riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 9, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking', 'victimTargeted', 'violence', 'weapon'], reason: 'Reason', motivations: ['addictions', 'pressure', 'financial', 'hatred', 'power', 'sexual', 'thrill', 'other'], motivationOther: utils.oasysString(128) }, page2: { howManyOthers: '5' }, page3: { leader: 'yes', leaderYesDetails: utils.oasysString(4000), leaderNoDetails: null, impact: 'yes', responsibility: null, responsibilityYesDetails: null, responsibilityNoDetails: null, patterns: null, escalation: null, riskSeriousHarm: null, riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 10, page1: { offenceDescription: 'Offence description', offenceElements: ['domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking', 'victimTargeted', 'violence', 'weapon'], reason: 'Reason', motivations: ['pressure', 'financial', 'hatred', 'power', 'sexual', 'thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '6to10' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: 'Leader no details', impact: 'yes', responsibility: 'yes', responsibilityYesDetails: null, responsibilityNoDetails: null, patterns: null, escalation: null, riskSeriousHarm: null, riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 11, page1: { offenceDescription: 'Offence description', offenceElements: ['excessiveViolence', 'sexualElement', 'stalking', 'victimTargeted', 'violence', 'weapon'], reason: 'Reason', motivations: ['financial', 'hatred', 'power', 'sexual', 'thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '11to15' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: null, impact: 'no', responsibility: 'yes', responsibilityYesDetails: utils.oasysString(4000), responsibilityNoDetails: null, patterns: null, escalation: null, riskSeriousHarm: null, riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 12, page1: { offenceDescription: 'Offence description', offenceElements: ['sexualElement', 'stalking', 'victimTargeted', 'violence', 'weapon'], reason: 'Reason', motivations: ['hatred', 'power', 'sexual', 'thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: 'more' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: 'Leader no details', impact: 'no', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: null, escalation: null, riskSeriousHarm: null, riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 13, page1: { offenceDescription: 'Offence description', offenceElements: ['stalking', 'victimTargeted', 'violence', 'weapon'], reason: 'Reason', motivations: ['power', 'sexual', 'thrill', 'other', 'emotional'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '0' }, page3: { leader: null, leaderYesDetails: null, leaderNoDetails: null, impact: 'yes', responsibility: 'no', responsibilityYesDetails: null, responsibilityNoDetails: null, patterns: utils.oasysString(4000), escalation: null, riskSeriousHarm: null, riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 14, page1: { offenceDescription: 'Offence description', offenceElements: ['victimTargeted', 'violence', 'weapon'], reason: 'Reason', motivations: ['sexual', 'thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '1' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: null, impact: 'yes', responsibility: 'no', responsibilityYesDetails: null, responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns of offending', escalation: 'yes', riskSeriousHarm: null, riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 15, page1: { offenceDescription: 'Offence description', offenceElements: ['violence', 'weapon'], reason: 'Reason', motivations: ['thrill', 'other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '2' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: utils.oasysString(4000), impact: 'no', responsibility: 'no', responsibilityYesDetails: null, responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns of offending', escalation: 'no', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 16, page1: { offenceDescription: 'Offence description', offenceElements: ['weapon'], reason: 'Reason', motivations: ['other'], motivationOther: 'Other motivation' }, page2: { howManyOthers: '3' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: null, impact: 'no', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: 'Patterns of offending', escalation: 'na', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: utils.oasysString(4000), riskSeriousHarmNoDetails: null } },
+        { ref: 17, page1: { offenceDescription: 'Offence description', offenceElements: ['arson'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '4' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: 'Leader no details', impact: 'yes', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: 'Patterns of offending', escalation: 'yes', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risk of harm yes details', riskSeriousHarmNoDetails: null } },
+        { ref: 18, page1: { offenceDescription: 'Offence description', offenceElements: ['domesticAbuse'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '5' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: null, impact: 'yes', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: 'Patterns of offending', escalation: 'no', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risk of harm yes details', riskSeriousHarmNoDetails: null } },
+        { ref: 19, page1: { offenceDescription: 'Offence description', offenceElements: ['excessiveViolence'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '6to10' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: 'Leader no details', impact: 'no', responsibility: 'no', responsibilityYesDetails: null, responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns of offending', escalation: 'na', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risk of harm yes details', riskSeriousHarmNoDetails: null } },
+        { ref: 20, page1: { offenceDescription: 'Offence description', offenceElements: ['sexualElement'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '11to15' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: null, impact: 'no', responsibility: 'no', responsibilityYesDetails: null, responsibilityNoDetails: utils.oasysString(4000), patterns: 'Patterns of offending', escalation: 'yes', riskSeriousHarm: 'no', riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 21, page1: { offenceDescription: 'Offence description', offenceElements: ['stalking'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: 'more' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: 'Leader no details', impact: 'yes', responsibility: 'no', responsibilityYesDetails: null, responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns of offending', escalation: 'no', riskSeriousHarm: 'no', riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: utils.oasysString(4000) } },
+        { ref: 22, page1: { offenceDescription: 'Offence description', offenceElements: ['victimTargeted'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '0' }, page3: { leader: null, leaderYesDetails: null, leaderNoDetails: null, impact: 'yes', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: 'Patterns of offending', escalation: 'na', riskSeriousHarm: 'no', riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: 'Risk of harm no details' } },
+        { ref: 23, page1: { offenceDescription: 'Offence description', offenceElements: ['violence'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '1' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: null, impact: 'no', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: 'Patterns of offending', escalation: 'yes', riskSeriousHarm: 'no', riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: 'Risk of harm no details' } },
+        { ref: 24, page1: { offenceDescription: 'Offence description', offenceElements: ['weapon'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '2' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: 'Leader no details', impact: 'no', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: 'Patterns of offending', escalation: 'no', riskSeriousHarm: 'no', riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: 'Risk of harm no details' } },
+        { ref: 25, page1: { offenceDescription: 'Offence description', offenceElements: ['none'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '3' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: null, impact: 'yes', responsibility: 'no', responsibilityYesDetails: null, responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns of offending', escalation: 'na', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: null } },
+        { ref: 26, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '4' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: 'Leader no details', impact: 'yes', responsibility: 'no', responsibilityYesDetails: null, responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns of offending', escalation: 'yes', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: utils.oasysString(4000), riskSeriousHarmNoDetails: null } },
+        { ref: 27, page1: { offenceDescription: 'Offence description', offenceElements: ['domesticAbuse', 'excessiveViolence'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '5' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: null, impact: 'no', responsibility: 'no', responsibilityYesDetails: null, responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns of offending', escalation: 'no', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risk of harm yes details', riskSeriousHarmNoDetails: null } },
+        { ref: 28, page1: { offenceDescription: 'Offence description', offenceElements: ['excessiveViolence', 'sexualElement'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '6to10' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: 'Leader no details', impact: 'no', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: 'Patterns of offending', escalation: 'na', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risk of harm yes details', riskSeriousHarmNoDetails: null } },
+        { ref: 29, page1: { offenceDescription: 'Offence description', offenceElements: ['sexualElement', 'stalking'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '11to15' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: null, impact: 'yes', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: 'Patterns of offending', escalation: 'yes', riskSeriousHarm: 'yes', riskSeriousHarmYesDetails: 'Risk of harm yes details', riskSeriousHarmNoDetails: null } },
+        { ref: 30, page1: { offenceDescription: 'Offence description', offenceElements: ['stalking', 'victimTargeted'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: 'more' }, page3: { leader: 'no', leaderYesDetails: null, leaderNoDetails: 'Leader no details', impact: 'yes', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: 'Patterns of offending', escalation: 'no', riskSeriousHarm: 'no', riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: 'Risk of harm no details' } },
+        { ref: 31, page1: { offenceDescription: 'Offence description', offenceElements: ['victimTargeted', 'violence'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '0' }, page3: { leader: null, leaderYesDetails: null, leaderNoDetails: null, impact: 'no', responsibility: 'no', responsibilityYesDetails: null, responsibilityNoDetails: 'Responsibility no details', patterns: 'Patterns of offending', escalation: 'na', riskSeriousHarm: 'no', riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: 'Risk of harm no details' } },
+        { ref: 32, page1: { offenceDescription: 'Offence description', offenceElements: ['violence', 'weapon'], reason: 'Reason', motivations: null, motivationOther: null }, page2: { howManyOthers: '1' }, page3: { leader: 'yes', leaderYesDetails: 'Leader yes details', leaderNoDetails: null, impact: 'no', responsibility: 'yes', responsibilityYesDetails: 'Responsibility yes details', responsibilityNoDetails: null, patterns: 'Patterns of offending', escalation: 'yes', riskSeriousHarm: 'no', riskSeriousHarmYesDetails: null, riskSeriousHarmNoDetails: 'Risk of harm no details' } },
     ]
 
 
@@ -161,14 +167,6 @@ async function scenario(test: TestCase, san: San) {
             }
             await san.offenceAnalysis.page3.patterns.setValue(test.page3.patterns)
             await san.offenceAnalysis.page3.escalation.setValue(test.page3.escalation)
-            await san.offenceAnalysis.page3.domesticAbusePerpetrator.setValue(test.page3.domesticAbusePerpetrator)
-            if (test.page3.domesticAbusePerpetrator == 'yes') {
-                await san.offenceAnalysis.page3.domesticAbusePerpetratorType.setValue(test.page3.domesticAbusePerpetratorType)
-            }
-            await san.offenceAnalysis.page3.domesticAbuseVictim.setValue(test.page3.domesticAbuseVictim)
-            if (test.page3.domesticAbuseVictim == 'yes') {
-                await san.offenceAnalysis.page3.domesticAbuseVictimType.setValue(test.page3.domesticAbuseVictimType)
-            }
             await san.offenceAnalysis.page3.riskSeriousHarm.setValue(test.page3.riskSeriousHarm)
             if (test.page3.riskSeriousHarm == 'yes') {
                 await san.offenceAnalysis.page3.riskSeriousHarmYesDetails.setValue(test.page3.riskSeriousHarmYesDetails)
@@ -197,7 +195,7 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '2.2_V2_ARSON', a: mapping2_2(test, 'arson') },
         { q: '2.2_V2_DOM_ABUSE', a: mapping2_2(test, 'domesticAbuse') },
         { q: '2.2_V2_EXCESSIVE', a: mapping2_2(test, 'excessiveViolence') },
-        { q: '2.2_V2_PHYSICALDAM', a: mapping2_2(test, 'physicalDamage') },
+        { q: '2.2_V2_PHYSICALDAM', a: null },
         { q: '2.2_V2_SEXUAL', a: mapping2_2(test, 'sexualElement') },
         { q: '2.3', a: mapping2_3(test) },
         { q: '2.6', a: mapping2_6(test) },
@@ -222,21 +220,13 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '2.99', a: mapping2_99(test) },
 
     ]
-    const section6Answers: OasysAnswer[] = [
-        { q: '6.7da', a: mapping6_7da(test) },
-        { q: '6.7.1.1da', a: mapping6_7_1_1da(test) },
-        { q: '6.7.1.2da', a: mapping6_7_1_2da(test) },
-        { q: '6.7.2.1da', a: mapping6_7_2_1da(test) },
-        { q: '6.7.2.2da', a: mapping6_7_2_2da(test) },
-    ]
     const expectedSanSectionAnswers: OasysAnswer[] = [
         { q: 'OA_SAN_SECTION_COMP', a: 'NO' },
     ]
     const section1Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '1', section1Answers, true)
     const section2Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '2', section2Answers, true)
-    const section6Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '6', section6Answers, true)
     const sanSectionFailed = await assessment.queries.checkSectionAnswers(assessmentPk, 'SAN', expectedSanSectionAnswers, true)
-    return section1Failed || section2Failed || section6Failed || sanSectionFailed
+    return section1Failed || section2Failed || sanSectionFailed
 }
 
 function mapping1_30(test: TestCase): string {
@@ -264,8 +254,8 @@ function mapping2_3(test: TestCase): string {
         result = 'DIRECTCONT,'
     }
 
-    if (test.page1.offenceElements.includes('hatred')) {
-        result = `${result}HATE,`
+    if (test.page1.offenceElements.includes('stalking')) {
+        result = `${result}STALKING,`
     }
     return result == '' ? null : result
 }
@@ -388,93 +378,3 @@ function mapping2_99(test: TestCase): string {
     return test.page3?.riskSeriousHarm?.toUpperCase()
 }
 
-function mapping6_7da(test: TestCase): string {
-
-    if (test.page3?.domesticAbusePerpetrator == 'yes' || test.page3?.domesticAbuseVictim == 'yes') {
-        return 'YES'
-    }
-    if (test.page3?.domesticAbusePerpetrator == 'no' || test.page3?.domesticAbuseVictim == 'no') {
-        return 'NO'
-    }
-    return null
-}
-
-function mapping6_7_1_1da(test: TestCase): string {
-
-    switch (test.page3?.domesticAbuseVictim) {
-        case 'yes':
-            switch (test.page3?.domesticAbuseVictimType) {
-                case 'family':
-                    return 'NO'
-                case 'partner':
-                case 'both':
-                    return 'YES'
-                default:
-                    return null
-            }
-        case 'no':
-            return 'NO'
-        default:
-            return null
-    }
-}
-
-function mapping6_7_1_2da(test: TestCase): string {
-
-    switch (test.page3?.domesticAbuseVictim) {
-        case 'yes':
-            switch (test.page3?.domesticAbuseVictimType) {
-                case 'family':
-                case 'both':
-                    return 'YES'
-                case 'partner':
-                    return 'NO'
-                default:
-                    return null
-            }
-        case 'no':
-            return 'NO'
-        default:
-            return null
-    }
-}
-
-function mapping6_7_2_1da(test: TestCase): string {
-
-    switch (test.page3?.domesticAbusePerpetrator) {
-        case 'yes':
-            switch (test.page3?.domesticAbusePerpetratorType) {
-                case 'family':
-                    return 'NO'
-                case 'partner':
-                case 'both':
-                    return 'YES'
-                default:
-                    return null
-            }
-        case 'no':
-            return 'NO'
-        default:
-            return null
-    }
-}
-
-function mapping6_7_2_2da(test: TestCase): string {
-
-    switch (test.page3?.domesticAbusePerpetrator) {
-        case 'yes':
-            switch (test.page3?.domesticAbusePerpetratorType) {
-                case 'family':
-                case 'both':
-                    return 'YES'
-                case 'partner':
-                    return 'NO'
-                default:
-                    return null
-            }
-        case 'no':
-            return 'NO'
-        default:
-            return null
-    }
-}

@@ -51,8 +51,8 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
 
     const testCases: TestCase[] = [
         { ref: 1, page1: { offenceDescription: null, offenceElements: null, reason: null, motivations: null, motivationOther: null }, page2: null, page3: null },
-        { ref: 2, page1: { offenceDescription: utils.oasysString(4000), offenceElements: ['arson'], reason: utils.oasysString(4000), motivations: ['addictions'], motivationOther: null }, page2: null, page3: null },
-        { ref: 3, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse'], reason: 'Reason', motivations: ['addictions', 'pressure'], motivationOther: null }, page2: null, page3: null },
+        { ref: 2, page1: { offenceDescription: utils.oasysString(4000), offenceElements: ['arson'], reason: 'Reason', motivations: ['addictions'], motivationOther: null }, page2: null, page3: null },
+        { ref: 3, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse'], reason: utils.oasysString(4000), motivations: ['addictions', 'pressure'], motivationOther: null }, page2: null, page3: null },
         { ref: 4, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence'], reason: 'Reason', motivations: ['addictions', 'pressure', 'financial'], motivationOther: null }, page2: { howManyOthers: '0' }, page3: null },
         { ref: 5, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement'], reason: 'Reason', motivations: ['addictions', 'pressure', 'financial', 'hatred'], motivationOther: null }, page2: { howManyOthers: '1' }, page3: null },
         { ref: 6, page1: { offenceDescription: 'Offence description', offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking'], reason: 'Reason', motivations: ['addictions', 'pressure', 'financial', 'hatred', 'power'], motivationOther: null }, page2: { howManyOthers: '2' }, page3: null },

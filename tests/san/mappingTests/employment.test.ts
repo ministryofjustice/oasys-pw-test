@@ -12,7 +12,6 @@ type TestCase = {
     page2: {
         employmentHistory: EmploymentHistory,
         anyQual: SanYesNo,
-        qualDetails: string,
         skills: SanYesNoSome,
         difficulties: SanDifficulties[],
         readingLevel: SanSignificantSome,
@@ -42,27 +41,25 @@ test('Mapping test V2: employment and education', async ({ oasys, user, offender
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 0, page1: { employmentStatus: null, unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: null },
-        { ref: 1, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: null },
-        { ref: 2, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: null, anyQual: null, qualDetails: null, skills: null, difficulties: [], readingLevel: null, writingLevel: null, numeracyLevel: null } },
-        { ref: 3, page1: { employmentStatus: 'retired', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: null },
-        { ref: 4, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'yes', unemployedEmployedBefore: null }, page2: null },
-        { ref: 5, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'no', unemployedEmployedBefore: null }, page2: null },
-        { ref: 6, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' }, page2: null },
-        { ref: 7, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' }, page2: null },
-        { ref: 8, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' }, page2: null },
-        { ref: 9, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' }, page2: null },
-        { ref: 10, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'continuous', anyQual: 'yes', qualDetails: 'some qualifications', skills: 'yes', difficulties: ['none'], readingLevel: null, writingLevel: null, numeracyLevel: null } },
-        { ref: 11, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'generallyEmployed', anyQual: 'no', qualDetails: 'some qualifications', skills: 'some', difficulties: ['none'], readingLevel: null, writingLevel: null, numeracyLevel: null } },
-        { ref: 12, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'unstable', anyQual: 'yes', qualDetails: null, skills: 'no', difficulties: ['none'], readingLevel: null, writingLevel: null, numeracyLevel: null } },
-        { ref: 13, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'unstable', anyQual: 'yes', qualDetails: utils.oasysString(400), skills: 'no', difficulties: ['reading'], readingLevel: 'some', writingLevel: null, numeracyLevel: null } },
-        { ref: 14, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'unstable', anyQual: 'no', qualDetails: utils.oasysString(400), skills: 'no', difficulties: ['writing'], readingLevel: null, writingLevel: 'some', numeracyLevel: null } },
-        { ref: 15, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'unstable', anyQual: 'no', qualDetails: null, skills: 'no', difficulties: ['numeracy'], readingLevel: null, writingLevel: null, numeracyLevel: 'some' } },
-        { ref: 16, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'unstable', anyQual: 'yes', qualDetails: 'Some text!!!', skills: 'no', difficulties: ['reading', 'writing', 'numeracy'], readingLevel: 'some', writingLevel: 'some', numeracyLevel: 'some' } },
-        { ref: 17, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'unstable', anyQual: 'no', qualDetails: 'Some text!!!', skills: 'no', difficulties: ['reading', 'writing', 'numeracy'], readingLevel: 'significant', writingLevel: 'some', numeracyLevel: 'some' } },
-        { ref: 18, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' }, page2: { employmentHistory: 'unstable', anyQual: 'yes', qualDetails: null, skills: 'no', difficulties: ['reading', 'writing', 'numeracy'], readingLevel: 'some', writingLevel: 'significant', numeracyLevel: 'some' } },
-        { ref: 19, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'unstable', anyQual: 'yes', qualDetails: utils.oasysString(400), skills: 'no', difficulties: ['reading', 'writing', 'numeracy'], readingLevel: 'some', writingLevel: 'some', numeracyLevel: 'significant' } },
-        { ref: 20, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'unstable', anyQual: 'yes', qualDetails: utils.oasysString(400), skills: 'no', difficulties: ['none'], readingLevel: null, writingLevel: null, numeracyLevel: null } },
+        { ref: 1, page1: { employmentStatus: null, unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: null  },
+        { ref: 2, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: null  },
+        { ref: 3, page1: { employmentStatus: 'retired', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: null  },
+        { ref: 4, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'yes', unemployedEmployedBefore: null } , page2: null  },
+        { ref: 5, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'no', unemployedEmployedBefore: null } , page2: null  },
+        { ref: 6, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' } , page2: null  },
+        { ref: 7, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' } , page2: null  },
+        { ref: 8, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: { employmentHistory: 'continuous', anyQual: 'yes', skills: 'yes', difficulties: ['none'], readingLevel: null, writingLevel: null, numeracyLevel: null }  },
+        { ref: 9, page1: { employmentStatus: 'retired', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: { employmentHistory: 'generallyEmployed', anyQual: 'no', skills: 'no', difficulties: ['reading'], readingLevel: 'some', writingLevel: null, numeracyLevel: null }  },
+        { ref: 10, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'yes', unemployedEmployedBefore: null } , page2: { employmentHistory: 'unstable', anyQual: 'yes', skills: 'some', difficulties: ['writing'], readingLevel: null, writingLevel: 'some', numeracyLevel: null }  },
+        { ref: 11, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'no', unemployedEmployedBefore: null } , page2: { employmentHistory: null, anyQual: 'no', skills: 'yes', difficulties: ['numeracy'], readingLevel: null, writingLevel: null, numeracyLevel: 'some' }  },
+        { ref: 12, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' } , page2: { employmentHistory: 'continuous', anyQual: 'yes', skills: 'no', difficulties: ['reading', 'writing'], readingLevel: 'significant', writingLevel: 'some', numeracyLevel: null }  },
+        { ref: 13, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' } , page2: { employmentHistory: null, anyQual: 'no', skills: 'some', difficulties: ['reading', 'numeracy'], readingLevel: 'some', writingLevel: null, numeracyLevel: 'significant' }  },
+        { ref: 14, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: { employmentHistory: 'unstable', anyQual: 'yes', skills: 'yes', difficulties: ['writing', 'numeracy'], readingLevel: null, writingLevel: 'significant', numeracyLevel: 'some' }  },
+        { ref: 15, page1: { employmentStatus: 'retired', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: { employmentHistory: 'unknown', anyQual: 'no', skills: 'no', difficulties: ['reading', 'writing', 'numeracy'], readingLevel: 'significant', writingLevel: 'significant', numeracyLevel: 'significant' }  },
+        { ref: 16, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'yes', unemployedEmployedBefore: null } , page2: { employmentHistory: 'continuous', anyQual: 'yes', skills: 'some', difficulties: ['reading', 'writing'], readingLevel: 'some', writingLevel: 'significant', numeracyLevel: null }  },
+        { ref: 17, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'no', unemployedEmployedBefore: null } , page2: { employmentHistory: null, anyQual: 'no', skills: 'yes', difficulties: ['reading', 'numeracy'], readingLevel: 'significant', writingLevel: null, numeracyLevel: 'some' }  },
+        { ref: 18, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' } , page2: { employmentHistory: 'generallyEmployed', anyQual: 'yes', skills: 'no', difficulties: ['writing', 'numeracy'], readingLevel: null, writingLevel: 'some', numeracyLevel: 'significant' }  },
+        { ref: 19, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' } , page2: { employmentHistory: null, anyQual: 'no', skills: 'some', difficulties: ['reading', 'writing', 'numeracy'], readingLevel: 'some', writingLevel: 'some', numeracyLevel: 'some' }  },
     ]
 
 
@@ -119,9 +116,6 @@ async function scenario(test: TestCase, san: San) {
         await san.employment.saveAndContinue()
         await san.employment.page2.employmentHistory.setValue(test.page2.employmentHistory)
         await san.employment.page2.anyQual.setValue(test.page2.anyQual)
-        if (test.page2.anyQual == 'yes') {
-            await san.employment.page2.qualDetails.setValue(test.page2.qualDetails)
-        }
         await san.employment.page2.skills.setValue(test.page2.skills)
         await san.employment.page2.difficulties.setValue(test.page2.difficulties)
         if (test.page2.difficulties.includes('reading')) {

@@ -3,21 +3,16 @@ import { getMappingTestOffender } from './mappingTestOffender'
 
 type TestCase = { ref: number, offenceDescription: string, result: string }
 
-// test.describe.configure({ retries: 1 })
-test('Mapping test V2: control characters', async ({ oasys, user, offender, assessment, san }) => {
+test.describe.configure({ retries: 1 })
+test('Mapping test V1: control characters', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+    const mappingTestOffender = await getMappingTestOffender('controlCharacters')
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
-
-    // Create a new SAN assessment
+    // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    await assessment.openLatest()
+    const assessmentPk = await assessment.queries.getLatestSetPk(mappingTestOffender.probationCrn)
 
     let failed = 0
 
@@ -31,9 +26,7 @@ test('Mapping test V2: control characters', async ({ oasys, user, offender, asse
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Offence analysis', true)
-        if (test.ref > 1) {
-            await san.offenceAnalysis.previous()
-        }
+        await san.offenceAnalysis.backToStart()
         await san.offenceAnalysis.page1.offenceElements.setValue(['arson'])
         await san.offenceAnalysis.page1.reason.setValue('Reason')
         await san.offenceAnalysis.page1.motivations.setValue(['addictions'])

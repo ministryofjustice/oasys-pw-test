@@ -15,52 +15,41 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: accommodation', async ({ oasys, user, offender, assessment, san }) => {
+test('Mapping test V1: accommodation', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+    const mappingTestOffender = await getMappingTestOffender('accommodation')
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
-
-    // Create a new SAN assessment
+    // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    await assessment.openLatest()
+    const assessmentPk = await assessment.queries.getLatestSetPk(mappingTestOffender.probationCrn)
 
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 1, page1: { currentAccommodation: null, temporaryAccommodation: null }, page2: null },
-        { ref: 2, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: null },
+        { ref: 1, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'partner'], locationSuitable: 'yes', accommodationSuitable: 'yes' } },
+        { ref: 2, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['unknown'], locationSuitable: 'no', accommodationSuitable: 'yesWithConcerns' } },
         { ref: 3, page1: { currentAccommodation: 'noAccommodation', temporaryAccommodation: null }, page2: null },
-        { ref: 4, page1: { currentAccommodation: 'temporary', temporaryAccommodation: null }, page2: null },
-        { ref: 5, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'approvedPremises' }, page2: null },
-        { ref: 6, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas2' }, page2: null },
-        { ref: 7, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas3' }, page2: null },
-        { ref: 8, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'immigration' }, page2: null },
-        { ref: 9, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: null },
-        { ref: 10, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'partner'], locationSuitable: null, accommodationSuitable: null } },
-        { ref: 11, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'child'], locationSuitable: 'yes', accommodationSuitable: null } },
-        { ref: 12, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'no', accommodationSuitable: null } },
-        { ref: 13, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family'], locationSuitable: 'yes', accommodationSuitable: 'yes' } },
-        { ref: 14, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'friends', 'other'], locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
-        { ref: 15, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'no' } },
+        { ref: 4, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'approvedPremises' }, page2: { livingWith: null, locationSuitable: 'no', accommodationSuitable: 'yes' } },
+        { ref: 5, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas2' }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
+        { ref: 6, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas3' }, page2: { livingWith: null, locationSuitable: 'no', accommodationSuitable: 'no' } },
+        { ref: 7, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'immigration' }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'yes' } },
+        { ref: 8, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: { livingWith: null, locationSuitable: 'no', accommodationSuitable: 'yesWithConcerns' } },
+        { ref: 9, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['alone'], locationSuitable: 'yes', accommodationSuitable: 'no' } },
+        { ref: 10, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'partner', 'other'], locationSuitable: 'no', accommodationSuitable: 'yes' } },
+        { ref: 11, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
+        { ref: 12, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family'], locationSuitable: 'no', accommodationSuitable: 'no' } },
+        { ref: 13, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'friends', 'other'], locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
+        { ref: 14, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'friends', 'other'], locationSuitable: 'no', accommodationSuitable: 'no' } },
     ]
 
 
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Accommodation', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.accommodation.previous()
-        }
+        await san.accommodation.backToStart()
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
         await san.returnToOASys()
@@ -96,17 +85,17 @@ async function scenario(test: TestCase, san: San) {
     if (test.page1.currentAccommodation == 'temporary') {
         await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
     }
-    if (test.page2) {
-        if (test.page1.currentAccommodation == 'settled') {
-            await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
-        }
-        await san.accommodation.saveAndContinue()
+    if (test.page1.currentAccommodation == 'settled') {
+        await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
+    }
+    if (test.page1.currentAccommodation == 'noAccommodation') {
+        await san.accommodation.page1.noAccommodationType.setValue('campsite')
+    }
+    await san.accommodation.saveAndContinue()
+    if (test.page1.currentAccommodation != 'noAccommodation') {
         await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
         await san.accommodation.page2.accommodationSuitable.setValue(test.page2.accommodationSuitable)
         await san.accommodation.page2.locationSuitable.setValue(test.page2.locationSuitable)
-        startPage = 2
-    } else {
-        startPage = 1
     }
 }
 
@@ -117,10 +106,6 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '3.4', a: mapping3_4(test) },
         { q: '3.5', a: mapping3_5(test) },
         { q: '3.6', a: mapping3_6(test) },
-        { q: '3.97', a: null },
-        { q: '3.98', a: null },
-        { q: '3.99', a: null },
-        { q: '3_SAN_STRENGTH', a: null },
     ]
     const section6Answers: OasysAnswer[] = [
         { q: '6.8', a: mapping6_8(test) },

@@ -1,28 +1,40 @@
 import * as fs from 'fs-extra'
 
 import { test } from 'fixtures'
-import { userSuffixes } from 'localSettings'
 import { mappingTestOffenderFile } from 'tests/san/mappingTests/mappingTestOffender'
+import { userSuffixes } from 'localSettings'
 
+const tests = [
+    'accommodation',
+    'alcohol',
+    'controlCharacters',
+    'drugsDetails',
+    'drugsPA',
+    'employment',
+    'finance',
+    'health',
+    'offenceAnalysis',
+    'question4-9',
+    'question6-7',
+    'question6-8',
+    'relationships',
+    'thinking',
+    'victims',
+]
 /**
- * Creates an offender and writes the details to a local file.  This should be run before running any of the mapping tests.
+ * Creates an offender and writes the details to a local file; creates an assessment to be used after deployment of SAN v2
  */
 
-const initialOffenderDetails: OffenderDef = {
+test('Create offender for SAN mapping tests', async ({ assessment, user, offender }) => {
 
-    forename1: 'MappingTest',
-    gender: 'Male',
-    dateOfBirth: { years: -40 },
-}
+    await user.prob.probSanUnappr.login()
 
-
-test('Create offender for SAN mapping tests', async ({ oasys, user, offender }) => {
-
-    await user.prob.probSanHeadPdu.login()
-
-    for (let i = 0; i < userSuffixes.length; i++) {
-        const mappingTestOffender = await offender.createProbFromStandardOffender({ type: 'noEvent' })
-        await fs.writeFile(`${mappingTestOffenderFile}${i}`, JSON.stringify(mappingTestOffender))
+    for (let u = 0; u < userSuffixes.length; u++) {
+        for (const t of tests) {
+            const mappingTestOffender = await offender.createProbFromStandardOffender({ type: 'noEvent', forename1: `SANV1-${t}${userSuffixes[u]}` })
+            await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes', selectAssessor: `[AUTOSANUNAPPR${userSuffixes[u]}]` })
+            await fs.writeFile(`${mappingTestOffenderFile}-${t}-${u}`, JSON.stringify(mappingTestOffender))
+        }
     }
 
     await user.logout()

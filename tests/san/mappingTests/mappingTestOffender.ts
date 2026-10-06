@@ -4,11 +4,11 @@ import * as fs from 'fs-extra'
  * Offender script used by all of the mapping tests.  Need to run the /setup/sanMappingTestOffenders script first to create an offender and store the details in a local file.
  */
 
-export const mappingTestOffenderFile = 'tests/data/local/mappingTestsOffender'
+export const mappingTestOffenderFile = 'tests/data/local/mappingTestsV1Offender'
 
-export async function getMappingTestOffender(): Promise<OffenderDef> {
+export async function getMappingTestOffender(test: string): Promise<OffenderDef> {
 
     const testProcess = Number.parseInt(process.env.TEST_PARALLEL_INDEX)
-    const offenderDetails = await fs.readFile(`${mappingTestOffenderFile}${testProcess}`)
+    const offenderDetails = await fs.readFile(`${mappingTestOffenderFile}-${test}-${testProcess}`)
     return JSON.parse(offenderDetails.toString()) as OffenderDef
 }

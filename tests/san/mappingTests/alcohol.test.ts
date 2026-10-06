@@ -14,28 +14,20 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: alcohol', async ({ oasys, user, offender, assessment, san }) => {
+test('Mapping test V1: alcohol', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+    const mappingTestOffender = await getMappingTestOffender('alcohol')
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
-
-    // Create a new SAN assessment
+    // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    await assessment.openLatest()
+    const assessmentPk = await assessment.queries.getLatestSetPk(mappingTestOffender.probationCrn)
 
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 0, page1: { everDrank: null }, page2: null },
         { ref: 1, page1: { everDrank: 'no' }, page2: null },
         { ref: 2, page1: { everDrank: 'yesNotLast3' }, page2: { howOftenLast3: null, typicalUnits: null, bingeDrinking: 'noEvidence' } },
         { ref: 3, page1: { everDrank: 'yesNotLast3' }, page2: { howOftenLast3: null, typicalUnits: null, bingeDrinking: 'someEvidence' } },
@@ -66,13 +58,8 @@ test('Mapping test V2: alcohol', async ({ oasys, user, offender, assessment, san
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Alcohol use', true)
-        // Back to the start, depending where the previous scenario ended
-        // if (test.ref > 1) {
-        //     await san.change()
-        // }
-        for (let i = 1; i < startPage; i++) {
-            await san.alcohol.previous()
-        }
+        await san.alcohol.backToStart()
+
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
         await san.returnToOASys()
@@ -119,9 +106,6 @@ async function scenario(test: TestCase, san: San) {
             await san.alcohol.page2.typicalUnits.setValue(test.page2.typicalUnits)
         }
         await san.alcohol.page2.bingeDrinking.setValue(test.page2.bingeDrinking)
-        startPage = 2
-    } else {
-        startPage = 1
     }
 }
 

@@ -25,6 +25,18 @@ export class Queries {
      * Returns all assessment PKs for a given offender, including deleted unless the optional second parameter is true.
      * Oldest assessment first
      */
+    async getLatestSetPk(probationCrn: string): Promise<number> {
+
+        const query = `select oasys_set_pk from eor.oasys_set where cms_prob_number = '${probationCrn}' and deleted_date is null order by initiation_date`
+
+        const pks = await this.getPk(query, true) as number[]
+        return pks[0]
+    }
+
+    /**
+     * Returns all assessment PKs for a given offender, including deleted unless the optional second parameter is true.
+     * Oldest assessment first
+     */
     async getAllSetPksByPnc(pnc: string, ignoreDeleted: boolean = false): Promise<number[]> {
 
         const deletion = ignoreDeleted ? ' and o.deleted_date is null ' : ''

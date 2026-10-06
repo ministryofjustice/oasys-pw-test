@@ -40,6 +40,30 @@ export class BaseSanSection {
 
         await this.page.locator('.govuk-back-link').first().click()
     }
+
+    async completed(): Promise<boolean> {
+
+        const changeCount = await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).count()
+        return changeCount > 0
+    }
+
+    async backToStart() {
+
+        const completed = await this.completed()
+        if (completed) {
+            await this.change()
+            await this.page.locator('.moj-side-navigation__item--active a').filter({ hasText: this.sectionName }).isVisible()  // Ensure page update before next check
+        }
+
+        let backCount: number
+        do {
+            backCount = await this.page.locator('.govuk-back-link').count()
+            if (backCount > 0) {
+                await this.previous()
+                await this.page.locator('.moj-side-navigation__item--active a').filter({ hasText: this.sectionName }).isVisible()  // Ensure page update before next check
+            }
+        } while (backCount > 0)
+    }
 }
 
 

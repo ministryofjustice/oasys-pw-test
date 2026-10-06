@@ -196,6 +196,7 @@ export class San {
             log(`Go to SAN section: ${section}`)
         }
         await this.page.locator('.moj-side-navigation__item a').filter({ hasText: section }).first().click()
+        await expect(this.page.locator('.moj-side-navigation__item--active a').filter({ hasText: section })).toBeVisible()
     }
 
     /**

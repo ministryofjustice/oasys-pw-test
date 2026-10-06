@@ -10,7 +10,6 @@ type TestCase = {
 }
 
 
-test.describe.configure({ retries: 1 })
 test('Mapping test for drugs practitioner analysis', async ({ oasys, user, offender, assessment, san }) => {
 
     await paTest(oasys, user, offender, assessment, san)
@@ -22,16 +21,11 @@ async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: 
 
     const mappingTestOffender = await getMappingTestOffender()
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
-
-    // Create a new SAN assessment
+    // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    await assessment.openLatest()
+    const assessmentPk = await assessment.queries.getLatestSetPk(mappingTestOffender.probationCrn)
 
     let failed = false
     const testCases: TestCase[] =

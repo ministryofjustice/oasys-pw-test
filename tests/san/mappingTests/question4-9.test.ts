@@ -5,7 +5,6 @@ import { getMappingTestOffender } from './mappingTestOffender'
 type HighestQualOptions = 'entryLevel' | 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'level6' | 'level7' | 'level8' | 'none' | 'unknown'
 type ProfessionalQualOptions = 'yes' | 'no' | 'unknown'
 
-test.describe.configure({ retries: 1 })
 test('Mapping test for question 4.9', async ({ oasys, user, offender, assessment, san, }) => {
 
     /*
@@ -27,14 +26,11 @@ test('Mapping test for question 4.9', async ({ oasys, user, offender, assessment
 
     const mappingTestOffender = await getMappingTestOffender()
 
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
-
+    // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    await assessment.openLatest()
+    const assessmentPk = await assessment.queries.getLatestSetPk(mappingTestOffender.probationCrn)
 
     const testCases: { i: number, highestQual: HighestQualOptions, professionalQual: ProfessionalQualOptions, mapping: number }[] =
         [

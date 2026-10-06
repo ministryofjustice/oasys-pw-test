@@ -5,7 +5,6 @@ import { getMappingTestOffender } from './mappingTestOffender'
 type AccommodationOptions = 'family' | 'friends' | 'partner' | 'child' | 'other' | 'unknown' | 'alone'
 type RelationshipOptions = 'partner' | 'ownChildren' | 'otherChildren' | 'family' | 'friends' | 'other'
 
-test.describe.configure({ retries: 1 })
 test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment, san, }) => {
 
     /*
@@ -23,14 +22,11 @@ test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment
 
     const mappingTestOffender = await getMappingTestOffender()
 
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
-
+    // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    await assessment.openLatest()
+    const assessmentPk = await assessment.queries.getLatestSetPk(mappingTestOffender.probationCrn)
 
     const testCases: { accommodation: AccommodationOptions[], relationship: RelationshipOptions[], mapping: number }[] =
         [

@@ -67,7 +67,6 @@ const expectedAnswersTemplate: OasysAnswer[] = [
 let expectedAnswers: OasysAnswer[]  // variable to hold a new copy of the template for each iteration of the test with the different drug types
 const otherDrugName = 'Other drug name'
 
-test.describe.configure({ retries: 1 })
 test.describe('Mapping test for drugs - individual drugs details', () => {
 
     test('amphetamines', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('amphetamines', page, oasys, user, offender, assessment, san) })
@@ -92,16 +91,11 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
 
     const mappingTestOffender = await getMappingTestOffender()
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
-
-    // Create a new SAN assessment
+    // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    await assessment.openLatest()
+    const assessmentPk = await assessment.queries.getLatestSetPk(mappingTestOffender.probationCrn)
 
     // Run all the scenarios for a single drug
     let failed = false

@@ -22,7 +22,7 @@ export class Utils {
 
         const result = lookup[value]
         if (result == null || result == undefined) {
-            return null
+            return result as number
         }
         if (translation == null) {
             return typeof result == 'string' ? this.stringToInt(result) : result

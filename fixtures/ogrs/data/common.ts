@@ -31,10 +31,15 @@ export function getOffenceCat(offence: string): OgrsOffenceCat {
     return cat == undefined ? null : cat
 }
 
-export function q141(q130: string, q141: string, offence: string): string {
+export function q141(q130: string, q141: string, offence: string, additionalOffences?: string[]): string {
 
-    const offenceCat = getOffenceCat(offence)
-    const sexualOffence = offenceCat && ['sexual_offences_not_children', 'sexual_offences_children'].includes(offenceCat.cat)
+    let sexualOffence = isSexualOffence(offence)
+    if (additionalOffences) {
+        for (const additionalOffence of additionalOffences) {
+            const additionalOffenceSexual = isSexualOffence(additionalOffence)
+            sexualOffence = sexualOffence || additionalOffenceSexual
+        }
+    }
 
     if (q130 != 'YES' || sexualOffence || (q130 == 'YES' && sexualOffence)) {
         return 'O'
@@ -42,6 +47,12 @@ export function q141(q130: string, q141: string, offence: string): string {
         return null
     }
     return q141
+}
+
+function isSexualOffence(offence: string): boolean {
+
+    const offenceCat = getOffenceCat(offence)
+    return offenceCat && ['sexual_offences_not_children', 'sexual_offences_children'].includes(offenceCat.cat)
 }
 
 export function q22(q22Weapon: string, oldQ22: string, after6_35: boolean): number {
@@ -94,7 +105,7 @@ export function dailyDrugUser(q81: string, drugs: { [key: string]: string }): 'Y
 
 export function q88(q81: string, q88: number): number {
 
-    return q81 == 'YES' ? q88 : 0
+    return q81 == 'YES' ? q88 : q81 == 'NO' ? 0 : null
 }
 
 export function getDrugUsed(drug: string, drugs: { [key: string]: string }): 'Y' {

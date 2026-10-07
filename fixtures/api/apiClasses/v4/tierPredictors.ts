@@ -32,7 +32,6 @@ export class TierPredictorsEndpointResponse extends v4Common.V4EndpointResponse 
 
     constructor(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {
 
-        offenderData.assessments.sort((a, b) => (a.tierPredictorsSortIndex > b.tierPredictorsSortIndex) ? 1 : ((b.tierPredictorsSortIndex > a.tierPredictorsSortIndex) ? -1 : 0))
         super(offenderData, parameters)
     }
 

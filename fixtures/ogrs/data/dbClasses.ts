@@ -230,6 +230,7 @@ export class OgrsAssessment {
     snsvDynamicCalculated: string
 
     offence: string
+    additionalOffences: string[]
     qaData: { [key: string]: any }
 
     constructor(assessmentData: string[]) {
@@ -263,6 +264,8 @@ export class OgrsAssessment {
         this.snsvDynamicYr2 = utils.stringToFloat(assessmentData[i++])
         this.snsvDynamicYr2Band = assessmentData[i++]
         this.snsvDynamicCalculated = assessmentData[i++]
+
+        this.additionalOffences = []
     }
 
     static query(rows: number, whereClause: string): string {
@@ -283,9 +286,9 @@ export class OgrsAssessment {
 
     static offenceQuery(assessmentPk: number | string): string {
 
-        return `select p.offence_group_code || p.sub_code 
+        return `select p.offence_group_code || p.sub_code, o.offence_block_type_elm
                     from eor.offence_block o, eor.ct_offence_pivot p
-                    where o.oasys_set_pk = ${assessmentPk} and o.offence_block_type_elm = 'CURRENT'
+                    where o.oasys_set_pk = ${assessmentPk} and o.offence_block_type_elm in ('CURRENT', 'CONCURRENT')
                     and p.offence_block_pk = o.offence_block_pk and p.additional_offence_ind = 'N'`
     }
 

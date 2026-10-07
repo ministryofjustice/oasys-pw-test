@@ -34,6 +34,8 @@ const testCases = [
     // [null, 'A2144FH'],          //  - 1.30 not reported missing
     // ['E776521', null],          //  OGP2 status defect NOD-1313
     // ['R414385', null],
+    // ['E621573', null],              // additional offence causes 1.41 to be hidden
+    // ['E705947', null],          // 6.8 is not in the database, should calculate OGP2?
 ]
 
 const limitEndpoints: Endpoint[] = []  // Only test these ones (all if none specified)

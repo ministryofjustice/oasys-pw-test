@@ -47,8 +47,16 @@ export class Data {
 
             // Offence
             const offences = await this.oasysDb.getData(OgrsAssessment.offenceQuery(assessment.pk))
-            if (offences.length > 0 && offences[0].length > 0) {
-                assessment.offence = offences[0][0]
+            if (offences.length > 0) {
+                for (let i = 0; i < offences.length; i++) {
+                    if (offences[i].length == 2) {
+                        if (offences[i][1] == 'CURRENT') {
+                            assessment.offence = offences[i][0]
+                        } else {
+                            assessment.additionalOffences.push(offences[i][0])
+                        }
+                    }
+                }
             }
 
             result.push(assessment)

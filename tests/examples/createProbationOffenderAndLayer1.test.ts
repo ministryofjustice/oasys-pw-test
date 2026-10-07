@@ -9,6 +9,7 @@ test('Example test - create a probation offender and a layer 1 assessment - mini
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Basic (Layer 1)' })
 
     await assessment.populateMinimal({ layer: 'Layer 1', probationCrn: offender1.probationCrn })
+    await signing.signAndLock({page: 'spService'})
 
     const failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true)
     expect(failed).toBeFalsy()

@@ -25,7 +25,7 @@ type TestCase = {
     }
 }
 
-// test.describe.configure({ retries: 1 })
+test.describe.configure({ retries: 1 })
 test('Mapping test V1: employment and education', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender('employment')

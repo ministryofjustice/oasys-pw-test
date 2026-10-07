@@ -2,11 +2,12 @@ import { test, Assessment, San } from 'fixtures'
 import { getMappingTestOffender } from './mappingTestOffender'
 
 type TestCaseVictim = { victimRelationship: VictimRelationship, victimAge: VictimAge, victimSex: VictimSex, victimRace: VictimRace }
-type TestCase = { ref: number, offenceElements: OffenceElements[], victim1: TestCaseVictim, victim2: TestCaseVictim, victim3: TestCaseVictim }
+type TestCase = { ref: number, offenceElements: OffenceElements[], victim1: TestCaseVictim, victim2: TestCaseVictim }
 
-test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san }) => {
+// test.describe.configure({ retries: 1 })
+test('Mapping test V1: victims', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+    const mappingTestOffender = await getMappingTestOffender('victims')
 
     // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
@@ -17,52 +18,45 @@ test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 1, offenceElements: ['none'], victim1: { victimRelationship: 'stranger', victimAge: '0to4', victimSex: 'male', victimRace: 'White - English, Welsh, Scottish, Northern Irish or British' }, victim2: null, victim3: null },
-        { ref: 2, offenceElements: ['hatred'], victim1: { victimRelationship: 'staff', victimAge: '5to11', victimSex: 'female', victimRace: 'White - Irish' }, victim2: null, victim3: null },
-        { ref: 3, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'child', victimAge: '12to15', victimSex: 'intersex', victimRace: 'White - Gypsy or Irish Traveller' }, victim2: null, victim3: null },
-        { ref: 4, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'partner', victimAge: '16to17', victimSex: 'unknown', victimRace: 'White - Any other White background' }, victim2: null, victim3: null },
-        { ref: 5, offenceElements: ['none'], victim1: { victimRelationship: 'exPartner', victimAge: '18to20', victimSex: 'male', victimRace: 'Mixed - White and Black Caribbean' }, victim2: null, victim3: null },
-        { ref: 6, offenceElements: ['hatred'], victim1: { victimRelationship: 'parent', victimAge: '21to25', victimSex: 'female', victimRace: 'Mixed - White and Black African' }, victim2: null, victim3: null },
-        { ref: 7, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'otherFamily', victimAge: '26to49', victimSex: 'intersex', victimRace: 'Mixed - White and Asian' }, victim2: null, victim3: null },
-        { ref: 8, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'other', victimAge: '50to64', victimSex: 'unknown', victimRace: 'Mixed - Any other mixed or multiple ethnic background background' }, victim2: null, victim3: null },
-        { ref: 9, offenceElements: ['hatred'], victim1: { victimRelationship: 'stranger', victimAge: '65plus', victimSex: 'male', victimRace: 'Asian or Asian British - Indian' }, victim2: null, victim3: null },
-        { ref: 10, offenceElements: ['hatred'], victim1: { victimRelationship: 'staff', victimAge: '0to4', victimSex: 'female', victimRace: 'Asian or Asian British - Pakistani' }, victim2: null, victim3: null },
-        { ref: 11, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'child', victimAge: '5to11', victimSex: 'intersex', victimRace: 'Asian or Asian British - Bangladeshi' }, victim2: null, victim3: null },
-        { ref: 12, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'partner', victimAge: '12to15', victimSex: 'unknown', victimRace: 'Asian or Asian British - Chinese' }, victim2: null, victim3: null },
-        { ref: 13, offenceElements: ['none'], victim1: { victimRelationship: 'exPartner', victimAge: '16to17', victimSex: 'male', victimRace: 'Asian or Asian British - Any other Asian background' }, victim2: null, victim3: null },
-        { ref: 14, offenceElements: ['hatred'], victim1: { victimRelationship: 'parent', victimAge: '18to20', victimSex: 'female', victimRace: 'Black or Black British - Caribbean' }, victim2: null, victim3: null },
-        { ref: 15, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'otherFamily', victimAge: '21to25', victimSex: 'intersex', victimRace: 'Black or Black British - African' }, victim2: null, victim3: null },
-        { ref: 16, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'other', victimAge: '26to49', victimSex: 'unknown', victimRace: 'Black or Black British - Any other Black background' }, victim2: { victimRelationship: 'stranger', victimAge: '0to4', victimSex: 'male', victimRace: 'White - English, Welsh, Scottish, Northern Irish or British' }, victim3: null },
-        { ref: 17, offenceElements: ['none'], victim1: { victimRelationship: 'stranger', victimAge: '0to4', victimSex: 'male', victimRace: 'Arab' }, victim2: { victimRelationship: 'staff', victimAge: '5to11', victimSex: 'female', victimRace: 'White - Irish' }, victim3: null },
-        { ref: 18, offenceElements: ['hatred'], victim1: { victimRelationship: 'staff', victimAge: '5to11', victimSex: 'female', victimRace: 'Any other ethnic group' }, victim2: { victimRelationship: 'child', victimAge: '12to15', victimSex: 'intersex', victimRace: 'White - Gypsy or Irish Traveller' }, victim3: { victimRelationship: 'exPartner', victimAge: '18to20', victimSex: 'male', victimRace: 'Mixed - White and Black Caribbean' } },
-        { ref: 19, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'child', victimAge: '12to15', victimSex: 'intersex', victimRace: 'White - Roma' }, victim2: { victimRelationship: 'partner', victimAge: '16to17', victimSex: 'unknown', victimRace: 'White - Any other White background' }, victim3: { victimRelationship: 'stranger', victimAge: '21to25', victimSex: 'female', victimRace: 'Mixed - White and Black African' } },
-        { ref: 20, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'child', victimAge: '16to17', victimSex: 'unknown', victimRace: 'Unknown' }, victim2: { victimRelationship: 'partner', victimAge: '18to20', victimSex: 'female', victimRace: 'White - Roma' }, victim3: { victimRelationship: 'stranger', victimAge: '65plus', victimSex: 'male', victimRace: 'Mixed - White and Black African' } },
+        { ref: 1, offenceElements: ['arson'], victim1: { victimRelationship: 'stranger', victimAge: '0to4', victimSex: 'male', victimRace: 'White - English, Welsh, Scottish, Northern Irish or British' }, victim2: { victimRelationship: 'otherFamily', victimAge: '26to49', victimSex: 'intersex', victimRace: 'Mixed - White and Black African' } },
+        { ref: 2, offenceElements: ['arson', 'domesticAbuse'], victim1: { victimRelationship: 'staff', victimAge: '5to11', victimSex: 'female', victimRace: 'White - Irish' }, victim2: { victimRelationship: 'other', victimAge: '50to64', victimSex: 'unknown', victimRace: 'Mixed - White and Asian' } },
+        { ref: 3, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence'], victim1: { victimRelationship: 'parent', victimAge: '12to15', victimSex: 'intersex', victimRace: 'White - Gypsy or Irish Traveller' }, victim2: { victimRelationship: 'other', victimAge: '65plus', victimSex: 'male', victimRace: 'Mixed - Any other mixed or multiple ethnic background background' } },
+        { ref: 4, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement'], victim1: { victimRelationship: 'partner', victimAge: '16to17', victimSex: 'unknown', victimRace: 'White - Roma' }, victim2: { victimRelationship: 'stranger', victimAge: '5to11', victimSex: 'female', victimRace: 'Asian or Asian British - Indian' } },
+        { ref: 5, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'hatred'], victim1: { victimRelationship: 'exPartner', victimAge: '18to20', victimSex: 'male', victimRace: 'White - Any other White background' }, victim2: { victimRelationship: 'staff', victimAge: '12to15', victimSex: 'intersex', victimRace: 'Asian or Asian British - Pakistani' } },
+        { ref: 6, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'hatred', 'victimTargeted'], victim1: { victimRelationship: 'child', victimAge: '21to25', victimSex: 'female', victimRace: 'Mixed - White and Black Caribbean' }, victim2: { victimRelationship: 'parent', victimAge: '16to17', victimSex: 'unknown', victimRace: 'Asian or Asian British - Bangladeshi' } },
+        { ref: 7, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'hatred', 'victimTargeted', 'violence'], victim1: { victimRelationship: 'otherFamily', victimAge: '26to49', victimSex: 'intersex', victimRace: 'Mixed - White and Black African' }, victim2: { victimRelationship: 'partner', victimAge: '18to20', victimSex: 'male', victimRace: 'Asian or Asian British - Chinese' } },
+        { ref: 8, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'hatred', 'victimTargeted', 'violence', 'weapon'], victim1: { victimRelationship: 'other', victimAge: '50to64', victimSex: 'unknown', victimRace: 'Mixed - White and Asian' }, victim2: { victimRelationship: 'exPartner', victimAge: '21to25', victimSex: 'female', victimRace: 'Asian or Asian British - Any other Asian background' } },
+        { ref: 9, offenceElements: ['domesticAbuse', 'excessiveViolence', 'sexualElement', 'hatred', 'victimTargeted', 'violence', 'weapon'], victim1: { victimRelationship: 'other', victimAge: '65plus', victimSex: 'male', victimRace: 'Mixed - Any other mixed or multiple ethnic background background' }, victim2: { victimRelationship: 'child', victimAge: '26to49', victimSex: 'intersex', victimRace: 'Black or Black British - Caribbean' } },
+        { ref: 10, offenceElements: ['excessiveViolence', 'sexualElement', 'hatred', 'victimTargeted', 'violence', 'weapon'], victim1: { victimRelationship: 'stranger', victimAge: '5to11', victimSex: 'female', victimRace: 'Asian or Asian British - Indian' }, victim2: { victimRelationship: 'otherFamily', victimAge: '50to64', victimSex: 'unknown', victimRace: 'Black or Black British - African' } },
+        { ref: 11, offenceElements: ['sexualElement', 'hatred', 'victimTargeted', 'violence', 'weapon'], victim1: { victimRelationship: 'staff', victimAge: '12to15', victimSex: 'intersex', victimRace: 'Asian or Asian British - Pakistani' }, victim2: { victimRelationship: 'other', victimAge: '65plus', victimSex: 'male', victimRace: 'Black or Black British - Any other Black background' } },
+        { ref: 12, offenceElements: ['hatred', 'victimTargeted', 'violence', 'weapon'], victim1: { victimRelationship: 'parent', victimAge: '16to17', victimSex: 'unknown', victimRace: 'Asian or Asian British - Bangladeshi' }, victim2: { victimRelationship: 'other', victimAge: '0to4', victimSex: 'female', victimRace: 'Arab' } },
+        { ref: 13, offenceElements: ['victimTargeted', 'violence', 'weapon'], victim1: { victimRelationship: 'partner', victimAge: '18to20', victimSex: 'male', victimRace: 'Asian or Asian British - Chinese' }, victim2: { victimRelationship: 'stranger', victimAge: '12to15', victimSex: 'intersex', victimRace: 'Any other ethnic group' } },
+        { ref: 14, offenceElements: ['violence', 'weapon'], victim1: { victimRelationship: 'exPartner', victimAge: '21to25', victimSex: 'female', victimRace: 'Asian or Asian British - Any other Asian background' }, victim2: { victimRelationship: 'staff', victimAge: '16to17', victimSex: 'unknown', victimRace: 'Not stated' } },
+        { ref: 15, offenceElements: ['weapon'], victim1: { victimRelationship: 'child', victimAge: '26to49', victimSex: 'intersex', victimRace: 'Black or Black British - Caribbean' }, victim2: { victimRelationship: 'parent', victimAge: '18to20', victimSex: 'male', victimRace: 'Unknown' } },
+        { ref: 16, offenceElements: ['arson'], victim1: { victimRelationship: 'otherFamily', victimAge: '50to64', victimSex: 'unknown', victimRace: 'Black or Black British - African' }, victim2: { victimRelationship: 'partner', victimAge: '21to25', victimSex: 'female', victimRace: 'White - English, Welsh, Scottish, Northern Irish or British' } },
+        { ref: 17, offenceElements: ['domesticAbuse'], victim1: { victimRelationship: 'other', victimAge: '65plus', victimSex: 'male', victimRace: 'Black or Black British - Any other Black background' }, victim2: { victimRelationship: 'exPartner', victimAge: '26to49', victimSex: 'intersex', victimRace: 'White - Irish' } },
+        { ref: 18, offenceElements: ['excessiveViolence'], victim1: { victimRelationship: 'other', victimAge: '0to4', victimSex: 'female', victimRace: 'Arab' }, victim2: { victimRelationship: 'stranger', victimAge: '0to4', victimSex: 'male', victimRace: 'White - English, Welsh, Scottish, Northern Irish or British' } },
+        { ref: 19, offenceElements: ['sexualElement'], victim1: { victimRelationship: 'stranger', victimAge: '12to15', victimSex: 'intersex', victimRace: 'Any other ethnic group' }, victim2: { victimRelationship: 'staff', victimAge: '5to11', victimSex: 'female', victimRace: 'White - Irish' } },
+        { ref: 20, offenceElements: ['hatred'], victim1: { victimRelationship: 'staff', victimAge: '16to17', victimSex: 'unknown', victimRace: 'Not stated' }, victim2: { victimRelationship: 'parent', victimAge: '12to15', victimSex: 'intersex', victimRace: 'White - Gypsy or Irish Traveller' } },
+        { ref: 21, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'parent', victimAge: '18to20', victimSex: 'male', victimRace: 'Unknown' }, victim2: { victimRelationship: 'partner', victimAge: '16to17', victimSex: 'unknown', victimRace: 'White - Roma' } },
+        { ref: 22, offenceElements: ['violence'], victim1: { victimRelationship: 'partner', victimAge: '21to25', victimSex: 'female', victimRace: 'White - English, Welsh, Scottish, Northern Irish or British' }, victim2: { victimRelationship: 'exPartner', victimAge: '18to20', victimSex: 'male', victimRace: 'White - Any other White background' } },
+        { ref: 23, offenceElements: ['weapon'], victim1: { victimRelationship: 'exPartner', victimAge: '26to49', victimSex: 'intersex', victimRace: 'White - Irish' }, victim2: { victimRelationship: 'child', victimAge: '21to25', victimSex: 'female', victimRace: 'Mixed - White and Black Caribbean' } },
+        { ref: 24, offenceElements: ['none'], victim1: { victimRelationship: 'child', victimAge: '50to64', victimSex: 'unknown', victimRace: 'White - Gypsy or Irish Traveller' }, victim2: { victimRelationship: 'stranger', victimAge: '16to17', victimSex: 'male', victimRace: 'Any other ethnic group' } },
     ]
 
 
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Offence analysis', true)
-        if (test.ref == 1) {
-            await san.offenceAnalysis.page1.offenceDescription.setValue('Description')
-            await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
-            if (test.offenceElements.includes('victimTargeted')) {
-                await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Victim targeted details')
-            }
-            await san.offenceAnalysis.page1.reason.setValue('Reason')
-            await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
-            await san.offenceAnalysis.page1.victimType.setValue(['people'])
-            await san.offenceAnalysis.saveAndContinue()
-        } else {
-            await san.offenceAnalysis.previous()
-            await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
-            if (test.offenceElements.includes('victimTargeted')) {
-                await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Victim targeted details')
-            }
-            await san.offenceAnalysis.saveAndContinue()
-            await san.offenceAnalysis.change()
+
+        await san.offenceAnalysis.backToStart()
+        await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
+        if (test.offenceElements.includes('victimTargeted')) {
+            await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Victim targeted details')
         }
-        // Set values on SAN, return to OASys and check the results
+        await san.offenceAnalysis.saveAndContinue()
+        await san.offenceAnalysis.change()
+
         await scenario(test, san)
         await san.returnToOASys()
         await oasys.clickButton('Previous', true)
@@ -85,22 +79,8 @@ test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san
 async function scenario(test: TestCase, san: San) {
 
     await setVictimDetails(test.victim1, san)
-    if (test.victim2) {
-        if (test.ref == 16) {
-            await san.offenceAnalysis.victims.addAnotherVictim.click()
-        } else {
-            await san.offenceAnalysis.change(2)
-        }
-        await setVictimDetails(test.victim2, san)
-        if (test.victim3) {
-            if (test.ref == 18) {
-                await san.offenceAnalysis.victims.addAnotherVictim.click()
-            } else {
-                await san.offenceAnalysis.change(3)
-            }
-            await setVictimDetails(test.victim3, san)
-        }
-    }
+    await san.offenceAnalysis.change(2)
+    await setVictimDetails(test.victim2, san)
 }
 
 async function setVictimDetails(victim: TestCaseVictim, san: San) {
@@ -124,9 +104,6 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
     if (test.victim2) {
         victimAnswers.push(mappingVictim(test.victim2))
     }
-    if (test.victim3) {
-        victimAnswers.push(mappingVictim(test.victim3))
-    }
 
     const section2Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '2', section2Answers, true)
     const victimsFailed = await assessment.queries.checkVictims(assessmentPk, victimAnswers, true)
@@ -143,7 +120,7 @@ function mapping2_3(test: TestCase): string {
     if (test.offenceElements.includes('hatred')) {
         result = `${result}HATE,`
     }
-    if (test.victim1.victimRelationship == 'stranger' || test.victim2?.victimRelationship == 'stranger' || test.victim3?.victimRelationship == 'stranger') {
+    if (test.victim1.victimRelationship == 'stranger' || test.victim2?.victimRelationship == 'stranger') {
         result = `${result}STRANGERS,`
     }
     return result == '' ? null : result

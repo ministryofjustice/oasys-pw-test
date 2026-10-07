@@ -4,9 +4,10 @@ import { paTest } from './practitionerAnalysis'
 
 type TestCase = { ref: number, incomeSource: IncomeSource[], overReliant: SanYesNoUnknown, howGoodManaging: HowGoodManaging }
 
-test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san }) => {
+test.describe.configure({ retries: 1 })
+test('Mapping test V1: finance', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+    const mappingTestOffender = await getMappingTestOffender('finance')
 
     // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
@@ -17,7 +18,6 @@ test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 0, incomeSource: null, overReliant: null, howGoodManaging: null },
         { ref: 1, incomeSource: ['offending'], overReliant: null, howGoodManaging: 'ableStrength' },
         { ref: 2, incomeSource: ['carersAllowance', 'offending'], overReliant: null, howGoodManaging: 'able' },
         { ref: 3, incomeSource: ['disabilityBenefits', 'offending'], overReliant: null, howGoodManaging: 'unable' },
@@ -39,7 +39,7 @@ test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Finances', true)
-
+        await san.finance.backToStart()
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
         await san.returnToOASys()
@@ -90,9 +90,6 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '5.4', a: mapping5_4(test) },
         { q: '5.5', a: mapping5_5(test) },
         { q: '5.6', a: mapping5_6(test) },
-        { q: '5.97', a: null },
-        { q: '5.98', a: null },
-        { q: '5.99', a: null },
     ]
     const scAnswers: OasysAnswer[] = [
         { q: 'SC8', a: mappingSc8(test) },

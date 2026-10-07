@@ -4,7 +4,7 @@ test('Create probation offender and CSRP', async ({ api, user, offender, ogrs })
 
     await user.prob.probHeadPdu.login()
 
-    const offender1 = await offender.createProbFromStandardOffender()
+    const offender1 = await offender.createProbFromStandardOffender({ age: 80 })
     await offender.standaloneCsrp.populateMinimal()
     await offender.standaloneCsrp.populateMinimalDynamic()
     await offender.standaloneCsrp.o8_1.setValue('Yes')

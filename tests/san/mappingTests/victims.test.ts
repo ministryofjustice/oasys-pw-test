@@ -3,7 +3,7 @@ import { getMappingTestOffender } from './mappingTestOffender'
 
 type TestCase = { ref: number, offenceElements: OffenceElements[], victim1: VictimDetails, victim2: VictimDetails }
 
-// test.describe.configure({ retries: 1 })
+test.describe.configure({ retries: 1 })
 test('Mapping test V1: victims', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender('victims')

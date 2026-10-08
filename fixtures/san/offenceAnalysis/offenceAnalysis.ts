@@ -88,4 +88,16 @@ export class OffenceAnalysis extends BaseSanSection {
         await this.page3.riskSeriousHarmYesDetails.setValue('No risk')
         await this.markAsComplete()
     }
+
+    async setVictimDetails(victim: VictimDetails) {
+
+        await this.victims.victimRelationship.setValue(victim.relationship)
+        if (victim.relationship == 'other') {
+            await this.victims.victimRelationshipOtherDetails.setValue(victim.relationshipOther ?? 'Other details')
+        }
+        await this.victims.victimAge.setValue(victim.age)
+        await this.victims.victimSex.setValue(victim.sex)
+        await this.victims.victimRace.setValue(victim.race)
+        await this.saveAndContinue()
+    }
 }

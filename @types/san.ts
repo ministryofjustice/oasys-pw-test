@@ -113,5 +113,6 @@ declare type VictimRace =
     'Black or Black British - Any other Black background' |
     'Arab' |
     'Any other ethnic group' |
-    'Not stated' |
     'Unknown'
+
+declare type VictimDetails = { relationship: VictimRelationship, relationshipOther?: string, age: VictimAge, sex: VictimSex, race: VictimRace }

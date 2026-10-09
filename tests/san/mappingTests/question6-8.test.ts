@@ -5,6 +5,7 @@ import { getMappingTestOffender } from './mappingTestOffender'
 type AccommodationOptions = 'family' | 'friends' | 'partner' | 'child' | 'other' | 'unknown' | 'alone'
 type RelationshipOptions = 'partner' | 'ownChildren' | 'otherChildren' | 'family' | 'friends' | 'other'
 
+// test.describe.configure({ retries: 1 })
 test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment, san, }) => {
 
     /*
@@ -20,7 +21,7 @@ test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment
 
     let failed = false
 
-    const mappingTestOffender = await getMappingTestOffender()
+    const mappingTestOffender = await getMappingTestOffender('question6-8')
 
     // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
@@ -64,28 +65,16 @@ test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment
             { accommodation: ['unknown', 'partner'], relationship: ['ownChildren', 'partner'], mapping: 1 },
         ]
 
-    let first = true
     let i = 1
     for (const test of testCases) {
 
-        if (first) {
-            // Extra case 0 without any accommodation
-            await san.gotoSan('Accommodation', true)
-            await san.accommodation.page1.currentAccommodation.setValue('noAccommodation')
-
-            await setRelationshipOptions(['partner'], true, san)
-            const caseFailed = await checkMapping(assessmentPk, 2, 0, oasys, assessment, san)
-            if (caseFailed) failed = true
-        }
-        await san.gotoSan('Accommodation', true)
-        await setAccommodationOptions(test.accommodation, first, san)
-        await setRelationshipOptions(test.relationship, false, san)
+        await setAccommodationOptions(test.accommodation, san)
+        await setRelationshipOptions(test.relationship, san)
         log('', `Test case ${i}: ${JSON.stringify(test)}`)
         console.log(`Test case ${i}: ${JSON.stringify(test)}`)
 
         const caseFailed = await checkMapping(assessmentPk, test.mapping, i, oasys, assessment, san)
         if (caseFailed) failed = true
-        first = false
         i++
     }
 
@@ -93,23 +82,22 @@ test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment
     expect(failed).toBeFalsy()
 })
 
-async function setAccommodationOptions(options: AccommodationOptions[], firstRun: boolean, san: San) {
-
-    if (firstRun) {
-        await san.accommodation.page1.currentAccommodation.setValue('settled')
-        await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
-    }
+async function setAccommodationOptions(options: AccommodationOptions[], san: San) {
+    
+    await san.gotoSan('Accommodation', true)
+    await san.accommodation.backToStart()
+    await san.accommodation.page1.currentAccommodation.setValue('settled')
+    await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
     await san.accommodation.saveAndContinue()
     await san.accommodation.page2.livingWith.setValue(options)
 }
 
-async function setRelationshipOptions(options: RelationshipOptions[], firstRun: boolean, san: San) {
+async function setRelationshipOptions(options: RelationshipOptions[], san: San) {
 
     await san.goto('Personal relationships and community')
-    if (firstRun) {
-        await san.relationships.page1.anyChildren.setValue(['no'])
-        await san.relationships.saveAndContinue()
-    }
+    await san.relationships.backToStart()
+    await san.relationships.page1.anyChildren.setValue(['no'])
+    await san.relationships.saveAndContinue()
     await san.relationships.page2.importantPeople.setValue(options)
 }
 

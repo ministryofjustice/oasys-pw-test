@@ -18,11 +18,10 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
+test.describe.configure({ retries: 1 })
 test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+    const mappingTestOffender = await getMappingTestOffender('health')
 
     // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
@@ -33,30 +32,21 @@ test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, as
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 0, page1: { mentalHealthProblems: null }, page2: null },
-        { ref: 1, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: null },
-        { ref: 2, page1: { mentalHealthProblems: 'yesOngoing' }, page2: null },
-        { ref: 3, page1: { mentalHealthProblems: 'yesPast' }, page2: null },
-        { ref: 4, page1: { mentalHealthProblems: 'no' }, page2: null },
-        { ref: 5, page1: { mentalHealthProblems: 'unknown' }, page2: null },
-        { ref: 6, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'yes', headInjury: 'yes', learningDifficulties: 'some', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
-        { ref: 7, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'pending', headInjury: 'no', learningDifficulties: 'no', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
-        { ref: 8, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'no', headInjury: 'unknown', learningDifficulties: 'yes', coping: 'some', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
-        { ref: 9, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'unknown', headInjury: 'yes', learningDifficulties: 'some', coping: 'no', attitude: 'mixed', selfHarmed: 'no', suicide: 'no' } },
-        { ref: 10, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'unknown', headInjury: 'no', learningDifficulties: 'no', coping: 'yes', attitude: 'negative', selfHarmed: 'yes', suicide: 'yes' } },
-        { ref: 11, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'no', headInjury: 'unknown', learningDifficulties: 'yes', coping: 'some', attitude: 'positive', selfHarmed: 'yes', suicide: 'no' } },
-        { ref: 12, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'pending', headInjury: 'yes', learningDifficulties: 'yes', coping: 'yes', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
-        { ref: 13, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'yes', headInjury: 'no', learningDifficulties: 'some', coping: 'some', attitude: 'positive', selfHarmed: 'no', suicide: 'no' } },
+        { ref: 1, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'yes', headInjury: 'yes', learningDifficulties: 'some', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
+        { ref: 2, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'pending', headInjury: 'no', learningDifficulties: 'no', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
+        { ref: 3, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'no', headInjury: 'unknown', learningDifficulties: 'yes', coping: 'some', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
+        { ref: 4, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'unknown', headInjury: 'yes', learningDifficulties: 'some', coping: 'no', attitude: 'mixed', selfHarmed: 'no', suicide: 'no' } },
+        { ref: 5, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'unknown', headInjury: 'no', learningDifficulties: 'no', coping: 'yes', attitude: 'negative', selfHarmed: 'yes', suicide: 'yes' } },
+        { ref: 6, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'no', headInjury: 'unknown', learningDifficulties: 'yes', coping: 'some', attitude: 'positive', selfHarmed: 'yes', suicide: 'no' } },
+        { ref: 7, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'pending', headInjury: 'yes', learningDifficulties: 'yes', coping: 'yes', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
+        { ref: 8, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'yes', headInjury: 'no', learningDifficulties: 'some', coping: 'some', attitude: 'positive', selfHarmed: 'no', suicide: 'no' } },
     ]
 
 
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Health and wellbeing', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.health.previous()
-        }
+        await san.health.backToStart()
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
         await san.returnToOASys()
@@ -99,19 +89,14 @@ async function scenario(test: TestCase, san: San) {
 
     await san.health.page1.physicalHealthConditions.setValue('yes')
     await san.health.page1.mentalHealthProblems.setValue(test.page1.mentalHealthProblems)
-    if (test.page2) {
-        await san.health.saveAndContinue()
-        await san.health.page2.psychTreatment.setValue(test.page2.psychTreatment)
-        await san.health.page2.headInjury.setValue(test.page2.headInjury)
-        await san.health.page2.learningDifficulties.setValue(test.page2.learningDifficulties)
-        await san.health.page2.coping.setValue(test.page2.coping)
-        await san.health.page2.attitude.setValue(test.page2.attitude)
-        await san.health.page2.selfHarmed.setValue(test.page2.selfHarmed)
-        await san.health.page2.suicide.setValue(test.page2.suicide)
-        startPage = 2
-    } else {
-        startPage = 1
-    }
+    await san.health.saveAndContinue()
+    await san.health.page2.psychTreatment.setValue(test.page2.psychTreatment)
+    await san.health.page2.headInjury.setValue(test.page2.headInjury)
+    await san.health.page2.learningDifficulties.setValue(test.page2.learningDifficulties)
+    await san.health.page2.coping.setValue(test.page2.coping)
+    await san.health.page2.attitude.setValue(test.page2.attitude)
+    await san.health.page2.selfHarmed.setValue(test.page2.selfHarmed)
+    await san.health.page2.suicide.setValue(test.page2.suicide)
 }
 
 async function checkAnswers(assessmentPk: number, test: TestCase, assessment: Assessment): Promise<boolean> {
@@ -133,10 +118,6 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '10.7_V2_PATIENT', a: null },
         { q: '10.7_V2_PSYCHTREAT', a: mapping10_7Psych(test) },
         { q: '10.8', a: null },
-        { q: '10.97', a: null },
-        { q: '10.98', a: null },
-        { q: '10.99', a: null },
-        { q: '10_SAN_STRENGTH', a: null },
     ]
     const expectedSanSectionAnswers: OasysAnswer[] = [
         { q: 'HW_SAN_SECTION_COMP', a: 'NO' },

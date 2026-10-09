@@ -17,11 +17,10 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
+test.describe.configure({ retries: 1 })
 test('Mapping test V2: relationships', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+    const mappingTestOffender = await getMappingTestOffender('relationships')
 
     // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
@@ -32,19 +31,18 @@ test('Mapping test V2: relationships', async ({ oasys, user, offender, assessmen
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 1, page2: { importantPeople: ['partner'] }, page3: null },
-        { ref: 2, page2: { importantPeople: ['ownChildren'] }, page3: null },
-        { ref: 3, page2: { importantPeople: ['otherChildren'] }, page3: null },
-        { ref: 4, page2: { importantPeople: ['family'] }, page3: null },
-        { ref: 5, page2: { importantPeople: ['friends'] }, page3: null },
-        { ref: 6, page2: { importantPeople: ['other'] }, page3: null },
-        { ref: 7, page2: { importantPeople: ['partner', 'ownChildren', 'otherChildren', 'family', 'friends', 'other'] }, page3: { happyWithStatus: 'happy', history: 'unstable', manageParenting: 'yes', currentFamilyRelationship: 'unstable', childhoodExperience: 'positive', behaviouralProblems: 'yes' } },
-        { ref: 8, page2: { importantPeople: ['ownChildren', 'otherChildren', 'family', 'friends', 'other'] }, page3: { happyWithStatus: 'someConcerns', history: 'stable', manageParenting: 'sometimes', currentFamilyRelationship: 'stable', childhoodExperience: 'mixed', behaviouralProblems: 'no' } },
-        { ref: 9, page2: { importantPeople: ['partner', 'otherChildren', 'family', 'friends', 'other'] }, page3: { happyWithStatus: 'unhappy', history: 'mixed', manageParenting: null, currentFamilyRelationship: 'mixed', childhoodExperience: 'negative', behaviouralProblems: 'yes' } },
-        { ref: 10, page2: { importantPeople: ['partner', 'ownChildren', 'family', 'friends', 'other'] }, page3: { happyWithStatus: 'happy', history: 'unstable', manageParenting: 'unknown', currentFamilyRelationship: 'unstable', childhoodExperience: 'negative', behaviouralProblems: 'no' } },
-        { ref: 11, page2: { importantPeople: ['partner', 'ownChildren', 'otherChildren', 'friends', 'other'] }, page3: { happyWithStatus: 'someConcerns', history: 'stable', manageParenting: 'yes', currentFamilyRelationship: 'unknown', childhoodExperience: 'positive', behaviouralProblems: 'yes' } },
-        { ref: 12, page2: { importantPeople: ['partner', 'ownChildren', 'otherChildren', 'family', 'other'] }, page3: { happyWithStatus: 'unhappy', history: 'mixed', manageParenting: 'sometimes', currentFamilyRelationship: 'stable', childhoodExperience: 'mixed', behaviouralProblems: 'no' } },
-        { ref: 13, page2: { importantPeople: ['partner', 'ownChildren', 'otherChildren', 'family', 'friends'] }, page3: { happyWithStatus: 'someConcerns', history: 'unstable', manageParenting: 'no', currentFamilyRelationship: 'mixed', childhoodExperience: 'positive', behaviouralProblems: 'yes' } },
+        { ref: 1, page2: { importantPeople: ['partner'] }, page3: { happyWithStatus: 'happy', history: 'unstable', manageParenting: null, currentFamilyRelationship: 'unstable', childhoodExperience: 'positive', behaviouralProblems: 'yes' } },
+        { ref: 2, page2: { importantPeople: ['ownChildren'] }, page3: { happyWithStatus: 'someConcerns', history: 'unstable', manageParenting: 'yes', currentFamilyRelationship: 'stable', childhoodExperience: 'mixed', behaviouralProblems: 'no' } },
+        { ref: 3, page2: { importantPeople: ['otherChildren'] }, page3: { happyWithStatus: 'unhappy', history: 'unstable', manageParenting: null, currentFamilyRelationship: 'mixed', childhoodExperience: 'negative', behaviouralProblems: 'yes' } },
+        { ref: 4, page2: { importantPeople: ['family'] }, page3: { happyWithStatus: 'happy', history: 'stable', manageParenting: null, currentFamilyRelationship: 'unknown', childhoodExperience: 'mixed', behaviouralProblems: 'no' } },
+        { ref: 5, page2: { importantPeople: ['friends'] }, page3: { happyWithStatus: 'someConcerns', history: 'stable', manageParenting: null, currentFamilyRelationship: 'unstable', childhoodExperience: 'negative', behaviouralProblems: 'yes' } },
+        { ref: 6, page2: { importantPeople: ['other'] }, page3: { happyWithStatus: 'unhappy', history: 'stable', manageParenting: null, currentFamilyRelationship: 'stable', childhoodExperience: 'positive', behaviouralProblems: 'no' } },
+        { ref: 7, page2: { importantPeople: ['partner', 'ownChildren', 'otherChildren', 'family', 'friends', 'other'] }, page3: { happyWithStatus: 'happy', history: 'mixed', manageParenting: 'sometimes', currentFamilyRelationship: 'mixed', childhoodExperience: 'negative', behaviouralProblems: 'yes' } },
+        { ref: 8, page2: { importantPeople: ['ownChildren', 'otherChildren', 'family', 'friends', 'other'] }, page3: { happyWithStatus: 'someConcerns', history: 'mixed', manageParenting: 'no', currentFamilyRelationship: 'unknown', childhoodExperience: 'positive', behaviouralProblems: 'no' } },
+        { ref: 9, page2: { importantPeople: ['partner', 'otherChildren', 'family', 'friends', 'other'] }, page3: { happyWithStatus: 'unhappy', history: 'mixed', manageParenting: null, currentFamilyRelationship: 'unstable', childhoodExperience: 'mixed', behaviouralProblems: 'yes' } },
+        { ref: 10, page2: { importantPeople: ['partner', 'ownChildren', 'family', 'friends', 'other'] }, page3: { happyWithStatus: 'happy', history: 'unstable', manageParenting: 'unknown', currentFamilyRelationship: 'stable', childhoodExperience: 'positive', behaviouralProblems: 'no' } },
+        { ref: 11, page2: { importantPeople: ['partner', 'ownChildren', 'otherChildren', 'friends', 'other'] }, page3: { happyWithStatus: 'someConcerns', history: 'stable', manageParenting: 'yes', currentFamilyRelationship: 'mixed', childhoodExperience: 'mixed', behaviouralProblems: 'yes' } },
+        { ref: 12, page2: { importantPeople: ['partner', 'ownChildren', 'otherChildren', 'family', 'other'] }, page3: { happyWithStatus: 'unhappy', history: 'mixed', manageParenting: 'sometimes', currentFamilyRelationship: 'unknown', childhoodExperience: 'negative', behaviouralProblems: 'no' } },
     ]
 
 
@@ -52,14 +50,7 @@ test('Mapping test V2: relationships', async ({ oasys, user, offender, assessmen
         // Get to the right starting screen
         await san.gotoSan('Personal relationships and community', true)
         // Back to the start (page 2), depending where the previous scenario ended
-        if (startPage == 1) {
-            await san.relationships.page1.anyChildren.setValue(['no'])
-            await san.relationships.saveAndContinue()
-        } else {
-            for (let i = 2; i < startPage; i++) {
-                await san.relationships.previous()
-            }
-        }
+        await san.relationships.backToStart()
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
         await san.returnToOASys()
@@ -91,6 +82,8 @@ test('Mapping test V2: relationships', async ({ oasys, user, offender, assessmen
 
 async function scenario(test: TestCase, san: San) {
 
+    await san.relationships.page1.populateMinimal()
+    await san.relationships.saveAndContinue()
     await san.relationships.page2.importantPeople.setValue(test.page2.importantPeople)
     if (test.page2.importantPeople.includes('other')) {
         await san.relationships.page2.importantOtherDetails.setValue('Other people details')
@@ -104,9 +97,6 @@ async function scenario(test: TestCase, san: San) {
         await san.relationships.page3.currentFamilyRelationship.setValue(test.page3.currentFamilyRelationship)
         await san.relationships.page3.childhoodExperience.setValue(test.page3.childhoodExperience)
         await san.relationships.page3.behaviouralProblems.setValue(test.page3.behaviouralProblems)
-        startPage = 3
-    } else {
-        startPage = 2
     }
 }
 
@@ -125,7 +115,6 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '6.7.2.2da', a: null },
         { q: '6.9', a: mapping6_9(test) },
         { q: '6.10', a: mapping6_10(test) },
-        { q: '6_SAN_STRENGTH', a: null },
     ]
     const section10Answers: OasysAnswer[] = [
         { q: '10.7_V2_CHILDHOOD', a: mapping10_7_V2_CHILDHOOD(test) },

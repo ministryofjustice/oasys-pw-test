@@ -9,8 +9,8 @@ type TestCase = {
     motivated: Motivation
 }
 
-
-test('Mapping test for drugs practitioner analysis', async ({ oasys, user, offender, assessment, san }) => {
+// test.describe.configure({ retries: 1 })
+test('Mapping test V1: drugs practitioner analysis', async ({ oasys, user, offender, assessment, san }) => {
 
     await paTest(oasys, user, offender, assessment, san)
 })
@@ -19,7 +19,7 @@ async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: 
 
     // Get offender details (run aaSanMappingTestOffender if required to create the offender)
 
-    const mappingTestOffender = await getMappingTestOffender()
+    const mappingTestOffender = await getMappingTestOffender('drugsPA')
 
     // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
@@ -30,7 +30,7 @@ async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: 
     let failed = false
     const testCases: TestCase[] =
         [
-            { ref: 1, strengths: true, riskOfHarm: false, riskOfReoffending: false, strengthsText: 'normal', riskOfHarmText: 'normal', riskOfReoffendingText: 'normal', motivated: null },
+            { ref: 1, strengths: true, riskOfHarm: false, riskOfReoffending: false, strengthsText: 'normal', riskOfHarmText: 'normal', riskOfReoffendingText: 'normal', motivated: 'noMotivation' },
             { ref: 2, strengths: false, riskOfHarm: true, riskOfReoffending: false, strengthsText: 'normal', riskOfHarmText: 'normal', riskOfReoffendingText: 'normal', motivated: 'motivated' },
             { ref: 3, strengths: false, riskOfHarm: false, riskOfReoffending: true, strengthsText: 'normal', riskOfHarmText: 'normal', riskOfReoffendingText: 'normal', motivated: 'someMotivation' },
             { ref: 4, strengths: false, riskOfHarm: false, riskOfReoffending: false, strengthsText: 'normal', riskOfHarmText: 'normal', riskOfReoffendingText: 'normal', motivated: 'noMotivation' },
@@ -45,8 +45,14 @@ async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: 
 
         // Get to the right starting screen
 
-        if (test.ref == 1) {
-            await san.gotoSan('Drug use', true)
+        await san.gotoSan('Drug use', true)
+        if (await san.drugs.completed()) {
+            await san.drugs.openPractitionerAnalysis()
+            if (await san.drugs.completed()) {
+                await san.drugs.practitionerAnalysis.change.click()
+            }
+        } else {
+            await san.drugs.backToStart()
             await san.drugs.page1.everUsed.setValue('yes')  // Need to set this otherwise the motivation question doesn't get returned
             await san.drugs.saveAndContinue()
             await san.drugs.page2.drugType.setValue(['cannabis'])
@@ -60,12 +66,6 @@ async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: 
             await san.drugs.page4.wantChanges.setValue('madeChanges')
             await san.drugs.saveAndContinue()
             await san.drugs.openPractitionerAnalysis()
-        } else {
-            await san.gotoSan('Drug use', true)
-            await san.drugs.openPractitionerAnalysis()
-            if (test.ref > 2) {
-                await san.drugs.practitionerAnalysis.change.click()
-            }
         }
 
         // Set values on SAN, return to OASys and check the results

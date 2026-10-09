@@ -5,6 +5,7 @@ import { getMappingTestOffender } from './mappingTestOffender'
 type HighestQualOptions = 'entryLevel' | 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'level6' | 'level7' | 'level8' | 'none' | 'unknown'
 type ProfessionalQualOptions = 'yes' | 'no' | 'unknown'
 
+test.describe.configure({ retries: 1 })
 test('Mapping test for question 4.9', async ({ oasys, user, offender, assessment, san, }) => {
 
     /*
@@ -24,7 +25,7 @@ test('Mapping test for question 4.9', async ({ oasys, user, offender, assessment
 
     let failed = false
 
-    const mappingTestOffender = await getMappingTestOffender()
+    const mappingTestOffender = await getMappingTestOffender('question4-9')
 
     // Open the latest assessment, should be WIP
     await user.prob.probSanUnappr.login()
@@ -84,15 +85,12 @@ test('Mapping test for question 4.9', async ({ oasys, user, offender, assessment
             { i: 48, highestQual: 'unknown', professionalQual: 'unknown', mapping: null },
         ]
 
-    let first = true
     for (const test of testCases) {
 
         await san.gotoSan('Employment and education', true)
-        if (first) {
-            await san.employment.page1.employmentStatus.setValue('retired')
-            await san.employment.saveAndContinue()
-            first = false
-        }
+        await san.employment.backToStart()
+        await san.employment.page1.employmentStatus.setValue('retired')
+        await san.employment.saveAndContinue()
         await setOptions(test.highestQual, test.professionalQual, san)
         log('', JSON.stringify(test))
         console.log(JSON.stringify(test))

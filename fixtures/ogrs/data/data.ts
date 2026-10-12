@@ -50,7 +50,7 @@ export class Data {
             if (offences.length > 0) {
                 for (let i = 0; i < offences.length; i++) {
                     if (offences[i].length == 2) {
-                        if (offences[i][1] == 'CURRENT') {
+                        if (offences[i][1] == 'N') {
                             assessment.offence = offences[i][0]
                         } else {
                             assessment.additionalOffences.push(offences[i][0])

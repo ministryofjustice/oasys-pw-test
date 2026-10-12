@@ -29,14 +29,11 @@ export class V4EndpointResponse extends common.EndpointResponse {
     assessments: V4AssessmentCommon[]
 
     // # properties are hidden so are ignored when comparing the API response
-    #lastCompleteIndex = -1
-    #lastWIPIndex = -1
-    #lastSignedIndex = -1
-    #lastPartCompSignedIndex = -1
-    #lastPartCompUnsignedIndex = -1
-    #latestSignLockDate: string = null
-    #latestAssessmentIndex = -1
-    #latestCompleteDate: string = null
+    #lastWipDate: string = null
+    #lastPartCompSignedDate: string = null
+    #lastPartCompUnsignedDate: string = null
+    #lastSignedDate: string = null
+    #lastCompleteDate: string = null
 
     constructor(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {
 
@@ -67,29 +64,51 @@ export class V4EndpointResponse extends common.EndpointResponse {
     processTimeline(dbAssessments: dbClasses.DbAssessmentOrRsr[], allAssessments: dbClasses.DbAssessmentOrRsr[] = []) {
 
         for (let i = 0; i < dbAssessments.length; i++) {
+
+            const initiationDate = dbAssessments[i].initiationDate
+            const signedDate = dbAssessments[i].signedDate
+            const completedDate = dbAssessments[i].completedDate
+
             this.timeline.push(new V4TimelineAssessment(dbAssessments[i]))
 
-            if (dbAssessments[i].status == 'COMPLETE') {
-                this.#lastCompleteIndex = i
-                this.#latestCompleteDate = dbAssessments[i].completedDate
+            switch (dbAssessments[i].status) {
+                case 'COMPLETE':
+                    if (!this.#lastCompleteDate || completedDate > this.#lastCompleteDate) {
+                        this.#lastCompleteDate = completedDate
+                    }
+                    break
+                case 'OPEN':
+                case 'AWAITING_PSR':
+                case 'AWAITING_SBC':
+                    if (!this.#lastWipDate || initiationDate > this.#lastWipDate) {
+                        this.#lastWipDate = initiationDate
+                    }
+                    break
+                case 'SIGNED':
+                case 'AWAITING_PSR':
+                case 'AWAITING_SBC':
+                    if (!this.#lastSignedDate || signedDate > this.#lastSignedDate) {
+                        this.#lastSignedDate = signedDate
+                    }
+                    break
+                case 'LOCKED_INCOMPLETE':
+                    if (signedDate && (!this.#lastPartCompSignedDate || initiationDate > this.#lastPartCompSignedDate)) {
+                        this.#lastPartCompSignedDate = initiationDate
+                    }
+                    if (!signedDate && (!this.#lastPartCompUnsignedDate || initiationDate > this.#lastPartCompUnsignedDate)) {
+                        this.#lastPartCompUnsignedDate = initiationDate
+                    }
+                    break
             }
-            if (['OPEN', 'AWAITING_PSR', 'AWAITING_SBC'].includes(dbAssessments[i].status)) this.#lastWIPIndex = i
-            if (['SIGNED', 'AWAITING_PSR', 'AWAITING_SBC'].includes(dbAssessments[i].status)) {
-                this.#lastSignedIndex = i
-                this.#latestSignLockDate = dbAssessments[i].signedDate
-            }
-            if (dbAssessments[i].status == 'LOCKED_INCOMPLETE' && dbAssessments[i].signedDate != null) this.#lastPartCompSignedIndex = i
-            if (dbAssessments[i].status == 'LOCKED_INCOMPLETE' && dbAssessments[i].signedDate == null) this.#lastPartCompUnsignedIndex = i
         }
-        this.#latestAssessmentIndex = this.timeline.length - 1
 
-        // If lastCompleteDate is null, check for an earlier complete assessment that was excluded from the 6-month list.
-        if (this.#latestCompleteDate == null) {
-            const completedAssessments = allAssessments.filter((ass) => ass.status == 'COMPLETE' && ass.assessmentType == 'LAYER3')
-            if (completedAssessments.length > 0) {
-                this.#latestCompleteDate = completedAssessments[completedAssessments.length - 1].completedDate
-            }
-        }
+        // // If lastCompleteDate is null, check for an earlier complete assessment that was excluded from the 6-month list.
+        // if (!this.#lastCompleteDate == null) {
+        //     const completedAssessments = allAssessments.filter((ass) => ass.status == 'COMPLETE' && ass.assessmentType == 'LAYER3')
+        //     if (completedAssessments.length > 0) {
+        //         this.#lastCompleteDate = completedAssessments[completedAssessments.length - 1].completedDate
+        //     }
+        // }
 
         return
     }
@@ -99,26 +118,21 @@ export class V4EndpointResponse extends common.EndpointResponse {
         const assessmentIndex = this.timeline.map((ass) => ass.assessmentPk).indexOf(dbAssessment.assessmentPk)
         if (assessmentIndex >= 0) {
             // can't pass private properties as parameters so have to copy them first
-            const lastWIPIndex = this.#lastWIPIndex
-            const lastSignedIndex = this.#lastSignedIndex
-            const lastPartCompSignedIndex = this.#lastPartCompSignedIndex
-            const lastPartCompUnsignedIndex = this.#lastPartCompUnsignedIndex
-            const latestSignLockDate = this.#latestSignLockDate
-            const latestCompleteDate = this.#latestCompleteDate
-            const lastCompleteIndex = this.#lastCompleteIndex
+            const lastWipDate = this.#lastWipDate
+            const lastSignedDate = this.#lastSignedDate
+            const lastPartCompSignedDate = this.#lastPartCompSignedDate
+            const lastPartCompUnsignedDate = this.#lastPartCompUnsignedDate
+            const lastCompleteDate = this.#lastCompleteDate
 
             this.assessments.push(
                 new assessmentType(
                     dbAssessment,
                     this.timeline,
-                    assessmentIndex,
-                    lastWIPIndex,
-                    lastSignedIndex,
-                    lastPartCompSignedIndex,
-                    lastPartCompUnsignedIndex,
-                    latestSignLockDate,
-                    latestCompleteDate,
-                    lastCompleteIndex
+                    lastWipDate,
+                    lastSignedDate,
+                    lastPartCompSignedDate,
+                    lastPartCompUnsignedDate,
+                    lastCompleteDate
                 )
             )
 
@@ -188,23 +202,16 @@ export class V4AssessmentCommon {
     constructor(
         assessment: dbClasses.DbAssessmentOrRsr,
         timeline: V4TimelineAssessment[],
-        assessmentIndex: number,
-        lastWIPIndex: number,
-        lastSignedIndex: number,
-        lastPartcompSignedIndex: number,
-        lastPartcompUnsignedIndex: number,
-        latestSignLockDate: string,
-        latestCompleteDate: string,
-        lastCompleteIndex: number
+        lastWipDate: string,
+        lastSignedDate: string,
+        lastPartCompSignedDate: string,
+        lastPartCompUnsignedDate: string,
+        lastCompleteDate: string,
     ) {
 
         this.assessmentPk = assessment.assessmentPk
         this.assessmentType = assessment.assessmentType
-        // if (this.assessmentType == 'STANDALONE') {
-        //     delete this.assessmentVersion
-        // } else {
-            this.assessmentVersion = assessment.assessmentVersion
-        // }
+        this.assessmentVersion = assessment.assessmentVersion
         this.dateCompleted = assessment.completedDate
         this.assessorSignedDate = assessment.signedDate
         this.initiationDate = assessment.initiationDate
@@ -213,21 +220,21 @@ export class V4AssessmentCommon {
         if (this.superStatus == 'PARTCOMP') {
             this.superStatus = this.assessorSignedDate == null ? 'PARTCOMP_UNSIGNED' : 'PARTCOMP_SIGNED'
         }
-        this.laterWIPAssessmentExists = lastWIPIndex > assessmentIndex
-        this.latestWIPDate = lastWIPIndex > -1 ? timeline[lastWIPIndex].initiationDate : null
-        this.laterSignLockAssessmentExists = lastSignedIndex > assessmentIndex
-        this.latestSignLockDate = latestSignLockDate
-        this.laterPartCompSignedAssessmentExists = lastPartcompSignedIndex > assessmentIndex
-        this.latestPartCompSignedDate = lastPartcompSignedIndex > -1 ? timeline[lastPartcompSignedIndex].initiationDate : null
-        this.laterPartCompUnsignedAssessmentExists = lastPartcompUnsignedIndex > assessmentIndex
-        this.latestPartCompUnsignedDate = lastPartcompUnsignedIndex > -1 ? timeline[lastPartcompUnsignedIndex].initiationDate : null
-        this.laterCompleteAssessmentExists = lastCompleteIndex > assessmentIndex
-        this.latestCompleteDate = latestCompleteDate
+        this.laterWIPAssessmentExists = lastWipDate ? lastWipDate > this.initiationDate : false
+        this.latestWIPDate = lastWipDate
+        this.laterSignLockAssessmentExists = lastSignedDate ? lastSignedDate > (this.assessorSignedDate ?? this.initiationDate) : false
+        this.latestSignLockDate = lastSignedDate
+        this.laterPartCompSignedAssessmentExists = lastPartCompSignedDate ? lastPartCompSignedDate > this.initiationDate : false
+        this.latestPartCompSignedDate = lastPartCompSignedDate
+        this.laterPartCompUnsignedAssessmentExists = lastPartCompUnsignedDate ? lastPartCompUnsignedDate > this.initiationDate : false
+        this.latestPartCompUnsignedDate = lastPartCompUnsignedDate
+        this.laterCompleteAssessmentExists = lastCompleteDate ? lastCompleteDate > (this.dateCompleted ?? this.initiationDate) : false
+        this.latestCompleteDate = lastCompleteDate
 
-        // Handle sequencing of overlapping assessment/CSRP
-        if (this.latestCompleteDate && this.dateCompleted && (this.dateCompleted > this.latestCompleteDate)) {
-            this.laterCompleteAssessmentExists = false
-        }
+        // // Handle sequencing of overlapping assessment/CSRP
+        // if (this.latestCompleteDate && this.dateCompleted && (this.dateCompleted > this.latestCompleteDate)) {
+        //     this.laterCompleteAssessmentExists = false
+        // }
 
         this.assessor.name = (assessment as dbClasses.DbAssessment).assessorName
     }

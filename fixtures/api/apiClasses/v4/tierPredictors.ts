@@ -1,6 +1,5 @@
 import { Ogrs } from 'fixtures'
 import * as v4Common from './v4Common'
-import * as common from '../common'
 import * as dbClasses from 'fixtures/api/data/dbClasses'
 import * as env from '../../endpointUrls'
 import { OgrsInputParams, OgrsOutputParams } from 'fixtures/ogrs/types'
@@ -11,16 +10,16 @@ import { Decimal } from 'decimal.js'
 export async function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams, ogrs: Ogrs) {
 
     const assessment = offenderData.assessments[offenderData.assessments.map((ass) => ass.assessmentPk).indexOf(parameters.assessmentPk)]
-
+    
     if (assessment == null) {
         return env.restErrorResults.noAssessments
-
+        
     } else {
         const result = new TierPredictorsEndpointResponse(offenderData, parameters)
         result.addAssessment(assessment)
         await result.addPredictors(assessment, ogrs)
         delete result.timeline
-
+        
         return result
     }
 }
@@ -31,7 +30,6 @@ export class TierPredictorsEndpointResponse extends v4Common.V4EndpointResponse 
     tierPredictors: TierPredictorGroup
 
     constructor(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {
-
         super(offenderData, parameters)
     }
 

@@ -67,7 +67,6 @@ export class DbAssessmentOrRsr {
     cmsEventNumber: number
     appVersion: string
 
-    tierPredictorsSortIndex: string
 }
 
 /**
@@ -138,8 +137,6 @@ export class DbAssessment extends DbAssessmentOrRsr {
         assignValues(this, assessmentColumns, assessmentData, 0)
         this.riskDetails = new DbRiskDetails(assessmentData, Object.keys(assessmentColumns).length, 'assessment')
         this.appVersion = oasysDateTime.dateToVersion(this.initiationDate)
-
-        this.tierPredictorsSortIndex = `${this.completedDate}${this.initiationDate}`
     }
 
     static query(offenderPk: number): string {
@@ -150,7 +147,8 @@ export class DbAssessment extends DbAssessmentOrRsr {
             `oasys_assessment_group.offender_pk = ${offenderPk} 
                 and oasys_assessment_group.oasys_assessment_group_pk = oasys_set.oasys_assessment_group_pk 
                 and oasys_set_change.oasys_set_pk = oasys_set.oasys_set_pk 
-                and oasys_set.deleted_date is null`,
+                and oasys_set.deleted_date is null
+                and oasys_set.ref_ass_version_code <> 'TR_BCS'`,
             'oasys_set.initiation_date'
         )
     }
@@ -220,8 +218,6 @@ export class DbRsr extends DbAssessmentOrRsr {
         this.cmsEventNumber = null
         this.assessmentType = 'STANDALONE'
         this.assessmentVersion = null
-
-        this.tierPredictorsSortIndex = `${this.completedDate}${this.initiationDate}`
     }
 
     static query(offenderPk: number): string {
@@ -391,7 +387,7 @@ export class DbOffence {
             this.offenceSubCode = null
             this.offence = null
             this.subOffence = null
-            this.additionalOffence = null//'N'
+            this.additionalOffence = offenceData[2] ? 'N' : null
         } else {
             this.offenceCode = offencePivotData[0]
             this.offenceSubCode = offencePivotData[1]
@@ -405,7 +401,7 @@ export class DbOffence {
 
         return `select offence_block_pk, offence_block_type_elm, to_char(offence_date, 'YYYY-MM-DD\"T\"HH24:MI:SS') 
                     from eor.offence_block 
-                    where oasys_set_pk = ${assessmentPk} and offence_block_type_elm in ('CURRENT', 'CONCURRENT', 'PRINCIPAL_PROPOSAL')`
+                    where oasys_set_pk = ${assessmentPk} and offence_block_type_elm in ('CURRENT', 'CONCURRENT')`
     }
 
     static pivotQuery(offenceBlockPk: string): string {
@@ -520,7 +516,7 @@ export class DbObjective {
         this.objectivePk = objectiveData[0]
         this.objectiveCode = objectiveData[4]
         this.objectiveCodeDesc = objectiveData[1]
-        this.objectiveDesc = utils.jsonString(objectiveData[5], { removeCrLf: true })
+        this.objectiveDesc = utils.jsonString(objectiveData[5], { removeCrLf: true, remove002: true })
         this.objectiveStatus = objectiveData[2]
         this.objectiveStatusDesc = objectiveData[6]
         this.objectiveSequence = Number.parseInt(objectiveData[3])

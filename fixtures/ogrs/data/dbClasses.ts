@@ -228,6 +228,8 @@ export class OgrsAssessment {
     snsvDynamicYr2: number
     snsvDynamicYr2Band: string
     snsvDynamicCalculated: string
+    ospDc: number
+    ospIic: number
 
     offence: string
     additionalOffences: string[]
@@ -264,6 +266,8 @@ export class OgrsAssessment {
         this.snsvDynamicYr2 = utils.stringToFloat(assessmentData[i++])
         this.snsvDynamicYr2Band = assessmentData[i++]
         this.snsvDynamicCalculated = assessmentData[i++]
+        this.ospDc = utils.stringToFloat(assessmentData[i++])
+        this.ospIic = utils.stringToFloat(assessmentData[i++])
 
         this.additionalOffences = []
     }
@@ -278,7 +282,8 @@ export class OgrsAssessment {
                         ogp2_percentage_2yr, ogp2_band_risk_recon_elm, ogp2_calculated, 
                         ovp2_percentage_2yr, ovp2_band_risk_recon_elm, ovp2_calculated, 
                         snsv_percentage_2yr_static, snsv_stat_band_risk_recon_elm, snsv_calculated_static, 
-                        snsv_percentage_2yr_dynamic, snsv_dyn_band_risk_recon_elm, snsv_calculated_dynamic
+                        snsv_percentage_2yr_dynamic, snsv_dyn_band_risk_recon_elm, snsv_calculated_dynamic,
+                        osp_dc_percentage_score, osp_iic_percentage_score
                     from eor.oasys_set 
                     where ${whereClause}
                     order by create_date desc fetch first ${rows} rows only`
@@ -286,10 +291,10 @@ export class OgrsAssessment {
 
     static offenceQuery(assessmentPk: number | string): string {
 
-        return `select p.offence_group_code || p.sub_code, o.offence_block_type_elm
+        return `select p.offence_group_code || p.sub_code, p.additional_offence_ind
                     from eor.offence_block o, eor.ct_offence_pivot p
-                    where o.oasys_set_pk = ${assessmentPk} and o.offence_block_type_elm in ('CURRENT', 'CONCURRENT')
-                    and p.offence_block_pk = o.offence_block_pk and p.additional_offence_ind = 'N'`
+                    where o.oasys_set_pk = ${assessmentPk} and o.offence_block_type_elm = 'CURRENT'
+                    and p.offence_block_pk = o.offence_block_pk`
     }
 
     static qaQuery(assessmentPk: number | string): string {

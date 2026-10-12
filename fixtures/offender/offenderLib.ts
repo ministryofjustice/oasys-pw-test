@@ -52,8 +52,8 @@ export const probation: { [keys: string]: OffenderDef } = {
                     subcode: '01',
                 },
                 {
-                    offence: '030',
-                    subcode: '01',
+                    offence: '020',
+                    subcode: '00',
                     additionalOffence: true,
                 },
             ],

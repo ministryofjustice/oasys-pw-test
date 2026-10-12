@@ -221,7 +221,9 @@ export class Cms {
     async enterOffences(offences: Offence | Offence[]) {
 
         if (offences.constructor.name == 'Array') {
-            await Array.prototype.forEach.call(offences, (async (offence: Offence) => { await this.enterOffence(offence) }))
+            for (const offence of offences as Offence[]) {
+                await this.enterOffence(offence)
+            }
         }
         else {
             await this.enterOffence(offences as Offence)

@@ -17,7 +17,7 @@ const testCases = [
     ['X781699', null],
     ['X360849', null],
 
-    // Pre-prod cases for PNI
+    // Pre-prod cases - PNI and others
     // ['V217229', null],
     // ['E445066', null],
     // ['E475550', null],
@@ -27,7 +27,7 @@ const testCases = [
     // ['E506857', null],
     // ['E599091', null],
     // ['E716844', null],
-    // ['E679100', null],          // NOD-1284
+    // // ['E679100', null],          // NOD-1284  // TODO reinstate this when defect is fixed
     // [null, 'A9029EY'],          //  (case raised by John for NOD-1196)
     // ['E591983', null],          //  - 1.30 not reported missing
     // ['S016052', null],          //  - 1.30 not reported missing
@@ -36,6 +36,14 @@ const testCases = [
     // ['R414385', null],
     // ['E621573', null],              // additional offence causes 1.41 to be hidden
     // ['E705947', null],          // 6.8 is not in the database, should calculate OGP2?
+    // ['E358147', null],              // additional offence is sexual
+    // ['E683384', null],              // sequencing for assessment/CSRP in tierPredictors
+    // ['E512443', null],          // empty offence
+    // ['E737442', null],          // empty offence
+    // ['E716596', null],          // sequencing for assessment/CSRP in tierPredictors
+    // ['E620701', null],
+    // ['E785259', null],
+    // ['E580056', null],
 ]
 
 const limitEndpoints: Endpoint[] = []  // Only test these ones (all if none specified)

@@ -15,7 +15,7 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
 
     let staticCalc = 'N'
     if (assessment.type == 'LAYER_1' && assessment.version == 2) {  // RoSHA - set static flag according to 1.39 (offender interview)
-        if (utils.lookupString('1.39', assessment.qaData) != 'YES') {
+        if (assessment.qaData['1.39'] !== undefined && utils.lookupString('1.39', assessment.qaData) != 'YES') {
             staticCalc = 'Y'
         }
     }
@@ -26,7 +26,7 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
     }
 
     const o6_8Lookup = utils.lookupInteger('6.8', assessment.qaData)
-    const o6_8 = o6_8Lookup == undefined ? null : o6_8Lookup == null ? 0 : o6_8Lookup
+    const o6_8 = o6_8Lookup === undefined ? null : o6_8Lookup === null ? 0 : o6_8Lookup
 
     const result = {
 

@@ -27,4 +27,5 @@ declare global {
     var fileLog: (logtext: string, filename?: string) => void
     var statsLog: (type: string, time: number) => void
     var appConfig: AppConfig
+    var sanMode: SanMode
 }

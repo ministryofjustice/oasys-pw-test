@@ -11,6 +11,7 @@ declare type SanSection = 'accommodation' | 'employment' | 'finance' | 'drugs' |
 declare type SanSectionTitle = 'Accommodation' | 'Employment and education' | 'Finances' | 'Drug use' | 'Alcohol use' | 'Health and wellbeing'
     | 'Personal relationships and community' | 'Thinking, behaviours and attitudes' | 'Offence analysis'
 
+declare type SanMode = 'community' | 'custody'
 
 // Generic
 declare type SanYesNo = 'yes' | 'no'

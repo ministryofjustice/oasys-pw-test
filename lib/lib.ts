@@ -9,6 +9,7 @@ export function initialiseGlobals() {
     globalThis.oasysDateTime = new OasysDateTime()
     globalThis.utils = new Utils()
     globalThis.appConfig = null
+    globalThis.sanMode = 'community'
 
     /////////////// Providers //////////////
     globalThis.providers = {

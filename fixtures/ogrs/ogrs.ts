@@ -97,6 +97,8 @@ export class Ogrs {
         failed = checkScore('SVRP dynamic score', result.outputParams.SNSV_PERCENTAGE_DYNAMIC?.toNumber() ?? null, assessment.snsvDynamicYr2) || failed
         failed = checkScore('SVRP dynamic band', result.outputParams.SNSV_BAND_DYNAMIC?.substring(0, 1) ?? null, assessment.snsvDynamicYr2Band) || failed
         failed = checkScore('SVRP dynamic calculated', result.outputParams.SNSV_CALCULATED_DYNAMIC, assessment.snsvDynamicCalculated) || failed
+        failed = checkScore('DC-OSP', result.outputParams.OSP_DC_PERCENTAGE?.toNumber(), assessment.ospDc) || failed
+        failed = checkScore('DC-OSP', result.outputParams.OSP_IIC_PERCENTAGE?.toNumber(), assessment.ospIic) || failed
 
         if (failed) {
             log(JSON.stringify(calculatorParams))
@@ -381,7 +383,7 @@ export class Ogrs {
             await this.risk.summary.iicSrpBand.checkValue(ogrsResult.iicSrpBand)
         }
     }
-    
+
     async checkNonMFResultOnPredictorsPage() {
 
         await this.sections.predictors.goto()

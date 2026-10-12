@@ -108,7 +108,7 @@ export class Utils {
         }
         let result = options?.removeCrLf ? JSON.stringify(param.replaceAll('"', '\"')).slice(1, -1) : param.replaceAll('"', '\"')
 
-        result = options?.remove002 ? result.replaceAll('\u0002', '') : result
+        result = options?.remove002 ? result.replaceAll('\u0002', '').replaceAll('', '') : result
         result = options?.removeFf ? result.replaceAll('\u000C', '') : result
         return result.substring(0, 4000)
     }
@@ -161,7 +161,7 @@ export class Utils {
     }
 
     testProcessNumber(): number {
-        
+
         return Number.parseInt(process.env.TEST_PARALLEL_INDEX)
     }
 }

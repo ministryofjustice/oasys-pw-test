@@ -270,8 +270,6 @@ function mappingVictimRace(race: VictimRace): string {
             return 'O2'
         case 'Any other ethnic group':
             return 'O9'
-        case 'Not stated':
-            return null
         case 'Unknown':
             return 'NS'
         default:

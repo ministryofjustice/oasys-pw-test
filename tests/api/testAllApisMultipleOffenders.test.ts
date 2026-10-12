@@ -33,6 +33,7 @@ const testDataIssues = [
     `'ZUFYJQT'`,  // SAN issue
     `'X778253'`,  // SAN issue
     `'R698334'`,  // OASYS 1 assessment
+    `'E530075'`,  // control character issues
 ]
 
 for (let i = 0; i < dateConditions.length; i++) {

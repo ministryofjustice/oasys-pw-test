@@ -7,7 +7,7 @@ export class Textbox<T> {
 
     constructor(private readonly page: Page, selector: string, private readonly dateType: boolean = false) {
 
-        this.selector = page.locator(selector)
+        this.selector = page.locator(selector.replace('[sanMode]', sanMode))
     }
 
     async setValue(value: T) {

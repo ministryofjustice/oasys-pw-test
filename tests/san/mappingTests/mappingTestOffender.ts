@@ -9,6 +9,6 @@ export const mappingTestOffenderFile = 'tests/data/local/mappingTestsOffender'
 export async function getMappingTestOffender(): Promise<OffenderDef> {
 
     const testProcess = Number.parseInt(process.env.TEST_PARALLEL_INDEX)
-    const offenderDetails = await fs.readFile(`${mappingTestOffenderFile}${testProcess}`)
+    const offenderDetails = await fs.readFile(`${mappingTestOffenderFile}-${sanMode}-${testProcess}`)
     return JSON.parse(offenderDetails.toString()) as OffenderDef
 }

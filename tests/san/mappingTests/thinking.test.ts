@@ -32,85 +32,89 @@ type TestCase = {
 let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
 
 // test.describe.configure({ retries: 1 })
-test('Mapping test V2: thinking', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+for (const mode of ['community', 'custody']) {
+    test(`Mapping test V2 ${mode}: thinking`, async ({ oasys, user, offender, assessment, san }) => {
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
+        sanMode = mode as SanMode
+        const mappingTestOffender = await getMappingTestOffender()
 
-    // Create a new SAN assessment
-    await user.prob.probSanUnappr.login()
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+        // Delete previous assessments so no data gets cloned
+        await user.admin.login(providers.prob.san)
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
+        await user.logout()
 
-    let failed = 0
+        // Create a new SAN assessment
+        await user.prob.probSanUnappr.login()
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 
-    const testCases: TestCase[] = [
-        { ref: 1, page1: { awareConsequences: null, stableBehaviour: null, activitiesLinkedOffending: null, resilient: null, ableSolveProblems: null, understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: null } , page3: null  },
-        { ref: 2, page1: { awareConsequences: 'yes', stableBehaviour: null, activitiesLinkedOffending: null, resilient: null, ableSolveProblems: null, understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: null } , page3: null  },
-        { ref: 3, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: null, resilient: null, ableSolveProblems: null, understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 4, page1: { awareConsequences: 'sometimes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: null, ableSolveProblems: null, understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'yes', sexualInterests: null, emotionalIntimacy: null }  },
-        { ref: 5, page1: { awareConsequences: 'yes', stableBehaviour: 'sometimes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: null, understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'yes', sexualInterests: 'yes', emotionalIntimacy: null }  },
-        { ref: 6, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'sometimes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'yes', sexualInterests: 'yes', emotionalIntimacy: 'yes' }  },
-        { ref: 7, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'hasBeen', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'sometimes', sexualInterests: 'yes', emotionalIntimacy: 'yes' }  },
-        { ref: 8, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'limited', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'yes', sexualInterests: 'sometimes', emotionalIntimacy: 'yes' }  },
-        { ref: 9, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'some', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'yes', sexualInterests: 'yes', emotionalIntimacy: 'sometimes' }  },
-        { ref: 10, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'some', manageTemper: 'yes', violence: 'yes', impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'no', sexualInterests: 'yes', emotionalIntimacy: 'yes' }  },
-        { ref: 11, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'sometimes', violence: 'yes', impulse: 'yes', hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'yes', sexualInterests: 'no', emotionalIntimacy: 'yes' }  },
-        { ref: 12, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'sometimes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: null, supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'yes', sexualInterests: 'yes', emotionalIntimacy: 'no' }  },
-        { ref: 13, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'sometimes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: null } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'unknown', sexualInterests: 'yes', emotionalIntimacy: 'yes' }  },
-        { ref: 14, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'sometimes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'yes', sexualInterests: 'unknown', emotionalIntimacy: 'yes' }  },
-        { ref: 15, page1: { awareConsequences: 'no', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'unsure', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'yes' } , page3: { sexualPreoccupation: 'yes', sexualInterests: 'yes', emotionalIntimacy: 'unknown' }  },
-        { ref: 16, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'sometimes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 17, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 18, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 19, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 20, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 21, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 22, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 23, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'no', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 24, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'no', impulse: 'no', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 25, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'no', impulse: 'no', hostileOrientation: 'no', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 26, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'no', impulse: 'no', hostileOrientation: 'no', acceptSupervision: 'no', supportCriminalBehaviour: 'yes' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },
-        { ref: 27, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'no', impulse: 'no', hostileOrientation: 'no', acceptSupervision: 'no', supportCriminalBehaviour: 'no' } , page2: { riskOfSexualHarm: 'no' } , page3: null  },    ]
+        let failed = 0
+
+        const testCases: TestCase[] = [
+            { ref: 1, page1: { awareConsequences: null, stableBehaviour: null, activitiesLinkedOffending: null, resilient: null, ableSolveProblems: null, understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: null }, page3: null },
+            { ref: 2, page1: { awareConsequences: 'yes', stableBehaviour: null, activitiesLinkedOffending: null, resilient: null, ableSolveProblems: null, understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: null }, page3: null },
+            { ref: 3, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: null, resilient: null, ableSolveProblems: null, understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 4, page1: { awareConsequences: 'sometimes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: null, ableSolveProblems: null, understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'yes', sexualInterests: null, emotionalIntimacy: null } },
+            { ref: 5, page1: { awareConsequences: 'yes', stableBehaviour: 'sometimes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: null, understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'yes', sexualInterests: 'yes', emotionalIntimacy: null } },
+            { ref: 6, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'sometimes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: null, manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'yes', sexualInterests: 'yes', emotionalIntimacy: 'yes' } },
+            { ref: 7, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'hasBeen', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: null, manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'sometimes', sexualInterests: 'yes', emotionalIntimacy: 'yes' } },
+            { ref: 8, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'limited', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: null, violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'yes', sexualInterests: 'sometimes', emotionalIntimacy: 'yes' } },
+            { ref: 9, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'some', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: null, impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'yes', sexualInterests: 'yes', emotionalIntimacy: 'sometimes' } },
+            { ref: 10, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'some', manageTemper: 'yes', violence: 'yes', impulse: null, hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'no', sexualInterests: 'yes', emotionalIntimacy: 'yes' } },
+            { ref: 11, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'sometimes', violence: 'yes', impulse: 'yes', hostileOrientation: null, acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'yes', sexualInterests: 'no', emotionalIntimacy: 'yes' } },
+            { ref: 12, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'sometimes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: null, supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'yes', sexualInterests: 'yes', emotionalIntimacy: 'no' } },
+            { ref: 13, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'sometimes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: null }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'unknown', sexualInterests: 'yes', emotionalIntimacy: 'yes' } },
+            { ref: 14, page1: { awareConsequences: 'yes', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'sometimes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'yes', sexualInterests: 'unknown', emotionalIntimacy: 'yes' } },
+            { ref: 15, page1: { awareConsequences: 'no', stableBehaviour: 'yes', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'unsure', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'yes' }, page3: { sexualPreoccupation: 'yes', sexualInterests: 'yes', emotionalIntimacy: 'unknown' } },
+            { ref: 16, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'yes', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'sometimes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 17, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'yes', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 18, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'yes', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 19, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'yes', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 20, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'yes', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 21, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'yes', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 22, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'yes', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 23, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'no', impulse: 'yes', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 24, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'no', impulse: 'no', hostileOrientation: 'yes', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 25, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'no', impulse: 'no', hostileOrientation: 'no', acceptSupervision: 'yes', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 26, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'no', impulse: 'no', hostileOrientation: 'no', acceptSupervision: 'no', supportCriminalBehaviour: 'yes' }, page2: { riskOfSexualHarm: 'no' }, page3: null },
+            { ref: 27, page1: { awareConsequences: 'no', stableBehaviour: 'no', activitiesLinkedOffending: 'no', resilient: 'no', ableSolveProblems: 'no', understandOthers: 'no', manipulativeBehaviour: 'no', manageTemper: 'no', violence: 'no', impulse: 'no', hostileOrientation: 'no', acceptSupervision: 'no', supportCriminalBehaviour: 'no' }, page2: { riskOfSexualHarm: 'no' }, page3: null },]
 
 
-    for (const test of testCases) {
-        // Get to the right starting screen
+        for (const test of testCases) {
+            // Get to the right starting screen
+            await san.gotoSan('thinking', true)
+            // Back to the start, depending where the previous scenario ended
+            for (let i = 1; i < startPage; i++) {
+                await san.thinking.previous()
+            }
+            // Set values on SAN, return to OASys and check the results
+            await scenario(test, san)
+            await san.returnToOASys()
+            await oasys.clickButton('Previous', true)
+            await oasys.clickButton('Next', true)
+
+            log(JSON.stringify(test))
+            const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
+            if (scenarioFailed) {
+                failed++
+            }
+            console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
+
+        }
+
+        expect(failed).toBe(0)
+
+        // Complete everything needed for PA
         await san.gotoSan('thinking', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.thinking.previous()
-        }
-        // Set values on SAN, return to OASys and check the results
-        await scenario(test, san)
+        await san.thinking.saveAndContinue()
         await san.returnToOASys()
-        await oasys.clickButton('Previous', true)
-        await oasys.clickButton('Next', true)
 
-        log(JSON.stringify(test))
-        const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
-        if (scenarioFailed) {
-            failed++
-        }
-        console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
-
-    }
-
-    expect(failed).toBe(0)
-
-    // Complete everything needed for PA
-    await san.gotoSan('thinking', true)
-    await san.thinking.saveAndContinue()
-    await san.returnToOASys()
-
-    await paTest(assessmentPk, san.thinking, oasys, assessment, san)
-    await user.logout()
-})
+        await paTest(assessmentPk, san.thinking, oasys, assessment, san)
+        await user.logout()
+    })
+}
 
 
 async function scenario(test: TestCase, san: San) {

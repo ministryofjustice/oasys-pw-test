@@ -5,80 +5,84 @@ import { paTest } from './practitionerAnalysis'
 type TestCase = { ref: number, incomeSource: IncomeSource[], overReliant: SanYesNoUnknown, anyIssues: SanYesNo, howGoodManaging: HowGoodManaging }
 
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+for (const mode of ['community', 'custody']) {
+    test(`Mapping test V2 ${mode}: finance`, async ({ oasys, user, offender, assessment, san }) => {
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
+        sanMode = mode as SanMode
+        const mappingTestOffender = await getMappingTestOffender()
 
-    // Create a new SAN assessment
-    await user.prob.probSanUnappr.login()
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+        // Delete previous assessments so no data gets cloned
+        await user.admin.login(providers.prob.san)
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
+        await user.logout()
 
-    let failed = 0
+        // Create a new SAN assessment
+        await user.prob.probSanUnappr.login()
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 
-    const testCases: TestCase[] = [
-        { ref: 1, incomeSource: null, overReliant: null, anyIssues: null, howGoodManaging: null },
-        { ref: 2, incomeSource: ['offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
-        { ref: 3, incomeSource: ['offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
-        { ref: 4, incomeSource: ['carersAllowance', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
-        { ref: 5, incomeSource: ['disabilityBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
-        { ref: 6, incomeSource: ['employment', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
-        { ref: 7, incomeSource: ['family', 'offending'], overReliant: 'yes', anyIssues: 'yes', howGoodManaging: 'able' },
-        { ref: 8, incomeSource: ['pension', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
-        { ref: 9, incomeSource: ['studentLoan', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
-        { ref: 10, incomeSource: ['undeclared', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
-        { ref: 11, incomeSource: ['workBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
-        { ref: 12, incomeSource: ['other', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
-        { ref: 13, incomeSource: ['pension'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
-        { ref: 14, incomeSource: ['noMoney'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
-        { ref: 15, incomeSource: ['family', 'offending'], overReliant: 'no', anyIssues: 'yes', howGoodManaging: 'able' },
-        { ref: 16, incomeSource: ['unknown'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
-        { ref: 17, incomeSource: ['family', 'offending'], overReliant: 'unknown', anyIssues: 'yes', howGoodManaging: 'unableProblems' },
-        { ref: 18, incomeSource: ['family', 'pension', 'studentLoan'], overReliant: 'yes', anyIssues: 'no', howGoodManaging: 'ableStrength' },
-        { ref: 19, incomeSource: ['family', 'pension', 'studentLoan', 'offending'], overReliant: 'no', anyIssues: 'yes', howGoodManaging: 'able' },
-    ]
+        let failed = 0
+
+        const testCases: TestCase[] = [
+            { ref: 1, incomeSource: null, overReliant: null, anyIssues: null, howGoodManaging: null },
+            { ref: 2, incomeSource: ['offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
+            { ref: 3, incomeSource: ['offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
+            { ref: 4, incomeSource: ['carersAllowance', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
+            { ref: 5, incomeSource: ['disabilityBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
+            { ref: 6, incomeSource: ['employment', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
+            { ref: 7, incomeSource: ['family', 'offending'], overReliant: 'yes', anyIssues: 'yes', howGoodManaging: 'able' },
+            { ref: 8, incomeSource: ['pension', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
+            { ref: 9, incomeSource: ['studentLoan', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
+            { ref: 10, incomeSource: ['undeclared', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
+            { ref: 11, incomeSource: ['workBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
+            { ref: 12, incomeSource: ['other', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
+            { ref: 13, incomeSource: ['pension'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
+            { ref: 14, incomeSource: ['noMoney'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
+            { ref: 15, incomeSource: ['family', 'offending'], overReliant: 'no', anyIssues: 'yes', howGoodManaging: 'able' },
+            { ref: 16, incomeSource: ['unknown'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
+            { ref: 17, incomeSource: ['family', 'offending'], overReliant: 'unknown', anyIssues: 'yes', howGoodManaging: 'unableProblems' },
+            { ref: 18, incomeSource: ['family', 'pension', 'studentLoan'], overReliant: 'yes', anyIssues: 'no', howGoodManaging: 'ableStrength' },
+            { ref: 19, incomeSource: ['family', 'pension', 'studentLoan', 'offending'], overReliant: 'no', anyIssues: 'yes', howGoodManaging: 'able' },
+        ]
 
 
-    for (const test of testCases) {
-        // Get to the right starting screen
-        await san.gotoSan('finance', true)
+        for (const test of testCases) {
+            // Get to the right starting screen
+            await san.gotoSan('finance', true)
 
-        // Set values on SAN, return to OASys and check the results
-        await scenario(test, san)
-        await san.returnToOASys()
-        await oasys.clickButton('Previous', true)
-        await oasys.clickButton('Next', true)
+            // Set values on SAN, return to OASys and check the results
+            await scenario(test, san)
+            await san.returnToOASys()
+            await oasys.clickButton('Previous', true)
+            await oasys.clickButton('Next', true)
 
-        log(JSON.stringify(test))
-        const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
-        if (scenarioFailed) {
-            failed++
+            log(JSON.stringify(test))
+            const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
+            if (scenarioFailed) {
+                failed++
+            }
+            console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
+
         }
-        console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
 
-    }
+        expect(failed).toBe(0)
 
-    expect(failed).toBe(0)
+        // Complete everything needed for PA
+        await san.gotoSan('finance', true)
+        await san.finance.page1.incomeSource.setValue(['carersAllowance'])
+        await san.finance.page1.anyIssues.setValue('yes')
+        await san.finance.page1.howGoodManaging.setValue('able')
+        await san.finance.page1.debt.setValue(['no'])
+        await san.finance.page1.wantChanges.setValue('madeChanges')
+        await san.finance.saveAndContinue()
+        await san.returnToOASys()
 
-    // Complete everything needed for PA
-    await san.gotoSan('finance', true)
-    await san.finance.page1.incomeSource.setValue(['carersAllowance'])
-    await san.finance.page1.anyIssues.setValue('yes')
-    await san.finance.page1.howGoodManaging.setValue('able')
-    await san.finance.page1.debt.setValue(['no'])
-    await san.finance.page1.wantChanges.setValue('madeChanges')
-    await san.finance.saveAndContinue()
-    await san.returnToOASys()
-
-    await paTest(assessmentPk, san.finance, oasys, assessment, san)
-    await user.logout()
-})
+        await paTest(assessmentPk, san.finance, oasys, assessment, san)
+        await user.logout()
+    })
+}
 
 
 async function scenario(test: TestCase, san: San) {

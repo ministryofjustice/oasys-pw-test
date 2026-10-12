@@ -20,92 +20,96 @@ type TestCase = {
 let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
 
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+for (const mode of ['community', 'custody']) {
+    test(`Mapping test V2 ${mode}: health and wellbeing`, async ({ oasys, user, offender, assessment, san }) => {
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
+        sanMode = mode as SanMode
+        const mappingTestOffender = await getMappingTestOffender()
 
-    // Create a new SAN assessment
-    await user.prob.probSanUnappr.login()
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+        // Delete previous assessments so no data gets cloned
+        await user.admin.login(providers.prob.san)
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
+        await user.logout()
 
-    let failed = 0
+        // Create a new SAN assessment
+        await user.prob.probSanUnappr.login()
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 
-    const testCases: TestCase[] = [
-        { ref: 1, page1: { mentalHealthProblems: null }, page2: null },
-        { ref: 2, page1: { mentalHealthProblems: 'yesOngoing' }, page2: null },
-        { ref: 3, page1: { mentalHealthProblems: 'yesPast' }, page2: null },
-        { ref: 4, page1: { mentalHealthProblems: 'no' }, page2: null },
-        { ref: 5, page1: { mentalHealthProblems: 'unknown' }, page2: null },
-        { ref: 6, page1: { mentalHealthProblems: 'undiagnosed' }, page2: null },
-        { ref: 7, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'yes', learningDifficulties: 'yes', coping: 'some', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
-        { ref: 8, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'pending', learningDifficulties: 'no', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
-        { ref: 9, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'no', learningDifficulties: 'some', coping: 'no', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
-        { ref: 10, page1: { mentalHealthProblems: 'no' }, page2: { psychTreatment: null, learningDifficulties: 'yes', coping: 'some', attitude: 'positive', selfHarmed: 'no', suicide: 'no' } },
-        { ref: 11, page1: { mentalHealthProblems: 'unknown' }, page2: { psychTreatment: null, learningDifficulties: 'no', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'yes' } },
-        { ref: 12, page1: { mentalHealthProblems: 'undiagnosed' }, page2: { psychTreatment: null, learningDifficulties: 'some', coping: 'no', attitude: 'negative', selfHarmed: 'yes', suicide: 'no' } },
-        { ref: 13, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'unknown', learningDifficulties: 'some', coping: 'some', attitude: 'mixed', selfHarmed: 'no', suicide: 'yes' } },
-        { ref: 14, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'yes', learningDifficulties: 'no', coping: 'some', attitude: 'negative', selfHarmed: 'no', suicide: 'no' } },
-        { ref: 15, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'pending', learningDifficulties: 'yes', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
-        { ref: 16, page1: { mentalHealthProblems: 'no' }, page2: { psychTreatment: null, learningDifficulties: 'some', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
-        { ref: 17, page1: { mentalHealthProblems: 'unknown' }, page2: { psychTreatment: null, learningDifficulties: 'no', coping: 'some', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
-        { ref: 18, page1: { mentalHealthProblems: 'undiagnosed' }, page2: { psychTreatment: null, learningDifficulties: 'yes', coping: 'no', attitude: 'positive', selfHarmed: 'no', suicide: 'no' } },
-        { ref: 19, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'no', learningDifficulties: 'no', coping: 'yes', attitude: 'negative', selfHarmed: 'yes', suicide: 'yes' } },
-        { ref: 20, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'unknown', learningDifficulties: 'some', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'no' } },
-        { ref: 21, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'yes', learningDifficulties: 'yes', coping: 'some', attitude: 'mixed', selfHarmed: 'no', suicide: 'yes' } },
-        { ref: 22, page1: { mentalHealthProblems: 'no' }, page2: { psychTreatment: null, learningDifficulties: 'no', coping: 'yes', attitude: 'negative', selfHarmed: 'no', suicide: 'no' } },
-        { ref: 23, page1: { mentalHealthProblems: 'unknown' }, page2: { psychTreatment: null, learningDifficulties: 'some', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
-        { ref: 24, page1: { mentalHealthProblems: 'undiagnosed' }, page2: { psychTreatment: null, learningDifficulties: 'yes', coping: 'some', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
-    ]
+        let failed = 0
+
+        const testCases: TestCase[] = [
+            { ref: 1, page1: { mentalHealthProblems: null }, page2: null },
+            { ref: 2, page1: { mentalHealthProblems: 'yesOngoing' }, page2: null },
+            { ref: 3, page1: { mentalHealthProblems: 'yesPast' }, page2: null },
+            { ref: 4, page1: { mentalHealthProblems: 'no' }, page2: null },
+            { ref: 5, page1: { mentalHealthProblems: 'unknown' }, page2: null },
+            { ref: 6, page1: { mentalHealthProblems: 'undiagnosed' }, page2: null },
+            { ref: 7, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'yes', learningDifficulties: 'yes', coping: 'some', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
+            { ref: 8, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'pending', learningDifficulties: 'no', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
+            { ref: 9, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'no', learningDifficulties: 'some', coping: 'no', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
+            { ref: 10, page1: { mentalHealthProblems: 'no' }, page2: { psychTreatment: null, learningDifficulties: 'yes', coping: 'some', attitude: 'positive', selfHarmed: 'no', suicide: 'no' } },
+            { ref: 11, page1: { mentalHealthProblems: 'unknown' }, page2: { psychTreatment: null, learningDifficulties: 'no', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'yes' } },
+            { ref: 12, page1: { mentalHealthProblems: 'undiagnosed' }, page2: { psychTreatment: null, learningDifficulties: 'some', coping: 'no', attitude: 'negative', selfHarmed: 'yes', suicide: 'no' } },
+            { ref: 13, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'unknown', learningDifficulties: 'some', coping: 'some', attitude: 'mixed', selfHarmed: 'no', suicide: 'yes' } },
+            { ref: 14, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'yes', learningDifficulties: 'no', coping: 'some', attitude: 'negative', selfHarmed: 'no', suicide: 'no' } },
+            { ref: 15, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'pending', learningDifficulties: 'yes', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
+            { ref: 16, page1: { mentalHealthProblems: 'no' }, page2: { psychTreatment: null, learningDifficulties: 'some', coping: 'yes', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
+            { ref: 17, page1: { mentalHealthProblems: 'unknown' }, page2: { psychTreatment: null, learningDifficulties: 'no', coping: 'some', attitude: 'negative', selfHarmed: 'no', suicide: 'yes' } },
+            { ref: 18, page1: { mentalHealthProblems: 'undiagnosed' }, page2: { psychTreatment: null, learningDifficulties: 'yes', coping: 'no', attitude: 'positive', selfHarmed: 'no', suicide: 'no' } },
+            { ref: 19, page1: { mentalHealthProblems: 'yesOngoingSevere' }, page2: { psychTreatment: 'no', learningDifficulties: 'no', coping: 'yes', attitude: 'negative', selfHarmed: 'yes', suicide: 'yes' } },
+            { ref: 20, page1: { mentalHealthProblems: 'yesOngoing' }, page2: { psychTreatment: 'unknown', learningDifficulties: 'some', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'no' } },
+            { ref: 21, page1: { mentalHealthProblems: 'yesPast' }, page2: { psychTreatment: 'yes', learningDifficulties: 'yes', coping: 'some', attitude: 'mixed', selfHarmed: 'no', suicide: 'yes' } },
+            { ref: 22, page1: { mentalHealthProblems: 'no' }, page2: { psychTreatment: null, learningDifficulties: 'no', coping: 'yes', attitude: 'negative', selfHarmed: 'no', suicide: 'no' } },
+            { ref: 23, page1: { mentalHealthProblems: 'unknown' }, page2: { psychTreatment: null, learningDifficulties: 'some', coping: 'no', attitude: 'positive', selfHarmed: 'yes', suicide: 'yes' } },
+            { ref: 24, page1: { mentalHealthProblems: 'undiagnosed' }, page2: { psychTreatment: null, learningDifficulties: 'yes', coping: 'some', attitude: 'mixed', selfHarmed: 'yes', suicide: 'no' } },
+        ]
 
 
-    for (const test of testCases) {
-        // Get to the right starting screen
+        for (const test of testCases) {
+            // Get to the right starting screen
+            await san.gotoSan('health', true)
+            // Back to the start, depending where the previous scenario ended
+            for (let i = 1; i < startPage; i++) {
+                await san.health.previous()
+            }
+            // Set values on SAN, return to OASys and check the results
+            await scenario(test, san)
+            await san.returnToOASys()
+            await oasys.clickButton('Previous', true)
+            await oasys.clickButton('Next', true)
+
+            log(JSON.stringify(test))
+            const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
+            if (scenarioFailed) {
+                failed++
+            }
+            console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
+
+        }
+
+        expect(failed).toBe(0)
+
+        // Complete everything needed for PA
         await san.gotoSan('health', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.health.previous()
-        }
-        // Set values on SAN, return to OASys and check the results
-        await scenario(test, san)
+        await san.health.page2.psychTreatment.setValue('no')
+        await san.health.page2.learningDifficulties.setValue('no')
+        await san.health.page2.coping.setValue('no')
+        await san.health.page2.gambling.setValue(['no'])
+        await san.health.page2.attitude.setValue('positive')
+        await san.health.page2.selfHarmed.setValue('no')
+        await san.health.page2.suicide.setValue('no')
+        await san.health.page2.wantChanges.setValue('madeChanges')
+
+        await san.health.saveAndContinue()
         await san.returnToOASys()
-        await oasys.clickButton('Previous', true)
-        await oasys.clickButton('Next', true)
 
-        log(JSON.stringify(test))
-        const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
-        if (scenarioFailed) {
-            failed++
-        }
-        console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
-
-    }
-
-    expect(failed).toBe(0)
-
-    // Complete everything needed for PA
-    await san.gotoSan('health', true)
-    await san.health.page2.psychTreatment.setValue('no')
-    await san.health.page2.learningDifficulties.setValue('no')
-    await san.health.page2.coping.setValue('no')
-    await san.health.page2.gambling.setValue(['no'])
-    await san.health.page2.attitude.setValue('positive')
-    await san.health.page2.selfHarmed.setValue('no')
-    await san.health.page2.suicide.setValue('no')
-    await san.health.page2.wantChanges.setValue('madeChanges')
-
-    await san.health.saveAndContinue()
-    await san.returnToOASys()
-
-    await paTest(assessmentPk, san.health, oasys, assessment, san)
-    await user.logout()
-})
+        await paTest(assessmentPk, san.health, oasys, assessment, san)
+        await user.logout()
+    })
+}
 
 
 async function scenario(test: TestCase, san: San) {

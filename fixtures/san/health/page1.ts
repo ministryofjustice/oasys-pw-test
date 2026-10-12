@@ -5,8 +5,8 @@ import { sanYesNoUnknownOptions } from '../sanSection'
 
 export class Page1 extends BaseSanEditPage {
 
-    physicalHealthConditions = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#health_wellbeing_physical_health_condition', sanYesNoUnknownOptions)
-    mentalHealthProblems = new Element.Radiogroup<MentalHealthProblems>(this.page, '#health_wellbeing_mental_health_condition', ['yesOngoingSevere', 'yesOngoing', 'yesPast', 'no', 'unknown', 'undiagnosed'])
+    physicalHealthConditions = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#[sanMode]_health_wellbeing_physical_health_condition', sanYesNoUnknownOptions)
+    mentalHealthProblems = new Element.Radiogroup<MentalHealthProblems>(this.page, '#[sanMode]_health_wellbeing_mental_health_condition', ['yesOngoingSevere', 'yesOngoing', 'yesPast', 'no', 'unknown', 'undiagnosed'])
 
 
     async populateMinimal() {

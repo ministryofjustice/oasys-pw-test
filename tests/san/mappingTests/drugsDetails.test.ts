@@ -74,140 +74,144 @@ let expectedAnswers: OasysAnswer[]  // variable to hold a new copy of the templa
 const otherDrugName = 'Other drug name'
 
 test.describe.configure({ retries: 1 })
-test.describe('Mapping test for drugs - individual drugs details', () => {
 
-    test('amphetamines', async ({ oasys, user, offender, assessment, san }) => { await drugTest('amphetamines', oasys, user, offender, assessment, san) })
-    test('benzodiazepines', async ({ oasys, user, offender, assessment, san }) => { await drugTest('benzodiazepines', oasys, user, offender, assessment, san) })
-    test('cannabis', async ({ oasys, user, offender, assessment, san }) => { await drugTest('cannabis', oasys, user, offender, assessment, san) })
-    test('cocaine', async ({ oasys, user, offender, assessment, san }) => { await drugTest('cocaine', oasys, user, offender, assessment, san) })
-    test('crack', async ({ oasys, user, offender, assessment, san }) => { await drugTest('crack', oasys, user, offender, assessment, san) })
-    test('ecstasy', async ({ oasys, user, offender, assessment, san }) => { await drugTest('ecstasy', oasys, user, offender, assessment, san) })
-    test('hallucinogenics', async ({ oasys, user, offender, assessment, san }) => { await drugTest('hallucinogenics', oasys, user, offender, assessment, san) })
-    test('heroin', async ({ oasys, user, offender, assessment, san }) => { await drugTest('heroin', oasys, user, offender, assessment, san) })
-    test('ketamine', async ({ oasys, user, offender, assessment, san }) => { await drugTest('ketamine', oasys, user, offender, assessment, san) })
-    test('mephedrone', async ({ oasys, user, offender, assessment, san }) => { await drugTest('mephedrone', oasys, user, offender, assessment, san) })
-    test('methadone', async ({ oasys, user, offender, assessment, san }) => { await drugTest('methadone', oasys, user, offender, assessment, san) })
-    test('prescribed', async ({ oasys, user, offender, assessment, san }) => { await drugTest('prescribed', oasys, user, offender, assessment, san) })
-    test('opiates', async ({ oasys, user, offender, assessment, san }) => { await drugTest('opiates', oasys, user, offender, assessment, san) })
-    test('solvents', async ({ oasys, user, offender, assessment, san }) => { await drugTest('solvents', oasys, user, offender, assessment, san) })
-    test('spice', async ({ oasys, user, offender, assessment, san }) => { await drugTest('spice', oasys, user, offender, assessment, san) })
-    test('steroids', async ({ oasys, user, offender, assessment, san }) => { await drugTest('steroids', oasys, user, offender, assessment, san) })
-    test('other', async ({ oasys, user, offender, assessment, san }) => { await drugTest('other', oasys, user, offender, assessment, san) })
-    test('Drugs practitioner analysis', async ({ oasys, user, offender, assessment, san }) => { await drugTest(null, oasys, user, offender, assessment, san) })
-})
+for (const mode of ['community', 'custody']) {
+    test.describe(`Mapping test V2 ${mode}: drugs - individual drugs details`, () => {
 
-async function drugTest(drugType: DrugType, oasys: Oasys, user: User, offender: Offender, assessment: Assessment, san: San) {
+        test('amphetamines', async ({ oasys, user, offender, assessment, san }) => { await drugTest('amphetamines', oasys, user, offender, assessment, san) })
+        test('benzodiazepines', async ({ oasys, user, offender, assessment, san }) => { await drugTest('benzodiazepines', oasys, user, offender, assessment, san) })
+        test('cannabis', async ({ oasys, user, offender, assessment, san }) => { await drugTest('cannabis', oasys, user, offender, assessment, san) })
+        test('cocaine', async ({ oasys, user, offender, assessment, san }) => { await drugTest('cocaine', oasys, user, offender, assessment, san) })
+        test('crack', async ({ oasys, user, offender, assessment, san }) => { await drugTest('crack', oasys, user, offender, assessment, san) })
+        test('ecstasy', async ({ oasys, user, offender, assessment, san }) => { await drugTest('ecstasy', oasys, user, offender, assessment, san) })
+        test('hallucinogenics', async ({ oasys, user, offender, assessment, san }) => { await drugTest('hallucinogenics', oasys, user, offender, assessment, san) })
+        test('heroin', async ({ oasys, user, offender, assessment, san }) => { await drugTest('heroin', oasys, user, offender, assessment, san) })
+        test('ketamine', async ({ oasys, user, offender, assessment, san }) => { await drugTest('ketamine', oasys, user, offender, assessment, san) })
+        test('mephedrone', async ({ oasys, user, offender, assessment, san }) => { await drugTest('mephedrone', oasys, user, offender, assessment, san) })
+        test('methadone', async ({ oasys, user, offender, assessment, san }) => { await drugTest('methadone', oasys, user, offender, assessment, san) })
+        test('prescribed', async ({ oasys, user, offender, assessment, san }) => { await drugTest('prescribed', oasys, user, offender, assessment, san) })
+        test('opiates', async ({ oasys, user, offender, assessment, san }) => { await drugTest('opiates', oasys, user, offender, assessment, san) })
+        test('solvents', async ({ oasys, user, offender, assessment, san }) => { await drugTest('solvents', oasys, user, offender, assessment, san) })
+        test('spice', async ({ oasys, user, offender, assessment, san }) => { await drugTest('spice', oasys, user, offender, assessment, san) })
+        test('steroids', async ({ oasys, user, offender, assessment, san }) => { await drugTest('steroids', oasys, user, offender, assessment, san) })
+        test('other', async ({ oasys, user, offender, assessment, san }) => { await drugTest('other', oasys, user, offender, assessment, san) })
+        test('Drugs practitioner analysis', async ({ oasys, user, offender, assessment, san }) => { await drugTest(null, oasys, user, offender, assessment, san) })
+    })
 
-    const mappingTestOffender = await getMappingTestOffender()
+    async function drugTest(drugType: DrugType, oasys: Oasys, user: User, offender: Offender, assessment: Assessment, san: San) {
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
+        sanMode = mode as SanMode
+        const mappingTestOffender = await getMappingTestOffender()
 
-    // Create a new SAN assessment
-    await user.prob.probSanUnappr.login()
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
-
-    if (!drugType) {  // If null, run the practitioner analysis test
-
-        // First check with no drug use (no PA)
-        await san.gotoSan('drugs', true)
-        await san.drugs.page1.everUsed.setValue('no')
-        await san.drugs.saveAndContinue()
-        await san.returnToOASys()
-        await oasys.clickButton('Previous', true)
-        await oasys.clickButton('Next', true)
-
-        const expectedAnswers = [
-            { section: '8', q: '8.97', a: 'No issues identified' },
-            { section: '8', q: '8.98', a: 'NO' },
-            { section: '8', q: '8.99', a: 'NO' },
-        ]
-        const result = await assessment.queries.checkSectionAnswers(assessmentPk, '8', expectedAnswers, true)
-        expect(result).toBeFalsy()
-
-        // Complete everything needed for PA
-        await san.gotoSan('drugs', true)
-        await san.drugs.page1.everUsed.setValue('yes')
-        await san.drugs.saveAndContinue()
-        await san.drugs.page2.drugType.setValue(['cannabis'])
-        await san.drugs.page2.cannabisLastSixMonths.setValue('no')
-        await san.drugs.saveAndContinue()
-        await san.drugs.page3.detailsNotLastSixMonths.setValue('Some text')
-        await san.drugs.page3.treatment.setValue('no')
-        await san.drugs.saveAndContinue()
-        await san.drugs.page4.motivatedToStop.setValue('motivated')
-        await san.drugs.page4.wantChanges.setValue('madeChanges')
-        await san.drugs.saveAndContinue()
-        await san.returnToOASys()
-
-        await paTest(assessmentPk, san.drugs, oasys, assessment, san)
+        // Delete previous assessments so no data gets cloned
+        await user.admin.login(providers.prob.san)
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
         await user.logout()
 
-    } else {
+        // Create a new SAN assessment
+        await user.prob.probSanUnappr.login()
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 
-        // Run all the scenarios for a single drug
-        let failed = false
+        if (!drugType) {  // If null, run the practitioner analysis test
 
-        const testCases: TestCase[] =
-            [
-                { ref: 1, lastSix: false, frequency: null, injectedLastSix: null, injectedMoreThanSix: null },
-                { ref: 2, lastSix: true, frequency: null, injectedLastSix: null, injectedMoreThanSix: null },
-                { ref: 3, lastSix: true, frequency: 'daily', injectedLastSix: null, injectedMoreThanSix: null },
-                { ref: 4, lastSix: true, frequency: 'weekly', injectedLastSix: null, injectedMoreThanSix: null },
-                { ref: 5, lastSix: true, frequency: 'monthly', injectedLastSix: null, injectedMoreThanSix: null },
-                { ref: 6, lastSix: true, frequency: 'occasionally', injectedLastSix: null, injectedMoreThanSix: null },
-                { ref: 7, lastSix: false, frequency: null, injectedLastSix: null, injectedMoreThanSix: true },  // might fail (ARN-3045)
-                { ref: 8, lastSix: true, frequency: 'daily', injectedLastSix: true, injectedMoreThanSix: null },
-                { ref: 9, lastSix: true, frequency: 'weekly', injectedLastSix: true, injectedMoreThanSix: null },
-                { ref: 10, lastSix: true, frequency: 'monthly', injectedLastSix: true, injectedMoreThanSix: null },
-                { ref: 11, lastSix: true, frequency: 'occasionally', injectedLastSix: true, injectedMoreThanSix: null },
-                { ref: 12, lastSix: true, frequency: 'daily', injectedLastSix: false, injectedMoreThanSix: true },
-                { ref: 13, lastSix: true, frequency: 'weekly', injectedLastSix: false, injectedMoreThanSix: true },
-                { ref: 14, lastSix: true, frequency: 'monthly', injectedLastSix: false, injectedMoreThanSix: true },
-                { ref: 15, lastSix: true, frequency: 'occasionally', injectedLastSix: false, injectedMoreThanSix: true },
-                { ref: 16, lastSix: true, frequency: 'daily', injectedLastSix: true, injectedMoreThanSix: true },
-                { ref: 17, lastSix: true, frequency: 'weekly', injectedLastSix: true, injectedMoreThanSix: true },
-                { ref: 18, lastSix: true, frequency: 'monthly', injectedLastSix: true, injectedMoreThanSix: true },
-                { ref: 19, lastSix: true, frequency: 'occasionally', injectedLastSix: true, injectedMoreThanSix: true },
+            // First check with no drug use (no PA)
+            await san.gotoSan('drugs', true)
+            await san.drugs.page1.everUsed.setValue('no')
+            await san.drugs.saveAndContinue()
+            await san.returnToOASys()
+            await oasys.clickButton('Previous', true)
+            await oasys.clickButton('Next', true)
+
+            const expectedAnswers = [
+                { section: '8', q: '8.97', a: 'No issues identified' },
+                { section: '8', q: '8.98', a: 'NO' },
+                { section: '8', q: '8.99', a: 'NO' },
             ]
+            const result = await assessment.queries.checkSectionAnswers(assessmentPk, '8', expectedAnswers, true)
+            expect(result).toBeFalsy()
 
-        let firstRun = true
-        console.log(`Testing ${drugType}`)
+            // Complete everything needed for PA
+            await san.gotoSan('drugs', true)
+            await san.drugs.page1.everUsed.setValue('yes')
+            await san.drugs.saveAndContinue()
+            await san.drugs.page2.drugType.setValue(['cannabis'])
+            await san.drugs.page2.cannabisLastSixMonths.setValue('no')
+            await san.drugs.saveAndContinue()
+            await san.drugs.page3.detailsNotLastSixMonths.setValue('Some text')
+            await san.drugs.page3.treatment.setValue('no')
+            await san.drugs.saveAndContinue()
+            await san.drugs.page4.motivatedToStop.setValue('motivated')
+            await san.drugs.page4.wantChanges.setValue('madeChanges')
+            await san.drugs.saveAndContinue()
+            await san.returnToOASys()
 
-        expectedAnswers = JSON.parse(JSON.stringify(expectedAnswersTemplate)) as OasysAnswer[]  // take a copy to modify for this drug
+            await paTest(assessmentPk, san.drugs, oasys, assessment, san)
+            await user.logout()
 
-        for (const test of testCases) {
-            if (injectableDrug(drugType) || (test.injectedLastSix == null && test.injectedMoreThanSix == null)) {  // skip injection tests for non-injectable drugs
-                // Get to the right starting screen
-                await san.gotoSan('drugs', true)
-                if (firstRun) {
-                    await san.drugs.page1.everUsed.setValue('yes')
-                    await san.drugs.saveAndContinue()
-                } else {
-                    await san.drugs.previous()
+        } else {
+
+            // Run all the scenarios for a single drug
+            let failed = false
+
+            const testCases: TestCase[] =
+                [
+                    { ref: 1, lastSix: false, frequency: null, injectedLastSix: null, injectedMoreThanSix: null },
+                    { ref: 2, lastSix: true, frequency: null, injectedLastSix: null, injectedMoreThanSix: null },
+                    { ref: 3, lastSix: true, frequency: 'daily', injectedLastSix: null, injectedMoreThanSix: null },
+                    { ref: 4, lastSix: true, frequency: 'weekly', injectedLastSix: null, injectedMoreThanSix: null },
+                    { ref: 5, lastSix: true, frequency: 'monthly', injectedLastSix: null, injectedMoreThanSix: null },
+                    { ref: 6, lastSix: true, frequency: 'occasionally', injectedLastSix: null, injectedMoreThanSix: null },
+                    { ref: 7, lastSix: false, frequency: null, injectedLastSix: null, injectedMoreThanSix: true },  // might fail (ARN-3045)
+                    { ref: 8, lastSix: true, frequency: 'daily', injectedLastSix: true, injectedMoreThanSix: null },
+                    { ref: 9, lastSix: true, frequency: 'weekly', injectedLastSix: true, injectedMoreThanSix: null },
+                    { ref: 10, lastSix: true, frequency: 'monthly', injectedLastSix: true, injectedMoreThanSix: null },
+                    { ref: 11, lastSix: true, frequency: 'occasionally', injectedLastSix: true, injectedMoreThanSix: null },
+                    { ref: 12, lastSix: true, frequency: 'daily', injectedLastSix: false, injectedMoreThanSix: true },
+                    { ref: 13, lastSix: true, frequency: 'weekly', injectedLastSix: false, injectedMoreThanSix: true },
+                    { ref: 14, lastSix: true, frequency: 'monthly', injectedLastSix: false, injectedMoreThanSix: true },
+                    { ref: 15, lastSix: true, frequency: 'occasionally', injectedLastSix: false, injectedMoreThanSix: true },
+                    { ref: 16, lastSix: true, frequency: 'daily', injectedLastSix: true, injectedMoreThanSix: true },
+                    { ref: 17, lastSix: true, frequency: 'weekly', injectedLastSix: true, injectedMoreThanSix: true },
+                    { ref: 18, lastSix: true, frequency: 'monthly', injectedLastSix: true, injectedMoreThanSix: true },
+                    { ref: 19, lastSix: true, frequency: 'occasionally', injectedLastSix: true, injectedMoreThanSix: true },
+                ]
+
+            let firstRun = true
+            console.log(`Testing ${drugType}`)
+
+            expectedAnswers = JSON.parse(JSON.stringify(expectedAnswersTemplate)) as OasysAnswer[]  // take a copy to modify for this drug
+
+            for (const test of testCases) {
+                if (injectableDrug(drugType) || (test.injectedLastSix == null && test.injectedMoreThanSix == null)) {  // skip injection tests for non-injectable drugs
+                    // Get to the right starting screen
+                    await san.gotoSan('drugs', true)
+                    if (firstRun) {
+                        await san.drugs.page1.everUsed.setValue('yes')
+                        await san.drugs.saveAndContinue()
+                    } else {
+                        await san.drugs.previous()
+                    }
+                    // Set values on SAN, return to OASys and check the results
+                    await scenario(drugType, test, san)
+                    await san.returnToOASys()
+                    await oasys.clickButton('Previous', true)
+                    await oasys.clickButton('Next', true)
+
+                    log('', JSON.stringify(test))
+                    const scenarioFailed = await checkAnswers(assessmentPk, drugType, test, assessment)
+                    if (scenarioFailed) {
+                        failed = true
+                    }
+                    console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
+
+                    firstRun = false
                 }
-                // Set values on SAN, return to OASys and check the results
-                await scenario(drugType, test, san)
-                await san.returnToOASys()
-                await oasys.clickButton('Previous', true)
-                await oasys.clickButton('Next', true)
-
-                log('', JSON.stringify(test))
-                const scenarioFailed = await checkAnswers(assessmentPk, drugType, test, assessment)
-                if (scenarioFailed) {
-                    failed = true
-                }
-                console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
-
-                firstRun = false
             }
-        }
 
-        expect(failed).toBeFalsy()
+            expect(failed).toBeFalsy()
+        }
     }
 }
 

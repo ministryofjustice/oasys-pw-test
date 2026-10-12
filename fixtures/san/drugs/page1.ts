@@ -3,7 +3,7 @@ import { BaseSanEditPage } from '../pages/baseSanEditPage'
 
 export class Page1 extends BaseSanEditPage {
 
-    everUsed = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drug_use', ['yes', 'no'])
+    everUsed = new Element.Radiogroup<'yes' | 'no'>(this.page, '#[sanMode]_drug_use', ['yes', 'no'])
 
 
     async populateMinimal() {

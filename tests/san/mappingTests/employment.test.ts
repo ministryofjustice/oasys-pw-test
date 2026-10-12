@@ -23,8 +23,11 @@ type TestCase = {
 let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
 
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: employment and education', async ({ oasys, user, offender, assessment, san }) => {
 
+for (const mode of ['community', 'custody']) {
+test(`Mapping test V2 ${mode}: employment and education`, async ({ oasys, user, offender, assessment, san }) => {
+    
+    sanMode = mode as SanMode
     const mappingTestOffender = await getMappingTestOffender()
 
     // Delete previous assessments so no data gets cloned
@@ -101,6 +104,7 @@ test('Mapping test V2: employment and education', async ({ oasys, user, offender
     await paTest(assessmentPk, san.employment, oasys, assessment, san)
     await user.logout()
 })
+}
 
 
 async function scenario(test: TestCase, san: San) {

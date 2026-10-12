@@ -5,13 +5,13 @@ import { sanYesNoUnknownOptions, sanWantChangesOptions, sanYesNoOptions } from '
 
 export class Page1 extends BaseSanEditPage {
 
-    incomeSource = new Element.CheckboxGroup<IncomeSource>(this.page, '#finance_income', ['carersAllowance', 'disabilityBenefits', 'employment', 'family', 'offending', 'pension', 'studentLoan', 'undeclared', 'workBenefits', 'other', 'unknown', '-', 'noMoney'])
-    overReliant = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#family_or_friends_details', sanYesNoUnknownOptions)
-    overReliantDetails = new Element.Textbox(this.page, '#tbc')
-    anyIssues = new Element.Radiogroup<SanYesNo>(this.page, '#finance_concerns', sanYesNoOptions)
-    howGoodManaging = new Element.Radiogroup<HowGoodManaging>(this.page, '#finance_money_management', ['ableStrength', 'able', 'unable', 'unableProblems'])
-    debt = new Element.CheckboxGroup<'own' | 'someoneElse' | 'no' | 'unknown'>(this.page, '#finance_debt', ['own', 'someoneElse', '-', 'no', 'unknown'])
-    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#finance_changes', sanWantChangesOptions)
+    incomeSource = new Element.CheckboxGroup<IncomeSource>(this.page, '#[sanMode]_finance_income', ['carersAllowance', 'disabilityBenefits', 'employment', 'family', 'offending', 'pension', 'studentLoan', 'undeclared', 'workBenefits', 'other', 'unknown', '-', 'noMoney'])
+    overReliant = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#[sanMode]_family_or_friends_details', sanYesNoUnknownOptions)
+    overReliantDetails = new Element.Textbox(this.page, '#[sanMode]_tbc')
+    anyIssues = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_finance_concerns', sanYesNoOptions)
+    howGoodManaging = new Element.Radiogroup<HowGoodManaging>(this.page, '#[sanMode]_finance_money_management', ['ableStrength', 'able', 'unable', 'unableProblems'])
+    debt = new Element.CheckboxGroup<'own' | 'someoneElse' | 'no' | 'unknown'>(this.page, '#[sanMode]_finance_debt', ['own', 'someoneElse', '-', 'no', 'unknown'])
+    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#[sanMode]_finance_changes', sanWantChangesOptions)
 
 
     async populateMinimal() {

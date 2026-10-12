@@ -5,13 +5,10 @@ import { sanWantChangesOptions, sanYesNoOptions } from '../sanSection'
 
 export class Page2 extends BaseSanEditPage {
 
-    name = 'AccommodationPage2'
-    title = 'Accommodation - Strengths and Needs'
-
-    livingWith = new Element.CheckboxGroup<LivingWith>(this.page, '#living_with', ['family', 'friends', 'partner', 'child', 'other', 'unknown', '-', 'alone'])
-    locationSuitable = new Element.Radiogroup<SanYesNo>(this.page, '#suitable_housing_location', sanYesNoOptions)
-    accommodationSuitable = new Element.Radiogroup<SanYesNoConcerns>(this.page, '#suitable_housing', ['yes', 'yesWithConcerns', 'no'])
-    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#accommodation_changes', sanWantChangesOptions)
+    livingWith = new Element.CheckboxGroup<LivingWith>(this.page, '#[sanMode]_living_with', ['family', 'friends', 'partner', 'child', 'other', 'unknown', '-', 'alone'])
+    locationSuitable = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_suitable_housing_location', sanYesNoOptions)
+    accommodationSuitable = new Element.Radiogroup<SanYesNoConcerns>(this.page, '#[sanMode]_suitable_housing', ['yes', 'yesWithConcerns', 'no'])
+    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#[sanMode]_accommodation_changes', sanWantChangesOptions)
 
 
     async populateMinimal() {

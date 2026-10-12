@@ -4,6 +4,7 @@ import { paTest } from './practitionerAnalysis'
 
 type TestCase = {
     ref: number,
+    custodyOnly?: boolean,
     page1: {
         currentAccommodation: CurrentAccommodation,
         temporaryAccommodation: TemporaryAccommodation,
@@ -18,84 +19,89 @@ type TestCase = {
 let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
 
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: accommodation', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+for (const mode of ['community', 'custody']) {
+    test(`Mapping test V2 ${mode}: accommodation`, async ({ oasys, user, offender, assessment, san }) => {
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
+        sanMode = mode as SanMode
+        const mappingTestOffender = await getMappingTestOffender()
 
-    // Create a new SAN assessment
-    await user.prob.probSanUnappr.login()
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+        // Delete previous assessments so no data gets cloned
+        await user.admin.login(providers.prob.san)
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
+        await user.logout()
 
-    let failed = 0
+        // Create a new SAN assessment
+        await user.prob.probSanUnappr.login()
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 
-    const testCases: TestCase[] = [
-        { ref: 1, page1: { currentAccommodation: null, temporaryAccommodation: null }, page2: null },
-        { ref: 2, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: null },
-        { ref: 3, page1: { currentAccommodation: 'noAccommodation', temporaryAccommodation: null }, page2: null },
-        { ref: 4, page1: { currentAccommodation: 'temporary', temporaryAccommodation: null }, page2: null },
-        // { ref: 5, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'approvedPremises' }, page2: null },  // TODO add back for custody only
-        // { ref: 6, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas2' }, page2: null },
-        // { ref: 7, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas3' }, page2: null },
-        // { ref: 8, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'immigration' }, page2: null },
-        // { ref: 9, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: null },
-        { ref: 10, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'partner'], locationSuitable: null, accommodationSuitable: null } },
-        { ref: 11, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'child'], locationSuitable: 'yes', accommodationSuitable: null } },
-        { ref: 12, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'no', accommodationSuitable: null } },
-        { ref: 13, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family'], locationSuitable: 'yes', accommodationSuitable: 'yes' } },
-        { ref: 14, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'friends', 'other'], locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
-        { ref: 15, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'no' } },
-    ]
+        let failed = 0
+
+        const testCases: TestCase[] = [
+            { ref: 1, page1: { currentAccommodation: null, temporaryAccommodation: null }, page2: null },
+            { ref: 2, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: null },
+            { ref: 3, page1: { currentAccommodation: 'noAccommodation', temporaryAccommodation: null }, page2: null },
+            { ref: 4, page1: { currentAccommodation: 'temporary', temporaryAccommodation: null }, page2: null },
+            { ref: 5, custodyOnly: true, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'approvedPremises' }, page2: null },
+            { ref: 6, custodyOnly: true, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas2' }, page2: null },
+            { ref: 7, custodyOnly: true, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas3' }, page2: null },
+            { ref: 8, custodyOnly: true, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'immigration' }, page2: null },
+            { ref: 9, custodyOnly: true, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: null },
+            { ref: 10, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'partner'], locationSuitable: null, accommodationSuitable: null } },
+            { ref: 11, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'child'], locationSuitable: 'yes', accommodationSuitable: null } },
+            { ref: 12, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'no', accommodationSuitable: null } },
+            { ref: 13, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family'], locationSuitable: 'yes', accommodationSuitable: 'yes' } },
+            { ref: 14, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'friends', 'other'], locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
+            { ref: 15, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'no' } },
+        ]
 
 
-    for (const test of testCases) {
-        // Get to the right starting screen
+        for (const test of testCases) {
+            if (sanMode == 'custody' || !test.custodyOnly) {
+                // Get to the right starting screen
+                await san.gotoSan('accommodation', true)
+                // Back to the start, depending where the previous scenario ended
+                for (let i = 1; i < startPage; i++) {
+                    await san.accommodation.previous()
+                }
+                // Set values on SAN, return to OASys and check the results
+                await scenario(test, san)
+                await san.returnToOASys()
+                await oasys.clickButton('Previous', true)
+                await oasys.clickButton('Next', true)
+
+                log(JSON.stringify(test))
+                const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
+                if (scenarioFailed) {
+                    failed++
+                }
+                console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
+            }
+        }
+
+        expect(failed).toBe(0)
+
+        // Complete everything needed for PA
         await san.gotoSan('accommodation', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.accommodation.previous()
-        }
-        // Set values on SAN, return to OASys and check the results
-        await scenario(test, san)
+        await san.accommodation.page2.livingWith.setValue(['alone'])
+        await san.accommodation.page2.wantChanges.setValue('madeChanges')
+        await san.accommodation.saveAndContinue()
         await san.returnToOASys()
-        await oasys.clickButton('Previous', true)
-        await oasys.clickButton('Next', true)
 
-        log(JSON.stringify(test))
-        const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
-        if (scenarioFailed) {
-            failed++
-        }
-        console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
-
-    }
-
-    expect(failed).toBe(0)
-
-    // Complete everything needed for PA
-    await san.gotoSan('accommodation', true)
-    await san.accommodation.page2.livingWith.setValue(['alone'])
-    await san.accommodation.page2.wantChanges.setValue('madeChanges')
-    await san.accommodation.saveAndContinue()
-    await san.returnToOASys()
-
-    await paTest(assessmentPk, san.accommodation, oasys, assessment, san)
-    await user.logout()
-})
+        await paTest(assessmentPk, san.accommodation, oasys, assessment, san)
+        await user.logout()
+    })
+}
 
 
 async function scenario(test: TestCase, san: San) {
 
     await san.accommodation.page1.currentAccommodation.setValue(test.page1.currentAccommodation)
-    // if (test.page1.currentAccommodation == 'temporary') {  // TODO add this back for custody tests
-    //     await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
-    // }
+    if (test.page1.currentAccommodation == 'temporary' && sanMode == 'custody') {
+        await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
+    }
     if (test.page2) {
         await san.accommodation.saveAndContinue()
         await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)

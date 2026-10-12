@@ -26,106 +26,110 @@ type TestCase = {
 let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
 
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: relationships', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+for (const mode of ['community', 'custody']) {
+    test(`Mapping test V2 ${mode}: relationships`, async ({ oasys, user, offender, assessment, san }) => {
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
+        sanMode = mode as SanMode
+        const mappingTestOffender = await getMappingTestOffender()
 
-    // Create a new SAN assessment
-    await user.prob.probSanUnappr.login()
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+        // Delete previous assessments so no data gets cloned
+        await user.admin.login(providers.prob.san)
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
+        await user.logout()
 
-    let failed = 0
+        // Create a new SAN assessment
+        await user.prob.probSanUnappr.login()
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 
-    const testCases: TestCase[] = [
-        { ref: 1, page1: { anyChildren: ['no'] } , page2: null , page3: { currentFamilyRelationship: null, childhoodExperience: null, behaviouralProblems: null, inARelationship: null, happyWithStatus: null, history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: null, domesticAbuseVictimType: null }  },
-        { ref: 2, page1: { anyChildren: ['yesLiveWith'] } , page2: { parentingResponsibilities: 'no', manageParenting: null } , page3: { currentFamilyRelationship: 'stable', childhoodExperience: null, behaviouralProblems: null, inARelationship: null, happyWithStatus: null, history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: null, domesticAbuseVictimType: null }  },
-        { ref: 3, page1: { anyChildren: ['yesLiveElsewhere'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' } , page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'mixed', behaviouralProblems: null, inARelationship: null, happyWithStatus: null, history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: null, domesticAbuseVictimType: null }  },
-        { ref: 4, page1: { anyChildren: ['yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' } , page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'unknown', behaviouralProblems: 'yes', inARelationship: null, happyWithStatus: null, history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: 'no', domesticAbuseVictimType: null }  },
-        { ref: 5, page1: { anyChildren: ['yesLiveWith', 'yesLiveElsewhere'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'no' } , page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'positive', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: null, history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: null }  },
-        { ref: 6, page1: { anyChildren: ['yesLiveWith', 'yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' } , page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'happy', history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' }  },
-        { ref: 7, page1: { anyChildren: ['yesLiveElsewhere', 'yesVisitRegularly'] } , page2: { parentingResponsibilities: 'no', manageParenting: null } , page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'mixed', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'someConcerns', history: 'stable', domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' }  },
-        { ref: 8, page1: { anyChildren: ['no'] } , page2: null , page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'unknown', behaviouralProblems: 'yes', inARelationship: 'no', happyWithStatus: 'unhappy', history: 'mixed', domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' }  },
-        { ref: 9, page1: { anyChildren: ['yesLiveWith'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' } , page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'positive', behaviouralProblems: 'no', inARelationship: 'livingTogether', happyWithStatus: 'happy', history: 'unstable', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: null, domesticAbuseVictimType: null }  },
-        { ref: 10, page1: { anyChildren: ['yesLiveElsewhere'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' } , page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'someConcerns', history: 'stable', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'no', domesticAbuseVictimType: null }  },
-        { ref: 11, page1: { anyChildren: ['yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'no' } , page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'unknown', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'unhappy', history: 'mixed', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: null }  },
-        { ref: 12, page1: { anyChildren: ['yesLiveWith', 'yesLiveElsewhere'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' } , page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'positive', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'someConcerns', history: 'unstable', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' }  },
-        { ref: 13, page1: { anyChildren: ['yesLiveWith', 'yesVisitRegularly'] } , page2: { parentingResponsibilities: 'no', manageParenting: null } , page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'negative', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'unhappy', history: 'mixed', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' }  },
-        { ref: 14, page1: { anyChildren: ['yesLiveElsewhere', 'yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' } , page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'mixed', behaviouralProblems: 'yes', inARelationship: 'no', happyWithStatus: 'happy', history: 'unstable', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' }  },
-        { ref: 15, page1: { anyChildren: ['no'] } , page2: null , page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'positive', behaviouralProblems: 'no', inARelationship: 'livingTogether', happyWithStatus: 'someConcerns', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: null, domesticAbuseVictimType: null }  },
-        { ref: 16, page1: { anyChildren: ['yesLiveWith'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' } , page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'unhappy', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'no', domesticAbuseVictimType: null }  },
-        { ref: 17, page1: { anyChildren: ['yesLiveElsewhere'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'no' } , page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'mixed', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'happy', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: null }  },
-        { ref: 18, page1: { anyChildren: ['yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' } , page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'unknown', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'someConcerns', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' }  },
-        { ref: 19, page1: { anyChildren: ['yesLiveWith', 'yesLiveElsewhere'] } , page2: { parentingResponsibilities: 'no', manageParenting: null } , page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'positive', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'unhappy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' }  },
-        { ref: 20, page1: { anyChildren: ['yesLiveWith', 'yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' } , page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'negative', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'someConcerns', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' }  },
-        { ref: 21, page1: { anyChildren: ['yesLiveElsewhere', 'yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' } , page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'mixed', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'unhappy', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: null, domesticAbuseVictimType: null }  },
-        { ref: 22, page1: { anyChildren: ['no'] } , page2: null , page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'unknown', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'happy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'no', domesticAbuseVictimType: null }  },
-        { ref: 23, page1: { anyChildren: ['yesLiveWith'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'no' } , page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'positive', behaviouralProblems: 'yes', inARelationship: 'no', happyWithStatus: 'someConcerns', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'yes', domesticAbuseVictimType: null }  },
-        { ref: 24, page1: { anyChildren: ['yesLiveElsewhere'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' } , page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'negative', behaviouralProblems: 'no', inARelationship: 'livingTogether', happyWithStatus: 'unhappy', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' }  },
-        { ref: 25, page1: { anyChildren: ['yesVisitRegularly'] } , page2: { parentingResponsibilities: 'no', manageParenting: null } , page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'unknown', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'happy', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' }  },
-        { ref: 26, page1: { anyChildren: ['yesLiveWith', 'yesLiveElsewhere'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' } , page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'positive', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'someConcerns', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' }  },
-        { ref: 27, page1: { anyChildren: ['yesLiveWith', 'yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' } , page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'unhappy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: null, domesticAbuseVictimType: null }  },
-        { ref: 28, page1: { anyChildren: ['yesLiveElsewhere', 'yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'no' } , page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'mixed', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'someConcerns', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'no', domesticAbuseVictimType: null }  },
-        { ref: 29, page1: { anyChildren: ['no'] } , page2: null , page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'no', happyWithStatus: 'unhappy', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'yes', domesticAbuseVictimType: null }  },
-        { ref: 30, page1: { anyChildren: ['yesLiveWith'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' } , page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'unknown', behaviouralProblems: 'no', inARelationship: 'livingTogether', happyWithStatus: 'happy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' }  },
-        { ref: 31, page1: { anyChildren: ['yesLiveElsewhere'] } , page2: { parentingResponsibilities: 'no', manageParenting: null } , page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'positive', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'someConcerns', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' }  },
-        { ref: 32, page1: { anyChildren: ['yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' } , page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'negative', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'unhappy', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' }  },
-        { ref: 33, page1: { anyChildren: ['yesLiveWith', 'yesLiveElsewhere'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' } , page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'mixed', behaviouralProblems: 'no', inARelationship: 'livingTogether', happyWithStatus: 'happy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: null, domesticAbuseVictimType: null }  },
-        { ref: 34, page1: { anyChildren: ['yesLiveWith', 'yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'no' } , page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'someConcerns', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'no', domesticAbuseVictimType: null }  },
-        { ref: 35, page1: { anyChildren: ['yesLiveElsewhere', 'yesVisitRegularly'] } , page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' } , page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'unknown', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'unhappy', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'yes', domesticAbuseVictimType: null }  },
-        { ref: 36, page1: { anyChildren: ['no'] } , page2: null , page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'positive', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'someConcerns', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' }  },
-        { ref: 37, page1: { anyChildren: ['no'] } , page2: null , page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'negative', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'unhappy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' }  },
-        { ref: 38, page1: { anyChildren: ['no'] } , page2: null , page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'mixed', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'unhappy', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' }  },    ]
+        let failed = 0
+
+        const testCases: TestCase[] = [
+            { ref: 1, page1: { anyChildren: ['no'] }, page2: null, page3: { currentFamilyRelationship: null, childhoodExperience: null, behaviouralProblems: null, inARelationship: null, happyWithStatus: null, history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: null, domesticAbuseVictimType: null } },
+            { ref: 2, page1: { anyChildren: ['yesLiveWith'] }, page2: { parentingResponsibilities: 'no', manageParenting: null }, page3: { currentFamilyRelationship: 'stable', childhoodExperience: null, behaviouralProblems: null, inARelationship: null, happyWithStatus: null, history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: null, domesticAbuseVictimType: null } },
+            { ref: 3, page1: { anyChildren: ['yesLiveElsewhere'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' }, page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'mixed', behaviouralProblems: null, inARelationship: null, happyWithStatus: null, history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: null, domesticAbuseVictimType: null } },
+            { ref: 4, page1: { anyChildren: ['yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' }, page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'unknown', behaviouralProblems: 'yes', inARelationship: null, happyWithStatus: null, history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: 'no', domesticAbuseVictimType: null } },
+            { ref: 5, page1: { anyChildren: ['yesLiveWith', 'yesLiveElsewhere'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'no' }, page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'positive', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: null, history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: null } },
+            { ref: 6, page1: { anyChildren: ['yesLiveWith', 'yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' }, page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'happy', history: null, domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' } },
+            { ref: 7, page1: { anyChildren: ['yesLiveElsewhere', 'yesVisitRegularly'] }, page2: { parentingResponsibilities: 'no', manageParenting: null }, page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'mixed', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'someConcerns', history: 'stable', domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' } },
+            { ref: 8, page1: { anyChildren: ['no'] }, page2: null, page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'unknown', behaviouralProblems: 'yes', inARelationship: 'no', happyWithStatus: 'unhappy', history: 'mixed', domesticAbusePerpetrator: null, domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' } },
+            { ref: 9, page1: { anyChildren: ['yesLiveWith'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' }, page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'positive', behaviouralProblems: 'no', inARelationship: 'livingTogether', happyWithStatus: 'happy', history: 'unstable', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: null, domesticAbuseVictimType: null } },
+            { ref: 10, page1: { anyChildren: ['yesLiveElsewhere'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' }, page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'someConcerns', history: 'stable', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'no', domesticAbuseVictimType: null } },
+            { ref: 11, page1: { anyChildren: ['yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'no' }, page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'unknown', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'unhappy', history: 'mixed', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: null } },
+            { ref: 12, page1: { anyChildren: ['yesLiveWith', 'yesLiveElsewhere'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' }, page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'positive', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'someConcerns', history: 'unstable', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' } },
+            { ref: 13, page1: { anyChildren: ['yesLiveWith', 'yesVisitRegularly'] }, page2: { parentingResponsibilities: 'no', manageParenting: null }, page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'negative', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'unhappy', history: 'mixed', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' } },
+            { ref: 14, page1: { anyChildren: ['yesLiveElsewhere', 'yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' }, page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'mixed', behaviouralProblems: 'yes', inARelationship: 'no', happyWithStatus: 'happy', history: 'unstable', domesticAbusePerpetrator: 'no', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' } },
+            { ref: 15, page1: { anyChildren: ['no'] }, page2: null, page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'positive', behaviouralProblems: 'no', inARelationship: 'livingTogether', happyWithStatus: 'someConcerns', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: null, domesticAbuseVictimType: null } },
+            { ref: 16, page1: { anyChildren: ['yesLiveWith'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' }, page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'unhappy', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'no', domesticAbuseVictimType: null } },
+            { ref: 17, page1: { anyChildren: ['yesLiveElsewhere'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'no' }, page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'mixed', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'happy', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: null } },
+            { ref: 18, page1: { anyChildren: ['yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' }, page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'unknown', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'someConcerns', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' } },
+            { ref: 19, page1: { anyChildren: ['yesLiveWith', 'yesLiveElsewhere'] }, page2: { parentingResponsibilities: 'no', manageParenting: null }, page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'positive', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'unhappy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' } },
+            { ref: 20, page1: { anyChildren: ['yesLiveWith', 'yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' }, page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'negative', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'someConcerns', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: null, domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' } },
+            { ref: 21, page1: { anyChildren: ['yesLiveElsewhere', 'yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' }, page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'mixed', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'unhappy', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: null, domesticAbuseVictimType: null } },
+            { ref: 22, page1: { anyChildren: ['no'] }, page2: null, page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'unknown', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'happy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'no', domesticAbuseVictimType: null } },
+            { ref: 23, page1: { anyChildren: ['yesLiveWith'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'no' }, page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'positive', behaviouralProblems: 'yes', inARelationship: 'no', happyWithStatus: 'someConcerns', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'yes', domesticAbuseVictimType: null } },
+            { ref: 24, page1: { anyChildren: ['yesLiveElsewhere'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' }, page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'negative', behaviouralProblems: 'no', inARelationship: 'livingTogether', happyWithStatus: 'unhappy', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' } },
+            { ref: 25, page1: { anyChildren: ['yesVisitRegularly'] }, page2: { parentingResponsibilities: 'no', manageParenting: null }, page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'unknown', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'happy', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' } },
+            { ref: 26, page1: { anyChildren: ['yesLiveWith', 'yesLiveElsewhere'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' }, page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'positive', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'someConcerns', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'both', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' } },
+            { ref: 27, page1: { anyChildren: ['yesLiveWith', 'yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' }, page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'unhappy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: null, domesticAbuseVictimType: null } },
+            { ref: 28, page1: { anyChildren: ['yesLiveElsewhere', 'yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'no' }, page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'mixed', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'someConcerns', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'no', domesticAbuseVictimType: null } },
+            { ref: 29, page1: { anyChildren: ['no'] }, page2: null, page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'no', happyWithStatus: 'unhappy', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'yes', domesticAbuseVictimType: null } },
+            { ref: 30, page1: { anyChildren: ['yesLiveWith'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' }, page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'unknown', behaviouralProblems: 'no', inARelationship: 'livingTogether', happyWithStatus: 'happy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' } },
+            { ref: 31, page1: { anyChildren: ['yesLiveElsewhere'] }, page2: { parentingResponsibilities: 'no', manageParenting: null }, page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'positive', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'someConcerns', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' } },
+            { ref: 32, page1: { anyChildren: ['yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'yes' }, page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'negative', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'unhappy', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'family', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' } },
+            { ref: 33, page1: { anyChildren: ['yesLiveWith', 'yesLiveElsewhere'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'sometimes' }, page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'mixed', behaviouralProblems: 'no', inARelationship: 'livingTogether', happyWithStatus: 'happy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: null, domesticAbuseVictimType: null } },
+            { ref: 34, page1: { anyChildren: ['yesLiveWith', 'yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'no' }, page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'negative', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'someConcerns', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'no', domesticAbuseVictimType: null } },
+            { ref: 35, page1: { anyChildren: ['yesLiveElsewhere', 'yesVisitRegularly'] }, page2: { parentingResponsibilities: 'yes', manageParenting: 'unknown' }, page3: { currentFamilyRelationship: 'mixed', childhoodExperience: 'unknown', behaviouralProblems: 'no', inARelationship: 'no', happyWithStatus: 'unhappy', history: 'mixed', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'yes', domesticAbuseVictimType: null } },
+            { ref: 36, page1: { anyChildren: ['no'] }, page2: null, page3: { currentFamilyRelationship: 'unstable', childhoodExperience: 'positive', behaviouralProblems: 'yes', inARelationship: 'livingTogether', happyWithStatus: 'someConcerns', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'both' } },
+            { ref: 37, page1: { anyChildren: ['no'] }, page2: null, page3: { currentFamilyRelationship: 'unknown', childhoodExperience: 'negative', behaviouralProblems: 'no', inARelationship: 'notLivingTogether', happyWithStatus: 'unhappy', history: 'stable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'family' } },
+            { ref: 38, page1: { anyChildren: ['no'] }, page2: null, page3: { currentFamilyRelationship: 'stable', childhoodExperience: 'mixed', behaviouralProblems: 'yes', inARelationship: 'notLivingTogether', happyWithStatus: 'unhappy', history: 'unstable', domesticAbusePerpetrator: 'yes', domesticAbusePerpetratorType: 'partner', domesticAbuseVictim: 'yes', domesticAbuseVictimType: 'partner' } },]
 
 
-    for (const test of testCases) {
-        // Get to the right starting screen
+        for (const test of testCases) {
+            // Get to the right starting screen
+            await san.gotoSan('relationships', true)
+            // Back to the start, depending where the previous scenario ended
+            for (let i = 1; i < startPage; i++) {
+                await san.relationships.previous()
+            }
+            // Set values on SAN, return to OASys and check the results
+            await scenario(test, san)
+            await san.returnToOASys()
+            await oasys.clickButton('Previous', true)
+            await oasys.clickButton('Next', true)
+
+            log(JSON.stringify(test))
+            const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
+            if (scenarioFailed) {
+                failed++
+            }
+            console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
+
+        }
+
+        expect(failed).toBe(0)
+
+        // Complete everything needed for PA
         await san.gotoSan('relationships', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.relationships.previous()
-        }
-        // Set values on SAN, return to OASys and check the results
-        await scenario(test, san)
+        await san.relationships.page3.currentFamilyRelationship.setValue('stable')
+        await san.relationships.page3.childhoodExperience.setValue('positive')
+        await san.relationships.page3.behaviouralProblems.setValue('no')
+        await san.relationships.page3.communities.setValue('yes')
+        await san.relationships.page3.inARelationship.setValue('no')
+        await san.relationships.page3.happyWithStatus.setValue('happy')
+        await san.relationships.page3.history.setValue('stable')
+        await san.relationships.page3.domesticAbusePerpetrator.setValue('no')
+        await san.relationships.page3.domesticAbuseVictim.setValue('no')
+        await san.relationships.page3.wantChanges.setValue('madeChanges')
+        await san.relationships.saveAndContinue()
         await san.returnToOASys()
-        await oasys.clickButton('Previous', true)
-        await oasys.clickButton('Next', true)
 
-        log(JSON.stringify(test))
-        const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
-        if (scenarioFailed) {
-            failed++
-        }
-        console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
-
-    }
-
-    expect(failed).toBe(0)
-
-    // Complete everything needed for PA
-    await san.gotoSan('relationships', true)
-    await san.relationships.page3.currentFamilyRelationship.setValue('stable')
-    await san.relationships.page3.childhoodExperience.setValue('positive')
-    await san.relationships.page3.behaviouralProblems.setValue('no')
-    await san.relationships.page3.communities.setValue('yes')
-    await san.relationships.page3.inARelationship.setValue('no')
-    await san.relationships.page3.happyWithStatus.setValue('happy')
-    await san.relationships.page3.history.setValue('stable')
-    await san.relationships.page3.domesticAbusePerpetrator.setValue('no')
-    await san.relationships.page3.domesticAbuseVictim.setValue('no')
-    await san.relationships.page3.wantChanges.setValue('madeChanges')
-    await san.relationships.saveAndContinue()
-    await san.returnToOASys()
-
-    await paTest(assessmentPk, san.relationships, oasys, assessment, san)
-    await user.logout()
-})
+        await paTest(assessmentPk, san.relationships, oasys, assessment, san)
+        await user.logout()
+    })
+}
 
 
 async function scenario(test: TestCase, san: San) {

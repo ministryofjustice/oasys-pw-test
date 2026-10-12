@@ -16,76 +16,80 @@ type TestCase = {
 let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
 
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: alcohol', async ({ oasys, user, offender, assessment, san }) => {
 
-    const mappingTestOffender = await getMappingTestOffender()
+for (const mode of ['community', 'custody']) {
+    test(`Mapping test V2 ${mode}: alcohol`, async ({ oasys, user, offender, assessment, san }) => {
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
+        sanMode = mode as SanMode
+        const mappingTestOffender = await getMappingTestOffender()
 
-    // Create a new SAN assessment
-    await user.prob.probSanUnappr.login()
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+        // Delete previous assessments so no data gets cloned
+        await user.admin.login(providers.prob.san)
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
+        await user.logout()
 
-    let failed = 0
+        // Create a new SAN assessment
+        await user.prob.probSanUnappr.login()
+        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
 
-    const testCases: TestCase[] = [
-        { ref: 1, page1: { evidenceCurrentIssues: null }, page2: null },
-        { ref: 2, page1: { evidenceCurrentIssues: 'neverDrank' }, page2: null },
-        { ref: 3, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: null },
-        { ref: 4, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'no' } },
-        { ref: 5, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'yes' } },
-        { ref: 6, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'evidence', pastIssues: 'no' } },
-        { ref: 7, page1: { evidenceCurrentIssues: 'someProblems' }, page2: null },
-        { ref: 8, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' } },
-        { ref: 9, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' } },
-        { ref: 10, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'evidence', pastIssues: 'yes' } },
-        { ref: 11, page1: { evidenceCurrentIssues: 'significant' }, page2: null },
-        { ref: 12, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' } },
-        { ref: 13, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' } },
-        { ref: 14, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'evidence', pastIssues: 'yes' } },
-    ]
+        let failed = 0
+
+        const testCases: TestCase[] = [
+            { ref: 1, page1: { evidenceCurrentIssues: null }, page2: null },
+            { ref: 2, page1: { evidenceCurrentIssues: 'neverDrank' }, page2: null },
+            { ref: 3, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: null },
+            { ref: 4, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'no' } },
+            { ref: 5, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'yes' } },
+            { ref: 6, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'evidence', pastIssues: 'no' } },
+            { ref: 7, page1: { evidenceCurrentIssues: 'someProblems' }, page2: null },
+            { ref: 8, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' } },
+            { ref: 9, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' } },
+            { ref: 10, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'evidence', pastIssues: 'yes' } },
+            { ref: 11, page1: { evidenceCurrentIssues: 'significant' }, page2: null },
+            { ref: 12, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' } },
+            { ref: 13, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' } },
+            { ref: 14, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'evidence', pastIssues: 'yes' } },
+        ]
 
 
-    for (const test of testCases) {
-        // Get to the right starting screen
+        for (const test of testCases) {
+            // Get to the right starting screen
+            await san.gotoSan('alcohol', true)
+            for (let i = 1; i < startPage; i++) {
+                await san.alcohol.previous()
+            }
+            // Set values on SAN, return to OASys and check the results
+            await scenario(test, san)
+            await san.returnToOASys()
+            await oasys.clickButton('Previous', true)
+            await oasys.clickButton('Next', true)
+
+            log(JSON.stringify(test))
+            const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
+            if (scenarioFailed) {
+                failed++
+            }
+            console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
+
+        }
+
+        expect(failed).toBe(0)
+
+        // Complete everything needed for PA
         await san.gotoSan('alcohol', true)
-        for (let i = 1; i < startPage; i++) {
-            await san.alcohol.previous()
-        }
-        // Set values on SAN, return to OASys and check the results
-        await scenario(test, san)
+        await san.alcohol.page2.bingeDrinking.setValue('noEvidence')
+        await san.alcohol.page2.pastIssues.setValue('no')
+        await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
+        await san.alcohol.page2.wantChanges.setValue('madeChanges')
+        await san.alcohol.saveAndContinue()
         await san.returnToOASys()
-        await oasys.clickButton('Previous', true)
-        await oasys.clickButton('Next', true)
 
-        log(JSON.stringify(test))
-        const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
-        if (scenarioFailed) {
-            failed++
-        }
-        console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
-
-    }
-
-    expect(failed).toBe(0)
-
-    // Complete everything needed for PA
-    await san.gotoSan('alcohol', true)
-    await san.alcohol.page2.bingeDrinking.setValue('noEvidence')
-    await san.alcohol.page2.pastIssues.setValue('no')
-    await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
-    await san.alcohol.page2.wantChanges.setValue('madeChanges')
-    await san.alcohol.saveAndContinue()
-    await san.returnToOASys()
-
-    await paTest(assessmentPk, san.alcohol, oasys, assessment, san)
-    await user.logout()
-})
+        await paTest(assessmentPk, san.alcohol, oasys, assessment, san)
+        await user.logout()
+    })
+}
 
 
 async function scenario(test: TestCase, san: San) {

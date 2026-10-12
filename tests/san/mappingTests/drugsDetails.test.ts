@@ -114,7 +114,7 @@ async function drugTest(drugType: DrugType, oasys: Oasys, user: User, offender: 
     if (!drugType) {  // If null, run the practitioner analysis test
 
         // First check with no drug use (no PA)
-        await san.gotoSan('Drug use', true)
+        await san.gotoSan('drugs', true)
         await san.drugs.page1.everUsed.setValue('no')
         await san.drugs.saveAndContinue()
         await san.returnToOASys()
@@ -130,7 +130,7 @@ async function drugTest(drugType: DrugType, oasys: Oasys, user: User, offender: 
         expect(result).toBeFalsy()
 
         // Complete everything needed for PA
-        await san.gotoSan('Drug use', true)
+        await san.gotoSan('drugs', true)
         await san.drugs.page1.everUsed.setValue('yes')
         await san.drugs.saveAndContinue()
         await san.drugs.page2.drugType.setValue(['cannabis'])
@@ -183,7 +183,7 @@ async function drugTest(drugType: DrugType, oasys: Oasys, user: User, offender: 
         for (const test of testCases) {
             if (injectableDrug(drugType) || (test.injectedLastSix == null && test.injectedMoreThanSix == null)) {  // skip injection tests for non-injectable drugs
                 // Get to the right starting screen
-                await san.gotoSan('Drug use', true)
+                await san.gotoSan('drugs', true)
                 if (firstRun) {
                     await san.drugs.page1.everUsed.setValue('yes')
                     await san.drugs.saveAndContinue()

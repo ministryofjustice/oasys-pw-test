@@ -30,7 +30,7 @@ test('Mapping test V2: control characters', async ({ oasys, user, offender, asse
 
     for (const test of testCases) {
         // Get to the right starting screen
-        await san.gotoSan('Offence analysis', true)
+        await san.gotoSan('offenceAnalysis', true)
         if (test.ref > 1) {
             await san.offenceAnalysis.previous()
         }

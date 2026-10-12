@@ -6,7 +6,7 @@ import { PractitionerAnalysis } from '../pages'
 
 export class Alcohol extends BaseSanSection {
 
-    override readonly sectionName: SanSection = 'Alcohol use'
+    override readonly sectionName: SanSectionTitle = 'Alcohol use'
     override readonly paPrefix = 'alcohol_use'
 
     readonly page1 = new Page1(this.page)

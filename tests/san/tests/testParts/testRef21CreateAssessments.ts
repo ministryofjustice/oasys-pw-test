@@ -108,7 +108,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         const offender2Pk5 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
         offender2Pks.push(offender2Pk5)
 
-        await san.gotoSan('Finances')
+        await san.gotoSan('finance')
         await san.finance.change()
         await san.finance.page1.incomeSource.setValue(['carersAllowance'])
         await san.finance.saveAndContinue()
@@ -122,7 +122,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await oasys.history(offender2)
         const offender2Pk6 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
         offender2Pks.push(offender2Pk6)
-        await san.gotoSan('Finances')
+        await san.gotoSan('finance')
         await san.finance.change()
         await san.finance.page1.incomeSource.setValue(['disabilityBenefits'])
         await san.finance.saveAndContinue()

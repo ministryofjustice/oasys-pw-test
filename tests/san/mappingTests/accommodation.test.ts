@@ -56,7 +56,7 @@ test('Mapping test V2: accommodation', async ({ oasys, user, offender, assessmen
 
     for (const test of testCases) {
         // Get to the right starting screen
-        await san.gotoSan('Accommodation', true)
+        await san.gotoSan('accommodation', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
             await san.accommodation.previous()
@@ -79,7 +79,7 @@ test('Mapping test V2: accommodation', async ({ oasys, user, offender, assessmen
     expect(failed).toBe(0)
 
     // Complete everything needed for PA
-    await san.gotoSan('Accommodation', true)
+    await san.gotoSan('accommodation', true)
     await san.accommodation.page2.livingWith.setValue(['alone'])
     await san.accommodation.page2.wantChanges.setValue('madeChanges')
     await san.accommodation.saveAndContinue()

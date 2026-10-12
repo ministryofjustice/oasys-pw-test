@@ -35,7 +35,7 @@ export async function paTest(assessmentPk: number, sanSection: BaseSanSection, o
     for (const test of testCases) {
 
         // Get to the right starting screen
-        await san.gotoSan(sanSection.sectionName, true)
+        await san.gotoSan(sanSection.constructor.name as SanSection, true)
         await sanSection.openPractitionerAnalysis()
         if (test.ref > 1) {
             await sanSection.change()
@@ -89,7 +89,7 @@ function getText(question: 'strengths' | 'riskOfHarm' | 'riskOfReoffending', yes
     }
 }
 
-async function checkAnswers(assessmentPk: number, sanSection: SanSection, test: TestCase, assessment: Assessment): Promise<boolean> {
+async function checkAnswers(assessmentPk: number, sanSectionTitle: SanSectionTitle, test: TestCase, assessment: Assessment): Promise<boolean> {
 
     /*
         x.97: combined text
@@ -129,11 +129,11 @@ async function checkAnswers(assessmentPk: number, sanSection: SanSection, test: 
         text = `${strengthsText}${riskOfHarmText}${riskOfReoffendingText}`
     }
 
-    const oasysSection = oasysSectionLookup[sanSection]
+    const oasysSection = oasysSectionLookup[sanSectionTitle]
 
-    const issuesQuestion = sanSection == 'Employment and education' ? '.94' : '.97'
-    const harmQuestion = sanSection == 'Employment and education' ? '.96' : '.98'
-    const reoffendingQuestion = sanSection == 'Employment and education' ? '.98' : '.99'
+    const issuesQuestion = sanSectionTitle == 'Employment and education' ? '.94' : '.97'
+    const harmQuestion = sanSectionTitle == 'Employment and education' ? '.96' : '.98'
+    const reoffendingQuestion = sanSectionTitle == 'Employment and education' ? '.98' : '.99'
 
     const expectedSectionAnswers: OasysAnswer[] = [
         { q: `${oasysSection}${issuesQuestion}`, a: text },
@@ -141,17 +141,17 @@ async function checkAnswers(assessmentPk: number, sanSection: SanSection, test: 
         { q: `${oasysSection}${reoffendingQuestion}`, a: test.riskOfReoffending == null ? null : test.riskOfReoffending ? 'YES' : 'NO' },
     ]
     const expectedSanSectionAnswers: OasysAnswer[] = [
-        { q: `${sanCompletionPrefixLookup[sanSection]}_SAN_SECTION_COMP`, a: 'YES' },
+        { q: `${sanCompletionPrefixLookup[sanSectionTitle]}_SAN_SECTION_COMP`, a: 'YES' },
     ]
 
-    if (sanSection == 'Thinking, behaviours and attitudes') {
+    if (sanSectionTitle == 'Thinking, behaviours and attitudes') {
         expectedSanSectionAnswers.push({ q: `TBA_SAN_STRENGTH`, a: test.strengths == null ? null : test.strengths ? 'YES' : 'NO' })
     } else {
         expectedSectionAnswers.push({ q: `${oasysSection}_SAN_STRENGTH`, a: test.strengths == null ? null : test.strengths ? 'YES' : 'NO' })
     }
 
     let sectionFailed = await assessment.queries.checkSectionAnswers(assessmentPk, oasysSection, expectedSectionAnswers, true)
-    if (sanSection == 'Thinking, behaviours and attitudes') {
+    if (sanSectionTitle == 'Thinking, behaviours and attitudes') {
         const expectedSection11Answers: OasysAnswer[] = [
             { q: `11${issuesQuestion}`, a: text },
             { q: `11${harmQuestion}`, a: test.riskOfHarm == null ? null : test.riskOfHarm ? 'YES' : 'NO' },
@@ -191,7 +191,7 @@ function answerText(question: 'strengths' | 'riskOfHarm' | 'riskOfReoffending', 
             : noPrefix[question]}${getText(question, test[question], test[`${question}Text`])}`
 }
 
-const sanCompletionPrefixLookup: { [key in SanSection]: string } = {
+const sanCompletionPrefixLookup: { [key in SanSectionTitle]: string } = {
     'Accommodation': 'AC',
     'Employment and education': 'EE',
     'Finances': 'FI',
@@ -201,10 +201,9 @@ const sanCompletionPrefixLookup: { [key in SanSection]: string } = {
     'Personal relationships and community': 'PRC',
     'Thinking, behaviours and attitudes': 'TBA',
     'Offence analysis': 'OA',
-    'Sentence plan': '',
 }
 
-const oasysSectionLookup: { [key in SanSection]: string } = {
+const oasysSectionLookup: { [key in SanSectionTitle]: string } = {
     'Accommodation': '3',
     'Employment and education': '4',
     'Finances': '5',
@@ -214,5 +213,4 @@ const oasysSectionLookup: { [key in SanSection]: string } = {
     'Personal relationships and community': '6',
     'Thinking, behaviours and attitudes': '7',  // Plus 11 and 12
     'Offence analysis': '2',
-    'Sentence plan': '',
 }

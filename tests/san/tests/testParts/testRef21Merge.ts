@@ -85,7 +85,7 @@ export function testRef21Merge(offender1: OffenderDef, offender2: OffenderDef, o
         // Create and complete assessment 8 (layer 3 v2)
         const pk = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
         offender2Pks.push(pk)
-        await san.gotoSan('Finances')
+        await san.gotoSan('finance')
         await san.finance.change()
         await san.finance.page1.incomeSource.setValue(['pension'])
         await san.finance.saveAndContinue()

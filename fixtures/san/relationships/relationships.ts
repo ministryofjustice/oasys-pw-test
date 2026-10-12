@@ -7,7 +7,7 @@ import { PractitionerAnalysis } from '../pages'
 
 export class Relationships extends BaseSanSection {
 
-    override readonly sectionName: SanSection = 'Personal relationships and community'
+    override readonly sectionName: SanSectionTitle = 'Personal relationships and community'
     override readonly paPrefix = 'personal_relationships_community'
 
     readonly page1 = new Page1(this.page)

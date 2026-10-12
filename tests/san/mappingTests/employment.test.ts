@@ -65,7 +65,7 @@ test('Mapping test V2: employment and education', async ({ oasys, user, offender
 
     for (const test of testCases) {
         // Get to the right starting screen
-        await san.gotoSan('Employment and education', true)
+        await san.gotoSan('employment', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
             await san.employment.previous()
@@ -88,7 +88,7 @@ test('Mapping test V2: employment and education', async ({ oasys, user, offender
     expect(failed).toBe(0)
 
     // Complete everything needed for PA
-    await san.gotoSan('Employment and education', true)
+    await san.gotoSan('employment', true)
     await san.employment.page2.employmentHistory.setValue('continuous')
     await san.employment.page2.additionalCommitments.setValue(['none'])
     await san.employment.page2.anyQual.setValue('no')

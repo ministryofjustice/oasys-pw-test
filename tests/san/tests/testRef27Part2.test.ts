@@ -107,9 +107,8 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, user, cms, offender
             Close the assessment - back to the offender record`, 'Test step')
 
     await assessment.openLatest()
-    await san.gotoSanReadOnly()
+    await san.gotoSanReadOnly('alcohol')
     await san.checkSanEditMode(false)
-    await san.goto('Alcohol use')
     await san.checkReadonlyText(
         `Has ${offender1.forename1} shown evidence of binge drinking or excessive alcohol use in the last 6 months?`,
         'Evidence of binge drinking or excessive alcohol use')

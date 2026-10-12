@@ -35,8 +35,4 @@ export class Button {
         return !visible ? 'notVisible' : disabled ? 'visible' : 'enabled'
     }
 
-    static async sanClick(page: Page, item: SanId) {
-
-        await page.getByRole('button', { name: item.id }).first().click()
-    }
 }

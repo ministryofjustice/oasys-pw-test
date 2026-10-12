@@ -6,7 +6,7 @@ import { PractitionerAnalysis } from '../pages'
 
 export class Accommodation extends BaseSanSection {
 
-    override readonly sectionName: SanSection = 'Accommodation'
+    override readonly sectionName: SanSectionTitle = 'Accommodation'
     override readonly paPrefix = 'accommodation'
 
     readonly page1 = new Page1(this.page)

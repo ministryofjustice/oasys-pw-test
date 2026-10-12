@@ -7,7 +7,7 @@ import { PractitionerAnalysis } from '../pages'
 
 export class Thinking extends BaseSanSection {
 
-    override readonly sectionName: SanSection = 'Thinking, behaviours and attitudes'
+    override readonly sectionName: SanSectionTitle = 'Thinking, behaviours and attitudes'
     override readonly paPrefix = 'thinking_behaviours_attitudes'
 
     readonly page1 = new Page1(this.page)

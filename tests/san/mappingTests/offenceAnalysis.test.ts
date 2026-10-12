@@ -87,7 +87,7 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
 
     for (const test of testCases) {
         // Get to the right starting screen
-        await san.gotoSan('Offence analysis', true)
+        await san.gotoSan('offenceAnalysis', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
             await san.offenceAnalysis.previous()
@@ -107,7 +107,7 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
 
         // Reset 1.30 if required ready for the next scenario
         if (test.ref < 22 && (test.page1.offenceElements.includes('sexualElement') || test.page1.motivations.includes('sexual'))) {
-            await san.gotoSan('Offence analysis', true)
+            await san.gotoSan('offenceAnalysis', true)
             for (let i = 1; i < startPage; i++) {
                 await san.offenceAnalysis.previous()
             }

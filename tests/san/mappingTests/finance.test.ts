@@ -47,7 +47,7 @@ test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san
 
     for (const test of testCases) {
         // Get to the right starting screen
-        await san.gotoSan('Finances', true)
+        await san.gotoSan('finance', true)
 
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
@@ -67,7 +67,7 @@ test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san
     expect(failed).toBe(0)
 
     // Complete everything needed for PA
-    await san.gotoSan('Finances', true)
+    await san.gotoSan('finance', true)
     await san.finance.page1.incomeSource.setValue(['carersAllowance'])
     await san.finance.page1.anyIssues.setValue('yes')
     await san.finance.page1.howGoodManaging.setValue('able')

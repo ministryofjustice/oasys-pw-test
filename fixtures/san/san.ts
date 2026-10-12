@@ -159,7 +159,7 @@ export class San {
         await this.landingPage.confirm.click()
 
         if (section) {
-            await this.goto(section, supressLog)
+            await this[section].goto()
         }
     }
 
@@ -171,7 +171,7 @@ export class San {
             await this.landingPage.confirm.click()
         }
     }
-    
+
     /**
      * Navigates to the SAN assessment in readonly mode (no landingPage), assuming you are somewhere in the OASys assessment.
      * 
@@ -183,20 +183,8 @@ export class San {
         await this.oasysSanSections.openSan.click()
 
         if (section) {
-            await this.goto(section)
+            await this[section].goto()
         }
-    }
-
-    /**
-     * Select a SAN section on the menu using the text label on the menu
-     */
-    async goto(section: SanSection, supressLog: boolean = false) {
-
-        if (!supressLog) {
-            log(`Go to SAN section: ${section}`)
-        }
-        await this.page.locator('.moj-side-navigation__item a').filter({ hasText: section }).first().click()
-        await expect(this.page.locator('.moj-side-navigation__item--active a').filter({ hasText: section })).toBeVisible()
     }
 
     /**

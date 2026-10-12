@@ -8,7 +8,7 @@ import { Victims } from './victims'
 
 export class OffenceAnalysis extends BaseSanSection {
 
-    override readonly sectionName: SanSection = 'Offence analysis'
+    override readonly sectionName: SanSectionTitle = 'Offence analysis'
     override readonly paPrefix = 'accommodation'
 
     readonly page1 = new Page1(this.page)

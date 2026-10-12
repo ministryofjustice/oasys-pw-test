@@ -5,7 +5,7 @@ import { PractitionerAnalysis } from '../pages'
 
 export class Finance extends BaseSanSection {
 
-    override readonly sectionName: SanSection = 'Finances'
+    override readonly sectionName: SanSectionTitle = 'Finances'
     override readonly paPrefix = 'finance'
 
     readonly page1 = new Page1(this.page)

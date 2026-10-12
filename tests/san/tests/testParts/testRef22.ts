@@ -67,7 +67,7 @@ export function testRef22(offender1: OffenderDef, offender2: OffenderDef, offend
 async function checkAssessment(user: string, offender: OffenderDef, pk: number, incomeSource: string, page: Page, san: San, sentencePlan: SentencePlan) {
 
     log(`Checking assessment pk ${pk}`)
-    await san.gotoSanReadOnly('Finances')
+    await san.gotoSanReadOnly('finance')
     await san.queries.checkSanOtlCall(pk,
         {
             'crn': offender.probationCrn,

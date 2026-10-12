@@ -7,7 +7,7 @@ export class BaseSanSection {
 
     constructor(readonly page: Page) { }
 
-    readonly sectionName: SanSection = null
+    readonly sectionName: SanSectionTitle = null
     readonly paPrefix: string = null
     readonly practitionerAnalysis: PractitionerAnalysis = null
 
@@ -56,7 +56,7 @@ export class BaseSanSection {
             // await this.page.locator('.moj-side-navigation__item--active a').filter({ hasText: this.sectionName }).isVisible()  // Ensure page update before next check
             // await this.page.waitForTimeout(1000)
         }
-        
+
         let backCount: number
         do {
             backCount = await this.page.locator('.govuk-back-link').count()

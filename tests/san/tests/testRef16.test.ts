@@ -42,7 +42,7 @@ test('SAN integration - test ref 16', async ({ oasys, user, offender, assessment
     await user.pris.prisSanPom.login()
     await offender.searchAndSelect(offender1)
     await assessment.openLatest()
-    await san.gotoSan('Accommodation')
+    await san.gotoSan('accommodation')
     await san.checkSanEditMode(true)
     await san.returnToOASys()
 

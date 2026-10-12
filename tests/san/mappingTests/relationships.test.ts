@@ -86,7 +86,7 @@ test('Mapping test V2: relationships', async ({ oasys, user, offender, assessmen
 
     for (const test of testCases) {
         // Get to the right starting screen
-        await san.gotoSan('Personal relationships and community', true)
+        await san.gotoSan('relationships', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
             await san.relationships.previous()
@@ -109,7 +109,7 @@ test('Mapping test V2: relationships', async ({ oasys, user, offender, assessmen
     expect(failed).toBe(0)
 
     // Complete everything needed for PA
-    await san.gotoSan('Personal relationships and community', true)
+    await san.gotoSan('relationships', true)
     await san.relationships.page3.currentFamilyRelationship.setValue('stable')
     await san.relationships.page3.childhoodExperience.setValue('positive')
     await san.relationships.page3.behaviouralProblems.setValue('no')

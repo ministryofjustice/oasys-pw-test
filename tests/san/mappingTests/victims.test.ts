@@ -51,7 +51,7 @@ test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san
 
     for (const test of testCases) {
         // Get to the right starting screen
-        await san.gotoSan('Offence analysis', true)
+        await san.gotoSan('offenceAnalysis', true)
         if (test.ref == 1) {
             await san.offenceAnalysis.page1.offenceDescription.setValue('Description')
             await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)

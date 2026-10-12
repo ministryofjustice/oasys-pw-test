@@ -67,7 +67,7 @@ test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, as
 
     for (const test of testCases) {
         // Get to the right starting screen
-        await san.gotoSan('Health and wellbeing', true)
+        await san.gotoSan('health', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
             await san.health.previous()
@@ -90,7 +90,7 @@ test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, as
     expect(failed).toBe(0)
 
     // Complete everything needed for PA
-    await san.gotoSan('Health and wellbeing', true)
+    await san.gotoSan('health', true)
     await san.health.page2.psychTreatment.setValue('no')
     await san.health.page2.learningDifficulties.setValue('no')
     await san.health.page2.coping.setValue('no')

@@ -34,26 +34,26 @@ test('Mapping test V2: alcohol', async ({ oasys, user, offender, assessment, san
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 1, page1: { evidenceCurrentIssues: null } , page2: null  },
-        { ref: 2, page1: { evidenceCurrentIssues: 'neverDrank' } , page2: null  },
-        { ref: 3, page1: { evidenceCurrentIssues: 'noCurrentProblems' } , page2: null  },
-        { ref: 4, page1: { evidenceCurrentIssues: 'noCurrentProblems' } , page2: { bingeDrinking: 'noEvidence', pastIssues: 'no' }  },
-        { ref: 5, page1: { evidenceCurrentIssues: 'noCurrentProblems' } , page2: { bingeDrinking: 'someEvidence', pastIssues: 'yes' }  },
-        { ref: 6, page1: { evidenceCurrentIssues: 'noCurrentProblems' } , page2: { bingeDrinking: 'evidence', pastIssues: 'no' }  },
-        { ref: 7, page1: { evidenceCurrentIssues: 'someProblems' } , page2: null  },
-        { ref: 8, page1: { evidenceCurrentIssues: 'someProblems' } , page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' }  },
-        { ref: 9, page1: { evidenceCurrentIssues: 'someProblems' } , page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' }  },
-        { ref: 10, page1: { evidenceCurrentIssues: 'someProblems' } , page2: { bingeDrinking: 'evidence', pastIssues: 'yes' }  },
-        { ref: 11, page1: { evidenceCurrentIssues: 'significant' } , page2: null  },
-        { ref: 12, page1: { evidenceCurrentIssues: 'significant' } , page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' }  },
-        { ref: 13, page1: { evidenceCurrentIssues: 'significant' } , page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' }  },
-        { ref: 14, page1: { evidenceCurrentIssues: 'significant' } , page2: { bingeDrinking: 'evidence', pastIssues: 'yes' }  },
+        { ref: 1, page1: { evidenceCurrentIssues: null }, page2: null },
+        { ref: 2, page1: { evidenceCurrentIssues: 'neverDrank' }, page2: null },
+        { ref: 3, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: null },
+        { ref: 4, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'no' } },
+        { ref: 5, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'yes' } },
+        { ref: 6, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'evidence', pastIssues: 'no' } },
+        { ref: 7, page1: { evidenceCurrentIssues: 'someProblems' }, page2: null },
+        { ref: 8, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' } },
+        { ref: 9, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' } },
+        { ref: 10, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'evidence', pastIssues: 'yes' } },
+        { ref: 11, page1: { evidenceCurrentIssues: 'significant' }, page2: null },
+        { ref: 12, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' } },
+        { ref: 13, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' } },
+        { ref: 14, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'evidence', pastIssues: 'yes' } },
     ]
 
 
     for (const test of testCases) {
         // Get to the right starting screen
-        await san.gotoSan('Alcohol use', true)
+        await san.gotoSan('alcohol', true)
         for (let i = 1; i < startPage; i++) {
             await san.alcohol.previous()
         }
@@ -75,7 +75,7 @@ test('Mapping test V2: alcohol', async ({ oasys, user, offender, assessment, san
     expect(failed).toBe(0)
 
     // Complete everything needed for PA
-    await san.gotoSan('Alcohol use', true)
+    await san.gotoSan('alcohol', true)
     await san.alcohol.page2.bingeDrinking.setValue('noEvidence')
     await san.alcohol.page2.pastIssues.setValue('no')
     await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')

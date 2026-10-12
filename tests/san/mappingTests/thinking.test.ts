@@ -81,7 +81,7 @@ test('Mapping test V2: thinking', async ({ oasys, user, offender, assessment, sa
 
     for (const test of testCases) {
         // Get to the right starting screen
-        await san.gotoSan('Thinking, behaviours and attitudes', true)
+        await san.gotoSan('thinking', true)
         // Back to the start, depending where the previous scenario ended
         for (let i = 1; i < startPage; i++) {
             await san.thinking.previous()
@@ -104,7 +104,7 @@ test('Mapping test V2: thinking', async ({ oasys, user, offender, assessment, sa
     expect(failed).toBe(0)
 
     // Complete everything needed for PA
-    await san.gotoSan('Thinking, behaviours and attitudes', true)
+    await san.gotoSan('thinking', true)
     await san.thinking.saveAndContinue()
     await san.returnToOASys()
 

@@ -25,7 +25,7 @@ export function demergeAndCheckOffenders(mergeTestData: MergeTestData) {
         await assessment.assessmentsTab.assessments.checkData([{ name: 'purposeOfAssessment', values: ['Start of Community Order (Full) '] }])
 
         await assessment.openLatest()
-        await san.gotoSanReadOnly('Offence analysis')
+        await san.gotoSanReadOnly('offenceAnalysis')
         await san.checkReadonlyText('Enter a brief description of the current index offence(s)', 'Offence description for assessment 1')
         await san.returnToOASys()
         await oasys.clickButton('Close')
@@ -36,7 +36,7 @@ export function demergeAndCheckOffenders(mergeTestData: MergeTestData) {
             await offender.offenderDetails.pnc.setValue(mergeTestData.offender1.pnc)
         }
         await assessment.createProb({ purposeOfAssessment: 'Review' })
-        await san.gotoSan('Offence analysis')
+        await san.gotoSan('offenceAnalysis')
         await san.checkReadonlyText('Enter a brief description of the current index offence(s)', 'Offence description for assessment 1')
         await san.returnToOASys()
         await user.logout()
@@ -50,20 +50,20 @@ export function demergeAndCheckOffenders(mergeTestData: MergeTestData) {
 
         // Check first assessment
         await assessment.assessmentsTab.assessments.purposeOfAssessment.clickRowContaining('Start of Suspended Sentence Order (Full) ')
-        await san.gotoSanReadOnly('Offence analysis')
+        await san.gotoSanReadOnly('offenceAnalysis')
         await san.checkReadonlyText('Enter a brief description of the current index offence(s)', 'Offence description modified for offender 2')
         await san.returnToOASys()
         await oasys.clickButton('Close')
 
         // Check second assessment
         await assessment.openLatest()
-        await san.gotoSanReadOnly('Offence analysis')
+        await san.gotoSanReadOnly('offenceAnalysis')
         await san.checkReadonlyText('Enter a brief description of the current index offence(s)', 'Offence description modified for 3rd assessment on merged offender')
         await san.returnToOASys()
         await oasys.clickButton('Close')
 
         await assessment.createProb({ purposeOfAssessment: 'Review' })
-        await san.gotoSan('Offence analysis')
+        await san.gotoSan('offenceAnalysis')
         await san.checkReadonlyText('Enter a brief description of the current index offence(s)', 'Offence description modified for 3rd assessment on merged offender')
         await san.returnToOASys()
         await user.logout()

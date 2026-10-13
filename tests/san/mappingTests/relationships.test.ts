@@ -143,6 +143,9 @@ async function scenario(test: TestCase, san: San) {
         startPage = 2
     }
     if (test.page3) {
+        if (sanMode == 'custody') {
+            await san.relationships.page2.childrenVisiting.setValue('no')
+        }
         await san.relationships.saveAndContinue()
         await san.relationships.page3.currentFamilyRelationship.setValue(test.page3.currentFamilyRelationship)
         await san.relationships.page3.childhoodExperience.setValue(test.page3.childhoodExperience)

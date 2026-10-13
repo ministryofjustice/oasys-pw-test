@@ -6,6 +6,7 @@ import { sanYesNoUnknownOptions, sanWantChangesOptions, sanYesNoOptions } from '
 export class Page1 extends BaseSanEditPage {
 
     incomeSource = new Element.CheckboxGroup<IncomeSource>(this.page, '#[sanMode]_finance_income', ['carersAllowance', 'disabilityBenefits', 'employment', 'family', 'offending', 'pension', 'studentLoan', 'undeclared', 'workBenefits', 'other', 'unknown', '-', 'noMoney'])
+    custodyIncomeSource = new Element.CheckboxGroup<'employment' | 'family' | 'pension' | 'unemployment' | 'other' | 'unknown' | 'noMoney'>(this.page, '#custody_tba', ['employment', 'family', 'pension', 'unemployment', 'other', 'unknown', '-', 'noMoney'])
     overReliant = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#[sanMode]_family_or_friends_details', sanYesNoUnknownOptions)
     overReliantDetails = new Element.Textbox(this.page, '#[sanMode]_tbc')
     anyIssues = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_finance_concerns', sanYesNoOptions)

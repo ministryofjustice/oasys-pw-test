@@ -72,6 +72,9 @@ for (const mode of ['community', 'custody']) {
         // Complete everything needed for PA
         await san.gotoSan('finance', true)
         await san.finance.page1.incomeSource.setValue(['carersAllowance'])
+        if (sanMode == 'custody') {
+            await san.finance.page1.custodyIncomeSource.setValue(['employment'])
+        }
         await san.finance.page1.anyIssues.setValue('yes')
         await san.finance.page1.howGoodManaging.setValue('able')
         await san.finance.page1.debt.setValue(['no'])

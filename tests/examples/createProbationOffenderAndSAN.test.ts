@@ -1,7 +1,7 @@
 import { test } from 'fixtures'
 
 
-test('Example test - create a prison offender and a SAN 3.2 assessment', async ({ oasys, user, offender, assessment, signing }) => {
+test('Example test - create a probtion offender and a SAN 3.2 assessment', async ({ oasys, user, offender, assessment, signing }) => {
 
     await user.prob.probSanHeadPdu.login()
 

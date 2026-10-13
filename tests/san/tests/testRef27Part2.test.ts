@@ -7,6 +7,7 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, user, cms, offender
         Create PRISON offender in a SAN PILOT Prison area whose latest assessment is a WIP OASys-SAN assessment (not signed and locked) and does NOT have a SARA.
         ALL the SAN data has been validated and the sentence plan has been agreed`, 'Test step')
 
+    sanMode = 'custody'
     await user.pris.prisSanUnappr.login()
     const offender1 = await offender.createPrisFromStandardOffender({ forename1: 'TestRefTwentySeven-Two' })
     await user.logout()

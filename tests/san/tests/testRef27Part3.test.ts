@@ -30,6 +30,7 @@ test('SAN integration - test ref 27 part 3', async ({ oasys, user, cms, offender
     await offender.createProb(offender1)
     await user.logout()
 
+    sanMode = 'custody'
     await user.pris.prisSanUnappr.login()
     await cms.createReceptionEvent(offender1)
 

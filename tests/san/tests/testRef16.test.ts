@@ -10,6 +10,7 @@ Also incorporates check of Male OPD calculation AND Learning Screening Tool (dat
 test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 16', async ({ oasys, user, offender, assessment, sections, tasks, san, risk }) => {
 
+    sanMode = 'custody'
     await user.pris.prisSanUnappr.login()
     const offender1 = await offender.createPrisFromStandardOffender({ forename1: 'TestRefSixteen' })
 

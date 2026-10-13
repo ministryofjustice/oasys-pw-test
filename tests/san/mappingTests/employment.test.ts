@@ -25,85 +25,94 @@ let startPage = 1 // Page that SAN will go back into when opening the section, d
 test.describe.configure({ retries: 1 })
 
 for (const mode of ['community', 'custody']) {
-test(`Mapping test V2 ${mode}: employment and education`, async ({ oasys, user, offender, assessment, san }) => {
-    
-    sanMode = mode as SanMode
-    const mappingTestOffender = await getMappingTestOffender()
+    test(`Mapping test V2 ${mode}: employment and education`, async ({ oasys, user, offender, assessment, san }) => {
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
+        sanMode = mode as SanMode
+        const mappingTestOffender = await getMappingTestOffender()
 
-    // Create a new SAN assessment
-    await user.prob.probSanUnappr.login()
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+        // Delete previous assessments so no data gets cloned
+        await user.admin.login(sanMode == 'community' ? providers.prob.san : providers.pris.san)
+        await offender.searchAndSelectByPnc(mappingTestOffender.pnc)
+        await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
+        await user.logout()
 
-    let failed = 0
+        // Create a new SAN assessment
+        if (sanMode == 'community') {
+            await user.prob.probSanUnappr.login()
+        } else {
+            await user.pris.prisSanPom.login()
+        }
+        await offender.searchAndSelectByPnc(mappingTestOffender.pnc)
+        let assessmentPk: number
+        if (sanMode == 'community') {
+            assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+        } else {
+            assessmentPk = await assessment.createPris({ purposeOfAssessment: 'Start custody', assessmentLayer: 'Full (Layer 3)' })
+        }
 
-    const testCases: TestCase[] = [
-        { ref: 1, page1: { employmentStatus: null, unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: null  },
-        { ref: 2, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: null  },
-        { ref: 3, page1: { employmentStatus: 'retired', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: null  },
-        { ref: 4, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'yes', unemployedEmployedBefore: null } , page2: null  },
-        { ref: 5, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'no', unemployedEmployedBefore: null } , page2: null  },
-        { ref: 6, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' } , page2: null  },
-        { ref: 7, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' } , page2: null  },
-        { ref: 8, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: { employmentHistory: 'continuous', anyQual: 'yes', skills: 'yes', difficulties: ['none'], readingLevel: null, writingLevel: null, numeracyLevel: null }  },
-        { ref: 9, page1: { employmentStatus: 'retired', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: { employmentHistory: 'generallyEmployed', anyQual: 'no', skills: 'no', difficulties: ['reading'], readingLevel: 'some', writingLevel: null, numeracyLevel: null }  },
-        { ref: 10, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'yes', unemployedEmployedBefore: null } , page2: { employmentHistory: 'unstable', anyQual: 'yes', skills: 'some', difficulties: ['writing'], readingLevel: null, writingLevel: 'some', numeracyLevel: null }  },
-        { ref: 11, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'no', unemployedEmployedBefore: null } , page2: { employmentHistory: null, anyQual: 'no', skills: 'yes', difficulties: ['numeracy'], readingLevel: null, writingLevel: null, numeracyLevel: 'some' }  },
-        { ref: 12, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' } , page2: { employmentHistory: 'continuous', anyQual: 'yes', skills: 'no', difficulties: ['reading', 'writing'], readingLevel: 'significant', writingLevel: 'some', numeracyLevel: null }  },
-        { ref: 13, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' } , page2: { employmentHistory: null, anyQual: 'no', skills: 'some', difficulties: ['reading', 'numeracy'], readingLevel: 'some', writingLevel: null, numeracyLevel: 'significant' }  },
-        { ref: 14, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: { employmentHistory: 'unstable', anyQual: 'yes', skills: 'yes', difficulties: ['writing', 'numeracy'], readingLevel: null, writingLevel: 'significant', numeracyLevel: 'some' }  },
-        { ref: 15, page1: { employmentStatus: 'retired', unavailableEmployedBefore: null, unemployedEmployedBefore: null } , page2: { employmentHistory: 'unknown', anyQual: 'no', skills: 'no', difficulties: ['reading', 'writing', 'numeracy'], readingLevel: 'significant', writingLevel: 'significant', numeracyLevel: 'significant' }  },
-        { ref: 16, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'yes', unemployedEmployedBefore: null } , page2: { employmentHistory: 'continuous', anyQual: 'yes', skills: 'some', difficulties: ['reading', 'writing'], readingLevel: 'some', writingLevel: 'significant', numeracyLevel: null }  },
-        { ref: 17, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'no', unemployedEmployedBefore: null } , page2: { employmentHistory: null, anyQual: 'no', skills: 'yes', difficulties: ['reading', 'numeracy'], readingLevel: 'significant', writingLevel: null, numeracyLevel: 'some' }  },
-        { ref: 18, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' } , page2: { employmentHistory: 'generallyEmployed', anyQual: 'yes', skills: 'no', difficulties: ['writing', 'numeracy'], readingLevel: null, writingLevel: 'some', numeracyLevel: 'significant' }  },
-        { ref: 19, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' } , page2: { employmentHistory: null, anyQual: 'no', skills: 'some', difficulties: ['reading', 'writing', 'numeracy'], readingLevel: 'some', writingLevel: 'some', numeracyLevel: 'some' }  },
-    ]
+        let failed = 0
+
+        const testCases: TestCase[] = [
+            { ref: 1, page1: { employmentStatus: null, unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: null },
+            { ref: 2, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: null },
+            { ref: 3, page1: { employmentStatus: 'retired', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: null },
+            { ref: 4, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'yes', unemployedEmployedBefore: null }, page2: null },
+            { ref: 5, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'no', unemployedEmployedBefore: null }, page2: null },
+            { ref: 6, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' }, page2: null },
+            { ref: 7, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' }, page2: null },
+            { ref: 8, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'continuous', anyQual: 'yes', skills: 'yes', difficulties: ['none'], readingLevel: null, writingLevel: null, numeracyLevel: null } },
+            { ref: 9, page1: { employmentStatus: 'retired', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'generallyEmployed', anyQual: 'no', skills: 'no', difficulties: ['reading'], readingLevel: 'some', writingLevel: null, numeracyLevel: null } },
+            { ref: 10, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'yes', unemployedEmployedBefore: null }, page2: { employmentHistory: 'unstable', anyQual: 'yes', skills: 'some', difficulties: ['writing'], readingLevel: null, writingLevel: 'some', numeracyLevel: null } },
+            { ref: 11, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'no', unemployedEmployedBefore: null }, page2: { employmentHistory: null, anyQual: 'no', skills: 'yes', difficulties: ['numeracy'], readingLevel: null, writingLevel: null, numeracyLevel: 'some' } },
+            { ref: 12, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' }, page2: { employmentHistory: 'continuous', anyQual: 'yes', skills: 'no', difficulties: ['reading', 'writing'], readingLevel: 'significant', writingLevel: 'some', numeracyLevel: null } },
+            { ref: 13, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' }, page2: { employmentHistory: null, anyQual: 'no', skills: 'some', difficulties: ['reading', 'numeracy'], readingLevel: 'some', writingLevel: null, numeracyLevel: 'significant' } },
+            { ref: 14, page1: { employmentStatus: 'employed', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'unstable', anyQual: 'yes', skills: 'yes', difficulties: ['writing', 'numeracy'], readingLevel: null, writingLevel: 'significant', numeracyLevel: 'some' } },
+            { ref: 15, page1: { employmentStatus: 'retired', unavailableEmployedBefore: null, unemployedEmployedBefore: null }, page2: { employmentHistory: 'unknown', anyQual: 'no', skills: 'no', difficulties: ['reading', 'writing', 'numeracy'], readingLevel: 'significant', writingLevel: 'significant', numeracyLevel: 'significant' } },
+            { ref: 16, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'yes', unemployedEmployedBefore: null }, page2: { employmentHistory: 'continuous', anyQual: 'yes', skills: 'some', difficulties: ['reading', 'writing'], readingLevel: 'some', writingLevel: 'significant', numeracyLevel: null } },
+            { ref: 17, page1: { employmentStatus: 'unavailable', unavailableEmployedBefore: 'no', unemployedEmployedBefore: null }, page2: { employmentHistory: null, anyQual: 'no', skills: 'yes', difficulties: ['reading', 'numeracy'], readingLevel: 'significant', writingLevel: null, numeracyLevel: 'some' } },
+            { ref: 18, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'yes' }, page2: { employmentHistory: 'generallyEmployed', anyQual: 'yes', skills: 'no', difficulties: ['writing', 'numeracy'], readingLevel: null, writingLevel: 'some', numeracyLevel: 'significant' } },
+            { ref: 19, page1: { employmentStatus: 'unemployed', unavailableEmployedBefore: null, unemployedEmployedBefore: 'no' }, page2: { employmentHistory: null, anyQual: 'no', skills: 'some', difficulties: ['reading', 'writing', 'numeracy'], readingLevel: 'some', writingLevel: 'some', numeracyLevel: 'some' } },
+        ]
 
 
-    for (const test of testCases) {
-        // Get to the right starting screen
+        for (const test of testCases) {
+            // Get to the right starting screen
+            await san.gotoSan('employment', true)
+            // Back to the start, depending where the previous scenario ended
+            for (let i = 1; i < startPage; i++) {
+                await san.employment.previous()
+            }
+            // Set values on SAN, return to OASys and check the results
+            await scenario(test, san)
+            await san.returnToOASys()
+            await oasys.clickButton('Previous', true)
+            await oasys.clickButton('Next', true)
+
+            log(JSON.stringify(test))
+            const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
+            if (scenarioFailed) {
+                failed++
+            }
+            console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
+
+        }
+
+        expect(failed).toBe(0)
+
+        // Complete everything needed for PA
         await san.gotoSan('employment', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.employment.previous()
-        }
-        // Set values on SAN, return to OASys and check the results
-        await scenario(test, san)
+        await san.employment.page2.employmentHistory.setValue('continuous')
+        await san.employment.page2.additionalCommitments.setValue(['none'])
+        await san.employment.page2.anyQual.setValue('no')
+        await san.employment.page2.skills.setValue('no')
+        await san.employment.page2.difficulties.setValue(['none'])
+        await san.employment.page2.wantChanges.setValue('madeChanges')
+        await san.employment.saveAndContinue()
         await san.returnToOASys()
-        await oasys.clickButton('Previous', true)
-        await oasys.clickButton('Next', true)
 
-        log(JSON.stringify(test))
-        const scenarioFailed = await checkAnswers(assessmentPk, test, assessment)
-        if (scenarioFailed) {
-            failed++
-        }
-        console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
-
-    }
-
-    expect(failed).toBe(0)
-
-    // Complete everything needed for PA
-    await san.gotoSan('employment', true)
-    await san.employment.page2.employmentHistory.setValue('continuous')
-    await san.employment.page2.additionalCommitments.setValue(['none'])
-    await san.employment.page2.anyQual.setValue('no')
-    await san.employment.page2.skills.setValue('no')
-    await san.employment.page2.difficulties.setValue(['none'])
-    await san.employment.page2.wantChanges.setValue('madeChanges')
-    await san.employment.saveAndContinue()
-    await san.returnToOASys()
-
-    await paTest(assessmentPk, san.employment, oasys, assessment, san)
-    await user.logout()
-})
+        await paTest(assessmentPk, san.employment, oasys, assessment, san)
+        await user.logout()
+    })
 }
 
 

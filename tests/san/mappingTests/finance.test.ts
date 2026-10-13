@@ -13,15 +13,24 @@ for (const mode of ['community', 'custody']) {
         const mappingTestOffender = await getMappingTestOffender()
 
         // Delete previous assessments so no data gets cloned
-        await user.admin.login(providers.prob.san)
-        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+        await user.admin.login(sanMode == 'community' ? providers.prob.san : providers.pris.san)
+        await offender.searchAndSelectByPnc(mappingTestOffender.pnc)
         await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
         await user.logout()
 
         // Create a new SAN assessment
-        await user.prob.probSanUnappr.login()
-        await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-        const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+        if (sanMode == 'community') {
+            await user.prob.probSanUnappr.login()
+        } else {
+            await user.pris.prisSanPom.login()
+        }
+        await offender.searchAndSelectByPnc(mappingTestOffender.pnc)
+        let assessmentPk: number
+        if (sanMode == 'community') {
+            assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+        } else {
+            assessmentPk = await assessment.createPris({ purposeOfAssessment: 'Start custody', assessmentLayer: 'Full (Layer 3)' })
+        }
 
         let failed = 0
 

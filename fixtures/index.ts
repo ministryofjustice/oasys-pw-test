@@ -100,8 +100,6 @@ export const test = base.extend<OasysFixtures>({
     user: async ({ page, oasys }, use) => {
 
         const user = new User(page, oasys)
-        await page.goto(testEnvironment.url)
-
         await use(user)
     },
 

@@ -2,12 +2,7 @@ import { Page } from '@playwright/test'
 
 export class CheckboxGroup<T extends string> {
 
-    conditionalDisplay: boolean
-
-    constructor(readonly page: Page, readonly selector: string, readonly options: (T | '-')[], conditionalDisplay: boolean = false) {
-
-        this.conditionalDisplay = conditionalDisplay
-    }
+    constructor(private readonly page: Page, private readonly selector: string, private readonly options: (T | '-')[]) { }
 
     async setValue(values: T[]) {
 
@@ -17,14 +12,7 @@ export class CheckboxGroup<T extends string> {
 
                 if (this.options[i] != '-') {   // '-' is used as a separator in the list of IDs
                     if (values.includes(this.options[i] as T)) {
-                        await this.page.locator(`${this.selector.replace('[sanMode]', sanMode)}${itemSuffix}`).check()
-
-                    } else if (this.conditionalDisplay) {
-
-                        const checkboxVisible = await this.page.locator('#main-content').locator(`${this.selector.replace('[sanMode]', sanMode)}${itemSuffix}:visible`).count()
-                        if (checkboxVisible == 1) {
-                            await this.page.locator(`${this.selector.replace('[sanMode]', sanMode)}${itemSuffix}`).uncheck()
-                        }
+                        await this.page.locator(`${this.selector}${itemSuffix}`).check()
                     } else {
                         await this.page.locator(`${this.selector.replace('[sanMode]', sanMode)}${itemSuffix}`).uncheck()
                     }

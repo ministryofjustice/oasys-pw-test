@@ -20,7 +20,7 @@ export class Page3 extends BaseSanEditPage {
     otherFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#how_often_used_last_six_months_other_drug', ['daily', 'weekly', 'monthly', 'occasionally'])
 
     detailsNotLastSixMonths = new Element.Textbox(this.page, '#not_used_in_last_six_months_details')
-    injected = new Element.CheckboxGroup<InjectableDrugType>(this.page, '#drugs_injected', ['none', '-', 'amphetamines', 'benzodiazepines', 'cocaine', 'crack', 'heroin', 'methadone', 'prescribed', 'opiates', 'steroids', 'other'], true)
+    injected = new Element.ConditionalCheckboxGroup<InjectableDrugType>(this.page, checkboxValuesLookup)
 
     amphetaminesInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#drugs_injected_amphetamines', ['lastSix', 'moreThanSix'])
     benzodiazepinesInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#drugs_injected_benzodiazepines', ['lastSix', 'moreThanSix'])
@@ -35,4 +35,18 @@ export class Page3 extends BaseSanEditPage {
 
     treatment = new Element.Radiogroup<'yes' | 'no'>(this.page, '#drugs_is_receiving_treatment', ['yes', 'no'])
     treatmentYesDetails = new Element.Textbox(this.page, '#drugs_is_receiving_treatment_yes_details')
+}
+
+const checkboxValuesLookup: { [key in InjectableDrugType]: string } = {
+    'amphetamines': 'AMPHETAMINES',
+    'benzodiazepines': 'BENZODIAZEPINES',
+    'cocaine': 'COCAINE',
+    'crack': 'CRACK',
+    'heroin': 'HEROIN',
+    'methadone': 'METHADONE_NOT_PRESCRIBED',
+    'prescribed': 'MISUSED_PRESCRIBED_DRUGS',
+    'opiates': 'OTHER_OPIATES',
+    'steroids': 'STEROIDS',
+    'other': 'OTHER_DRUG',
+    'none': 'NONE',
 }

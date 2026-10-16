@@ -9,6 +9,11 @@ export class OasysDateTime {
     oracleTimestampFormatMs = 'YYYY-MM-DD\"T\"HH24:MI:SS.FF3'
     timers: { [keys: string]: Temporal.PlainDateTime } = {}
 
+    logTimestamp() {
+
+        log(Temporal.Now.plainDateTimeISO().toString())
+    }
+
     // Convert date string to Temporal Plain date.  Might be in RFC9557 format, but also need to allow for DD/MM/YYYY in OASys string fields or DD-MM-YYYY from CSV loads
     stringToDate(param: string): Temporal.PlainDate {
 

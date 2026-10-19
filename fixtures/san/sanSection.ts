@@ -18,7 +18,7 @@ export class BaseSanSection {
 
     async saveAndContinue() {
 
-        await this.page.locator(`button[value='YES']`).first().click()
+        await this.page.locator(`button[value='save']`).first().click()
     }
 
     async markAsComplete() {

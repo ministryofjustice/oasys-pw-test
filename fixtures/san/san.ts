@@ -192,7 +192,7 @@ export class San {
      */
     async returnToOASys() {
 
-        await this.page.locator('#return-to-oasys').click()
+        await this.page.getByRole('button', {name: 'Return to OASys'}).first().click()
         await waitForPageUpdate(this.page)
     }
 
@@ -252,7 +252,7 @@ export class San {
     async checkSanSectionsCompletionStatus(expectComplete: number) {
 
         await waitForPageUpdate(this.page)
-        const count = await this.page.locator('.moj-side-navigation__list').locator('.section-complete').count()
+        const count = await this.page.locator('.moj-side-navigation__list').locator('[data-complete="YES"]').count()
         expect(count).toBe(expectComplete)
         log(`Checked SAN sections completion status: ${expectComplete} sections complete.`)
     }

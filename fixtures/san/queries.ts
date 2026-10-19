@@ -573,7 +573,7 @@ export class Queries {
 function findSanVersion(data: string): number {
 
     const vStart = data.search('sanAssessmentVersion') + 22
-    let sanVersionNumber = data.substring(vStart, vStart + 4)
+    let sanVersionNumber = data.substring(vStart, data.length - 1)
     const vEnd = sanVersionNumber.search(',')
 
     const number = parseInt(sanVersionNumber.substring(0, vEnd))

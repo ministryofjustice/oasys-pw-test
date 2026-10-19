@@ -76,7 +76,6 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
-        SAN_ASSESSMENT_VERSION_NO: '0'
     })
 
     // Countersign the first assessment

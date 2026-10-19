@@ -49,7 +49,7 @@ declare type SanWantChanges = 'madeChanges' | 'makingChanges' | 'wantToChange' |
 
 // Accommodation
 declare type CurrentAccommodation = 'settled' | 'temporary' | 'noAccommodation'
-declare type TemporaryAccommodation = 'approvedPremises' | 'cas2' | 'cas3' | 'immigration' | 'shortTerm'
+declare type TemporaryAccommodation = 'approvedPremises' | 'cas2' | 'cas3' | 'immigration' | 'shortTerm' | 'unknown'
 declare type LivingWith = 'family' | 'friends' | 'partner' | 'child' | 'other' | 'unknown' | 'alone'
 
 // Alcohol
@@ -98,11 +98,11 @@ declare type VictimRace =
     'White - Irish' |
     'White - Gypsy or Irish Traveller' |
     'White - Roma' |
-    'White - Any other White background' |
+    'White - Any other white background' |
     'Mixed - White and Black Caribbean' |
     'Mixed - White and Black African' |
     'Mixed - White and Asian' |
-    'Mixed - Any other mixed or multiple ethnic background background' |
+    'Mixed - Any other mixed or multiple ethnic background' |
     'Asian or Asian British - Indian' |
     'Asian or Asian British - Pakistani' |
     'Asian or Asian British - Bangladeshi' |

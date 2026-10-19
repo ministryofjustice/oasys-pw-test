@@ -85,8 +85,8 @@ async function checkAssessment(user: string, offender: OffenderDef, pk: number, 
     )
     await san.checkSanEditMode(false)
 
-    const a1 = await page.locator('#main-content').locator('.summary__answer:has-text("Settled"):visible').count()
-    const a2 = await page.locator('#main-content').locator(`.summary__answer--secondary:has-text("${accommodation}"):visible`).count()
+    const a1 = await page.locator('#summary').locator('.govuk-summary-list__value:has-text("Settled"):visible').count()
+    const a2 = await page.locator('#summary').locator(`.govuk-summary-list__value:has-text("${accommodation}"):visible`).count()
     expect(a1).toBe(1)
     expect(a2).toBe(1)
 

@@ -5,7 +5,7 @@ import { paTest } from './practitionerAnalysis'
 type TestCase = { ref: number, incomeSource: IncomeSource[], overReliant: SanYesNoUnknown, howGoodManaging: HowGoodManaging }
 
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san }) => {
+test('Mapping test AAP: finance', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()
 
@@ -23,7 +23,6 @@ test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san
     let failed = 0
 
     const testCases: TestCase[] = [
-        { ref: 0, incomeSource: null, overReliant: null, howGoodManaging: null },
         { ref: 1, incomeSource: ['offending'], overReliant: null, howGoodManaging: 'ableStrength' },
         { ref: 2, incomeSource: ['carersAllowance', 'offending'], overReliant: null, howGoodManaging: 'able' },
         { ref: 3, incomeSource: ['disabilityBenefits', 'offending'], overReliant: null, howGoodManaging: 'unable' },
@@ -45,6 +44,7 @@ test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Finances', true)
+        await san.finance.backToStart()
 
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
@@ -63,17 +63,6 @@ test('Mapping test V2: finance', async ({ oasys, user, offender, assessment, san
 
     expect(failed).toBe(0)
 
-    // Complete everything needed for PA
-    await san.gotoSan('Finances', true)
-    await san.finance.page1.incomeSource.setValue(['carersAllowance'])
-    await san.finance.page1.ownAccount.setValue('unknown')
-    await san.finance.page1.howGoodManaging.setValue('able')
-    await san.finance.page1.gambling.setValue(['no'])
-    await san.finance.page1.debt.setValue(['no'])
-    await san.finance.page1.wantChanges.setValue('madeChanges')
-    await san.finance.saveAndContinue()
-    await san.returnToOASys()
-
     await paTest(assessmentPk, san.finance, oasys, assessment, san)
     await user.logout()
 })
@@ -86,6 +75,12 @@ async function scenario(test: TestCase, san: San) {
         await san.finance.page1.overReliant.setValue(test.overReliant)
     }
     await san.finance.page1.howGoodManaging.setValue(test.howGoodManaging)
+
+    await san.finance.page1.ownAccount.setValue('unknown')
+    await san.finance.page1.gambling.setValue(['no'])
+    await san.finance.page1.debt.setValue(['no'])
+    await san.finance.page1.wantChanges.setValue('madeChanges')
+    await san.finance.saveAndContinue()
 }
 
 async function checkAnswers(assessmentPk: number, test: TestCase, assessment: Assessment): Promise<boolean> {

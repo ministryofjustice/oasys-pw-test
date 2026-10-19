@@ -17,10 +17,8 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: relationships', async ({ oasys, user, offender, assessment, san }) => {
+test('Mapping test AAP: relationships', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()
 
@@ -57,15 +55,7 @@ test('Mapping test V2: relationships', async ({ oasys, user, offender, assessmen
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Personal relationships and community', true)
-        // Back to the start (page 2), depending where the previous scenario ended
-        if (startPage == 1) {
-            await san.relationships.page1.anyChildren.setValue(['no'])
-            await san.relationships.saveAndContinue()
-        } else {
-            for (let i = 2; i < startPage; i++) {
-                await san.relationships.previous()
-            }
-        }
+        await san.relationships.backToStart()
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
         await san.returnToOASys()
@@ -83,36 +73,31 @@ test('Mapping test V2: relationships', async ({ oasys, user, offender, assessmen
 
     expect(failed).toBe(0)
 
-    // Complete everything needed for PA
-    await san.gotoSan('Personal relationships and community', true)
-    await san.relationships.page3.resolveChallenges.setValue('Testing')
-    await san.relationships.page3.wantChanges.setValue('madeChanges')
-    await san.relationships.saveAndContinue()
-    await san.returnToOASys()
-
     await paTest(assessmentPk, san.relationships, oasys, assessment, san)
     await user.logout()
 })
 
 
 async function scenario(test: TestCase, san: San) {
-
+    
+    await san.relationships.page1.anyChildren.setValue(['no'])
+    await san.relationships.saveAndContinue()
     await san.relationships.page2.importantPeople.setValue(test.page2.importantPeople)
     if (test.page2.importantPeople.includes('other')) {
         await san.relationships.page2.importantOtherDetails.setValue('Other people details')
     }
+    await san.relationships.saveAndContinue()
 
     if (test.page3) {
-        await san.relationships.saveAndContinue()
         await san.relationships.page3.happyWithStatus.setValue(test.page3.happyWithStatus)
         await san.relationships.page3.history.setValue(test.page3.history)
         await san.relationships.page3.manageParenting.setValue(test.page3.manageParenting)
         await san.relationships.page3.currentFamilyRelationship.setValue(test.page3.currentFamilyRelationship)
         await san.relationships.page3.childhoodExperience.setValue(test.page3.childhoodExperience)
         await san.relationships.page3.behaviouralProblems.setValue(test.page3.behaviouralProblems)
-        startPage = 3
-    } else {
-        startPage = 2
+        await san.relationships.page3.resolveChallenges.setValue('Testing')
+        await san.relationships.page3.wantChanges.setValue('madeChanges')
+        await san.relationships.saveAndContinue()
     }
 }
 

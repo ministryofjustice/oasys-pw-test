@@ -18,10 +18,8 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, assessment, san }) => {
+test('Mapping test AAP: health and wellbeing', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()
 
@@ -59,10 +57,7 @@ test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, as
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Health and wellbeing', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.health.previous()
-        }
+        await san.health.backToStart()
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
         await san.returnToOASys()
@@ -80,22 +75,6 @@ test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, as
 
     expect(failed).toBe(0)
 
-    // Complete everything needed for PA
-    await san.gotoSan('Health and wellbeing', true)
-    await san.health.page2.psychTreatment.setValue('no')
-    await san.health.page2.headInjury.setValue('no')
-    await san.health.page2.neurodiverse.setValue('no')
-    await san.health.page2.learningDifficulties.setValue('no')
-    await san.health.page2.coping.setValue('no')
-    await san.health.page2.attitude.setValue('positive')
-    await san.health.page2.selfHarmed.setValue('no')
-    await san.health.page2.suicide.setValue('no')
-    await san.health.page2.optimistic.setValue('optimistic')
-    await san.health.page2.wantChanges.setValue('madeChanges')
-
-    await san.health.saveAndContinue()
-    await san.returnToOASys()
-
     await paTest(assessmentPk, san.health, oasys, assessment, san)
     await user.logout()
 })
@@ -105,18 +84,27 @@ async function scenario(test: TestCase, san: San) {
 
     await san.health.page1.physicalHealthConditions.setValue('yes')
     await san.health.page1.mentalHealthProblems.setValue(test.page1.mentalHealthProblems)
+    await san.health.saveAndContinue()
+
     if (test.page2) {
-        await san.health.saveAndContinue()
         await san.health.page2.psychTreatment.setValue(test.page2.psychTreatment)
         await san.health.page2.headInjury.setValue(test.page2.headInjury)
+        await san.health.page2.neurodiverse.setValue('no')
         await san.health.page2.learningDifficulties.setValue(test.page2.learningDifficulties)
         await san.health.page2.coping.setValue(test.page2.coping)
         await san.health.page2.attitude.setValue(test.page2.attitude)
         await san.health.page2.selfHarmed.setValue(test.page2.selfHarmed)
+        if (test.page2.selfHarmed == 'yes') {
+            await san.health.page2.selfHarmedDetails.setValue('some text')
+        }
         await san.health.page2.suicide.setValue(test.page2.suicide)
-        startPage = 2
-    } else {
-        startPage = 1
+        if (test.page2.suicide == 'yes') {
+            await san.health.page2.suicideDetails.setValue('some text')
+        }
+        await san.health.page2.optimistic.setValue('optimistic')
+        await san.health.page2.wantChanges.setValue('madeChanges')
+    
+        await san.health.saveAndContinue()
     }
 }
 

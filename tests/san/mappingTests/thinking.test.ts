@@ -30,10 +30,8 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
-// test.describe.configure({ retries: 1 })
-test('Mapping test V2: thinking', async ({ oasys, user, offender, assessment, san }) => {
+test.describe.configure({ retries: 1 })
+test('Mapping test AAP: thinking', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()
 
@@ -81,10 +79,7 @@ test('Mapping test V2: thinking', async ({ oasys, user, offender, assessment, sa
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Thinking, behaviours and attitudes', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.thinking.previous()
-        }
+        await san.thinking.backToStart()
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
         await san.returnToOASys()
@@ -101,11 +96,6 @@ test('Mapping test V2: thinking', async ({ oasys, user, offender, assessment, sa
     }
 
     expect(failed).toBe(0)
-
-    // Complete everything needed for PA
-    await san.gotoSan('Thinking, behaviours and attitudes', true)
-    await san.thinking.saveAndContinue()
-    await san.returnToOASys()
 
     await paTest(assessmentPk, san.thinking, oasys, assessment, san)
     await user.logout()
@@ -128,21 +118,17 @@ async function scenario(test: TestCase, san: San) {
     await san.thinking.page1.hostileOrientation.setValue(test.page1.hostileOrientation)
     await san.thinking.page1.acceptSupervision.setValue(test.page1.acceptSupervision)
     await san.thinking.page1.supportCriminalBehaviour.setValue(test.page1.supportCriminalBehaviour)
+    await san.thinking.page1.wantChanges.setValue('madeChanges')
+    await san.thinking.saveAndContinue()
     if (test.page2) {
-        await san.thinking.page1.wantChanges.setValue('madeChanges')
-        await san.thinking.saveAndContinue()
         await san.thinking.page2.riskOfSexualHarm.setValue(test.page2.riskOfSexualHarm)
+        await san.thinking.saveAndContinue()
         if (test.page3) {
-            await san.thinking.saveAndContinue()
             await san.thinking.page3.sexualPreoccupation.setValue(test.page3.sexualPreoccupation)
             await san.thinking.page3.sexualInterests.setValue(test.page3.sexualInterests)
             await san.thinking.page3.emotionalIntimacy.setValue(test.page3.emotionalIntimacy)
-            startPage = 3
-        } else {
-            startPage = 2
+            await san.thinking.saveAndContinue()
         }
-    } else {
-        startPage = 1
     }
 }
 

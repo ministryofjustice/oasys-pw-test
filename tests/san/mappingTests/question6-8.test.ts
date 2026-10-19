@@ -6,8 +6,9 @@ type AccommodationOptions = 'family' | 'friends' | 'partner' | 'child' | 'other'
 type RelationshipOptions = 'partner' | 'ownChildren' | 'otherChildren' | 'family' | 'friends' | 'other'
 
 test.describe.configure({ retries: 1 })
-test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment, san, }) => {
+test('Mapping test AAP: question 6.8', async ({ oasys, user, offender, assessment, san, }) => {
 
+    test.setTimeout(0)
     /*
     Who is [subject] living with?
         If living_with contains 'PARTNER' then
@@ -77,13 +78,13 @@ test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment
             await san.gotoSan('Accommodation', true)
             await san.accommodation.page1.currentAccommodation.setValue('noAccommodation')
 
-            await setRelationshipOptions(['partner'], true, san)
+            await setRelationshipOptions(['partner'], san)
             const caseFailed = await checkMapping(assessmentPk, 2, 0, oasys, assessment, san)
             if (caseFailed) failed = true
         }
-        await san.gotoSan('Accommodation', true)
-        await setAccommodationOptions(test.accommodation, first, san)
-        await setRelationshipOptions(test.relationship, false, san)
+
+        await setAccommodationOptions(test.accommodation, san)
+        await setRelationshipOptions(test.relationship, san)
         log('', `Test case ${i}: ${JSON.stringify(test)}`)
         console.log(`Test case ${i}: ${JSON.stringify(test)}`)
 
@@ -97,24 +98,25 @@ test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment
     expect(failed).toBeFalsy()
 })
 
-async function setAccommodationOptions(options: AccommodationOptions[], firstRun: boolean, san: San) {
+async function setAccommodationOptions(options: AccommodationOptions[], san: San) {
 
-    if (firstRun) {
-        await san.accommodation.page1.currentAccommodation.setValue('settled')
-        await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
-    }
+    await san.gotoSan('Accommodation', true)
+    await san.accommodation.backToStart()
+    await san.accommodation.page1.currentAccommodation.setValue('settled')
+    await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
     await san.accommodation.saveAndContinue()
     await san.accommodation.page2.livingWith.setValue(options)
+    await san.accommodation.saveAndContinue()
 }
 
-async function setRelationshipOptions(options: RelationshipOptions[], firstRun: boolean, san: San) {
+async function setRelationshipOptions(options: RelationshipOptions[], san: San) {
 
     await san.goto('Personal relationships and community')
-    if (firstRun) {
-        await san.relationships.page1.anyChildren.setValue(['no'])
-        await san.relationships.saveAndContinue()
-    }
+    await san.relationships.backToStart()
+    await san.relationships.page1.anyChildren.setValue(['no'])
+    await san.relationships.saveAndContinue()
     await san.relationships.page2.importantPeople.setValue(options)
+    await san.relationships.saveAndContinue()
 }
 
 

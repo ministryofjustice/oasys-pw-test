@@ -5,7 +5,7 @@ type TestCaseVictim = { victimRelationship: VictimRelationship, victimAge: Victi
 type TestCase = { ref: number, offenceElements: OffenceElements[], victim1: TestCaseVictim, victim2: TestCaseVictim, victim3: TestCaseVictim }
 
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san }) => {
+test('Mapping test AAP: victims', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()
 
@@ -26,11 +26,11 @@ test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san
         { ref: 1, offenceElements: ['none'], victim1: { victimRelationship: 'stranger', victimAge: '0to4', victimSex: 'male', victimRace: 'White - English, Welsh, Scottish, Northern Irish or British' }, victim2: null, victim3: null },
         { ref: 2, offenceElements: ['hatred'], victim1: { victimRelationship: 'staff', victimAge: '5to11', victimSex: 'female', victimRace: 'White - Irish' }, victim2: null, victim3: null },
         { ref: 3, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'child', victimAge: '12to15', victimSex: 'intersex', victimRace: 'White - Gypsy or Irish Traveller' }, victim2: null, victim3: null },
-        { ref: 4, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'partner', victimAge: '16to17', victimSex: 'unknown', victimRace: 'White - Any other White background' }, victim2: null, victim3: null },
+        { ref: 4, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'partner', victimAge: '16to17', victimSex: 'unknown', victimRace: 'White - Any other white background' }, victim2: null, victim3: null },
         { ref: 5, offenceElements: ['none'], victim1: { victimRelationship: 'exPartner', victimAge: '18to20', victimSex: 'male', victimRace: 'Mixed - White and Black Caribbean' }, victim2: null, victim3: null },
         { ref: 6, offenceElements: ['hatred'], victim1: { victimRelationship: 'parent', victimAge: '21to25', victimSex: 'female', victimRace: 'Mixed - White and Black African' }, victim2: null, victim3: null },
         { ref: 7, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'otherFamily', victimAge: '26to49', victimSex: 'intersex', victimRace: 'Mixed - White and Asian' }, victim2: null, victim3: null },
-        { ref: 8, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'other', victimAge: '50to64', victimSex: 'unknown', victimRace: 'Mixed - Any other mixed or multiple ethnic background background' }, victim2: null, victim3: null },
+        { ref: 8, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'other', victimAge: '50to64', victimSex: 'unknown', victimRace: 'Mixed - Any other mixed or multiple ethnic background' }, victim2: null, victim3: null },
         { ref: 9, offenceElements: ['hatred'], victim1: { victimRelationship: 'stranger', victimAge: '65plus', victimSex: 'male', victimRace: 'Asian or Asian British - Indian' }, victim2: null, victim3: null },
         { ref: 10, offenceElements: ['hatred'], victim1: { victimRelationship: 'staff', victimAge: '0to4', victimSex: 'female', victimRace: 'Asian or Asian British - Pakistani' }, victim2: null, victim3: null },
         { ref: 11, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'child', victimAge: '5to11', victimSex: 'intersex', victimRace: 'Asian or Asian British - Bangladeshi' }, victim2: null, victim3: null },
@@ -41,7 +41,7 @@ test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san
         { ref: 16, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'other', victimAge: '26to49', victimSex: 'unknown', victimRace: 'Black or Black British - Any other Black background' }, victim2: { victimRelationship: 'stranger', victimAge: '0to4', victimSex: 'male', victimRace: 'White - English, Welsh, Scottish, Northern Irish or British' }, victim3: null },
         { ref: 17, offenceElements: ['none'], victim1: { victimRelationship: 'stranger', victimAge: '0to4', victimSex: 'male', victimRace: 'Arab' }, victim2: { victimRelationship: 'staff', victimAge: '5to11', victimSex: 'female', victimRace: 'White - Irish' }, victim3: null },
         { ref: 18, offenceElements: ['hatred'], victim1: { victimRelationship: 'staff', victimAge: '5to11', victimSex: 'female', victimRace: 'Any other ethnic group' }, victim2: { victimRelationship: 'child', victimAge: '12to15', victimSex: 'intersex', victimRace: 'White - Gypsy or Irish Traveller' }, victim3: { victimRelationship: 'exPartner', victimAge: '18to20', victimSex: 'male', victimRace: 'Mixed - White and Black Caribbean' } },
-        { ref: 19, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'child', victimAge: '12to15', victimSex: 'intersex', victimRace: 'White - Roma' }, victim2: { victimRelationship: 'partner', victimAge: '16to17', victimSex: 'unknown', victimRace: 'White - Any other White background' }, victim3: { victimRelationship: 'stranger', victimAge: '21to25', victimSex: 'female', victimRace: 'Mixed - White and Black African' } },
+        { ref: 19, offenceElements: ['victimTargeted'], victim1: { victimRelationship: 'child', victimAge: '12to15', victimSex: 'intersex', victimRace: 'White - Roma' }, victim2: { victimRelationship: 'partner', victimAge: '16to17', victimSex: 'unknown', victimRace: 'White - Any other white background' }, victim3: { victimRelationship: 'stranger', victimAge: '21to25', victimSex: 'female', victimRace: 'Mixed - White and Black African' } },
         { ref: 20, offenceElements: ['hatred', 'victimTargeted'], victim1: { victimRelationship: 'child', victimAge: '16to17', victimSex: 'unknown', victimRace: 'Unknown' }, victim2: { victimRelationship: 'partner', victimAge: '18to20', victimSex: 'female', victimRace: 'White - Roma' }, victim3: { victimRelationship: 'stranger', victimAge: '65plus', victimSex: 'male', victimRace: 'Mixed - White and Black African' } },
     ]
 
@@ -49,6 +49,7 @@ test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Offence analysis', true)
+        await san.offenceAnalysis.backToStart()
         if (test.ref == 1) {
             await san.offenceAnalysis.page1.offenceDescription.setValue('Description')
             await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
@@ -60,7 +61,6 @@ test('Mapping test V2: victims', async ({ oasys, user, offender, assessment, san
             await san.offenceAnalysis.page1.victimType.setValue(['people'])
             await san.offenceAnalysis.saveAndContinue()
         } else {
-            await san.offenceAnalysis.previous()
             await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
             if (test.offenceElements.includes('victimTargeted')) {
                 await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Victim targeted details')
@@ -107,6 +107,7 @@ async function scenario(test: TestCase, san: San) {
             await setVictimDetails(test.victim3, san)
         }
     }
+    await san.offenceAnalysis.saveAndContinue()
 }
 
 async function setVictimDetails(victim: TestCaseVictim, san: San) {
@@ -240,7 +241,7 @@ function mappingVictimRace(race: VictimRace): string {
             return 'W4'
         case 'White - Roma':
             return 'W5'
-        case 'White - Any other White background':
+        case 'White - Any other white background':
             return 'W9'
         case 'Mixed - White and Black Caribbean':
             return 'M1'
@@ -248,7 +249,7 @@ function mappingVictimRace(race: VictimRace): string {
             return 'M2'
         case 'Mixed - White and Asian':
             return 'M3'
-        case 'Mixed - Any other mixed or multiple ethnic background background':
+        case 'Mixed - Any other mixed or multiple ethnic background':
             return 'M9'
         case 'Asian or Asian British - Indian':
             return 'A1'

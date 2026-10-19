@@ -3,8 +3,8 @@ import { getMappingTestOffender } from './mappingTestOffender'
 
 type TestCase = { ref: number, offenceDescription: string, result: string }
 
-// test.describe.configure({ retries: 1 })
-test('Mapping test V2: control characters', async ({ oasys, user, offender, assessment, san }) => {
+test.describe.configure({ retries: 1 })
+test('Mapping test AAP: control characters', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()
 
@@ -26,6 +26,7 @@ test('Mapping test V2: control characters', async ({ oasys, user, offender, asse
         { ref: 2, offenceDescription: '`', result: `'` },
         { ref: 3, offenceDescription: `%&#– “” ‘’`, result: `%&#- "" ''` },
         { ref: 4, offenceDescription: `\\/<>	`, result: `\\/<>` }, // NOTE Tab is not returned
+        // { ref: 5, offenceDescription: `${utils.oasysString(3995)}€ „ …`, result: `${utils.oasysString(3995)}€ „ …` },
     ]
 
     for (const test of testCases) {

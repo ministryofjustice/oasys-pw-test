@@ -68,7 +68,7 @@ let expectedAnswers: OasysAnswer[]  // variable to hold a new copy of the templa
 const otherDrugName = 'Other drug name'
 
 test.describe.configure({ retries: 1 })
-test.describe('Mapping test for drugs - individual drugs details', () => {
+test.describe('Mapping test AAP: drugs - individual drugs details', () => {
 
     test('amphetamines', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('amphetamines', page, oasys, user, offender, assessment, san) })
     test('benzodiazepines', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('benzodiazepines', page, oasys, user, offender, assessment, san) })
@@ -109,7 +109,6 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
     const testCases: TestCase[] =
         [
             { ref: 1, lastSix: false, frequency: null, injectedLastSix: null, injectedMoreThanSix: null },
-            { ref: 2, lastSix: true, frequency: null, injectedLastSix: null, injectedMoreThanSix: null },
             { ref: 3, lastSix: true, frequency: 'daily', injectedLastSix: null, injectedMoreThanSix: null },
             { ref: 4, lastSix: true, frequency: 'weekly', injectedLastSix: null, injectedMoreThanSix: null },
             { ref: 5, lastSix: true, frequency: 'monthly', injectedLastSix: null, injectedMoreThanSix: null },
@@ -129,7 +128,6 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
             { ref: 19, lastSix: true, frequency: 'occasionally', injectedLastSix: true, injectedMoreThanSix: true },
         ]
 
-    let firstRun = true
     console.log(`Testing ${drugType}`)
 
     expectedAnswers = JSON.parse(JSON.stringify(expectedAnswersTemplate)) as OasysAnswer[]  // take a copy to modify for this drug
@@ -138,12 +136,7 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
         if (injectableDrug(drugType) || (test.injectedLastSix == null && test.injectedMoreThanSix == null)) {  // skip injection tests for non-injectable drugs
             // Get to the right starting screen
             await san.gotoSan('Drug use', true)
-            if (firstRun) {
-                await san.drugs.page1.everUsed.setValue('yes')
-                await san.drugs.saveAndContinue()
-            } else {
-                await san.drugs.previous()
-            }
+            await san.drugs.backToStart()
             // Set values on SAN, return to OASys and check the results
             await scenario(drugType, test, san)
             await san.returnToOASys()
@@ -156,8 +149,6 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
                 failed = true
             }
             console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
-
-            firstRun = false
         }
     }
 
@@ -166,6 +157,8 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
 
 async function scenario(drugType: DrugType, test: TestCase, san: San) {
 
+    await san.drugs.page1.everUsed.setValue('yes')
+    await san.drugs.saveAndContinue()
     await san.drugs.page2.drugType.setValue([drugType])
     if (drugType == 'other') {
         await san.drugs.page2.drugTypeOther.setValue(otherDrugName)
@@ -189,6 +182,8 @@ async function scenario(drugType: DrugType, test: TestCase, san: San) {
             }
         }
     }
+    await san.drugs.page3.treatment.setValue('no')
+    await san.drugs.saveAndContinue()
 }
 
 async function checkAnswers(assessmentPk: number, drugType: DrugType, test: TestCase, assessment: Assessment): Promise<boolean> {

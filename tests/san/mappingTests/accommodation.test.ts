@@ -15,10 +15,8 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
 test.describe.configure({ retries: 1 })
-test('Mapping test V2: accommodation', async ({ oasys, user, offender, assessment, san }) => {
+test('Mapping test AAP: accommodation', async ({ oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()
 
@@ -39,28 +37,25 @@ test('Mapping test V2: accommodation', async ({ oasys, user, offender, assessmen
         { ref: 1, page1: { currentAccommodation: null, temporaryAccommodation: null }, page2: null },
         { ref: 2, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: null },
         { ref: 3, page1: { currentAccommodation: 'noAccommodation', temporaryAccommodation: null }, page2: null },
-        { ref: 4, page1: { currentAccommodation: 'temporary', temporaryAccommodation: null }, page2: null },
+        { ref: 4, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'unknown' }, page2: null },
         { ref: 5, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'approvedPremises' }, page2: null },
         { ref: 6, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas2' }, page2: null },
         { ref: 7, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas3' }, page2: null },
         { ref: 8, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'immigration' }, page2: null },
         { ref: 9, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: null },
-        { ref: 10, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'partner'], locationSuitable: null, accommodationSuitable: null } },
-        { ref: 11, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'child'], locationSuitable: 'yes', accommodationSuitable: null } },
-        { ref: 12, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'no', accommodationSuitable: null } },
+        { ref: 10, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'partner'], locationSuitable: 'no', accommodationSuitable: 'no' } },
+        { ref: 11, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'child'], locationSuitable: 'yes', accommodationSuitable: 'no' } },
+        { ref: 12, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'no', accommodationSuitable: 'yes' } },
         { ref: 13, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family'], locationSuitable: 'yes', accommodationSuitable: 'yes' } },
         { ref: 14, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'friends', 'other'], locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
-        { ref: 15, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'no' } },
+        { ref: 15, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['alone'], locationSuitable: 'no', accommodationSuitable: 'yesWithConcerns' } },
     ]
 
 
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Accommodation', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.accommodation.previous()
-        }
+        await san.accommodation.backToStart()
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
         await san.returnToOASys()
@@ -78,13 +73,6 @@ test('Mapping test V2: accommodation', async ({ oasys, user, offender, assessmen
 
     expect(failed).toBe(0)
 
-    // Complete everything needed for PA
-    await san.gotoSan('Accommodation', true)
-    await san.accommodation.page2.livingWith.setValue(['alone'])
-    await san.accommodation.page2.wantChanges.setValue('madeChanges')
-    await san.accommodation.saveAndContinue()
-    await san.returnToOASys()
-
     await paTest(assessmentPk, san.accommodation, oasys, assessment, san)
     await user.logout()
 })
@@ -93,20 +81,24 @@ test('Mapping test V2: accommodation', async ({ oasys, user, offender, assessmen
 async function scenario(test: TestCase, san: San) {
 
     await san.accommodation.page1.currentAccommodation.setValue(test.page1.currentAccommodation)
-    if (test.page1.currentAccommodation == 'temporary') {
-        await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
-    }
-    if (test.page2) {
-        if (test.page1.currentAccommodation == 'settled') {
+    switch (test.page1.currentAccommodation) {
+        case 'temporary':
+            await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
+            break
+        case 'settled':
             await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
-        }
-        await san.accommodation.saveAndContinue()
+            break
+        case 'noAccommodation':
+            await san.accommodation.page1.noAccommodationType.setValue('campsite')
+            break
+    }
+    await san.accommodation.saveAndContinue()
+    if (test.page2) {
         await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
         await san.accommodation.page2.accommodationSuitable.setValue(test.page2.accommodationSuitable)
         await san.accommodation.page2.locationSuitable.setValue(test.page2.locationSuitable)
-        startPage = 2
-    } else {
-        startPage = 1
+        await san.accommodation.page2.wantChanges.setValue('madeChanges')
+        await san.accommodation.saveAndContinue()
     }
 }
 

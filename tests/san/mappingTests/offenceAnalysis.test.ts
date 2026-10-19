@@ -33,10 +33,8 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
-test.describe.configure({ retries: 1 })
-test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offender, assessment, san }) => {
+// test.describe.configure({ retries: 1 })
+test('Mapping test AAP: offence analysis', async ({ sections, oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()
 
@@ -82,10 +80,7 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
     for (const test of testCases) {
         // Get to the right starting screen
         await san.gotoSan('Offence analysis', true)
-        // Back to the start, depending where the previous scenario ended
-        for (let i = 1; i < startPage; i++) {
-            await san.offenceAnalysis.previous()
-        }
+        await san.offenceAnalysis.backToStart()
         // Set values on SAN, return to OASys and check the results
         await scenario(test, san)
         await san.returnToOASys()
@@ -102,12 +97,10 @@ test('Mapping test V2: offence analysis', async ({ sections, oasys, user, offend
         // Reset 1.30 if required ready for the next scenario
         if (test.ref < 22 && (test.page1.offenceElements.includes('sexualElement') || test.page1.motivations.includes('sexual'))) {
             await san.gotoSan('Offence analysis', true)
-            for (let i = 1; i < startPage; i++) {
-                await san.offenceAnalysis.previous()
-            }
-            startPage = 1
+            await san.offenceAnalysis.backToStart()
             await san.offenceAnalysis.page1.offenceElements.setValue(['arson'])
             await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
+            await san.offenceAnalysis.saveAndContinue()
             await san.returnToOASys()
             await sections.predictors.goto()
             await sections.predictors.o1_30.setValue('')
@@ -130,19 +123,17 @@ async function scenario(test: TestCase, san: San) {
     if (test.page1.motivations.includes('other')) {
         await san.offenceAnalysis.page1.motivationOther.setValue(test.page1.motivationOther)
     }
+    if (test.page1.offenceElements.includes('victimTargeted')) {
+        await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Some details')
+    }
+    await san.offenceAnalysis.page1.victimType.setValue(['other'])
+    await san.offenceAnalysis.page1.victimTypeDetails.setValue('Some details')
+    await san.offenceAnalysis.saveAndContinue()
 
     if (test.page2) {
-        if (test.page1.offenceElements.includes('victimTargeted')) {
-            await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Some details')
-        }
-        await san.offenceAnalysis.page1.victimType.setValue(['other'])
-        await san.offenceAnalysis.page1.victimTypeDetails.setValue('Some details')
+        await san.offenceAnalysis.page2.howManyOthers.setValue(test.page2.howManyOthers)
         await san.offenceAnalysis.saveAndContinue()
-        await san.offenceAnalysis.page2.howManyOthers.setValue(test.page2.howManyOthers
-
-        )
         if (test.page3) {
-            await san.offenceAnalysis.saveAndContinue()
 
             if (test.page3.leader) {
                 await san.offenceAnalysis.page3.leader.setValue(test.page3.leader)
@@ -164,10 +155,32 @@ async function scenario(test: TestCase, san: San) {
             await san.offenceAnalysis.page3.domesticAbusePerpetrator.setValue(test.page3.domesticAbusePerpetrator)
             if (test.page3.domesticAbusePerpetrator == 'yes') {
                 await san.offenceAnalysis.page3.domesticAbusePerpetratorType.setValue(test.page3.domesticAbusePerpetratorType)
+                switch (test.page3.domesticAbusePerpetratorType) {
+                    case 'family':
+                        await san.offenceAnalysis.page3.familyPerpetratorDetails.setValue('details')
+                        break
+                    case 'partner':
+                        await san.offenceAnalysis.page3.partnerPerpetratorDetails.setValue('details')
+                        break
+                    case 'both':
+                        await san.offenceAnalysis.page3.bothPerpetratorDetails.setValue('details')
+                        break
+                }
             }
             await san.offenceAnalysis.page3.domesticAbuseVictim.setValue(test.page3.domesticAbuseVictim)
             if (test.page3.domesticAbuseVictim == 'yes') {
                 await san.offenceAnalysis.page3.domesticAbuseVictimType.setValue(test.page3.domesticAbuseVictimType)
+                switch (test.page3.domesticAbuseVictimType) {
+                    case 'family':
+                        await san.offenceAnalysis.page3.familyVictimDetails.setValue('details')
+                        break
+                    case 'partner':
+                        await san.offenceAnalysis.page3.partnerVictimDetails.setValue('details')
+                        break
+                    case 'both':
+                        await san.offenceAnalysis.page3.bothVictimDetails.setValue('details')
+                        break
+                }
             }
             await san.offenceAnalysis.page3.riskSeriousHarm.setValue(test.page3.riskSeriousHarm)
             if (test.page3.riskSeriousHarm == 'yes') {
@@ -175,13 +188,8 @@ async function scenario(test: TestCase, san: San) {
             } else if (test.page3.riskSeriousHarm == 'no') {
                 await san.offenceAnalysis.page3.riskSeriousHarmNoDetails.setValue(test.page3.riskSeriousHarmNoDetails)
             }
-
-            startPage = 3
-        } else {
-            startPage = 2
+            await san.offenceAnalysis.saveAndContinue()
         }
-    } else {
-        startPage = 1
     }
 }
 
@@ -230,7 +238,7 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '6.7.2.2da', a: mapping6_7_2_2da(test) },
     ]
     const expectedSanSectionAnswers: OasysAnswer[] = [
-        { q: 'OA_SAN_SECTION_COMP', a: 'NO' },
+        { q: 'OA_SAN_SECTION_COMP', a: test.page3 ? 'YES' : 'NO' },
     ]
     const section1Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '1', section1Answers, true)
     const section2Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '2', section2Answers, true)

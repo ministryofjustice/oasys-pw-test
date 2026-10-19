@@ -24,7 +24,7 @@ export class PractitionerAnalysis extends BaseSanEditPage {
     riskOfReoffendingYesDetails = new Element.Textbox(this.page, `#${this.idPrefix}_practitioner_analysis_risk_of_reoffending_yes_details`)
     riskOfReoffendingNoDetails = new Element.Textbox(this.page, `#${this.idPrefix}_practitioner_analysis_risk_of_reoffending_no_details`)
 
-    saveAndContinue = new Element.Button(this.page, `button[value='YES']`)
+    saveAndContinue = new Element.Button(this.page, `button[value='save']`)
     markAsComplete = new Element.Button(this.page, `button[value='YES']`)
     returnToOASys = new Element.Link(this.page, 'Return to OASys')
 

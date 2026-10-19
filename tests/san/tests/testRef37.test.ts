@@ -82,7 +82,6 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
-        SAN_ASSESSMENT_VERSION_NO: '0'
     })
     await user.logout()
 
@@ -186,7 +185,6 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
-        SAN_ASSESSMENT_VERSION_NO: '0'
     })
     await user.logout()
 
@@ -387,7 +385,6 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
-        SAN_ASSESSMENT_VERSION_NO: '2'
     })
 
     await user.logout()

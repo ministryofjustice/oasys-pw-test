@@ -57,29 +57,24 @@ test('Mapping test V1: finance', async ({ oasys, user, offender, assessment, san
 
     expect(failed).toBe(0)
 
-    // Complete everything needed for PA
-    await san.gotoSan('Finances', true)
-    await san.finance.page1.incomeSource.setValue(['carersAllowance'])
-    await san.finance.page1.ownAccount.setValue('unknown')
-    await san.finance.page1.howGoodManaging.setValue('able')
-    await san.finance.page1.gambling.setValue(['no'])
-    await san.finance.page1.debt.setValue(['no'])
-    await san.finance.page1.wantChanges.setValue('madeChanges')
-    await san.finance.saveAndContinue()
-    await san.returnToOASys()
-
     await paTest(assessmentPk, san.finance, oasys, assessment, san)
     await user.logout()
 })
 
 
 async function scenario(test: TestCase, san: San) {
-
+    
     await san.finance.page1.incomeSource.setValue(test.incomeSource)
     if (test.incomeSource?.includes('family')) {
         await san.finance.page1.overReliant.setValue(test.overReliant)
     }
+    await san.finance.page1.ownAccount.setValue('unknown')
     await san.finance.page1.howGoodManaging.setValue(test.howGoodManaging)
+    await san.finance.page1.gambling.setValue(['no'])
+    await san.finance.page1.debt.setValue(['no'])
+    await san.finance.page1.wantChanges.setValue('madeChanges')
+    await san.finance.saveAndContinue()
+
 }
 
 async function checkAnswers(assessmentPk: number, test: TestCase, assessment: Assessment): Promise<boolean> {

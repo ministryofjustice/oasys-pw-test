@@ -122,6 +122,7 @@ async function scenario(test: TestCase, san: San) {
         await san.thinking.page3.sexualPreoccupation.setValue(test.page3.sexualPreoccupation)
         await san.thinking.page3.sexualInterests.setValue(test.page3.sexualInterests)
         await san.thinking.page3.emotionalIntimacy.setValue(test.page3.emotionalIntimacy)
+        await san.thinking.saveAndContinue()
     }
 }
 

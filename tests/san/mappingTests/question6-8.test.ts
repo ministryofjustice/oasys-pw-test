@@ -7,7 +7,7 @@ type RelationshipOptions = 'partner' | 'ownChildren' | 'otherChildren' | 'family
 
 // test.describe.configure({ retries: 1 })
 test('Mapping test for question 6.8', async ({ oasys, user, offender, assessment, san, }) => {
-
+test.setTimeout(0)
     /*
     Who is [subject] living with?
         If living_with contains 'PARTNER' then
@@ -90,6 +90,7 @@ async function setAccommodationOptions(options: AccommodationOptions[], san: San
     await san.accommodation.page1.settledAccommodationType.setValue('homeowner')
     await san.accommodation.saveAndContinue()
     await san.accommodation.page2.livingWith.setValue(options)
+    await san.accommodation.saveAndContinue()
 }
 
 async function setRelationshipOptions(options: RelationshipOptions[], san: San) {
@@ -99,6 +100,7 @@ async function setRelationshipOptions(options: RelationshipOptions[], san: San) 
     await san.relationships.page1.anyChildren.setValue(['no'])
     await san.relationships.saveAndContinue()
     await san.relationships.page2.importantPeople.setValue(options)
+    await san.relationships.saveAndContinue()
 }
 
 

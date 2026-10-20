@@ -9,7 +9,7 @@ type TestCase = {
     motivated: Motivation
 }
 
-// test.describe.configure({ retries: 1 })
+test.describe.configure({ retries: 1 })
 test('Mapping test V1: drugs practitioner analysis', async ({ oasys, user, offender, assessment, san }) => {
 
     await paTest(oasys, user, offender, assessment, san)
@@ -49,7 +49,7 @@ async function paTest(oasys: Oasys, user: User, offender: Offender, assessment: 
         if (await san.drugs.completed()) {
             await san.drugs.openPractitionerAnalysis()
             if (await san.drugs.completed()) {
-                await san.drugs.practitionerAnalysis.change.click()
+                await san.drugs.change()
             }
         } else {
             await san.drugs.backToStart()

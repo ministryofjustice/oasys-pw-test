@@ -99,6 +99,7 @@ test('Mapping test V1: alcohol', async ({ oasys, user, offender, assessment, san
 async function scenario(test: TestCase, san: San) {
 
     await san.alcohol.page1.everDrank.setValue(test.page1.everDrank)
+    await san.alcohol.saveAndContinue()
     if (test.page2) {
         await san.alcohol.saveAndContinue()
         if (test.page1.everDrank == 'yesIncLast3') {
@@ -106,6 +107,7 @@ async function scenario(test: TestCase, san: San) {
             await san.alcohol.page2.typicalUnits.setValue(test.page2.typicalUnits)
         }
         await san.alcohol.page2.bingeDrinking.setValue(test.page2.bingeDrinking)
+        await san.alcohol.saveAndContinue()
     }
 }
 

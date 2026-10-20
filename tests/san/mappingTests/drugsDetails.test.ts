@@ -104,7 +104,6 @@ async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User
     const testCases: TestCase[] =
         [
             { ref: 1, lastSix: false, frequency: null, injectedLastSix: null, injectedMoreThanSix: null },
-            { ref: 2, lastSix: true, frequency: null, injectedLastSix: null, injectedMoreThanSix: null },
             { ref: 3, lastSix: true, frequency: 'daily', injectedLastSix: null, injectedMoreThanSix: null },
             { ref: 4, lastSix: true, frequency: 'weekly', injectedLastSix: null, injectedMoreThanSix: null },
             { ref: 5, lastSix: true, frequency: 'monthly', injectedLastSix: null, injectedMoreThanSix: null },

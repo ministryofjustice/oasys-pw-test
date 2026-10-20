@@ -83,20 +83,6 @@ test('Mapping test V1: employment and education', async ({ oasys, user, offender
 
     expect(failed).toBe(0)
 
-    // Complete everything needed for PA
-    await san.gotoSan('Employment and education', true)
-    await san.employment.backToStart()
-    await san.employment.page1.employmentStatus.setValue('retired')
-    await san.employment.saveAndContinue()
-    await san.employment.page2.additionalCommitments.setValue(['none'])
-    await san.employment.page2.highestQual.setValue('entryLevel')
-    await san.employment.page2.professionalQual.setValue('no')
-    await san.employment.page2.skills.setValue('no')
-    await san.employment.page2.difficulties.setValue(['none'])
-    await san.employment.page2.wantChanges.setValue('madeChanges')
-    await san.employment.saveAndContinue()
-    await san.returnToOASys()
-
     await paTest(assessmentPk, san.employment, oasys, assessment, san)
     await user.logout()
 })
@@ -123,6 +109,8 @@ async function scenario(test: TestCase, san: San) {
     if (test.page2.employmentHistory) {
         await san.employment.page2.employmentHistory.setValue(test.page2.employmentHistory)
     }
+
+    await san.employment.page2.additionalCommitments.setValue(['none'])
     await san.employment.page2.highestQual.setValue(test.page2.highestQual)
     await san.employment.page2.professionalQual.setValue(test.page2.professionalQual)
     if (test.page2.professionalQual == 'yes') {
@@ -145,6 +133,7 @@ async function scenario(test: TestCase, san: San) {
             await san.employment.page2.employmentExperience.setValue('positive')
         }
     }
+    await san.employment.page2.wantChanges.setValue('madeChanges')
     await san.employment.saveAndContinue()
 }
 

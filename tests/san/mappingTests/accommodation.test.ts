@@ -96,6 +96,7 @@ async function scenario(test: TestCase, san: San) {
         await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
         await san.accommodation.page2.accommodationSuitable.setValue(test.page2.accommodationSuitable)
         await san.accommodation.page2.locationSuitable.setValue(test.page2.locationSuitable)
+        await san.accommodation.saveAndContinue()
     }
 }
 

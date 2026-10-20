@@ -64,39 +64,27 @@ test('Mapping test V2: health and wellbeing', async ({ oasys, user, offender, as
 
     expect(failed).toBe(0)
 
-    // Complete everything needed for PA
-    await san.gotoSan('Health and wellbeing', true)
-    await san.health.page2.psychTreatment.setValue('no')
-    await san.health.page2.headInjury.setValue('no')
-    await san.health.page2.neurodiverse.setValue('no')
-    await san.health.page2.learningDifficulties.setValue('no')
-    await san.health.page2.coping.setValue('no')
-    await san.health.page2.attitude.setValue('positive')
-    await san.health.page2.selfHarmed.setValue('no')
-    await san.health.page2.suicide.setValue('no')
-    await san.health.page2.optimistic.setValue('optimistic')
-    await san.health.page2.wantChanges.setValue('madeChanges')
-
-    await san.health.saveAndContinue()
-    await san.returnToOASys()
-
     await paTest(assessmentPk, san.health, oasys, assessment, san)
     await user.logout()
 })
 
 
 async function scenario(test: TestCase, san: San) {
-
+    
     await san.health.page1.physicalHealthConditions.setValue('yes')
     await san.health.page1.mentalHealthProblems.setValue(test.page1.mentalHealthProblems)
     await san.health.saveAndContinue()
     await san.health.page2.psychTreatment.setValue(test.page2.psychTreatment)
     await san.health.page2.headInjury.setValue(test.page2.headInjury)
+    await san.health.page2.neurodiverse.setValue('no')
     await san.health.page2.learningDifficulties.setValue(test.page2.learningDifficulties)
     await san.health.page2.coping.setValue(test.page2.coping)
     await san.health.page2.attitude.setValue(test.page2.attitude)
     await san.health.page2.selfHarmed.setValue(test.page2.selfHarmed)
     await san.health.page2.suicide.setValue(test.page2.suicide)
+    await san.health.page2.optimistic.setValue('optimistic')
+    await san.health.page2.wantChanges.setValue('madeChanges')
+    await san.health.saveAndContinue()
 }
 
 async function checkAnswers(assessmentPk: number, test: TestCase, assessment: Assessment): Promise<boolean> {

@@ -68,13 +68,6 @@ test('Mapping test V2: relationships', async ({ oasys, user, offender, assessmen
 
     expect(failed).toBe(0)
 
-    // Complete everything needed for PA
-    await san.gotoSan('Personal relationships and community', true)
-    await san.relationships.page3.resolveChallenges.setValue('Testing')
-    await san.relationships.page3.wantChanges.setValue('madeChanges')
-    await san.relationships.saveAndContinue()
-    await san.returnToOASys()
-
     await paTest(assessmentPk, san.relationships, oasys, assessment, san)
     await user.logout()
 })
@@ -88,15 +81,18 @@ async function scenario(test: TestCase, san: San) {
     if (test.page2.importantPeople.includes('other')) {
         await san.relationships.page2.importantOtherDetails.setValue('Other people details')
     }
-
+    await san.relationships.saveAndContinue()
+    
     if (test.page3) {
-        await san.relationships.saveAndContinue()
         await san.relationships.page3.happyWithStatus.setValue(test.page3.happyWithStatus)
         await san.relationships.page3.history.setValue(test.page3.history)
         await san.relationships.page3.manageParenting.setValue(test.page3.manageParenting)
         await san.relationships.page3.currentFamilyRelationship.setValue(test.page3.currentFamilyRelationship)
         await san.relationships.page3.childhoodExperience.setValue(test.page3.childhoodExperience)
         await san.relationships.page3.behaviouralProblems.setValue(test.page3.behaviouralProblems)
+        await san.relationships.page3.resolveChallenges.setValue('Testing')
+        await san.relationships.page3.wantChanges.setValue('madeChanges')
+        await san.relationships.saveAndContinue()
     }
 }
 

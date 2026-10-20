@@ -41,10 +41,16 @@ export class BaseSanSection {
         await this.page.locator('.govuk-back-link').first().click()
     }
 
+    async changeLinkCount(): Promise<number> {
+
+        const changeLinkCount = await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).count()
+        return changeLinkCount
+    }
+
     async completed(): Promise<boolean> {
 
-        const changeCount = await this.page.locator('.govuk-link:visible').filter({ hasText: 'Change' }).count()
-        return changeCount > 0
+        const changeLinkCount = await this.changeLinkCount()
+        return changeLinkCount > 0
     }
 
     async backToStart() {
@@ -56,7 +62,7 @@ export class BaseSanSection {
             // await this.page.locator('.moj-side-navigation__item--active a').filter({ hasText: this.sectionName }).isVisible()  // Ensure page update before next check
             // await this.page.waitForTimeout(1000)
         }
-        
+
         let backCount: number
         do {
             backCount = await this.page.locator('.govuk-back-link').count()

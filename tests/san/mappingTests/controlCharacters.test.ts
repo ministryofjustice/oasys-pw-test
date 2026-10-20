@@ -26,6 +26,10 @@ test('Mapping test V2: control characters', async ({ oasys, user, offender, asse
         { ref: 2, offenceDescription: '`', result: `'` },
         { ref: 3, offenceDescription: `%&#– “” ‘’`, result: `%&#- "" ''` },
         { ref: 4, offenceDescription: `\\/<>	`, result: `\\/<>` }, // NOTE Tab is not returned
+        { ref: 5, offenceDescription: `${utils.oasysString(3995)}€ „ …`, result: `${utils.oasysString(3995)}€ „ …` },
+        { ref: 6, offenceDescription: `£5 café naïve Ñandú Über straße ½ © ° ± × ÷ « » € „ ‚ … • † ‡ ‰ ™ Š š Ž ž Œ œ Ÿ ƒ ‹ ›`, result: `£5 café naïve Ñandú Über straße ½ © ° ± × ÷ « » € „ ‚ … • † ‡ ‰ ™ Š š Ž ž Œ œ Ÿ ƒ ‹ ›` },
+        { ref: 7, offenceDescription: `Gwŷn Llŵyd Łódź Ștefan Ğül Ωmega Жора → ≤ ≠ ✓`, result: `Gwyn Llwyd Lódz ¿tefan Gül Omega ¿¿¿¿ ¿ = ¿ ¿` },
+        { ref: 8, offenceDescription: `${utils.oasysString(3915)}£5 café naïve Ñandú Über straße ½ © ° ± × ÷ « » € „ ‚ … • † ‡ ‰ ™ Š š Ž ž Œ œ Ÿ ƒ ‹ ›`, result: `${utils.oasysString(3915)}£5 café naïve Ñandú Über straße ½ © ° ± × ÷ « » € „ ‚ … • † ‡ ‰ ™ Š š Ž ž Œ œ Ÿ ƒ ‹ ›` },
     ]
 
     for (const test of testCases) {

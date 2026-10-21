@@ -100,16 +100,18 @@ async function drugTest(drugType: DrugType, oasys: Oasys, user: User, offender: 
 
     const mappingTestOffender = await getMappingTestOffender()
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
-
-    // Create a new SAN assessment
+    // Create a new SAN assessment if there isn't one already
     await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    const assessments = await assessment.assessmentsTab.assessments.getRowCount()
+    let assessmentPk: number
+    if (assessments == 0) {
+        assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    } else {
+        assessmentPk = await assessment.getLatestSetPkByPnc(mappingTestOffender.pnc)
+        log(`PK: ${assessmentPk}`)
+        await assessment.openLatest()
+    }
 
     if (!drugType) {  // If null, run the practitioner analysis test
 

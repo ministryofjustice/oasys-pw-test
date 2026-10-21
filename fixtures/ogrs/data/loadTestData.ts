@@ -42,6 +42,7 @@ export function loadParameterSet(parameterLine: string): OgrsInputParams {
         HALLUCINOGENS: utils.getString(parameters[i++]),
         HEROIN: utils.getString(parameters[i++]),
         KETAMINE: utils.getString(parameters[i++]),
+        MEPHEDRONE: null,           // TODO add this when included in test data
         METHADONE: utils.getString(parameters[i++]),
         MISUSED_PRESCRIBED: utils.getString(parameters[i++]),
         OTHER_DRUGS: utils.getString(parameters[i++]),

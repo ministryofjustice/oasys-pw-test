@@ -85,6 +85,7 @@ export class Rescoring {
             HALLUCINOGENS: getDrugUsed(assessment.qaData, 'HALLUCINOGENS'),
             HEROIN: getDrugUsed(assessment.qaData, 'HEROIN'),
             KETAMINE: getDrugUsed(assessment.qaData, 'KETAMINE'),
+            MEPHEDRONE: null,       // will need updating if rescoring test is used after release 7.13
             METHADONE: getDrugUsed(assessment.qaData, 'METHADONE'),
             MISUSED_PRESCRIBED: getDrugUsed(assessment.qaData, 'MISUSED_PRESCRIBED'),
             OTHER_DRUGS: getDrugUsed(assessment.qaData, 'OTHER_DRUGS'),

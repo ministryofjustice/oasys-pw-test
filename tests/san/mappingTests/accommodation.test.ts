@@ -66,6 +66,7 @@ for (const mode of ['community', 'custody']) {
             { ref: 15, sanMode: null, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'no' } },
             { ref: 16, sanMode: 'custody', page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'unknown' } },
             { ref: 17, sanMode: 'custody', page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: null, locationSuitable: 'unknown', accommodationSuitable: 'no' } },
+            { ref: 18, sanMode: 'custody', page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'yes' } },
         ]
 
 
@@ -117,13 +118,13 @@ async function scenario(test: TestCase, san: San) {
         await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
     }
     if (test.page2) {
-        await san.accommodation.saveAndContinue()
-        await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
+        if (test.page1.currentAccommodation == 'settled') {
+            await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
+        }
         await san.accommodation.page2.accommodationSuitable.setValue(test.page2.accommodationSuitable)
         await san.accommodation.page2.locationSuitable.setValue(test.page2.locationSuitable)
-        startPage = 2
-    } else {
-        startPage = 1
+        await san.accommodation.page2.wantChanges.setValue('madeChanges')
+        await san.accommodation.saveAndContinue()
     }
 }
 

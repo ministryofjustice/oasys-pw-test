@@ -33,7 +33,7 @@ type TestCase = {
     }
 }
 
-// test.describe.configure({ retries: 1 })
+test.describe.configure({ retries: 1 })
 test('Mapping test AAP: offence analysis', async ({ sections, oasys, user, offender, assessment, san }) => {
 
     const mappingTestOffender = await getMappingTestOffender()

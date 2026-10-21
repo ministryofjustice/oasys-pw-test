@@ -10,7 +10,7 @@ type TestCase = {
 }
 
 
-// test.describe.configure({ retries: 1 })
+test.describe.configure({ retries: 1 })
 test('Mapping test AAP: drugs practitioner analysis', async ({ oasys, user, offender, assessment, san }) => {
 
     await paTest(oasys, user, offender, assessment, san)

@@ -45,10 +45,11 @@ test('Mapping test AAP: accommodation', async ({ oasys, user, offender, assessme
         { ref: 9, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: null },
         { ref: 10, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'partner'], locationSuitable: 'no', accommodationSuitable: 'no' } },
         { ref: 11, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'child'], locationSuitable: 'yes', accommodationSuitable: 'no' } },
-        { ref: 12, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'no', accommodationSuitable: 'yes' } },
-        { ref: 13, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family'], locationSuitable: 'yes', accommodationSuitable: 'yes' } },
-        { ref: 14, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'friends', 'other'], locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
-        { ref: 15, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['alone'], locationSuitable: 'no', accommodationSuitable: 'yesWithConcerns' } },
+        { ref: 12, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family'], locationSuitable: 'yes', accommodationSuitable: 'yes' } },
+        { ref: 13, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'friends', 'other'], locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
+        { ref: 14, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['alone'], locationSuitable: 'no', accommodationSuitable: 'yesWithConcerns' } },
+        { ref: 15, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'no', accommodationSuitable: 'yes' } },
+        { ref: 16, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'yes' } },
     ]
 
 
@@ -94,9 +95,14 @@ async function scenario(test: TestCase, san: San) {
     }
     await san.accommodation.saveAndContinue()
     if (test.page2) {
-        await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
+        if (test.page1.currentAccommodation == 'settled') {
+            await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
+        }
         await san.accommodation.page2.accommodationSuitable.setValue(test.page2.accommodationSuitable)
         await san.accommodation.page2.locationSuitable.setValue(test.page2.locationSuitable)
+        if (test.page1.currentAccommodation == 'temporary') {
+            await san.accommodation.page2.futurePlanned.setValue('no')
+        }
         await san.accommodation.page2.wantChanges.setValue('madeChanges')
         await san.accommodation.saveAndContinue()
     }

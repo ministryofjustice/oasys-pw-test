@@ -85,23 +85,24 @@ test.describe('Mapping test AAP: drugs - individual drugs details', () => {
     test('spice', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('spice', page, oasys, user, offender, assessment, san) })
     test('steroids', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('steroids', page, oasys, user, offender, assessment, san) })
     test('other', async ({ page, oasys, user, offender, assessment, san }) => { await drugTest('other', page, oasys, user, offender, assessment, san) })
-    // TODO add ketamine (16)
 })
 
 async function drugTest(drugType: DrugType, page: Page, oasys: Oasys, user: User, offender: Offender, assessment: Assessment, san: San) {
 
     const mappingTestOffender = await getMappingTestOffender()
 
-    // Delete previous assessments so no data gets cloned
-    await user.admin.login(providers.prob.san)
-    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-    await user.logout()
-
-    // Create a new SAN assessment
+    // Create a new SAN assessment if there isn't one already
     await user.prob.probSanUnappr.login()
     await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
-    const assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    const assessments = await assessment.assessmentsTab.assessments.getRowCount()
+    let assessmentPk: number
+    if (assessments == 0) {
+        assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
+    } else {
+        assessmentPk = await assessment.getLatestSetPkByPnc(mappingTestOffender.pnc)
+        log(`PK: ${assessmentPk}`)
+        await assessment.openLatest()
+    }
 
     // Run all the scenarios for a single drug
     let failed = false

@@ -1,45 +1,38 @@
+import { ConnectCalcResult } from './data/connectCalcResult'
+import { ConnectParams } from './data/connectParams'
+
 export function connectCalc(connectParams: ConnectParams): ConnectCalcResult {
 
-    const result: ConnectCalcResult = {
-        sexDomainLevel: null,
-        sexDomainScore: 0,
-        thinkingDomainLevel: null,
-        thinkingDomainScore: 0,
-        relationshipDomainLevel: null,
-        relationshipDomainScore: 0,
-        selfManagementDomainLevel: null,
-        selfManagementDomainScore: 0,
-        totalDomainScore: 0,
-        overallNeedLevel: null,
-        connectResult: null,
-        missingFields: [],
-    }
+    const result = new ConnectCalcResult()
+    const missingFields: string[] = []
 
     // SEX DOMAIN
     let sexDomainScore = 0
 
-    if (connectParams.s1_30 == null && connectParams.s6_11 == 'No') {
-        result.missingFields.push('1.30 Have they ever committed a sexual or sexually motivated offence?')
+    if (connectParams.s1_30 == null) {
+        missingFields.push('1.30 Have they ever committed a sexual or sexually motivated offence?')
 
     } else if (connectParams.s1_30 == 'Yes' || connectParams.s6_11 == 'Yes') { // We can continue to look at the sex domain scores
         if (connectParams.s11_12 == null) {
-            result.missingFields.push('11.12 Offence Related Sexual Interests')
-        } else if (connectParams.s11_12 == 2) {
-            sexDomainScore = 6
+            missingFields.push('\n11.12 Offence Related Sexual Interests')
         } else {
             sexDomainScore += connectParams.s11_12
         }
 
         if (connectParams.s11_11 == null) {
-            result.missingFields.push('11.11 Sexual Pre-Occupation')
+            missingFields.push('\n11.11 Sexual Pre-Occupation')
         } else {
             sexDomainScore += connectParams.s11_11
         }
 
         if (connectParams.s6_12 == null) {
-            result.missingFields.push('6.12 Emotional Congruence with Children/ Feeling Closer to Children than Adults')
+            missingFields.push('\n6.12 Emotional Congruence with Children/ Feeling Closer to Children than Adults')
         } else {
             sexDomainScore += connectParams.s6_12
+        }
+
+        if (connectParams.s11_12 == 2 && sexDomainScore < 6) {  // 11.12 trumps all
+            sexDomainScore = 6
         }
     }
 
@@ -50,7 +43,7 @@ export function connectCalc(connectParams: ConnectParams): ConnectCalcResult {
     let thinkingDomainScore = 0
 
     if (connectParams.s12_1 == null) {
-        result.missingFields.push('12.1 Pro-criminal attitudes')
+        missingFields.push('\n12.1 Pro-criminal attitudes')
     } else if (connectParams.s12_1 == 2) {
         thinkingDomainScore = 4
     } else {
@@ -59,7 +52,7 @@ export function connectCalc(connectParams: ConnectParams): ConnectCalcResult {
 
     if (connectParams.s12_1 != 2) {
         if (connectParams.s12_9 == null) {
-            result.missingFields.push('12.9 Hostile orientation')
+            missingFields.push('\n12.9 Hostile orientation')
         } else {
             thinkingDomainScore = thinkingDomainScore + connectParams.s12_9
         }
@@ -72,25 +65,25 @@ export function connectCalc(connectParams: ConnectParams): ConnectCalcResult {
     let relationshipsDomainScore = 0
 
     if (connectParams.s6_1 == null) {
-        result.missingFields.push('6.1 Current relationship with close family member')
+        missingFields.push('\n6.1 Current relationship with close family member')
     } else {
         relationshipsDomainScore = connectParams.s6_1
     }
 
     if (connectParams.s6_6 == null) {
-        result.missingFields.push('6.6 Previous experience of close relationships')
+        missingFields.push('\n6.6 Previous experience of close relationships')
     } else {
         relationshipsDomainScore = relationshipsDomainScore + connectParams.s6_6
     }
 
     if (connectParams.s7_3 == null) {
-        result.missingFields.push('7.3 Easily influenced by criminal associates')
+        missingFields.push('\n7.3 Easily influenced by criminal associates')
     } else {
         relationshipsDomainScore = relationshipsDomainScore + connectParams.s7_3
     }
 
     if (connectParams.s11_3 == null) {
-        result.missingFields.push('11.3 Aggressive controlling behaviour')
+        missingFields.push('\n11.3 Aggressive controlling behaviour')
     } else {
         relationshipsDomainScore = relationshipsDomainScore + connectParams.s11_3
     }
@@ -102,25 +95,25 @@ export function connectCalc(connectParams: ConnectParams): ConnectCalcResult {
     let selfManagementDomainScore = 0
 
     if (connectParams.s11_2 == null) {
-        result.missingFields.push('11.2 Impulsivity')
+        missingFields.push('\n11.2 Impulsivity')
     } else {
         selfManagementDomainScore = connectParams.s11_2
     }
 
     if (connectParams.s11_4 == null) {
-        result.missingFields.push('11.4 Temper Control')
+        missingFields.push('\n11.4 Temper Control')
     } else {
         selfManagementDomainScore = selfManagementDomainScore + connectParams.s11_4
     }
 
     if (connectParams.s11_6 == null) {
-        result.missingFields.push('11.6 Problem solving skills')
+        missingFields.push('\n11.6 Problem solving skills')
     } else {
         selfManagementDomainScore = selfManagementDomainScore + connectParams.s11_6
     }
 
     if (connectParams.s10_1 == null) {
-        result.missingFields.push('10.1 Difficulties coping')
+        missingFields.push('\n10.1 Difficulties coping')
     } else {
         selfManagementDomainScore = selfManagementDomainScore + connectParams.s10_1
     }
@@ -134,33 +127,38 @@ export function connectCalc(connectParams: ConnectParams): ConnectCalcResult {
 
     // Check RoSH, ARP and CSRP for eligibility
     let eligible = true
-    if (connectParams.rosh == null) {
-        eligible = false
-        result.missingFields.push('Risk of Serious Harm')
-    } else if (connectParams.rosh != 'M') {
+    let missing = false
+
+    if (connectParams.rsrPercentageScore == null) {
+        missing = true
+        missingFields.push('\nCSRP')
+    } else if (connectParams.rsrPercentageScore < 1 || connectParams.rsrPercentageScore >= 3) {
         eligible = false
     }
     if (connectParams.arpPercentageScore == null) {
-        eligible = false
-        result.missingFields.push('Dynamic ARP Score')
+        missing = true
+        missingFields.push('\nARP')
     } else if (connectParams.arpPercentageScore < 25 || connectParams.arpPercentageScore >= 50) {
         eligible = false
     }
-    if (connectParams.rsrPercentageScore == null) {
-        eligible = false
-        result.missingFields.push('Dynamic CSRP Score')
-    } else if (connectParams.rsrPercentageScore < 1 || connectParams.rsrPercentageScore >= 3) {
+    if (connectParams.rosh == null) {
+        missing = true
+        missingFields.push('\nRisk of Serious Harm')
+    } else if (connectParams.rosh != 'M') {
         eligible = false
     }
 
     const prefix = connectParams.community ? 'P' : 'C'
 
-    // Determine result based on eligibility and score
-    if (eligible) {
-        result.connectResult = result.totalDomainScore >= 3 ? `${prefix}P` : result.missingFields.length == 0 ? `${prefix}F` : 'M'
+    // Determine result based on eligibility, missing questions and score
+    if (missing) {  // No ROSH/ARP/CSRP
+        result.connectResult = 'M'
+    } else if (eligible) {
+        result.connectResult = result.totalDomainScore >= 3 ? `${prefix}P` : missingFields.length == 0 ? `${prefix}F` : 'M'
     } else {
         result.connectResult = `${prefix}F`
     }
 
+    result.missingFields = missingFields.join('')
     return result
 }

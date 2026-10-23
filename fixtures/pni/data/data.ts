@@ -1,5 +1,6 @@
 import { OasysDb } from 'fixtures'
 import { assignValues, buildQuery } from 'lib/queryBuilder'
+import { ConnectParams } from './connectParams'
 
 type SaraParams = { saraRiskLevelToPartner: number, saraRiskLevelToOther: number }
 
@@ -29,35 +30,9 @@ export class Data {
         const age = oasysDateTime.dateDiffString(oasysSetValues.dateOfBirth, oasysSetValues.initiationDate, 'year')
         const sara = await getSaraParameters(probationCrn, pk, age, oasysSetValues.noSaraDate, qaValues, this.oasysDb)
 
-        return { pniParams: assignPniParams(oasysSetValues, qaValues, sara, community), connectParams: assignConnectParams(oasysSetValues, qaValues, community) }
+        return { pniParams: assignPniParams(oasysSetValues, qaValues, sara, community), connectParams: new ConnectParams(oasysSetValues, qaValues, community) }
     }
 
-    async getConnectCalcTestData(whereClause: string, count: number): Promise<ConnectParams[]> {
-
-        const result: ConnectParams[] = []
-
-        const query = buildQuery(oasysSetColumns, ['oasys_set'],
-            whereClause,
-            `initiation_date desc fetch first ${count} rows only`)
-
-        const oasysSetData = await this.oasysDb.getData(query)
-
-        for (const assessment of oasysSetData) {
-
-            const oasysSetValues = new OasysSetValues()
-            assignValues(oasysSetValues, oasysSetColumns, assessment, 0)
-
-            const qa = await this.oasysDb.getData(qaQuery(oasysSetValues.assessmentPk))
-            const qaValues: { [key: string]: string } = {}
-            for (const q of qa) {
-                qaValues[q[0]] = q[1]
-            }
-
-            result.push(assignConnectParams(oasysSetValues, qaValues, true))
-        }
-
-        return result
-    }
 }
 
 function assignPniParams(oasysSetValues: OasysSetValues, qaValues: { [key: string]: string }, sara: SaraParams, community: boolean): PniParams {
@@ -90,33 +65,8 @@ function assignPniParams(oasysSetValues: OasysSetValues, qaValues: { [key: strin
 
 }
 
-function assignConnectParams(oasysSetValues: OasysSetValues, qaValues: { [key: string]: string }, community: boolean): ConnectParams {
 
-    return {
-
-        s1_30: yn(qaValues['1.30']),
-        s6_1: getOasysScore(qaValues['6.1']),
-        s6_6: getOasysScore(qaValues['6.6']),
-        s6_11: yn(qaValues['6.11']),
-        s6_12: getOasysScore(qaValues['6.12']),
-        s7_3: getOasysScore(qaValues['7.3']),
-        s10_1: getOasysScore(qaValues['10.1']),
-        s11_11: getOasysScore(qaValues['11.11']),
-        s11_12: getOasysScore(qaValues['11.12']),
-        s11_3: getOasysScore(qaValues['11.3']),
-        s11_2: getOasysScore(qaValues['11.2']),
-        s11_4: getOasysScore(qaValues['11.4']),
-        s11_6: getOasysScore(qaValues['11.6']),
-        s12_1: getOasysScore(qaValues['12.1']),
-        s12_9: getOasysScore(qaValues['12.9']),
-        arpPercentageScore: oasysSetValues.arpPercentageScore,
-        rsrPercentageScore: oasysSetValues.rsrPercentageScore,
-        rosh: oasysSetValues.rosh,
-        community: community,
-    }
-}
-
-function getOasysScore(param: string): number {
+export function getOasysScore(param: string): number {
 
     if (!param) {
         return null
@@ -126,7 +76,7 @@ function getOasysScore(param: string): number {
     return Number.isNaN(Number.parseInt(c)) ? null : Number.parseInt(c)
 }
 
-function yn(param: string): string {
+export function yn(param: string): string {
 
     return param == 'YES' ? 'Yes' : param == 'NO' ? 'No' : null
 }
@@ -148,7 +98,7 @@ const oasysSetColumns: Columns = {
     rosh: { name: 'rosh_level_elm', type: 'string' },
 }
 
-class OasysSetValues  {
+export class OasysSetValues {
     assessmentPk: number
     arpStaticBand: string
     arpDynamicBand: string
@@ -268,5 +218,8 @@ async function getSaraParameters(probationCrn: string, assessmentPk: number, age
 async function getSaraRiskLevels(saraPk: number, oasysDb: OasysDb): Promise<{ saraRiskLevelToPartner: number, saraRiskLevelToOther: number }> {
 
     const saraData = await oasysDb.getData(saraQaQuery(saraPk))
+    if (saraData.length == 0) {
+        return { saraRiskLevelToPartner: null, saraRiskLevelToOther: null }
+    }
     return { saraRiskLevelToPartner: utils.getInteger(saraData[0][1]), saraRiskLevelToOther: utils.getInteger(saraData[1][1]) }
 }

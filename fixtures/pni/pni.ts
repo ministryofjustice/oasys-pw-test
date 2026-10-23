@@ -1,8 +1,8 @@
 import { Assessment, OasysDb } from 'fixtures'
-import { Data } from './data'
+import { Data } from './data/data'
 import { pniCalc } from './pniCalc'
 import { connectCalc } from './connectCalc'
-import { connectFunctionCall, loadOracleOutputValues } from './connectFunctionCall'
+import { ConnectCalcResult } from './data/connectCalcResult'
 
 export class Pni {
 
@@ -39,26 +39,63 @@ export class Pni {
         })
     }
 
-    async testConnectCalculator(whereClause: string, count: number) {
+    async testCalculators(probationCrn: string, offenderPk: number, reportPasses: boolean): Promise<{ count: number, failed: number }> {
 
-        const testData = await this.data.getConnectCalcTestData(whereClause, count)
-        let failed = 0
+        const assessmentQuery = `select os.oasys_set_pk from oasys_set os, oasys_assessment_group og
+                                    where og.offender_pk = ${offenderPk} 
+                                    and og.oasys_assessment_group_pk = os.oasys_assessment_group_pk 
+                                    and os.deleted_date is null
+                                    and os.ref_ass_version_code = 'LAYER3'
+                                    order by initiation_date desc`
 
-        for (const testCase of testData) {
-
-            const connectResult = connectCalc(testCase)
-            const functionCall = connectFunctionCall(testCase)
-            const oracleResponse = await this.oasysDb.callFunction(functionCall)
-            const oracleResult = loadOracleOutputValues(oracleResponse.split('|'))
-
-            const caseFailed = compareConnectResults(connectResult, oracleResult)
-            if (caseFailed) {
-                failed++
-                log(`Expected ${JSON.stringify(connectResult)}, got ${JSON.stringify(oracleResult)}`, JSON.stringify(testCase))
+        const assessments = await this.oasysDb.getData(assessmentQuery)
+        if (assessments.length == 0) {
+            if (reportPasses) {
+                log('No layer 3 assessment', `CRN: ${probationCrn}`)
             }
+            return { count: 0, failed: 0 }
         }
 
-        expect(failed).toBe(0)
+        let count = 0
+        let failed = 0
+        for (let i = 0; i < assessments.length; i++) {
+            count++
+            const assessmentPk = Number.parseInt(assessments[i][0])
+
+            const testParams = await this.data.getPniTestParameters(probationCrn, assessmentPk)
+
+            // Building choices
+            const pniResult = pniCalc(testParams.pniParams)
+
+            // TODO call PNI calculator in Oracle
+
+            // if (pniFailed) {
+            //     failed++
+            //     log(`Params:  ${JSON.stringify(testParams.connectParams)}.  Expected ${JSON.stringify(pniResult)}, got ${JSON.stringify(oasysResult)}`,
+            //         `CRN: ${probationCrn}, Offender PK: ${offenderPk}, Assessment PK: ${assessmentPk} PNI **** FAILED ****`)
+            // } else if (reportPasses) {
+            //     log(`Params:  ${JSON.stringify(testParams.connectParams)}.  Expected ${pniResult.pniCalculation} ${pniResult.missingFields?.join()}, got ${JSON.stringify(oasysResult)}`,
+            //         `CRN: ${probationCrn}, PK: ${assessmentPk} PNI PASSED`)
+            // }
+
+            // Connect
+            const connectResult = connectCalc(testParams.connectParams)
+            const functionCall = testParams.connectParams.oracleFunctionCall()
+            const oracleResponse = await this.oasysDb.callFunction(functionCall)
+            const oracleResult = new ConnectCalcResult()
+            oracleResult.loadOracleOutputValues(oracleResponse.split('|'))
+
+            const connectFailed = compareConnectResults(connectResult, oracleResult)
+            if (connectFailed) {
+                failed++
+                log(`Params:  ${JSON.stringify(testParams.connectParams)}.  Expected ${JSON.stringify(connectResult)}, got ${JSON.stringify(oracleResult)}`,
+                    `CRN: ${probationCrn}, Offender PK: ${offenderPk}, Assessment PK: ${assessmentPk} Connect **** FAILED ****`)
+            } else if (reportPasses) {
+                log(`Params:  ${JSON.stringify(testParams.connectParams)}.  Expected ${JSON.stringify(connectResult)}, got ${JSON.stringify(oracleResult)}`,
+                    `CRN: ${probationCrn}, PK: ${assessmentPk} Connect PASSED`)
+            }
+        }
+        return { count: count, failed: failed }
     }
 
 }
@@ -82,3 +119,6 @@ function compareConnectResults(pw: ConnectCalcResult, oracle: ConnectCalcResult)
 
     return failed
 }
+
+
+

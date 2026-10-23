@@ -387,40 +387,6 @@ declare type PniCalcResult = {
     partResult: string,
 }
 
-declare type ConnectParams = {
-
-    s1_30: string,
-    s6_1: number,
-    s6_6: number,
-    s6_11: string,
-    s6_12: number,
-    s7_3: number,
-    s10_1: number,
-    s11_11: number,
-    s11_12: number,
-    s11_3: number,
-    s11_2: number,
-    s11_4: number,
-    s11_6: number,
-    s12_1: number,
-    s12_9: number,
-    arpPercentageScore: number,
-    rsrPercentageScore: number,
-    rosh: string,
-    community: boolean,
-}
-
-declare type ConnectCalcResult = {
-    sexDomainLevel: 'L' | 'M' | 'H',
-    sexDomainScore: number,
-    thinkingDomainLevel: 'L' | 'M' | 'H',
-    thinkingDomainScore: number,
-    relationshipDomainLevel: 'L' | 'M' | 'H',
-    relationshipDomainScore: number,
-    selfManagementDomainLevel: 'L' | 'M' | 'H',
-    selfManagementDomainScore: number,
-    totalDomainScore: number,
-    overallNeedLevel: string,
-    connectResult: 'PP' | 'PF' | 'CP' | 'CF' | 'M',
-    missingFields: string[],
-}
+// PNI and Connect
+declare type DomainResult = 'L' | 'M' | 'H'
+declare type ConnectResult = 'PP' | 'PF' | 'CP' | 'CF' | 'M'

@@ -5,7 +5,7 @@ import { OgrsInputParams, OgrsOutputParams } from 'fixtures/ogrs/types'
 
 
 // Load input parameters from a CSV file
-export async function ogrsCsvTest(dataFile: string, staticFlag: 'Y' | 'N', reportMode: ReportMode, outputFile: string, ogrs: Ogrs) {
+export async function ogrsCsvTest(dataFile: string, staticFlag: 'Y' | 'N', mephedrone: 'Y' | null, reportMode: ReportMode, outputFile: string, ogrs: Ogrs) {
 
     let failures = 0
     let cases = 0
@@ -19,10 +19,17 @@ export async function ogrsCsvTest(dataFile: string, staticFlag: 'Y' | 'N', repor
         const testCaseParams = ogrs.createInputFromCsvLine(inputParameters[i])
 
         testCaseParams.STATIC_CALC = staticFlag
+        testCaseParams.MEPHEDRONE = mephedrone
 
         // Call the calculator in Oracle
+        // TODO temporary hack until release 7.12 goes in to correct the 4.2 parameter and revert the coefficients
+        testCaseParams.FOUR_POINT_TWO = testCaseParams.FOUR_POINT_TWO == null ? null : testCaseParams.FOUR_POINT_TWO / 2
+
         const functionCall = ogrs.getFunctionCall(testCaseParams)
         const oracleTestCaseResult = await ogrs.getOracleResult(functionCall)
+
+        // TODO temporary hack until release 7.12 goes in to correct the 4.2 parameter and revert the coefficients
+        testCaseParams.FOUR_POINT_TWO = testCaseParams.FOUR_POINT_TWO == null ? null : testCaseParams.FOUR_POINT_TWO * 2
 
         const testCaseIdentifier = (i)?.toString() ?? 'null'
         const testCaseResult = ogrs.calculateOgrsAndCompare(testCaseParams, oracleTestCaseResult, testCaseIdentifier, reportMode)
@@ -62,7 +69,7 @@ export async function ogrsOracleTest(type: AssessmentOrCsrp, count: number, wher
 
             // Run twice, for static flag Y and N
             for (let staticFlag of ['Y', 'N']) {
-                
+
                 cases++
                 testCaseParams.MEPHEDRONE = mephedrone
                 testCaseParams.STATIC_CALC = staticFlag

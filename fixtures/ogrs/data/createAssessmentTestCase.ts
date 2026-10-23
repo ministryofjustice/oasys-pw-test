@@ -26,7 +26,7 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
     }
 
     const o6_8Lookup = utils.lookupInteger('6.8', assessment.qaData)
-    const o6_8 = o6_8Lookup === undefined ? null : o6_8Lookup === null ? 0 : o6_8Lookup
+    const o6_8 = o6_8Lookup === undefined ? null : o6_8Lookup === null ? 3 : o6_8Lookup
 
     const result = {
 
@@ -56,7 +56,7 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
         FOUR_POINT_TWO: utils.lookupIntegerMissingAs0('4.2', assessment.qaData, q4_2Lookup),
         SIX_POINT_FOUR: utils.lookupIntegerMissingAs0('6.4', assessment.qaData),
         SIX_POINT_SEVEN: da(assessment.qaData, after6_30),
-        SIX_POINT_EIGHT: o6_8, // utils.lookupInteger('6.8', assessment.qaData) ?? 0,
+        SIX_POINT_EIGHT: o6_8,
         SEVEN_POINT_TWO: utils.lookupIntegerMissingAs0('7.2', assessment.qaData),
         DAILY_DRUG_USER: dailyDrugUser(q81, drugs),
         AMPHETAMINES: getDrugUsed('AMPHETAMINES', drugs),

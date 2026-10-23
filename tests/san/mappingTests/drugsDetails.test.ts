@@ -103,25 +103,26 @@ for (const mode of ['community', 'custody']) {
         sanMode = mode as SanMode
         const mappingTestOffender = await getMappingTestOffender()
 
-        // Delete previous assessments so no data gets cloned
-        await user.admin.login(sanMode == 'community' ? providers.prob.san : providers.pris.san)
-        await offender.searchAndSelectByPnc(mappingTestOffender.pnc)
-        await assessment.deleteAll(mappingTestOffender.surname, mappingTestOffender.forename1)
-        await user.logout()
-
-        // Create a new SAN assessment
-        if (sanMode == 'community') {
-            await user.prob.probSanUnappr.login()
-        } else {
-            await user.pris.prisSanPom.login()
-        }
-        await offender.searchAndSelectByPnc(mappingTestOffender.pnc)
-        let assessmentPk: number
+    // Create a new SAN assessment if there isn't one already
+    if (sanMode == 'community') {
+        await user.prob.probSanUnappr.login()
+    } else {
+        await user.pris.prisSanPom.login()
+    }
+    await offender.searchAndSelectByCrn(mappingTestOffender.probationCrn)
+    const assessments = await assessment.assessmentsTab.assessments.getRowCount()
+    let assessmentPk: number
+    if (assessments == 0) {
         if (sanMode == 'community') {
             assessmentPk = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)' })
         } else {
             assessmentPk = await assessment.createPris({ purposeOfAssessment: 'Start custody', assessmentLayer: 'Full (Layer 3)' })
         }
+    } else {
+        assessmentPk = await assessment.getLatestSetPkByPnc(mappingTestOffender.pnc)
+        log(`PK: ${assessmentPk}`)
+        await assessment.openLatest()
+    }
 
         if (!drugType) {  // If null, run the practitioner analysis test
 

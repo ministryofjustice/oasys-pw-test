@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 import { PractitionerAnalysis } from './pages'
-
+import { Element } from 'classes'
 
 
 export class BaseSanSection {
@@ -9,6 +9,8 @@ export class BaseSanSection {
 
     readonly sectionName: SanSectionTitle = null
     readonly paPrefix: string = null
+
+    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, `#${this.paPrefix}_changes`, sanWantChangesOptions)
     readonly practitionerAnalysis: PractitionerAnalysis = null
 
     async goto() {

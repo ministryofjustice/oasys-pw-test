@@ -79,9 +79,7 @@ for (const mode of ['community', 'custody']) {
             // Get to the right starting screen
             await san.gotoSan('health', true)
             // Back to the start, depending where the previous scenario ended
-            for (let i = 1; i < startPage; i++) {
-                await san.health.previous()
-            }
+            await san.health.backToStart()
             // Set values on SAN, return to OASys and check the results
             await scenario(test, san)
             await san.returnToOASys()

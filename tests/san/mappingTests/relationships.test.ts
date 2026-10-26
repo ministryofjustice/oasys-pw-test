@@ -98,9 +98,7 @@ for (const mode of ['community', 'custody']) {
             // Get to the right starting screen
             await san.gotoSan('relationships', true)
             // Back to the start, depending where the previous scenario ended
-            for (let i = 1; i < startPage; i++) {
-                await san.relationships.previous()
-            }
+            await san.relationships.backToStart()
             // Set values on SAN, return to OASys and check the results
             await scenario(test, san)
             await san.returnToOASys()
@@ -142,12 +140,10 @@ for (const mode of ['community', 'custody']) {
 async function scenario(test: TestCase, san: San) {
 
     await san.relationships.page1.anyChildren.setValue(test.page1.anyChildren)
-    startPage = 1
     if (test.page2 && !test.page1.anyChildren?.includes('no')) {
         await san.relationships.saveAndContinue()
         await san.relationships.page2.parentingResponsibilities.setValue(test.page2.parentingResponsibilities)
         await san.relationships.page2.manageParenting.setValue(test.page2.manageParenting)
-        startPage = 2
     }
     if (test.page3) {
         if (sanMode == 'custody') {
@@ -164,11 +160,6 @@ async function scenario(test: TestCase, san: San) {
         await san.relationships.page3.domesticAbusePerpetratorType.setValue(test.page3.domesticAbusePerpetratorType)
         await san.relationships.page3.domesticAbuseVictim.setValue(test.page3.domesticAbuseVictim)
         await san.relationships.page3.domesticAbuseVictimType.setValue(test.page3.domesticAbuseVictimType)
-        if (test.page2) {  // Might skip 2 straight to 3
-            startPage = 3
-        } else {
-            startPage = 2
-        }
     }
 }
 

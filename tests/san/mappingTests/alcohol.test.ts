@@ -64,9 +64,7 @@ for (const mode of ['community', 'custody']) {
         for (const test of testCases) {
             // Get to the right starting screen
             await san.gotoSan('alcohol', true)
-            for (let i = 1; i < startPage; i++) {
-                await san.alcohol.previous()
-            }
+            await san.alcohol.backToStart()
             // Set values on SAN, return to OASys and check the results
             await scenario(test, san)
             await san.returnToOASys()

@@ -99,9 +99,7 @@ for (const mode of ['community', 'custody']) {
             // Get to the right starting screen
             await san.gotoSan('offenceAnalysis', true)
             // Back to the start, depending where the previous scenario ended
-            for (let i = 1; i < startPage; i++) {
-                await san.offenceAnalysis.previous()
-            }
+            await san.offenceAnalysis.backToStart()
             // Set values on SAN, return to OASys and check the results
             await scenario(test, san)
             await san.returnToOASys()
@@ -118,10 +116,7 @@ for (const mode of ['community', 'custody']) {
             // Reset 1.30 if required ready for the next scenario
             if (test.ref < 22 && (test.page1.offenceElements.includes('sexualElement') || test.page1.motivations.includes('sexual'))) {
                 await san.gotoSan('offenceAnalysis', true)
-                for (let i = 1; i < startPage; i++) {
-                    await san.offenceAnalysis.previous()
-                }
-                startPage = 1
+                await san.offenceAnalysis.backToStart()
                 await san.offenceAnalysis.page1.offenceElements.setValue(['arson'])
                 await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
                 await san.returnToOASys()

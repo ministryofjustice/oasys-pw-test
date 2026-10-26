@@ -17,8 +17,6 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
 test.describe.configure({ retries: 1 })
 
 for (const mode of ['community', 'custody']) {
@@ -125,17 +123,25 @@ async function scenario(test: TestCase, san: San) {
 
     await san.health.page1.physicalHealthConditions.setValue('yes')
     await san.health.page1.mentalHealthProblems.setValue(test.page1.mentalHealthProblems)
+    await san.health.saveAndContinue()
+
     if (test.page2) {
-        await san.health.saveAndContinue()
         await san.health.page2.psychTreatment.setValue(test.page2.psychTreatment)
         await san.health.page2.learningDifficulties.setValue(test.page2.learningDifficulties)
         await san.health.page2.coping.setValue(test.page2.coping)
         await san.health.page2.attitude.setValue(test.page2.attitude)
         await san.health.page2.selfHarmed.setValue(test.page2.selfHarmed)
+        if (test.page2.selfHarmed == 'yes') {
+            await san.health.page2.selfHarmedDetails.setValue('some text')
+        }
         await san.health.page2.suicide.setValue(test.page2.suicide)
-        startPage = 2
-    } else {
-        startPage = 1
+        if (test.page2.suicide == 'yes') {
+            await san.health.page2.suicideDetails.setValue('some text')
+        }
+        await san.health.page2.optimistic.setValue('optimistic')
+        await san.health.page2.wantChanges.setValue('madeChanges')
+    
+        await san.health.saveAndContinue()
     }
 }
 

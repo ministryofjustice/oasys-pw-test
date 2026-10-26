@@ -13,8 +13,6 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
 test.describe.configure({ retries: 1 })
 
 for (const mode of ['community', 'custody']) {
@@ -107,9 +105,12 @@ async function scenario(test: TestCase, san: San) {
     if (test.page2) {
         await san.alcohol.saveAndContinue()
         await san.alcohol.page2.bingeDrinking.setValue(test.page2.bingeDrinking)
-        startPage = 2
-    } else {
-        startPage = 1
+        await san.alcohol.page2.pastIssues.setValue('no')
+        await san.alcohol.page2.whyDrink.setValue(['cultural'])
+        await san.alcohol.page2.impactAlcohol.setValue(['behavioural'])
+        await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
+        await san.alcohol.page2.wantChanges.setValue('madeChanges')
+        await san.alcohol.saveAndContinue()
     }
 }
 

@@ -29,8 +29,6 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
 test.describe.configure({ retries: 1 })
 
 for (const mode of ['community', 'custody']) {
@@ -149,19 +147,17 @@ async function scenario(test: TestCase, san: San) {
     if (test.page1.motivations.includes('other')) {
         await san.offenceAnalysis.page1.motivationOther.setValue(test.page1.motivationOther)
     }
+    if (test.page1.offenceElements.includes('victimTargeted')) {
+        await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Some details')
+    }
+    await san.offenceAnalysis.page1.victimType.setValue(['other'])
+    await san.offenceAnalysis.page1.victimTypeDetails.setValue('Some details')
+    await san.offenceAnalysis.saveAndContinue()
 
     if (test.page2) {
-        if (test.page1.offenceElements.includes('victimTargeted')) {
-            await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Some details')
-        }
-        await san.offenceAnalysis.page1.victimType.setValue(['other'])
-        await san.offenceAnalysis.page1.victimTypeDetails.setValue('Some details')
+        await san.offenceAnalysis.page2.howManyOthers.setValue(test.page2.howManyOthers)
         await san.offenceAnalysis.saveAndContinue()
-        await san.offenceAnalysis.page2.howManyOthers.setValue(test.page2.howManyOthers
-
-        )
         if (test.page3) {
-            await san.offenceAnalysis.saveAndContinue()
 
             if (test.page3.leader) {
                 await san.offenceAnalysis.page3.leader.setValue(test.page3.leader)
@@ -186,13 +182,8 @@ async function scenario(test: TestCase, san: San) {
             } else if (test.page3.riskSeriousHarm == 'no') {
                 await san.offenceAnalysis.page3.riskSeriousHarmNoDetails.setValue(test.page3.riskSeriousHarmNoDetails)
             }
-
-            startPage = 3
-        } else {
-            startPage = 2
+            await san.offenceAnalysis.saveAndContinue()
         }
-    } else {
-        startPage = 1
     }
 }
 
@@ -234,7 +225,7 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
 
     ]
     const expectedSanSectionAnswers: OasysAnswer[] = [
-        { q: 'OA_SAN_SECTION_COMP', a: 'NO' },
+        { q: 'OA_SAN_SECTION_COMP', a: test.page3 ? 'YES' : 'NO' },
     ]
     const section1Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '1', section1Answers, true)
     const section2Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '2', section2Answers, true)

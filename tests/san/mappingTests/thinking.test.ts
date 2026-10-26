@@ -141,21 +141,17 @@ async function scenario(test: TestCase, san: San) {
     await san.thinking.page1.hostileOrientation.setValue(test.page1.hostileOrientation)
     await san.thinking.page1.acceptSupervision.setValue(test.page1.acceptSupervision)
     await san.thinking.page1.supportCriminalBehaviour.setValue(test.page1.supportCriminalBehaviour)
+    await san.thinking.page1.wantChanges.setValue('madeChanges')
+    await san.thinking.saveAndContinue()
     if (test.page2) {
-        await san.thinking.page1.wantChanges.setValue('madeChanges')
-        await san.thinking.saveAndContinue()
         await san.thinking.page2.riskOfSexualHarm.setValue(test.page2.riskOfSexualHarm)
+        await san.thinking.saveAndContinue()
         if (test.page3) {
-            await san.thinking.saveAndContinue()
             await san.thinking.page3.sexualPreoccupation.setValue(test.page3.sexualPreoccupation)
             await san.thinking.page3.sexualInterests.setValue(test.page3.sexualInterests)
             await san.thinking.page3.emotionalIntimacy.setValue(test.page3.emotionalIntimacy)
-            startPage = 3
-        } else {
-            startPage = 2
+            await san.thinking.saveAndContinue()
         }
-    } else {
-        startPage = 1
     }
 }
 

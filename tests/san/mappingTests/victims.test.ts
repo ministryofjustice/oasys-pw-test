@@ -123,6 +123,7 @@ async function scenario(test: TestCase, san: San) {
             await san.offenceAnalysis.setVictimDetails(test.victim3)
         }
     }
+    await san.offenceAnalysis.saveAndContinue()
 }
 
 async function checkAnswers(assessmentPk: number, test: TestCase, assessment: Assessment): Promise<boolean> {
@@ -244,7 +245,7 @@ function mappingVictimRace(race: VictimRace): string {
             return 'W4'
         case 'White - Roma':
             return 'W5'
-        case 'White - Any other White background':
+        case 'White - Any other white background':
             return 'W9'
         case 'Mixed - White and Black Caribbean':
             return 'M1'
@@ -252,7 +253,7 @@ function mappingVictimRace(race: VictimRace): string {
             return 'M2'
         case 'Mixed - White and Asian':
             return 'M3'
-        case 'Mixed - Any other mixed or multiple ethnic background background':
+        case 'Mixed - Any other mixed or multiple ethnic background':
             return 'M9'
         case 'Asian or Asian British - Indian':
             return 'A1'

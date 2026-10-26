@@ -16,8 +16,6 @@ type TestCase = {
     }
 }
 
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
-
 test.describe.configure({ retries: 1 })
 
 for (const mode of ['community', 'custody']) {
@@ -117,6 +115,7 @@ async function scenario(test: TestCase, san: San) {
     if (test.page1.currentAccommodation == 'temporary' && sanMode == 'custody') {
         await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
     }
+    await san.accommodation.saveAndContinue()
     if (test.page2) {
         if (test.page1.currentAccommodation == 'settled') {
             await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)

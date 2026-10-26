@@ -104,6 +104,12 @@ async function scenario(test: TestCase, san: San) {
         await san.finance.page1.overReliant.setValue(test.overReliant)
     }
     await san.finance.page1.howGoodManaging.setValue(test.howGoodManaging)
+
+    await san.finance.page1.ownAccount.setValue('unknown')
+    await san.finance.page1.gambling.setValue(['no'])
+    await san.finance.page1.debt.setValue(['no'])
+    await san.finance.page1.wantChanges.setValue('madeChanges')
+    await san.finance.saveAndContinue()
 }
 
 async function checkAnswers(assessmentPk: number, test: TestCase, assessment: Assessment): Promise<boolean> {

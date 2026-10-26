@@ -1,4 +1,4 @@
-import { test, Assessment, San } from 'fixtures'
+import { test, Assessment, San, Oasys } from 'fixtures'
 import { getMappingTestOffender } from './mappingTestOffender'
 import { paTest } from './practitionerAnalysis'
 
@@ -19,8 +19,6 @@ type TestCase = {
         numeracyLevel: SanSignificantSome,
     }
 }
-
-let startPage = 1 // Page that SAN will go back into when opening the section, depends on last page reached in previous scenario
 
 test.describe.configure({ retries: 1 })
 

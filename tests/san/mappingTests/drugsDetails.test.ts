@@ -227,6 +227,8 @@ for (const mode of ['community', 'custody']) {
 
 async function scenario(drugType: DrugType, test: TestCase, san: San) {
 
+    await san.drugs.page1.everUsed.setValue('yes')
+    await san.drugs.saveAndContinue()
     await san.drugs.page2.drugType.setValue([drugType])
     if (drugType == 'other') {
         await san.drugs.page2.drugTypeOther.setValue(otherDrugName)
@@ -250,6 +252,8 @@ async function scenario(drugType: DrugType, test: TestCase, san: San) {
             }
         }
     }
+    await san.drugs.page3.treatment.setValue('no')
+    await san.drugs.saveAndContinue()
 }
 
 async function checkAnswers(assessmentPk: number, drugType: DrugType, test: TestCase, assessment: Assessment): Promise<boolean> {

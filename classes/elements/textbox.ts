@@ -3,11 +3,10 @@ import { Locator, Page } from '@playwright/test'
 
 export class Textbox<T> {
 
-    selector: Locator
+    constructor(private readonly page: Page, private readonly selector: string, private readonly dateType: boolean = false) { }
 
-    constructor(private readonly page: Page, selector: string, private readonly dateType: boolean = false) {
-
-        this.selector = page.locator(selector.replace('[sanMode]', sanMode))
+    private get locator(): Locator {
+        return this.page.locator(this.selector.replace('[sanMode]', sanMode))
     }
 
     async setValue(value: T) {
@@ -22,11 +21,11 @@ export class Textbox<T> {
         }
         if (this.dateType) {  // Handle date fields, the normal fill doesn't work for these
             await this.page.waitForTimeout(200)
-            await this.selector.clear()
+            await this.locator.clear()
             await this.page.waitForTimeout(200)
-            await this.selector.pressSequentially(textValue, { delay: 100 })
+            await this.locator.pressSequentially(textValue, { delay: 100 })
         } else {
-            await this.selector.fill(textValue)
+            await this.locator.fill(textValue)
         }
     }
 
@@ -69,25 +68,25 @@ export class Textbox<T> {
     async getStatusAndValue(): Promise<ElementStatusAndValue> {
 
         const result: ElementStatusAndValue = { status: 'notVisible', value: '' }
-        const count = await this.selector.count()
+        const count = await this.locator.count()
 
         if (count > 0) { // If element exists in the DOM
-            const visible = await this.selector.isVisible()
+            const visible = await this.locator.isVisible()
             if (visible) {
 
-                let editable = await this.selector.isEditable()
+                let editable = await this.locator.isEditable()
                 if (editable) {
                     const oasysReadonly =
-                        (await this.selector.getAttribute('class'))?.includes('input_readonly') ||
-                        (await this.selector.getAttribute('readonly')) == 'true' ||
-                        (await this.selector.getAttribute('mimic_readonly')) == 'true' ||
-                        (await this.selector.getAttribute('data-mimic_readonly')) == 'true'
+                        (await this.locator.getAttribute('class'))?.includes('input_readonly') ||
+                        (await this.locator.getAttribute('readonly')) == 'true' ||
+                        (await this.locator.getAttribute('mimic_readonly')) == 'true' ||
+                        (await this.locator.getAttribute('data-mimic_readonly')) == 'true'
                     result.status = oasysReadonly ? 'readonly' : 'enabled'
                 } else {
                     result.status = 'readonly'
                 }
             }
-            result.value = await this.selector.inputValue()
+            result.value = await this.locator.inputValue()
         }
 
         return result

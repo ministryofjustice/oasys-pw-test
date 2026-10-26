@@ -12,7 +12,7 @@ export class CheckboxGroup<T extends string> {
 
                 if (this.options[i] != '-') {   // '-' is used as a separator in the list of IDs
                     if (values.includes(this.options[i] as T)) {
-                        await this.page.locator(`${this.selector}${itemSuffix}`).check()
+                        await this.page.locator(`${this.selector.replace('[sanMode]', sanMode)}${itemSuffix}`).check()
                     } else {
                         await this.page.locator(`${this.selector.replace('[sanMode]', sanMode)}${itemSuffix}`).uncheck()
                     }

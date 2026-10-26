@@ -211,24 +211,24 @@ export class San {
 
     /**
      * Checks the floating menu to see if sections 2 to 13 and the self-assessment form are there or not, and checks for the SAN and SP sections.
-     * Parameter is true for SAN mode, false for normal OASys mode (layer 3.1), the test fails if the menu is not as expected.
+     * Parameter is true for a SAN assessment, false for an OASys assessment (layer 3.1), the test fails if the menu is not as expected.
      */
-    async checkLayer3Menu(sanMode: boolean, sections: Sections) {
+    async checkLayer3Menu(sanAssessment: boolean, sections: Sections) {
 
-        await sections.section2.checkMenuVisibility(!sanMode)
-        await sections.section3.checkMenuVisibility(!sanMode)
-        await sections.section4.checkMenuVisibility(!sanMode)
-        await sections.section5.checkMenuVisibility(!sanMode)
-        await sections.section6.checkMenuVisibility(!sanMode)
-        await sections.section7.checkMenuVisibility(!sanMode)
-        await sections.section8.checkMenuVisibility(!sanMode)
-        await sections.section9.checkMenuVisibility(!sanMode)
-        await sections.section10.checkMenuVisibility(!sanMode)
-        await sections.section11.checkMenuVisibility(!sanMode)
-        await sections.section12.checkMenuVisibility(!sanMode)
-        await sections.section13.checkMenuVisibility(!sanMode)
-        await sections.selfAssessmentForm.checkMenuVisibility(!sanMode)
-        await this.oasysSanSections.checkMenuVisibility(sanMode)
+        await sections.section2.checkMenuVisibility(!sanAssessment)
+        await sections.section3.checkMenuVisibility(!sanAssessment)
+        await sections.section4.checkMenuVisibility(!sanAssessment)
+        await sections.section5.checkMenuVisibility(!sanAssessment)
+        await sections.section6.checkMenuVisibility(!sanAssessment)
+        await sections.section7.checkMenuVisibility(!sanAssessment)
+        await sections.section8.checkMenuVisibility(!sanAssessment)
+        await sections.section9.checkMenuVisibility(!sanAssessment)
+        await sections.section10.checkMenuVisibility(!sanAssessment)
+        await sections.section11.checkMenuVisibility(!sanAssessment)
+        await sections.section12.checkMenuVisibility(!sanAssessment)
+        await sections.section13.checkMenuVisibility(!sanAssessment)
+        await sections.selfAssessmentForm.checkMenuVisibility(!sanAssessment)
+        await this.oasysSanSections.checkMenuVisibility(sanAssessment)
     }
 
     /**

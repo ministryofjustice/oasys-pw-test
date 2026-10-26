@@ -96,8 +96,11 @@ export function calculatePredictor(scoreType: ScoreType, params: OgrsInputParams
     zScore = zScore.add(calculateConditional(scoreType, coefs, 'drug_use_flag_v411_cannabis', params.CANNABIS == 'Y', outputParams))
     zScore = zScore.add(calculateConditional(scoreType, coefs, 'drug_use_flag_v411_steroid', params.STEROIDS == 'Y', outputParams))
     zScore = zScore.add(calculateConditional(scoreType, coefs, 'drug_use_flag_v411_anyotherdrug',
-        params.HALLUCINOGENS == 'Y' || params.KETAMINE == 'Y' || params.OTHER_DRUGS == 'Y' || params.SOLVENTS == 'Y' || params.SPICE == 'Y' || params.MEPHEDRONE == 'Y',
+        params.HALLUCINOGENS == 'Y' || params.KETAMINE == 'Y' || params.OTHER_DRUGS == 'Y' || params.SOLVENTS == 'Y' || params.SPICE == 'Y',
         outputParams))
+    // zScore = zScore.add(calculateConditional(scoreType, coefs, 'drug_use_flag_v411_anyotherdrug',
+    //     params.HALLUCINOGENS == 'Y' || params.KETAMINE == 'Y' || params.OTHER_DRUGS == 'Y' || params.SOLVENTS == 'Y' || params.SPICE == 'Y' || params.MEPHEDRONE == 'Y',
+    //     outputParams))  // TODO add mephedrone for NOD-1387
 
     // Previous convictions
     zScore = addDecimalsWithNull(zScore, calculateMultiplier(scoreType, coefs, 'r1q2_murder_prev', params.HOMICIDE, outputParams))

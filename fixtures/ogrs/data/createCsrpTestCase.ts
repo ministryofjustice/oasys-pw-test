@@ -42,7 +42,7 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         HALLUCINOGENS: drugUsed(csrp.s8_q1_drugs_misused, csrp.hallucinogens_curr_use),
         HEROIN: drugUsed(csrp.s8_q1_drugs_misused, csrp.heroin_curr_use),
         KETAMINE: drugUsed(csrp.s8_q1_drugs_misused, csrp.ketamine_curr_use),
-        MEPHEDRONE: drugUsed(csrp.s8_q1_drugs_misused, null),       // TODO add mephedrone column when release 7.13 is available
+        // MEPHEDRONE: drugUsed(csrp.s8_q1_drugs_misused, null),       // TODO add mephedrone for NOD-1387
         METHADONE: drugUsed(csrp.s8_q1_drugs_misused, csrp.methadone_curr_use),
         MISUSED_PRESCRIBED: drugUsed(csrp.s8_q1_drugs_misused, csrp.misused_prescribed_curr_use),
         OTHER_DRUGS: drugUsed(csrp.s8_q1_drugs_misused, csrp.other_curr_use),

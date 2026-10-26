@@ -19,7 +19,7 @@ export async function ogrsCsvTest(dataFile: string, staticFlag: 'Y' | 'N', mephe
         const testCaseParams = ogrs.createInputFromCsvLine(inputParameters[i])
 
         testCaseParams.STATIC_CALC = staticFlag
-        testCaseParams.MEPHEDRONE = mephedrone
+        // testCaseParams.MEPHEDRONE = mephedrone  // TODO add mephedrone for NOD-1387
 
         // Call the calculator in Oracle
         // TODO temporary hack until release 7.12 goes in to correct the 4.2 parameter and revert the coefficients
@@ -65,13 +65,13 @@ export async function ogrsOracleTest(type: AssessmentOrCsrp, count: number, wher
         const testCaseParams = ogrs.getInputParams(type, assessmentOrRsr)
 
         // Run twice, for MEPHEDRONE Y and null     // TODO replace with Oracle values when there's some test data available after release of 7.13
-        for (let mephedrone of ['Y', null]) {
+        // for (let mephedrone of ['Y', null]) { // TODO add mephedrone for NOD-1387
 
             // Run twice, for static flag Y and N
             for (let staticFlag of ['Y', 'N']) {
 
                 cases++
-                testCaseParams.MEPHEDRONE = mephedrone
+                // testCaseParams.MEPHEDRONE = mephedrone
                 testCaseParams.STATIC_CALC = staticFlag
 
                 // Call the calculator in Oracle
@@ -92,7 +92,7 @@ export async function ogrsOracleTest(type: AssessmentOrCsrp, count: number, wher
                     console.log(testCaseResult.identifier)
                 }
             }
-        }
+        // }
     }
 
     log(' ')

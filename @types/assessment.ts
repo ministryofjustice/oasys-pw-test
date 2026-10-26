@@ -119,7 +119,7 @@ declare type PopulateAssessmentParams = {
     o6_7PrePopulated?: boolean,
     populate6_11?: 'Yes' | 'No',
     populate1_38?: OasysDate,
-    probationCrn? : string,
+    probationCrn?: string,
 }
 
 declare type SigningPage = 'spService' | 'rmp' | 'riskScreening' | 'psr'
@@ -370,7 +370,6 @@ declare type PniParams = {
     saraRiskOther: number,
 }
 
-
 declare type PniCalcResult = {
     sexDomainLevel: string,
     sexDomainScore: number,
@@ -387,3 +386,7 @@ declare type PniCalcResult = {
     missingFields: string[],
     partResult: string,
 }
+
+// PNI and Connect
+declare type DomainResult = 'L' | 'M' | 'H'
+declare type ConnectResult = 'PP' | 'PF' | 'CP' | 'CF' | 'M'

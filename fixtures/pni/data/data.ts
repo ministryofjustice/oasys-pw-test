@@ -1,14 +1,14 @@
-import { Temporal } from '@js-temporal/polyfill'
-
-import { assignValues, buildQuery } from 'lib/queryBuilder'
 import { OasysDb } from 'fixtures'
+import { assignValues, buildQuery } from 'lib/queryBuilder'
+import { ConnectParams } from './connectParams'
 
+type SaraParams = { saraRiskLevelToPartner: number, saraRiskLevelToOther: number }
 
 export class Data {
 
     constructor(private readonly oasysDb: OasysDb) { }
 
-    async getPniTestParameters(probationCrn: string, pk: number): Promise<PniParams> {
+    async getPniTestParameters(probationCrn: string, pk: number): Promise<{ pniParams: PniParams, connectParams: ConnectParams }> {
 
         // Offender data
         const offenderData = await this.oasysDb.getData(`select custody_ind, remand_ind from eor.offender where cms_prob_number = '${probationCrn}'`)
@@ -17,18 +17,7 @@ export class Data {
         // oasys_Set
         const oasysSetData = await this.oasysDb.getData(oasysSetQuery(pk))
 
-        const oasysSetValues = {
-            arpStaticBand: '',
-            arpDynamicBand: '',
-            vrpStaticBand: '',
-            vrpDynamicBand: '',
-            ospDc: '',
-            ospIic: '',
-            rsrPercentageScore: 0,
-            dateOfBirth: '',
-            initiationDate: '',
-            noSaraDate: '',
-        }
+        const oasysSetValues = new OasysSetValues()
         assignValues(oasysSetValues, oasysSetColumns, oasysSetData[0], 0)
 
         // Q & A
@@ -39,39 +28,45 @@ export class Data {
         }
 
         const age = oasysDateTime.dateDiffString(oasysSetValues.dateOfBirth, oasysSetValues.initiationDate, 'year')
-
         const sara = await getSaraParameters(probationCrn, pk, age, oasysSetValues.noSaraDate, qaValues, this.oasysDb)
 
-        return {
-            s1_30: yn(qaValues['1.30']),
-            s6_1: getOasysScore(qaValues['6.1']),
-            s6_6: getOasysScore(qaValues['6.6']),
-            s6_11: yn(qaValues['6.11']),
-            s6_12: getOasysScore(qaValues['6.12']),
-            s7_3: getOasysScore(qaValues['7.3']),
-            s10_1: getOasysScore(qaValues['10.1']),
-            s11_11: getOasysScore(qaValues['11.11']),
-            s11_12: getOasysScore(qaValues['11.12']),
-            s11_3: getOasysScore(qaValues['11.3']),
-            s11_2: getOasysScore(qaValues['11.2']),
-            s11_4: getOasysScore(qaValues['11.4']),
-            s11_6: getOasysScore(qaValues['11.6']),
-            s12_1: getOasysScore(qaValues['12.1']),
-            s12_9: getOasysScore(qaValues['12.9']),
-            arpBand: oasysSetValues.arpDynamicBand ?? oasysSetValues.arpStaticBand,
-            vrpBand: oasysSetValues.vrpDynamicBand ?? oasysSetValues.vrpStaticBand,
-            ospDc: oasysSetValues.ospDc,
-            ospIic: oasysSetValues.ospIic,
-            rsrPercentageScore: oasysSetValues.rsrPercentageScore,
-            community: community,
-            saraRiskPartner: sara.saraRiskLevelToPartner,
-            saraRiskOther: sara.saraRiskLevelToOther,
-        }
+        return { pniParams: assignPniParams(oasysSetValues, qaValues, sara, community), connectParams: new ConnectParams(oasysSetValues, qaValues, community) }
     }
 
 }
 
-function getOasysScore(param: string): number {
+function assignPniParams(oasysSetValues: OasysSetValues, qaValues: { [key: string]: string }, sara: SaraParams, community: boolean): PniParams {
+
+    return {
+        s1_30: yn(qaValues['1.30']),
+        s6_1: getOasysScore(qaValues['6.1']),
+        s6_6: getOasysScore(qaValues['6.6']),
+        s6_11: yn(qaValues['6.11']),
+        s6_12: getOasysScore(qaValues['6.12']),
+        s7_3: getOasysScore(qaValues['7.3']),
+        s10_1: getOasysScore(qaValues['10.1']),
+        s11_11: getOasysScore(qaValues['11.11']),
+        s11_12: getOasysScore(qaValues['11.12']),
+        s11_3: getOasysScore(qaValues['11.3']),
+        s11_2: getOasysScore(qaValues['11.2']),
+        s11_4: getOasysScore(qaValues['11.4']),
+        s11_6: getOasysScore(qaValues['11.6']),
+        s12_1: getOasysScore(qaValues['12.1']),
+        s12_9: getOasysScore(qaValues['12.9']),
+        arpBand: oasysSetValues.arpDynamicBand ?? oasysSetValues.arpStaticBand,
+        vrpBand: oasysSetValues.vrpDynamicBand ?? oasysSetValues.vrpStaticBand,
+        ospDc: oasysSetValues.ospDc,
+        ospIic: oasysSetValues.ospIic,
+        rsrPercentageScore: oasysSetValues.rsrPercentageScore,
+        community: community,
+        saraRiskPartner: sara.saraRiskLevelToPartner,
+        saraRiskOther: sara.saraRiskLevelToOther,
+    }
+
+}
+
+
+export function getOasysScore(param: string): number {
 
     if (!param) {
         return null
@@ -81,23 +76,42 @@ function getOasysScore(param: string): number {
     return Number.isNaN(Number.parseInt(c)) ? null : Number.parseInt(c)
 }
 
-function yn(param: string): string {
+export function yn(param: string): string {
 
     return param == 'YES' ? 'Yes' : param == 'NO' ? 'No' : null
 }
 
 const oasysSetColumns: Columns = {
 
+    assessmentPk: { name: 'oasys_set_pk', type: 'integer' },
     arpStaticBand: { name: 'ogrs4g_band_risk_recon_elm', type: 'string' },
     arpDynamicBand: { name: 'ogp_risk_recon_elm', type: 'string' },
     vrpStaticBand: { name: 'ogrs4v_band_risk_recon_elm', type: 'string' },
     vrpDynamicBand: { name: 'ovp_risk_recon_elm', type: 'string' },
     ospDc: { name: 'osp_dc_risk_recon_elm', type: 'string' },
     ospIic: { name: 'osp_iic_risk_recon_elm', type: 'string' },
+    arpPercentageScore: { name: 'ogp2_percentage_2yr', type: 'float' },
     rsrPercentageScore: { name: 'rsr_percentage_score', type: 'float' },
     dateOfBirth: { name: 'date_of_birth', type: 'date' },
     initiationDate: { name: 'initiation_date', type: 'date' },
-    noSaraDate: { name: 'no_sara_date', type: 'date' }
+    noSaraDate: { name: 'no_sara_date', type: 'date' },
+    rosh: { name: 'rosh_level_elm', type: 'string' },
+}
+
+export class OasysSetValues {
+    assessmentPk: number
+    arpStaticBand: string
+    arpDynamicBand: string
+    vrpStaticBand: string
+    vrpDynamicBand: string
+    ospDc: string
+    ospIic: string
+    arpPercentageScore: number
+    rsrPercentageScore: number
+    dateOfBirth: string
+    initiationDate: string
+    noSaraDate: string
+    rosh: string
 }
 
 function oasysSetQuery(assessmentPk: number): string {
@@ -144,7 +158,7 @@ function saraQaQuery(saraPk: number): string {
 }
 
 async function getSaraParameters(probationCrn: string, assessmentPk: number, age: number, noSaraDate: string, qaValues: { [key: string]: string | number }, oasysDb: OasysDb)
-    : Promise<{ saraRiskLevelToPartner: number, saraRiskLevelToOther: number }> {
+    : Promise<SaraParams> {
 
     // Rule 1
     if (age < 18) {
@@ -204,5 +218,8 @@ async function getSaraParameters(probationCrn: string, assessmentPk: number, age
 async function getSaraRiskLevels(saraPk: number, oasysDb: OasysDb): Promise<{ saraRiskLevelToPartner: number, saraRiskLevelToOther: number }> {
 
     const saraData = await oasysDb.getData(saraQaQuery(saraPk))
+    if (saraData.length == 0) {
+        return { saraRiskLevelToPartner: null, saraRiskLevelToOther: null }
+    }
     return { saraRiskLevelToPartner: utils.getInteger(saraData[0][1]), saraRiskLevelToOther: utils.getInteger(saraData[1][1]) }
 }

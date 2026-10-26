@@ -62,6 +62,7 @@ export type OgrsInputParams = {
     HALLUCINOGENS: string,
     HEROIN: string,
     KETAMINE: string,
+    // MEPHEDRONE: string,  // TODO add mephedrone for NOD-1387
     METHADONE: string,
     MISUSED_PRESCRIBED: string,
     OTHER_DRUGS: string,

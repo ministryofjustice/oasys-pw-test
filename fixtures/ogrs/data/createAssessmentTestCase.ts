@@ -67,6 +67,7 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
         HALLUCINOGENS: getDrugUsed('HALLUCINOGENS', drugs),
         HEROIN: getDrugUsed('HEROIN', drugs),
         KETAMINE: getDrugUsed('KETAMINE', drugs),
+        MEPHEDRONE: getDrugUsed('MEPHEDRONE', drugs),
         METHADONE: getDrugUsed('METHADONE', drugs),
         MISUSED_PRESCRIBED: getDrugUsed('MISUSED_PRESCRIBED', drugs),
         OTHER_DRUGS: getDrugUsed('OTHER_DRUGS', drugs),

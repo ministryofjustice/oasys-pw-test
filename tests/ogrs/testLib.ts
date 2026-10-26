@@ -5,7 +5,7 @@ import { OgrsInputParams, OgrsOutputParams } from 'fixtures/ogrs/types'
 
 
 // Load input parameters from a CSV file
-export async function ogrsCsvTest(dataFile: string, staticFlag: 'Y' | 'N', reportMode: ReportMode, outputFile: string, ogrs: Ogrs) {
+export async function ogrsCsvTest(dataFile: string, staticFlag: 'Y' | 'N', mephedrone: 'Y' | null, reportMode: ReportMode, outputFile: string, ogrs: Ogrs) {
 
     let failures = 0
     let cases = 0
@@ -19,10 +19,17 @@ export async function ogrsCsvTest(dataFile: string, staticFlag: 'Y' | 'N', repor
         const testCaseParams = ogrs.createInputFromCsvLine(inputParameters[i])
 
         testCaseParams.STATIC_CALC = staticFlag
+        // testCaseParams.MEPHEDRONE = mephedrone  // TODO add mephedrone for NOD-1387
 
         // Call the calculator in Oracle
+        // TODO temporary hack until release 7.12 goes in to correct the 4.2 parameter and revert the coefficients
+        testCaseParams.FOUR_POINT_TWO = testCaseParams.FOUR_POINT_TWO == null ? null : testCaseParams.FOUR_POINT_TWO / 2
+
         const functionCall = ogrs.getFunctionCall(testCaseParams)
         const oracleTestCaseResult = await ogrs.getOracleResult(functionCall)
+
+        // TODO temporary hack until release 7.12 goes in to correct the 4.2 parameter and revert the coefficients
+        testCaseParams.FOUR_POINT_TWO = testCaseParams.FOUR_POINT_TWO == null ? null : testCaseParams.FOUR_POINT_TWO * 2
 
         const testCaseIdentifier = (i)?.toString() ?? 'null'
         const testCaseResult = ogrs.calculateOgrsAndCompare(testCaseParams, oracleTestCaseResult, testCaseIdentifier, reportMode)
@@ -57,24 +64,35 @@ export async function ogrsOracleTest(type: AssessmentOrCsrp, count: number, wher
 
         const testCaseParams = ogrs.getInputParams(type, assessmentOrRsr)
 
-        // Run generate two sets of scores, for static flag Y and N
-        for (let staticFlag of ['Y', 'N']) {
-            cases++
-            testCaseParams.STATIC_CALC = staticFlag
+        // Run twice, for MEPHEDRONE Y and null     // TODO replace with Oracle values when there's some test data available after release of 7.13
+        // for (let mephedrone of ['Y', null]) { // TODO add mephedrone for NOD-1387
 
-            // Call the calculator in Oracle
-            const functionCall = ogrs.getFunctionCall(testCaseParams)
-            const oracleTestCaseResult = await ogrs.getOracleResult(functionCall)
+            // Run twice, for static flag Y and N
+            for (let staticFlag of ['Y', 'N']) {
 
-            // Call the calculator in Cypress and compare against the Oracle result
-            const testCaseResult = ogrs.calculateOgrsAndCompare(testCaseParams, oracleTestCaseResult, assessmentOrRsr.pk.toString(), reportMode)
+                cases++
+                // testCaseParams.MEPHEDRONE = mephedrone
+                testCaseParams.STATIC_CALC = staticFlag
 
-            if (testCaseResult.failed) {
-                failures++
-                console.log(testCaseResult.identifier)
+                // Call the calculator in Oracle
+                // TODO temporary hack until release 7.12 goes in to correct the 4.2 parameter and revert the coefficients
+                testCaseParams.FOUR_POINT_TWO = testCaseParams.FOUR_POINT_TWO == null ? null : testCaseParams.FOUR_POINT_TWO / 2
+
+                const functionCall = ogrs.getFunctionCall(testCaseParams)
+                const oracleTestCaseResult = await ogrs.getOracleResult(functionCall)
+
+                // TODO temporary hack until release 7.12 goes in to correct the 4.2 parameter and revert the coefficients
+                testCaseParams.FOUR_POINT_TWO = testCaseParams.FOUR_POINT_TWO == null ? null : testCaseParams.FOUR_POINT_TWO * 2
+
+                // Call the calculator in Cypress and compare against the Oracle result
+                const testCaseResult = ogrs.calculateOgrsAndCompare(testCaseParams, oracleTestCaseResult, assessmentOrRsr.pk.toString(), reportMode)
+
+                if (testCaseResult.failed) {
+                    failures++
+                    console.log(testCaseResult.identifier)
+                }
             }
-        }
-
+        // }
     }
 
     log(' ')

@@ -39,6 +39,7 @@ export function ogrsFunctionCall(params: OgrsInputParams): string {
     result.push(utils.stringParameterToString(params.HALLUCINOGENS))
     result.push(utils.stringParameterToString(params.HEROIN))
     result.push(utils.stringParameterToString(params.KETAMINE))
+    // result.push(utils.stringParameterToString(params.MEPHEDRONE)) // TODO add mephedrone for NOD-1387
     result.push(utils.stringParameterToString(params.METHADONE))
     result.push(utils.stringParameterToString(params.MISUSED_PRESCRIBED))
     result.push(utils.stringParameterToString(params.OTHER_DRUGS))

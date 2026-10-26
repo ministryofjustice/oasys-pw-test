@@ -132,6 +132,7 @@ export function getDrugsUsage(data: {}): {} {
         AMPHETAMINES: utils.lookupString('8.2.8.1', data),
         HALLUCINOGENS: utils.lookupString('8.2.9.1', data),
         KETAMINE: utils.lookupString('8.2.16.1', data),
+        MEPHEDRONE: utils.lookupString('8.2.17.1', data),  // TODO confirm correct drug number when release 7.13 is delivered
     }
 
 }

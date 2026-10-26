@@ -47,17 +47,14 @@ for (const mode of ['community', 'custody']) {
             { ref: 1, page1: { evidenceCurrentIssues: null }, page2: null },
             { ref: 2, page1: { evidenceCurrentIssues: 'neverDrank' }, page2: null },
             { ref: 3, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: null },
-            { ref: 4, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'no' } },
-            { ref: 5, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'yes' } },
-            { ref: 6, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: 'evidence', pastIssues: 'no' } },
-            { ref: 7, page1: { evidenceCurrentIssues: 'someProblems' }, page2: null },
-            { ref: 8, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' } },
-            { ref: 9, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' } },
-            { ref: 10, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'evidence', pastIssues: 'yes' } },
-            { ref: 11, page1: { evidenceCurrentIssues: 'significant' }, page2: null },
-            { ref: 12, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' } },
-            { ref: 13, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' } },
-            { ref: 14, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'evidence', pastIssues: 'yes' } },
+            { ref: 4, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: null, pastIssues: 'no' } },
+            { ref: 5, page1: { evidenceCurrentIssues: 'noCurrentProblems' }, page2: { bingeDrinking: null, pastIssues: 'yes' } },
+            { ref: 7, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' } },
+            { ref: 8, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' } },
+            { ref: 9, page1: { evidenceCurrentIssues: 'someProblems' }, page2: { bingeDrinking: 'evidence', pastIssues: 'yes' } },
+            { ref: 10, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'noEvidence', pastIssues: 'yes' } },
+            { ref: 11, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'someEvidence', pastIssues: 'no' } },
+            { ref: 12, page1: { evidenceCurrentIssues: 'significant' }, page2: { bingeDrinking: 'evidence', pastIssues: 'yes' } },
         ]
 
 
@@ -84,10 +81,10 @@ for (const mode of ['community', 'custody']) {
 
         // Complete everything needed for PA
         await san.gotoSan('alcohol', true)
-        await san.alcohol.page2.bingeDrinking.setValue('noEvidence')
-        await san.alcohol.page2.pastIssues.setValue('no')
-        await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
-        await san.alcohol.page2.wantChanges.setValue('madeChanges')
+        await san.alcohol.page2.populateMinimal()
+        await san.alcohol.saveAndContinue()
+        await san.alcohol.page3.anythingHelped.setValue('no')
+        await san.alcohol.wantChanges.setValue('madeChanges')
         await san.alcohol.saveAndContinue()
         await san.returnToOASys()
 
@@ -102,12 +99,10 @@ async function scenario(test: TestCase, san: San) {
     await san.alcohol.page1.evidenceCurrentIssues.setValue(test.page1.evidenceCurrentIssues)
     if (test.page2) {
         await san.alcohol.saveAndContinue()
-        await san.alcohol.page2.bingeDrinking.setValue(test.page2.bingeDrinking)
+        if (test.page2.bingeDrinking) {
+            await san.alcohol.page2.bingeDrinking.setValue(test.page2.bingeDrinking)
+        }
         await san.alcohol.page2.pastIssues.setValue('no')
-        await san.alcohol.page2.whyDrink.setValue(['cultural'])
-        await san.alcohol.page2.impactAlcohol.setValue(['behavioural'])
-        await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
-        await san.alcohol.page2.wantChanges.setValue('madeChanges')
         await san.alcohol.saveAndContinue()
     }
 }

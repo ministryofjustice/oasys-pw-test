@@ -2,8 +2,8 @@ import { test, Pni } from 'fixtures'
 
 
 // Number of offenders for each date range
-const offenderCountEarly = 100     // Used for pre-2023
-const offenderCount = 1000         // 2025 and later
+const offenderCountEarly = 100      // 
+const offenderCount = 1000         // 2024 and later
 
 
 // Define date parameters for sets of offender data
@@ -11,8 +11,8 @@ const dateConditions = [
     { date: `2020-${randomMonth()}-${randomDay()}`, count: offenderCountEarly },
     { date: `2021-${randomMonth()}-${randomDay()}`, count: offenderCountEarly },
     { date: `2022-${randomMonth()}-${randomDay()}`, count: offenderCountEarly },
-    { date: `2023-${randomMonth()}-${randomDay()}`, count: offenderCountEarly },
-    { date: `2024-${randomMonth()}-${randomDay()}`, count: offenderCountEarly },
+    { date: `2023-${randomMonth()}-${randomDay()}`, count: offenderCount },
+    { date: `2024-${randomMonth()}-${randomDay()}`, count: offenderCount },
     { date: `2025-${randomMonth()}-${randomDay()}`, count: offenderCount },
     { date: 'today', count: offenderCount },
 ]
@@ -47,7 +47,12 @@ for (let i = 0; i < dateConditions.length; i++) {
     })
 }
 
-test(`PNI and Connect calculator tests - specific offender`, async ({ pni }) => {
+test(`PNI and Connect calculator tests - specific offenders`, async ({ pni }) => {
+
+    const offenderDetails = [
+        ['N628778', '1387261912'],
+        ['E679327', '1397167628'],
+    ]
 
     const failed = await runTest([['N628778', '1387261912']], pni, true)
     expect(failed).toBe(0)

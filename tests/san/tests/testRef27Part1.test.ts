@@ -118,8 +118,8 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     await san.alcohol.saveAndContinue()
     await san.alcohol.page2.bingeDrinking.setValue('noEvidence')
     await san.alcohol.page2.pastIssues.setValue('no')
-    await san.alcohol.page2.anythingHelpedAlcohol.setValue('no')
-    await san.alcohol.page2.wantChanges.setValue('madeChanges')
+    await san.alcohol.page3.anythingHelped.setValue('no')
+    await san.alcohol.wantChanges.setValue('madeChanges')
     await san.returnToOASys()
 
     log(`From the offender record click on the <Open SSP> button - taken into the Sentence Plan Service in EDIT mode

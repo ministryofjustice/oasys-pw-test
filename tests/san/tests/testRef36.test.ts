@@ -133,7 +133,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await san.finance.goto()
     await san.finance.change()
     await san.finance.page1.incomeSource.setValue(['family'])
-    await san.finance.page1.overReliant.setValue('yes')
+    await san.finance.page2.overReliant.setValue('yes')
     await san.finance.saveAndContinue()
     await san.drugs.goto()
     await san.drugs.change()

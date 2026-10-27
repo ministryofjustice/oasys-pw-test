@@ -36,31 +36,31 @@ for (const mode of ['community', 'custody']) {
 
         const testCases: TestCase[] = [
             { ref: 1, incomeSource: null, overReliant: null, anyIssues: null, howGoodManaging: null },
-            { ref: 2, incomeSource: ['offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
+            { ref: 2, incomeSource: ['offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'ableStrength' },
             { ref: 3, incomeSource: ['offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
-            { ref: 4, incomeSource: ['carersAllowance', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
+            { ref: 4, incomeSource: ['carersAllowance', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
             { ref: 5, incomeSource: ['disabilityBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
-            { ref: 6, incomeSource: ['employment', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
+            { ref: 6, incomeSource: ['employment', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'ableStrength' },
             { ref: 7, incomeSource: ['family', 'offending'], overReliant: 'yes', anyIssues: 'yes', howGoodManaging: 'able' },
-            { ref: 8, incomeSource: ['pension', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
+            { ref: 8, incomeSource: ['pension', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
             { ref: 9, incomeSource: ['studentLoan', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
-            { ref: 10, incomeSource: ['undeclared', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
+            { ref: 10, incomeSource: ['undeclared', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'ableStrength' },
             { ref: 11, incomeSource: ['workBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
-            { ref: 12, incomeSource: ['other', 'offending'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
+            { ref: 12, incomeSource: ['other', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
             { ref: 13, incomeSource: ['pension'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
-            { ref: 14, incomeSource: ['noMoney'], overReliant: null, anyIssues: 'no', howGoodManaging: 'ableStrength' },
-            { ref: 15, incomeSource: ['family', 'offending'], overReliant: 'no', anyIssues: 'yes', howGoodManaging: 'able' },
-            { ref: 16, incomeSource: ['unknown'], overReliant: null, anyIssues: 'no', howGoodManaging: 'unable' },
-            { ref: 17, incomeSource: ['family', 'offending'], overReliant: 'unknown', anyIssues: 'yes', howGoodManaging: 'unableProblems' },
-            { ref: 18, incomeSource: ['family', 'pension', 'studentLoan'], overReliant: 'yes', anyIssues: 'no', howGoodManaging: 'ableStrength' },
-            { ref: 19, incomeSource: ['family', 'pension', 'studentLoan', 'offending'], overReliant: 'no', anyIssues: 'yes', howGoodManaging: 'able' },
+            { ref: 14, incomeSource: ['noMoney'], overReliant: null, anyIssues: 'no', howGoodManaging: null },
+            { ref: 15, incomeSource: ['family', 'offending'], overReliant: 'no', anyIssues: 'no', howGoodManaging: null },
+            { ref: 16, incomeSource: ['unknown'], overReliant: null, anyIssues: 'no', howGoodManaging: null },
+            { ref: 17, incomeSource: ['family', 'offending'], overReliant: 'unknown', anyIssues: 'no', howGoodManaging: null },
+            { ref: 18, incomeSource: ['family', 'pension', 'studentLoan'], overReliant: 'yes', anyIssues: 'no', howGoodManaging: null },
+            { ref: 19, incomeSource: ['family', 'pension', 'studentLoan', 'offending'], overReliant: 'no', anyIssues: 'no', howGoodManaging: null },
         ]
 
 
         for (const test of testCases) {
             // Get to the right starting screen
             await san.gotoSan('finance', true)
-
+            await san.finance.backToStart()
             // Set values on SAN, return to OASys and check the results
             await scenario(test, san)
             await san.returnToOASys()
@@ -80,14 +80,13 @@ for (const mode of ['community', 'custody']) {
 
         // Complete everything needed for PA
         await san.gotoSan('finance', true)
+        await san.finance.backToStart()
         await san.finance.page1.incomeSource.setValue(['carersAllowance'])
         if (sanMode == 'custody') {
             await san.finance.page1.custodyIncomeSource.setValue(['employment'])
         }
-        await san.finance.page1.anyIssues.setValue('yes')
-        await san.finance.page1.howGoodManaging.setValue('able')
-        await san.finance.page1.debt.setValue(['no'])
-        await san.finance.page1.wantChanges.setValue('madeChanges')
+        await san.finance.saveAndContinue()
+        await san.finance.page3.anyIssues.setValue('no')
         await san.finance.saveAndContinue()
         await san.returnToOASys()
 
@@ -100,16 +99,20 @@ for (const mode of ['community', 'custody']) {
 async function scenario(test: TestCase, san: San) {
 
     await san.finance.page1.incomeSource.setValue(test.incomeSource)
-    if (test.incomeSource?.includes('family')) {
-        await san.finance.page1.overReliant.setValue(test.overReliant)
-    }
-    await san.finance.page1.howGoodManaging.setValue(test.howGoodManaging)
-
-    await san.finance.page1.ownAccount.setValue('unknown')
-    await san.finance.page1.gambling.setValue(['no'])
-    await san.finance.page1.debt.setValue(['no'])
-    await san.finance.page1.wantChanges.setValue('madeChanges')
     await san.finance.saveAndContinue()
+    if (test.incomeSource?.includes('family')) {
+        await san.finance.page2.overReliant.setValue(test.overReliant)
+        await san.finance.saveAndContinue()
+    }
+    if (test.anyIssues) {
+        await san.finance.page3.anyIssues.setValue(test.anyIssues)
+        await san.finance.saveAndContinue()
+
+        if (test.howGoodManaging) {
+            await san.finance.page4.howGoodManaging.setValue(test.howGoodManaging)
+            await san.finance.saveAndContinue()
+        }
+    }
 }
 
 async function checkAnswers(assessmentPk: number, test: TestCase, assessment: Assessment): Promise<boolean> {
@@ -120,9 +123,9 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '5.4', a: mapping5_4(test) },
         { q: '5.5', a: mapping5_5(test) },
         { q: '5.6', a: mapping5_6(test) },
-        { q: '5.97', a: mapping5_97(test) },
-        { q: '5.98', a: mapping5_98(test) },
-        { q: '5.99', a: mapping5_99(test) },
+        { q: '5.97', a: null },
+        { q: '5.98', a: null },
+        { q: '5.99', a: null },
     ]
     const scAnswers: OasysAnswer[] = [
         { q: 'SC8', a: mappingSc8(test) },
@@ -215,19 +218,4 @@ function mappingSc8(test: TestCase): string {
         default:
             return null
     }
-}
-
-function mapping5_97(test: TestCase): string {
-
-    return test.anyIssues == 'no' ? 'No issues identified' : null
-}
-
-function mapping5_98(test: TestCase): string {
-
-    return test.anyIssues == 'no' ? 'NO' : null
-}
-
-function mapping5_99(test: TestCase): string {
-
-    return test.anyIssues == 'no' ? 'NO' : null
 }

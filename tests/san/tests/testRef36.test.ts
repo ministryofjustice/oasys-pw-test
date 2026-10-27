@@ -128,7 +128,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await san.employment.change()
     await san.employment.page1.employmentStatus.setValue('retired')
     await san.employment.saveAndContinue()
-    await san.employment.page2.employmentHistory.setValue('unstable')
+    await san.employment.page3.employmentHistory.setValue('unstable')
     await san.employment.saveAndContinue()
     await san.finance.goto()
     await san.finance.change()

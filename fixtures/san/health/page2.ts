@@ -1,13 +1,13 @@
 import { Element } from 'classes'
 import { BaseSanEditPage } from '../pages/baseSanEditPage'
-import { sanPositiveMixedNegativeOptions, sanWantChangesOptions, sanYesNoOptions, sanYesNoSomeOptions, sanYesNoUnknownOptions } from '../sanSection'
+import { sanPositiveMixedNegativeOptions, sanWantChangesOptions, sanYesNoOptions, sanYesSomeNoOptions, sanYesNoUnknownOptions } from '../sanSection'
 
 
 export class Page2 extends BaseSanEditPage {
 
     psychTreatment = new Element.Radiogroup<PsychTreatment>(this.page, '#[sanMode]_health_wellbeing_psychiatric_treatment', ['yes', 'pending', 'no', 'unknown'])
-    learningDifficulties = new Element.Radiogroup<SanYesNoSome>(this.page, '#[sanMode]_health_wellbeing_learning_difficulties', sanYesNoSomeOptions)
-    coping = new Element.Radiogroup<SanYesNoSome>(this.page, '#[sanMode]_health_wellbeing_coping_day_to_day_life', sanYesNoSomeOptions)
+    learningDifficulties = new Element.Radiogroup<SanYesNoSome>(this.page, '#[sanMode]_health_wellbeing_learning_difficulties', sanYesSomeNoOptions)
+    coping = new Element.Radiogroup<SanYesNoSome>(this.page, '#[sanMode]_health_wellbeing_coping_day_to_day_life', sanYesSomeNoOptions)
     gambling = new Element.CheckboxGroup<Gambling>(this.page, '#[sanMode]_finance_gambling', ['own', 'someoneElse', '-', 'no', 'unknown'])
     attitude = new Element.Radiogroup<SanPositiveMixedNegative>(this.page, '#[sanMode]_health_wellbeing_attitude_towards_self', sanPositiveMixedNegativeOptions)
     selfHarmed = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_health_wellbeing_self_harmed', sanYesNoOptions)
@@ -15,7 +15,7 @@ export class Page2 extends BaseSanEditPage {
     suicide = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_health_wellbeing_attempted_suicide_or_suicidal_thoughts', sanYesNoOptions)
     suicideDetails = new Element.Textbox(this.page, '#[sanMode]_health_wellbeing_attempted_suicide_or_suicidal_thoughts_yes_details')
     wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#[sanMode]_health_wellbeing_changes', sanWantChangesOptions)
-    
+
 
     async populateMinimal() {
 

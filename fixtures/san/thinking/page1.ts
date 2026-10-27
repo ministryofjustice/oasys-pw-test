@@ -1,6 +1,6 @@
 import { Element } from 'classes'
 import { BaseSanEditPage } from '../pages/baseSanEditPage'
-import { sanNoSometimesYesOptions, sanWantChangesOptions, sanYesHasBeenNoOptions, sanYesLimitedNoOptions, sanYesNoSomeOptions, sanYesPartlyNoOptions, sanYesSometimesNoOptions, sanYesUnsureNoOptions } from '../sanSection'
+import { sanNoSometimesYesOptions, sanWantChangesOptions, sanYesHasBeenNoOptions, sanYesLimitedNoOptions, sanYesSomeNoOptions, sanYesPartlyNoOptions, sanYesSometimesNoOptions, sanYesUnsureNoOptions } from '../sanSection'
 
 export class Page1 extends BaseSanEditPage {
 
@@ -9,7 +9,7 @@ export class Page1 extends BaseSanEditPage {
     activitiesLinkedOffending = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#[sanMode]_thinking_behaviours_attitudes_offending_activities', sanNoSometimesYesOptions)
     resilient = new Element.Radiogroup<SanYesHasBeenNo>(this.page, '#[sanMode]_thinking_behaviours_attitudes_peer_pressure', sanYesHasBeenNoOptions)
     ableSolveProblems = new Element.Radiogroup<SanYesLimitedNo>(this.page, '#[sanMode]_thinking_behaviours_attitudes_problem_solving', sanYesLimitedNoOptions)
-    understandOthers = new Element.Radiogroup<SanYesNoSome>(this.page, '#[sanMode]_thinking_behaviours_attitudes_peoples_views', sanYesNoSomeOptions)
+    understandOthers = new Element.Radiogroup<SanYesNoSome>(this.page, '#[sanMode]_thinking_behaviours_attitudes_peoples_views', sanYesSomeNoOptions)
     manipulativeBehaviour = new Element.Radiogroup<SanYesNoSome>(this.page, '#[sanMode]_thinking_behaviours_attitudes_manipulative_predatory_behaviour', ['no', 'some', 'yes'])
     manageTemper = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#[sanMode]_thinking_behaviours_attitudes_temper_management', sanYesSometimesNoOptions)
     violence = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#[sanMode]_thinking_behaviours_attitudes_violence_controlling_behaviour', sanNoSometimesYesOptions)

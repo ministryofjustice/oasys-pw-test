@@ -35,9 +35,11 @@ export function testRef9(offender1: OffenderDef, pks: number[]) {
 
         await san.accommodation.goto()
         await san.accommodation.change()
-        await san.accommodation.page1.currentAccommodation.setValue('temporary')
+        await san.accommodation.somewhereToLive.setValue('yes')
         await san.accommodation.saveAndContinue()
-        await san.accommodation.page2.accommodationSuitable.setValue('yesWithConcerns')
+        await san.accommodation.accommodationSettled.setValue('no')
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.accommodationSuitable.setValue('concerns')
         await san.accommodation.saveAndContinue()
         await san.accommodation.openPractitionerAnalysis()
         await san.accommodation.markAsComplete()

@@ -1,24 +1,38 @@
-import { BaseSanSection } from '../sanSection'
-import { Page1 } from './page1'
-import { Page2 } from './page2'
+import { BaseSanSection, sanYesConcernsNoOptions, sanYesNoOptions, sanYesNoUnknownOptions } from '../sanSection'
+import { Element } from 'classes'
 import { PractitionerAnalysis } from '../pages'
-
 
 export class Accommodation extends BaseSanSection {
 
     override readonly sectionName: SanSectionTitle = 'Accommodation'
     override readonly paPrefix = 'accommodation'
 
-    readonly page1 = new Page1(this.page)
-    readonly page2 = new Page2(this.page)
+    // page 1
+    readonly somewhereToLive = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_current_accommodation', sanYesNoOptions)
+    // page 2
+    readonly accommodationSettled = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_current_accommodation_settled', sanYesNoOptions)
+    // page 2b why no accommodation
+    // page 3
+    readonly locationSuitable = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_suitable_housing_location', sanYesNoOptions)
+    // page 4 - optional reasons if location is not suitable
+    // page 5
+    readonly accommodationSuitable = new Element.Radiogroup<SanYesConcernsNo>(this.page, '#[sanMode]_suitable_housing', sanYesConcernsNoOptions)
+    // page 6 - optional reasons if accommodation not suitable
+
     override readonly practitionerAnalysis = new PractitionerAnalysis(this.page, this.paPrefix)
 
     async populateMinimal() {
 
         await this.goto()
-        await this.page1.populateMinimal()
+        await this.somewhereToLive.setValue('yes')
         await this.saveAndContinue()
-        await this.page2.populateMinimal()
+        await this.accommodationSettled.setValue('yes')
+        await this.saveAndContinue()
+        await this.locationSuitable.setValue('yes')
+        await this.saveAndContinue()
+        await this.accommodationSuitable.setValue('yes')
+        await this.saveAndContinue()
+        await this.wantChanges.setValue('madeChanges')
         await this.saveAndContinue()
         await this.openPractitionerAnalysis()
         await this.practitionerAnalysis.populateMinimal()
@@ -28,17 +42,20 @@ export class Accommodation extends BaseSanSection {
     async populateNoAccommodation() {
 
         await this.goto()
-        await this.page1.currentAccommodation.setValue('noAccommodation')
+        await this.somewhereToLive.setValue('no')
+        await this.saveAndContinue()
     }
 
     async populateForOpd() {
 
-        await this.page1.currentAccommodation.setValue('settled')
+        await this.somewhereToLive.setValue('yes')
         await this.saveAndContinue()
-        await this.page2.livingWith.setValue(['family', 'partner'])
-        await this.page2.locationSuitable.setValue('yes')
-        await this.page2.accommodationSuitable.setValue('yes')
-        await this.page2.wantChanges.setValue('madeChanges')
+        await this.accommodationSettled.setValue('yes')
+        await this.saveAndContinue()
+        await this.locationSuitable.setValue('yes')
+        await this.saveAndContinue()
+        await this.accommodationSuitable.setValue('yes')
+        await this.wantChanges.setValue('madeChanges')
         await this.saveAndContinue()
         await this.openPractitionerAnalysis()
         await this.practitionerAnalysis.populateWithRiskOfHarm()

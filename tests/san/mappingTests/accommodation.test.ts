@@ -5,15 +5,10 @@ import { paTest } from './practitionerAnalysis'
 type TestCase = {
     ref: number,
     sanMode: SanMode,
-    page1: {
-        currentAccommodation: CurrentAccommodation,
-        temporaryAccommodation: TemporaryAccommodation,
-    },
-    page2: {
-        livingWith: LivingWith[],
-        locationSuitable: SanYesNoUnknown,
-        accommodationSuitable: SanYesNoConcernsUnknown,
-    }
+    somewhereToLive: SanYesNo,
+    accommodationSettled: SanYesNo,
+    locationSuitable: SanYesNo,
+    accommodationSuitable: SanYesConcernsNo,
 }
 
 test.describe.configure({ retries: 1 })
@@ -32,7 +27,7 @@ for (const mode of ['community', 'custody']) {
 
         // Create a new SAN assessment
         if (sanMode == 'community') {
-            await user.pris.prisSanPom.login()
+            await user.prob.probSanUnappr.login()
         } else {
             await user.pris.prisSanPom.login()
         }
@@ -47,24 +42,20 @@ for (const mode of ['community', 'custody']) {
         let failed = 0
 
         const testCases: TestCase[] = [
-            { ref: 1, sanMode: null, page1: { currentAccommodation: null, temporaryAccommodation: null }, page2: null },
-            { ref: 2, sanMode: null, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: null },
-            { ref: 3, sanMode: null, page1: { currentAccommodation: 'noAccommodation', temporaryAccommodation: null }, page2: null },
-            { ref: 4, sanMode: null, page1: { currentAccommodation: 'temporary', temporaryAccommodation: null }, page2: null },
-            { ref: 5, sanMode: 'custody', page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'approvedPremises' }, page2: null },
-            { ref: 6, sanMode: 'custody', page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas2' }, page2: null },
-            { ref: 7, sanMode: 'custody', page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'cas3' }, page2: null },
-            { ref: 8, sanMode: 'custody', page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'immigration' }, page2: null },
-            { ref: 9, sanMode: 'custody', page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: null },
-            { ref: 10, sanMode: null, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'partner'], locationSuitable: null, accommodationSuitable: null } },
-            { ref: 11, sanMode: null, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'child'], locationSuitable: 'yes', accommodationSuitable: null } },
-            { ref: 12, sanMode: null, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'no', accommodationSuitable: null } },
-            { ref: 13, sanMode: null, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family'], locationSuitable: 'yes', accommodationSuitable: 'yes' } },
-            { ref: 14, sanMode: null, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'friends', 'other'], locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
-            { ref: 15, sanMode: null, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'no' } },
-            { ref: 16, sanMode: 'custody', page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'unknown' } },
-            { ref: 17, sanMode: 'custody', page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: null, locationSuitable: 'unknown', accommodationSuitable: 'no' } },
-            { ref: 18, sanMode: 'custody', page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'yes' } },
+            { ref: 1, sanMode: null, somewhereToLive: null, accommodationSettled: null, locationSuitable: null, accommodationSuitable: null },
+            { ref: 2, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'yes', locationSuitable: 'yes', accommodationSuitable: 'yes' },
+            { ref: 3, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'yes', locationSuitable: 'yes', accommodationSuitable: 'no' },
+            { ref: 4, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'yes', locationSuitable: 'yes', accommodationSuitable: 'concerns' },
+            { ref: 5, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'yes', locationSuitable: 'no', accommodationSuitable: 'yes' },
+            { ref: 6, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'yes', locationSuitable: 'no', accommodationSuitable: 'no' },
+            { ref: 7, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'yes', locationSuitable: 'no', accommodationSuitable: 'concerns' },
+            { ref: 8, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'no', locationSuitable: 'yes', accommodationSuitable: 'yes' },
+            { ref: 9, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'no', locationSuitable: 'yes', accommodationSuitable: 'no' },
+            { ref: 10, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'no', locationSuitable: 'yes', accommodationSuitable: 'concerns' },
+            { ref: 11, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'no', locationSuitable: 'no', accommodationSuitable: 'yes' },
+            { ref: 12, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'no', locationSuitable: 'no', accommodationSuitable: 'no' },
+            { ref: 13, sanMode: null, somewhereToLive: 'yes', accommodationSettled: 'no', locationSuitable: 'no', accommodationSuitable: 'concerns' },
+            { ref: 14, sanMode: null, somewhereToLive: 'no', accommodationSettled: null, locationSuitable: null, accommodationSuitable: null },
         ]
 
 
@@ -93,11 +84,16 @@ for (const mode of ['community', 'custody']) {
 
         // Complete everything needed for PA
         await san.gotoSan('accommodation', true)
-        if (sanMode == 'custody') {
-            await san.accommodation.page2.planToReturn.setValue('yes')
-        }
-        await san.accommodation.page2.livingWith.setValue(['alone'])
-        await san.accommodation.page2.wantChanges.setValue('madeChanges')
+        await san.accommodation.backToStart()
+        await san.accommodation.somewhereToLive.setValue('yes')
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.accommodationSettled.setValue('yes')
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.locationSuitable.setValue('yes')
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.accommodationSuitable.setValue('yes')
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.wantChanges.setValue('madeChanges')
         await san.accommodation.saveAndContinue()
         await san.returnToOASys()
 
@@ -109,18 +105,14 @@ for (const mode of ['community', 'custody']) {
 
 async function scenario(test: TestCase, san: San) {
 
-    await san.accommodation.page1.currentAccommodation.setValue(test.page1.currentAccommodation)
-    if (test.page1.currentAccommodation == 'temporary' && sanMode == 'custody') {
-        await san.accommodation.page1.temporaryAccommodationType.setValue(test.page1.temporaryAccommodation)
-    }
+    await san.accommodation.somewhereToLive.setValue(test.somewhereToLive)
     await san.accommodation.saveAndContinue()
-    if (test.page2) {
-        if (test.page1.currentAccommodation == 'settled') {
-            await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
-        }
-        await san.accommodation.page2.accommodationSuitable.setValue(test.page2.accommodationSuitable)
-        await san.accommodation.page2.locationSuitable.setValue(test.page2.locationSuitable)
-        await san.accommodation.page2.wantChanges.setValue('madeChanges')
+    if (test.somewhereToLive == 'yes') {
+        await san.accommodation.accommodationSettled.setValue(test.accommodationSettled)
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.locationSuitable.setValue(test.locationSuitable)
+        await san.accommodation.saveAndContinue()
+        await san.accommodation.accommodationSuitable.setValue(test.accommodationSuitable)
         await san.accommodation.saveAndContinue()
     }
 }
@@ -138,7 +130,7 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '3_SAN_STRENGTH', a: null },
     ]
     const section6Answers: OasysAnswer[] = [
-        { q: '6.8', a: mapping6_8(test) },
+        { q: '6.8', a: null },
     ]
     const expectedSanSectionAnswers: OasysAnswer[] = [
         { q: 'AC_SAN_SECTION_COMP', a: 'NO' },
@@ -151,31 +143,24 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
 
 function mapping3_3(test: TestCase): string {
 
-    switch (test.page1.currentAccommodation) {
-        case 'noAccommodation':
-            return 'YES'
-        case 'settled':
-        case 'temporary':
-            return 'NO'
-        default:
-            return null
+    if (test.somewhereToLive == 'no') {
+        return 'YES'
     }
+    return null
 }
 
 function mapping3_4(test: TestCase): string {
 
-    if (test.page1.currentAccommodation == 'noAccommodation') {
+    if (test.somewhereToLive == 'no') {
         return '2'
     }
-    switch (test.page2?.accommodationSuitable) {
+    switch (test.accommodationSuitable) {
         case 'yes':
             return '0'
-        case 'yesWithConcerns':
+        case 'concerns':
             return '1'
         case 'no':
             return '2'
-        case 'unknown':
-            return 'M'
         default:
             return null
     }
@@ -183,40 +168,22 @@ function mapping3_4(test: TestCase): string {
 
 function mapping3_5(test: TestCase): string {
 
-    switch (test.page1.currentAccommodation) {
-        case 'noAccommodation':
-            return '2'
-        case 'settled':
-            return '0'
-        case 'temporary':
-            return test.page1.temporaryAccommodation == 'shortTerm' ? '2' : null
-        default:
-            return null
+    if (test.somewhereToLive == 'no' || test.accommodationSettled == 'no') {
+        return '2'
     }
+    if (test.accommodationSettled == 'yes') {
+        return '0'
+    }
+    return null
 }
 
 function mapping3_6(test: TestCase): string {
 
-    if (test.page1.currentAccommodation == 'noAccommodation') {
+    if (test.somewhereToLive == 'no' || test.locationSuitable == 'no') {
         return '2'
     }
-    switch (test.page2?.locationSuitable) {
-        case 'yes':
-            return '0'
-        case 'no':
-            return '2'
-        case 'unknown':
-            return 'M'
-        default:
-            return null
+    if (test.locationSuitable == 'yes') {
+        return '0'
     }
-}
-
-function mapping6_8(test: TestCase): string {
-
-    if (test.page2?.livingWith == null) {
-        return '3'
-    } else {
-        return test.page2.livingWith.includes('partner') ? '1' : '3'
-    }
+    return null
 }

@@ -16,7 +16,7 @@ declare type SanMode = 'community' | 'custody'
 // Generic
 declare type SanYesNo = 'yes' | 'no'
 declare type SanYesNoNa = 'yes' | 'no' | 'na'
-declare type SanYesNoConcerns = 'yes' | 'yesWithConcerns' | 'no'
+declare type SanYesConcernsNo = 'yes' | 'concerns' | 'no'
 declare type SanYesNoConcernsUnknown = 'yes' | 'yesWithConcerns' | 'no' | 'unknown'
 declare type SanYesNoUnknown = 'yes' | 'no' | 'unknown'
 declare type SanYesSometimesNo = 'yes' | 'sometimes' | 'no'

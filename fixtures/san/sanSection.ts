@@ -82,7 +82,7 @@ export class BaseSanSection {
 // Generic radio/checkbox options
 export const sanYesNoOptions: SanYesNo[] = ['yes', 'no']
 export const sanYesNoNaOptions: SanYesNoNa[] = ['yes', 'no', 'na']
-export const sanYesNoConcernsOptions: SanYesNoConcerns[] = ['yes', 'yesWithConcerns', 'no']
+export const sanYesConcernsNoOptions: SanYesConcernsNo[] = ['yes', 'concerns', 'no']
 export const sanYesNoUnknownOptions: SanYesNoUnknown[] = ['yes', 'no', 'unknown']
 export const sanYesSometimesNoOptions: SanYesSometimesNo[] = ['yes', 'sometimes', 'no']
 export const sanNoSometimesYesOptions: SanYesSometimesNo[] = ['no', 'sometimes', 'yes']

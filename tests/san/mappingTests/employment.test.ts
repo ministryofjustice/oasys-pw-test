@@ -8,7 +8,7 @@ type TestCase = {
     employedBefore: SanYesNo,
     employmentHistory: EmploymentHistory,
     anyQual: SanYesNoUnknown,
-    skills: SanYesNoSome,
+    skills: SanYesSomeNo,
     difficulties: SanDifficulties[],
     readingLevel: SanSignificantSome,
     writingLevel: SanSignificantSome,

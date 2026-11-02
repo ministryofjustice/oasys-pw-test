@@ -1,20 +1,20 @@
 import { Element } from 'classes'
 import { BaseSanEditPage } from '../pages/baseSanEditPage'
-import { sanPositiveMixedNegativeOptions, sanWantChangesOptions, sanYesNoOptions, sanYesSomeNoOptions, sanYesNoUnknownOptions } from '../sanSection'
+import { sanPositiveMixedNegativeOptions, sanYesNoUnknownOptions, sanYesNoOptions, sanYesSomeNoOptions, sanSignificantSomeNoUnknownOptions } from '../sanSection'
 
 
 export class Page2 extends BaseSanEditPage {
 
-    psychTreatment = new Element.Radiogroup<PsychTreatment>(this.page, '#[sanMode]_health_wellbeing_psychiatric_treatment', ['yes', 'pending', 'no', 'unknown'])
-    learningDifficulties = new Element.Radiogroup<SanYesNoSome>(this.page, '#[sanMode]_health_wellbeing_learning_difficulties', sanYesSomeNoOptions)
-    coping = new Element.Radiogroup<SanYesNoSome>(this.page, '#[sanMode]_health_wellbeing_coping_day_to_day_life', sanYesSomeNoOptions)
-    gambling = new Element.CheckboxGroup<Gambling>(this.page, '#[sanMode]_finance_gambling', ['own', 'someoneElse', '-', 'no', 'unknown'])
-    attitude = new Element.Radiogroup<SanPositiveMixedNegative>(this.page, '#[sanMode]_health_wellbeing_attitude_towards_self', sanPositiveMixedNegativeOptions)
-    selfHarmed = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_health_wellbeing_self_harmed', sanYesNoOptions)
-    selfHarmedDetails = new Element.Textbox(this.page, '#[sanMode]_health_wellbeing_self_harmed_yes_details')
-    suicide = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_health_wellbeing_attempted_suicide_or_suicidal_thoughts', sanYesNoOptions)
-    suicideDetails = new Element.Textbox(this.page, '#[sanMode]_health_wellbeing_attempted_suicide_or_suicidal_thoughts_yes_details')
-    wantChanges = new Element.Radiogroup<SanWantChanges>(this.page, '#[sanMode]_health_wellbeing_changes', sanWantChangesOptions)
+    describeMentalHealthCondition = new Element.Radiogroup<MentalHealthCondition>(this.page, '#health_wellbeing_mental_health_condition_description', ['diagnosedEvidenceOfImpact', 'diagnosedNoEvidence', 'past', 'undiagnosed'])
+    psychTreatment = new Element.Radiogroup<SanYesNoUnknown>(this.page, '#health_wellbeing_psychiatric_treatment', sanYesNoUnknownOptions)
+    learningDifficulties = new Element.Radiogroup<SanSignificantSomeNoUnknown>(this.page, '#health_wellbeing_learning_difficulties',sanSignificantSomeNoUnknownOptions )
+    coping = new Element.Radiogroup<SanYesSomeNo>(this.page, '#health_wellbeing_coping_day_to_day_life', sanYesSomeNoOptions)
+    gambling = new Element.CheckboxGroup<Gambling>(this.page, '#health_wellbeing_gambling', ['own', 'someoneElse', '-', 'no', 'unknown'])
+    attitude = new Element.Radiogroup<SanPositiveMixedNegative>(this.page, '#health_wellbeing_attitude_towards_self', sanPositiveMixedNegativeOptions)
+    selfHarmed = new Element.Radiogroup<SanYesNo>(this.page, '#health_wellbeing_self_harmed', sanYesNoOptions)
+    selfHarmedDetails = new Element.Textbox(this.page, '#health_wellbeing_self_harmed_yes_details')
+    suicide = new Element.Radiogroup<SanYesNo>(this.page, '#health_wellbeing_attempted_suicide_or_suicidal_thoughts', sanYesNoOptions)
+    suicideDetails = new Element.Textbox(this.page, '#health_wellbeing_attempted_suicide_or_suicidal_thoughts_yes_details')
 
 
     async populateMinimal() {
@@ -24,7 +24,6 @@ export class Page2 extends BaseSanEditPage {
         await this.attitude.setValue('positive')
         await this.selfHarmed.setValue('no')
         await this.suicide.setValue('no')
-        await this.wantChanges.setValue('madeChanges')
     }
 
 }

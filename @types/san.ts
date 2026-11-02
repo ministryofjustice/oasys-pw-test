@@ -25,8 +25,9 @@ declare type SanYesHasBeenNo = 'yes' | 'hasBeen' | 'no'
 declare type SanYesUnsureNo = 'yes' | 'unsure' | 'no'
 declare type SanYesLimitedNo = 'yes' | 'limited' | 'no'
 declare type SanYesSometimesNoUnknown = 'yes' | 'sometimes' | 'no' | 'unknown'
-declare type SanYesNoSome = 'yes' | 'some' | 'no'
+declare type SanYesSomeNo = 'yes' | 'some' | 'no'
 declare type SanSignificantSome = 'significant' | 'some'
+declare type SanSignificantSomeNoUnknown = 'significant' | 'some' | 'no' | 'unknown'
 declare type SanExperience = 'positive' | 'mostlyPositive' | 'positiveNegative' | 'mostlyNegative' | 'negative' | 'unknown'
 declare type SanPositiveMixedNegative = 'positive' | 'mixed' | 'negative'
 declare type SanPositiveMixedNegativeUnknown = 'positive' | 'mixed' | 'negative' | 'unknown'
@@ -56,8 +57,7 @@ declare type IncomeSource = 'carersAllowance' | 'disabilityBenefits' | 'employme
 declare type HowGoodManaging = 'ableStrength' | 'able' | 'unable' | 'unableProblems'
 
 // Health
-declare type MentalHealthProblems = 'yesOngoingSevere' | 'yesOngoing' | 'yesPast' | 'no' | 'unknown' | 'undiagnosed'
-declare type PsychTreatment = 'yes' | 'pending' | 'no' | 'unknown'
+declare type MentalHealthCondition = 'diagnosedEvidenceOfImpact' | 'diagnosedNoEvidence' | 'past' | 'undiagnosed'
 declare type Gambling = 'own' | 'someoneElse' | 'no' | 'unknown'
 
 // Relationships

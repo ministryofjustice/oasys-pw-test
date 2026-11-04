@@ -2,6 +2,8 @@ import { test, Assessment, San } from 'fixtures'
 import { getMappingTestOffender } from './mappingTestOffender'
 
 type TestCase = { ref: number, offenceElements: OffenceElements[], victim1: VictimDetails, victim2: VictimDetails, victim3: VictimDetails }
+let victim2Added: boolean
+let victim3Added: boolean
 
 test.describe.configure({ retries: 1 })
 
@@ -32,6 +34,8 @@ for (const mode of ['community', 'custody']) {
         }
 
         let failed = 0
+        victim2Added = false
+        victim3Added = false
 
         const testCases: TestCase[] = [
             { ref: 1, offenceElements: ['arson'], victim1: null, victim2: null, victim3: null },
@@ -39,7 +43,7 @@ for (const mode of ['community', 'custody']) {
             { ref: 3, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence'], victim1: { relationship: 'staff', age: '5to11', sex: 'female', race: 'White - Irish' }, victim2: null, victim3: null },
             { ref: 4, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement'], victim1: { relationship: 'parent', age: '12to15', sex: 'intersex', race: 'White - Gypsy or Irish Traveller' }, victim2: null, victim3: null },
             { ref: 5, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking'], victim1: { relationship: 'partner', age: '16to17', sex: 'unknown', race: 'White - Roma' }, victim2: null, victim3: null },
-            { ref: 6, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking', 'victimTargeted'], victim1: { relationship: 'exPartner', age: '18to20', sex: 'male', race: 'White - Any other white background' }, victim2: null, victim3: null },
+            { ref: 6, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking', 'victimTargeted'], victim1: { relationship: 'exPartner', age: '18to20', sex: 'male', race: 'White - Any other White background' }, victim2: null, victim3: null },
             { ref: 7, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking', 'victimTargeted', 'violence'], victim1: { relationship: 'child', age: '21to25', sex: 'female', race: 'Mixed - White and Black Caribbean' }, victim2: null, victim3: null },
             { ref: 8, offenceElements: ['arson', 'domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking', 'victimTargeted', 'violence', 'weapon'], victim1: { relationship: 'otherFamily', age: '26to49', sex: 'intersex', race: 'Mixed - White and Black African' }, victim2: null, victim3: null },
             { ref: 9, offenceElements: ['domesticAbuse', 'excessiveViolence', 'sexualElement', 'stalking', 'victimTargeted', 'violence', 'weapon'], victim1: { relationship: 'friend', age: '50to64', sex: 'unknown', race: 'Mixed - White and Asian' }, victim2: null, victim3: null },
@@ -52,37 +56,33 @@ for (const mode of ['community', 'custody']) {
             { ref: 16, offenceElements: ['arson'], victim1: { relationship: 'child', age: '26to49', sex: 'intersex', race: 'Black or Black British - Caribbean' }, victim2: null, victim3: null },
             { ref: 17, offenceElements: ['domesticAbuse'], victim1: { relationship: 'otherFamily', age: '50to64', sex: 'unknown', race: 'Black or Black British - African' }, victim2: null, victim3: null },
             { ref: 18, offenceElements: ['excessiveViolence'], victim1: { relationship: 'friend', age: '65plus', sex: 'male', race: 'Black or Black British - Any other Black background' }, victim2: null, victim3: null },
-            { ref: 19, offenceElements: ['sexualElement'], victim1: { relationship: 'other', age: '0to4', sex: 'female', race: 'Arab' }, victim2: null, victim3: null },
-            { ref: 20, offenceElements: ['stalking'], victim1: { relationship: 'stranger', age: '12to15', sex: 'intersex', race: 'Any other ethnic group' }, victim2: null, victim3: null },
-            { ref: 21, offenceElements: ['victimTargeted'], victim1: { relationship: 'staff', age: '16to17', sex: 'unknown', race: 'Asian or Asian British - Bangladeshi' }, victim2: { relationship: 'otherFamily', age: '65plus', sex: 'female', race: 'Black or Black British - African' }, victim3: null },
-            { ref: 22, offenceElements: ['violence'], victim1: { relationship: 'parent', age: '18to20', sex: 'male', race: 'Unknown' }, victim2: { relationship: 'friend', age: '5to11', sex: 'intersex', race: 'Black or Black British - Any other Black background' }, victim3: null },
-            { ref: 23, offenceElements: ['weapon'], victim1: { relationship: 'partner', age: '21to25', sex: 'female', race: 'White - English, Welsh, Scottish, Northern Irish or British' }, victim2: { relationship: 'other', age: '12to15', sex: 'unknown', race: 'Arab' }, victim3: { relationship: 'stranger', age: '0to4', sex: 'male', race: 'White - Roma' } },
-            { ref: 24, offenceElements: ['none'], victim1: { relationship: 'exPartner', age: '26to49', sex: 'intersex', race: 'White - Irish' }, victim2: { relationship: 'stranger', age: '16to17', sex: 'male', race: 'Any other ethnic group' }, victim3: { relationship: 'staff', age: '12to15', sex: 'female', race: 'Unknown' } },
+            { ref: 19, offenceElements: ['sexualElement'], victim1: { relationship: 'other', age: 'unknown', sex: 'female', race: 'Arab' }, victim2: null, victim3: null },
+            { ref: 20, offenceElements: ['stalking'], victim1: { relationship: 'stranger', age: '0to4', sex: 'intersex', race: 'Any other ethnic group' }, victim2: null, victim3: null },
+            { ref: 21, offenceElements: ['victimTargeted'], victim1: { relationship: 'staff', age: '12to15', sex: 'unknown', race: 'Asian or Asian British - Bangladeshi' }, victim2: { relationship: 'otherFamily', age: '65plus', sex: 'female', race: 'Black or Black British - African' }, victim3: null },
+            { ref: 22, offenceElements: ['violence'], victim1: { relationship: 'parent', age: '16to17', sex: 'male', race: 'Unknown' }, victim2: { relationship: 'friend', age: '5to11', sex: 'intersex', race: 'Black or Black British - Any other Black background' }, victim3: null },
+            { ref: 23, offenceElements: ['weapon'], victim1: { relationship: 'partner', age: '18to20', sex: 'female', race: 'White - English, Welsh, Scottish, Northern Irish or British' }, victim2: { relationship: 'other', age: '12to15', sex: 'unknown', race: 'Arab' }, victim3: { relationship: 'stranger', age: '0to4', sex: 'male', race: 'White - Roma' } },
+            { ref: 24, offenceElements: ['none'], victim1: { relationship: 'exPartner', age: '21to25', sex: 'intersex', race: 'White - Irish' }, victim2: { relationship: 'stranger', age: '16to17', sex: 'male', race: 'Any other ethnic group' }, victim3: { relationship: 'staff', age: '12to15', sex: 'female', race: 'Unknown' } },
         ]
 
 
         for (const test of testCases) {
             // Get to the right starting screen
             await san.gotoSan('offenceAnalysis', true)
+            await san.offenceAnalysis.backToStart()
+
             if (test.ref == 1) {
                 await san.offenceAnalysis.page1.offenceDescription.setValue('Description')
-                await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
-                if (test.offenceElements.includes('victimTargeted')) {
-                    await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Victim targeted details')
-                }
                 await san.offenceAnalysis.page1.reason.setValue('Reason')
                 await san.offenceAnalysis.page1.motivations.setValue(['addictions'])
                 await san.offenceAnalysis.page1.victimType.setValue(['people'])
-                await san.offenceAnalysis.saveAndContinue()
-            } else {
-                await san.offenceAnalysis.previous()
-                await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
-                if (test.offenceElements.includes('victimTargeted')) {
-                    await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Victim targeted details')
-                }
-                await san.offenceAnalysis.saveAndContinue()
-                await san.offenceAnalysis.change()
             }
+            await san.offenceAnalysis.page1.offenceElements.setValue(test.offenceElements)
+            if (test.offenceElements.includes('victimTargeted')) {
+                await san.offenceAnalysis.page1.victimTargetedDetails.setValue('Victim targeted details')
+            }
+            await san.offenceAnalysis.saveAndContinue()
+            await san.offenceAnalysis.change()
+
             // Set values on SAN, return to OASys and check the results
             await scenario(test, san)
             await san.returnToOASys()
@@ -108,15 +108,17 @@ async function scenario(test: TestCase, san: San) {
 
     await san.offenceAnalysis.setVictimDetails(test.victim1)
     if (test.victim2) {
-        if (test.ref == 16) {
+        if (!victim2Added) {
             await san.offenceAnalysis.victims.addAnotherVictim.click()
+            victim2Added = true
         } else {
             await san.offenceAnalysis.change(2)
         }
         await san.offenceAnalysis.setVictimDetails(test.victim2)
         if (test.victim3) {
-            if (test.ref == 18) {
+            if (!victim3Added) {
                 await san.offenceAnalysis.victims.addAnotherVictim.click()
+                victim3Added = true
             } else {
                 await san.offenceAnalysis.change(3)
             }
@@ -245,7 +247,7 @@ function mappingVictimRace(race: VictimRace): string {
             return 'W4'
         case 'White - Roma':
             return 'W5'
-        case 'White - Any other white background':
+        case 'White - Any other White background':
             return 'W9'
         case 'Mixed - White and Black Caribbean':
             return 'M1'

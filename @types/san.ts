@@ -75,14 +75,14 @@ declare type HowManyOthers = '0' | '1' | '2' | '3' | '4' | '5' | '6to10' | '11to
 
 // Victims
 declare type VictimRelationship = 'stranger' | 'staff' | 'parent' | 'partner' | 'exPartner' | 'child' | 'otherFamily' | 'friend' | 'other'
-declare type VictimAge = '0to4' | '5to11' | '12to15' | '16to17' | '18to20' | '21to25' | '26to49' | '50to64' | '65plus'
+declare type VictimAge = '0to4' | '5to11' | '12to15' | '16to17' | '18to20' | '21to25' | '26to49' | '50to64' | '65plus' | 'unknown'
 declare type VictimSex = 'male' | 'female' | 'intersex' | 'unknown'
 declare type VictimRace =
     'White - English, Welsh, Scottish, Northern Irish or British' |
     'White - Irish' |
     'White - Gypsy or Irish Traveller' |
     'White - Roma' |
-    'White - Any other white background' |
+    'White - Any other White background' |
     'Mixed - White and Black Caribbean' |
     'Mixed - White and Black African' |
     'Mixed - White and Asian' |

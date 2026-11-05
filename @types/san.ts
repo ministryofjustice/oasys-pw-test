@@ -60,12 +60,12 @@ declare type MentalHealthCondition = 'diagnosedEvidenceOfImpact' | 'diagnosedNoE
 declare type Gambling = 'own' | 'someoneElse' | 'no' | 'unknown'
 
 // Relationships
-declare type AnyChildren = 'yesLiveWith' | 'yesLiveElsewhere' | 'yesVisitRegularly' | 'no'
+declare type AnyChildren = 'yesLiveWith' | 'yesLiveElsewhere' | 'no'
 declare type HappyWithStatus = 'happy' | 'someConcerns' | 'unhappy'
 declare type RelationshipHistory = 'stable' | 'mixed' | 'unstable'
 declare type CurrentFamilyRelationship = 'stable' | 'mixed' | 'unstable' | 'unknown'
 declare type InARelationship = 'livingTogether' | 'notLivingTogether' | 'no'
-declare type FamilyPartnerBoth = 'family' | 'partner' | 'both'
+declare type FamilyPartner = 'family' | 'partner'
 
 // Offence analysis
 declare type OffenceElements = 'arson' | 'domesticAbuse' | 'excessiveViolence' | 'sexualElement' | 'stalking' | 'victimTargeted' | 'violence' | 'weapon' | 'none'

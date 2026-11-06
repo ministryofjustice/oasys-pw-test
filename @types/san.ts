@@ -42,9 +42,11 @@ declare type EvidenceCurrentIssues = 'significant' | 'someProblems' | 'noCurrent
 declare type BingeDrinking = 'noEvidence' | 'someEvidence' | 'evidence'
 
 // Drugs
+declare type DrugsWhenUsed = 'lastSix' | 'moreThanSix'
 declare type DrugsFrequency = 'daily' | 'weekly' | 'monthly' | 'occasionally'
 declare type DrugType = 'amphetamines' | 'benzodiazepines' | 'cannabis' | 'cocaine' | 'crack' | 'ecstasy' | 'hallucinogenics' | 'heroin' | 'ketamine' | 'mephedrone' | 'methadone' | 'prescribed' | 'opiates' | 'solvents' | 'steroids' | 'spice' | 'other'
-declare type InjectableDrugType = 'none' | 'amphetamines' | 'benzodiazepines' | 'cocaine' | 'crack' | 'heroin' | 'methadone' | 'prescribed' | 'opiates' | 'steroids' | 'other'
+declare type InjectableDrugType = 'amphetamines' | 'benzodiazepines' | 'cocaine' | 'crack' | 'heroin' | 'ketamine' | 'mephedrone' | 'methadone' | 'prescribed' | 'opiates' | 'steroids' | 'other'
+declare type DrugsMotivation = 'noMotivation' | 'someMotivation' | 'motivated' | 'unknown'
 
 // Employment
 declare type EmploymentStatus = 'employed' | 'retired' | 'unavailable' | 'unemployed'

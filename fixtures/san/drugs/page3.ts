@@ -1,56 +1,25 @@
 import { Element } from 'classes'
 import { BaseSanEditPage } from '../pages/baseSanEditPage'
+import { drugsWhenUsedOptions } from './drugs'
 
 export class Page3 extends BaseSanEditPage {
 
-    amphetaminesFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_amphetamines', ['daily', 'weekly', 'monthly', 'occasionally'])
-    benzodiazepinesFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_benzodiazepines', ['daily', 'weekly', 'monthly', 'occasionally'])
-    cannabisFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_cannabis', ['daily', 'weekly', 'monthly', 'occasionally'])
-    cocaineFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_cocaine', ['daily', 'weekly', 'monthly', 'occasionally'])
-    crackFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_crack', ['daily', 'weekly', 'monthly', 'occasionally'])
-    ecstasyFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_ecstasy', ['daily', 'weekly', 'monthly', 'occasionally'])
-    hallucinogenicsFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_hallucinogenics', ['daily', 'weekly', 'monthly', 'occasionally'])
-    heroinFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_heroin', ['daily', 'weekly', 'monthly', 'occasionally'])
-    ketamineFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_ketamine', ['daily', 'weekly', 'monthly', 'occasionally'])
-    mephedroneFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_mephedrone', ['daily', 'weekly', 'monthly', 'occasionally'])
-    methadoneFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_methadone_not_prescribed', ['daily', 'weekly', 'monthly', 'occasionally'])
-    prescribedFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_misused_prescribed_drugs', ['daily', 'weekly', 'monthly', 'occasionally'])
-    opiatesFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_other_opiates', ['daily', 'weekly', 'monthly', 'occasionally'])
-    solventsFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_solvents', ['daily', 'weekly', 'monthly', 'occasionally'])
-    steroidsFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_steroids', ['daily', 'weekly', 'monthly', 'occasionally'])
-    spiceFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_spice', ['daily', 'weekly', 'monthly', 'occasionally'])
-    otherFrequency = new Element.Radiogroup<DrugsFrequency>(this.page, '#[sanMode]_how_often_used_last_six_months_other_drug', ['daily', 'weekly', 'monthly', 'occasionally'])
-
-    detailsNotLastSixMonths = new Element.Textbox(this.page, '#[sanMode]_not_used_in_last_six_months_details')
-    injected = new Element.ConditionalCheckboxGroup<InjectableDrugType>(this.page, checkboxValuesLookup)
-
-    amphetaminesInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_amphetamines', ['lastSix', 'moreThanSix'])
-    benzodiazepinesInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_benzodiazepines', ['lastSix', 'moreThanSix'])
-    cocaineInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_cocaine', ['lastSix', 'moreThanSix'])
-    crackInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_crack', ['lastSix', 'moreThanSix'])
-    heroinInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_heroin', ['lastSix', 'moreThanSix'])
-    ketamineInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_ketamine', ['lastSix', 'moreThanSix'])
-    mephedroneInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_mephedrone', ['lastSix', 'moreThanSix'])
-    methadoneInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_methadone_not_prescribed', ['lastSix', 'moreThanSix'])
-    prescribedInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_misused_prescribed_drugs', ['lastSix', 'moreThanSix'])
-    opiatesInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_other_opiates', ['lastSix', 'moreThanSix'])
-    steroidsInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_steroids', ['lastSix', 'moreThanSix'])
-    otherInjectedLastSixMonths = new Element.CheckboxGroup<'lastSix' | 'moreThanSix'>(this.page, '#[sanMode]_drugs_injected_other_drug', ['lastSix', 'moreThanSix'])
-
-    treatment = new Element.Radiogroup<'yes' | 'no'>(this.page, '#[sanMode]_drugs_is_receiving_treatment', ['yes', 'no'])
-    treatmentYesDetails = new Element.Textbox(this.page, '#[sanMode]_drugs_is_receiving_treatment_yes_details')
-}
-
-const checkboxValuesLookup: { [key in InjectableDrugType]: string } = {
-    'amphetamines': 'AMPHETAMINES',
-    'benzodiazepines': 'BENZODIAZEPINES',
-    'cocaine': 'COCAINE',
-    'crack': 'CRACK',
-    'heroin': 'HEROIN',
-    'methadone': 'METHADONE_NOT_PRESCRIBED',
-    'prescribed': 'MISUSED_PRESCRIBED_DRUGS',
-    'opiates': 'OTHER_OPIATES',
-    'steroids': 'STEROIDS',
-    'other': 'OTHER_DRUG',
-    'none': 'NONE',
+    amphetaminesWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_amphetamines', drugsWhenUsedOptions)
+    benzodiazepinesWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_benzodiazepines', drugsWhenUsedOptions)
+    cannabisWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_cannabis', drugsWhenUsedOptions)
+    cocaineWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_cocaine', drugsWhenUsedOptions)
+    crackWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_crack', drugsWhenUsedOptions)
+    ecstasyWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_ecstasy', drugsWhenUsedOptions)
+    hallucinogenicsWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_hallucinogenics', drugsWhenUsedOptions)
+    heroinWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_heroin', drugsWhenUsedOptions)
+    ketamineWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_ketamine', drugsWhenUsedOptions)
+    mephedroneWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_mephedrone', drugsWhenUsedOptions)
+    methadoneWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_methadone_not_prescribed', drugsWhenUsedOptions)
+    prescribedWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_misused_prescribed_drugs', drugsWhenUsedOptions)
+    opiatesWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_other_opiates', drugsWhenUsedOptions)
+    solventsWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_solvents', drugsWhenUsedOptions)
+    spiceWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_spice', drugsWhenUsedOptions)
+    steroidsWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_steroids', drugsWhenUsedOptions)
+    otherWhenUsed = new Element.Radiogroup<DrugsWhenUsed>(this.page, '#drug_last_used_other_drug', drugsWhenUsedOptions)
+    otherDrugName = new Element.Textbox(this.page, '#other_drug_name')
 }

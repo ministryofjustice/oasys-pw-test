@@ -122,7 +122,7 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '9_SAN_STRENGTH', a: null },
     ]
     const expectedSanSectionAnswers: OasysAnswer[] = [
-        { q: 'AC_SAN_SECTION_COMP', a: 'NO' },
+        { q: 'SMA_SAN_SECTION_COMP', a: 'NO' },
     ]
     const section9Failed = await assessment.queries.checkSectionAnswers(assessmentPk, '9', section9Answers, true)
     const sanSectionFailed = await assessment.queries.checkSectionAnswers(assessmentPk, 'SAN', expectedSanSectionAnswers, true)

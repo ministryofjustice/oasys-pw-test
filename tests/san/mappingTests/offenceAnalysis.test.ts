@@ -253,7 +253,7 @@ function mapping2_2(test: TestCase, element: OffenceElements): string {
 
 function mapping2_2t(test: TestCase):string {
 
-    return test.page1.weaponDetails  // TODO trim to 96 chars?
+    return test.page1.weaponDetails?.substring(0, 96)
 }
 
 function mapping2_3(test: TestCase): string {
@@ -262,7 +262,9 @@ function mapping2_3(test: TestCase): string {
     if (test.page1.offenceElements.includes('victimTargeted')) {
         result = 'DIRECTCONT,'
     }
-
+    if (test.page1.motivations.includes('hatred')) {
+        result = `${result}HATE,`
+    }
     if (test.page1.offenceElements.includes('stalking')) {
         result = `${result}STALKING,`
     }

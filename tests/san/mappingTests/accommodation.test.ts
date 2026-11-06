@@ -58,12 +58,11 @@ for (const mode of ['community', 'custody']) {
             { ref: 14, sanMode: null, somewhereToLive: 'no', accommodationSettled: null, locationSuitable: null, accommodationSuitable: null },
         ]
 
-
+// TODO no PA if no alcohol use
         for (const test of testCases) {
             if (!test.sanMode || test.sanMode == sanMode) {
                 // Get to the right starting screen
                 await san.gotoSan('accommodation', true)
-                // Back to the start, depending where the previous scenario ended
                 await san.accommodation.backToStart()
                 // Set values on SAN, return to OASys and check the results
                 await scenario(test, san)

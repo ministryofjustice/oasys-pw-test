@@ -25,6 +25,8 @@ export class Finance extends BaseSanSection {
         await this.page1.populateMinimal()
         await this.saveAndContinue()
         await this.page3.populateMinimal()
+        await this.saveAndContinue()
+        await this.openPractitionerAnalysis()
         await this.markAsComplete()
     }
 

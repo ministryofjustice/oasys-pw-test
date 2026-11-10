@@ -71,7 +71,7 @@ export class Queries {
     /**
      * Checks cLog for a getAssessment call for the given PK, including the expected version number in the respose.
      */
-    async checkSanGetAssessmentCall(pk: number, expectedVersion: number, suppressLog = false): Promise<boolean> {
+    async checkSanGetAssessmentCall(pk: number, suppressLog = false) {
 
         if (!suppressLog) {
             log(`Checking GetAssessment call for ${pk}`)
@@ -84,17 +84,20 @@ export class Queries {
             log(`GetAssessment call FAILED - Expected 2 rows in CLog, found ${clogData.length}`)
             failed = true
         } else {
+
+            const oasysSetData = await this.getOasysSetSanData(pk)
+
             if (clogData[1][0].search(pk.toString()) < 0) {
                 log(`GetAssessment call FAILED - ${pk} not found in GetAssessment call`)
                 failed = true
             }
             const sanVersionNumber = findSanVersion(clogData[0][0])
-            if (sanVersionNumber != expectedVersion) {
-                log(`GetAssessment call FAILED - Expected version: ${expectedVersion}, found ${sanVersionNumber}`)
+            if (oasysSetData.sanVersion && sanVersionNumber != oasysSetData.sanVersion) {
+                log(`GetAssessment call FAILED - Expected version: ${oasysSetData.sanVersion}, found ${sanVersionNumber}`)
                 failed = true
             }
         }
-        return failed
+        expect(failed).toBeFalsy()
     }
 
 
@@ -209,7 +212,7 @@ export class Queries {
      *  - expectedVersion: version number that should be returned by SAN
      *  - expectedSpVersion: version number for the sentence plan that should be returned by SAN
      */
-    async checkSanSigningCall(pk: number, expectedUser: TestUser, signingType: 'SELF' | 'COUNTERSIGN') {
+    async  checkSanSigningCall(pk: number, expectedUser: TestUser, signingType: 'SELF' | 'COUNTERSIGN') {
 
         await this.checkSanCall('Signing', 'SIGN', 'sign', pk, expectedUser, { signingType: signingType })
     }

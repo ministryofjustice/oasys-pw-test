@@ -27,7 +27,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
     await san.checkLayer3Menu(true, sections)
 
     await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.pris.prisSanCAdm, providers.pris.sanCode, 'INITIAL')
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
+    await san.queries.checkSanGetAssessmentCall(pk1)
 
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',

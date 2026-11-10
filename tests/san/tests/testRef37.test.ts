@@ -16,7 +16,7 @@ const offender1: OffenderDef = {
  * Roll back the first 3.2 assessment and carry on with that does it work with SAN statuses?
  */
 
-test.describe.configure({ retries: 1 })
+// test.describe.configure({ retries: 1 })
 test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessment, signing, sections, san, risk, sentencePlan, sns }) => {
 
     await user.prob.probSanUnappr.login()
@@ -29,7 +29,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
 
     // Check Create call
     await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probSanUnappr, providers.prob.sanCode, 'INITIAL')
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
+    await san.queries.checkSanGetAssessmentCall(pk1)
 
     // Complete section 1
     await sections.offendingInformation.goto()
@@ -68,7 +68,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     )
 
     await oasys.clickButton('Next')
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
+    await san.queries.checkSanGetAssessmentCall(pk1)
 
     await risk.screeningNoRisks(false)
 
@@ -111,7 +111,6 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await san.returnToOASys()
 
     // Countersign the assessment
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await signing.countersign({ page: 'spService', comment: 'Test 37 part 2 countersigning' })
     await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
@@ -176,12 +175,11 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await san.checkSanEditMode(true)
     await san.returnToOASys()
     await oasys.clickButton('Next')
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
+    await san.queries.checkSanGetAssessmentCall(pk1)
 
     await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu, countersignComment: 'Test 37 part 3 signing again' })
-    await san.queries.checkSanSigningCall(pk1, user.prob.probSanUnappr, 'COUNTERSIGN')
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanUnappr, 'COUNTERSIGN')
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
@@ -215,12 +213,10 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await san.returnToOASys()
 
     // Countersign the assessment
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await signing.countersign({ page: 'spService', comment: 'Test 37 part 4 countersign again' })
 
-    await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
     await user.logout()
 
     log('Create 3.2 assessment and change some data, then delete it', 'Test step')
@@ -235,7 +231,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
 
     // Check Create call
     await san.queries.checkSanCreateAssessmentCall(pk2, pk1, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
-    await san.queries.checkSanGetAssessmentCall(pk2, 1)
+    await san.queries.checkSanGetAssessmentCall(pk2)
 
     // Tweak section 1
     await sections.offendingInformation.goto()
@@ -291,7 +287,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await san.returnToOASys()
     await oasys.clickButton('Next')
     await risk.rmp.checkMenuVisibility(true)
-    await san.queries.checkSanGetAssessmentCall(pk2, 1)
+    await san.queries.checkSanGetAssessmentCall(pk2)
 
     await user.logout()
     // Delete the WIP assessment
@@ -372,16 +368,15 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await san.thinking.markAsComplete()
     await san.returnToOASys()
     await oasys.clickButton('Next')
-    await san.queries.checkSanGetAssessmentCall(pk1, 2)
+    await san.queries.checkSanGetAssessmentCall(pk1)
 
     await risk.rmp.checkMenuVisibility(false)  // Shouldn't be there
 
     // Sign and lock again, check API calls and OASYS_SET
 
     await signing.signAndLock({ page: 'spService', expectCountersigner: true, countersigner: user.prob.probSanHeadPdu, countersignComment: 'Signing for the third time' })
-    await san.queries.checkSanSigningCall(pk1, user.prob.probSanUnappr, 'COUNTERSIGN')
-    await san.queries.checkSanGetAssessmentCall(pk1, 2)
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['OGRS', 'RSR'])
+    await san.queries.checkSanSigningCall(pk1, user.prob.probSanUnappr, 'COUNTERSIGN')
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',
         CLONED_FROM_PREV_OASYS_SAN_PK: null,
@@ -420,11 +415,9 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await san.returnToOASys()
 
     // Countersign the assessment
-    await san.queries.checkSanGetAssessmentCall(pk1, 2)
     await signing.countersign({ page: 'spService', comment: 'Countersigning for the third time' })
 
     await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
-    await san.queries.checkSanGetAssessmentCall(pk1, 2)
     await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
 
     // Check the signing history

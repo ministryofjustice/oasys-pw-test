@@ -28,7 +28,7 @@ test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment
 
     // Check Create call
     await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probSanPo, providers.prob.sanCode, 'INITIAL')
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
+    await san.queries.checkSanGetAssessmentCall(pk1)
 
     // Complete section 1
     await sections.offendingInformation.populateMinimal()
@@ -97,7 +97,7 @@ test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment
         Navigate to the next RoSH Screen - will be asked if want to create a SARA - this will be prompted via the Section 6 questions populated from the SAN Assessment
         - Create the SARA`, 'Test step')
 
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
+    await san.queries.checkSanGetAssessmentCall(pk1)
     await oasys.clickButton('Next')
     await san.oasysSanSections.checkCompletionStatus(true)
     await risk.fullAnalysisSection62.checkMenuVisibility(true)

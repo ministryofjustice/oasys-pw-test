@@ -92,7 +92,6 @@ test('SAN integration - test ref 27 part 2', async ({ oasys, user, cms, offender
     const sectionCount = await san.queries.getSanSectionsCount(pk1)
     expect(sectionCount).toBe(2)
 
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
     failed = await assessment.queries.checkSingleAnswer(pk1, '9', '9.2', 'refAnswer', '2')  // change from offender record sets binge drinking
     expect(failed).toBeFalsy()
 

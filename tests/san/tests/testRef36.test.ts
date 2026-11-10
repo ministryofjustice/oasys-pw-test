@@ -23,7 +23,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
 
     // Check Create call
     await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probSanUnappr, providers.prob.sanCode, 'INITIAL')
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
+    await san.queries.checkSanGetAssessmentCall(pk1)
 
     // Complete section 1
     await sections.offendingInformation.goto()
@@ -61,7 +61,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     )
 
     await oasys.clickButton('Next')
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
+    await san.queries.checkSanGetAssessmentCall(pk1)
 
     await risk.screeningNoRisks()
 
@@ -98,7 +98,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', pk1)
 
     await san.queries.checkSanCreateAssessmentCall(pk2, pk1, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
-    await san.queries.checkSanGetAssessmentCall(pk2, 1)
+    await san.queries.checkSanGetAssessmentCall(pk2)
     await assessment.queries.checkCloning(pk2, pk1, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13',
         'SAQ', 'ROSH', 'ROSHFULL', 'RMP', 'SKILLSCHECKER', 'SAN',])
 
@@ -166,7 +166,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
         CLONED_FROM_PREV_OASYS_SAN_PK: pk1.toString(),
         SAN_ASSESSMENT_VERSION_NO: null
     })
-    await san.queries.checkSanGetAssessmentCall(pk2, 1)
+    await san.queries.checkSanGetAssessmentCall(pk2)
     await user.logout()
 
     // Delete the WIP assessment
@@ -186,7 +186,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await san.queries.getSanApiTimeAndCheckDbValues(pk3, 'Y', pk1)
 
     await san.queries.checkSanCreateAssessmentCall(pk3, pk1, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
-    await san.queries.checkSanGetAssessmentCall(pk3, 2)
+    await san.queries.checkSanGetAssessmentCall(pk3)
 
     // Check cloning from first assessment to second (non-deleted)
     await assessment.queries.checkCloning(pk3, pk1, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13',
@@ -212,7 +212,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     )
     await san.returnToOASys()
     await oasys.clickButton('Close')
-    await san.queries.checkSanGetAssessmentCall(pk3, 2)
+    await san.queries.checkSanGetAssessmentCall(pk3)
 
     // Lock incomplete, check API call and OASYS_SET
     await assessment.lockIncomplete()

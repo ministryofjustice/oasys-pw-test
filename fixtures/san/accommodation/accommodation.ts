@@ -8,7 +8,7 @@ export class Accommodation extends BaseSanSection {
     override readonly paPrefix = 'accommodation'
 
     // page 1
-    readonly somewhereToLive = new Element.Radiogroup<SanYesNo>(this.page, '#community_current_accommodation|custody_future_accommodation', sanYesNoOptions)
+    readonly somewhereToLive = new Element.Radiogroup<SanYesNo>(this.page, '#community_current_accommodation|#custody_future_accommodation', sanYesNoOptions)
     // page 2
     readonly accommodationSettled = new Element.Radiogroup<SanYesNo>(this.page, '#[sanMode]_current_accommodation_settled', sanYesNoOptions)
     // page 2b why no accommodation

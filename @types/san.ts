@@ -55,6 +55,7 @@ declare type SanDifficulties = 'reading' | 'writing' | 'numeracy' | 'none'
 
 // Finance
 declare type IncomeSource = 'carersAllowance' | 'disabilityBenefits' | 'employment' | 'family' | 'offending' | 'pension' | 'studentLoan' | 'undeclared' | 'workBenefits' | 'other' | 'unknown' | 'noMoney'
+declare type IncomeSourceInCustody = 'employment' | 'family' |  'pension' | 'unemploymentPay' | 'other' | 'unknown' | 'noMoney'
 declare type HowGoodManaging = 'ableStrength' | 'able' | 'unable' | 'unableProblems'
 
 // Health

@@ -6,7 +6,15 @@ export class Textbox<T> {
     constructor(private readonly page: Page, private readonly selector: string, private readonly dateType: boolean = false) { }
 
     private get locator(): Locator {
-        return this.page.locator(this.selector.replace('[sanMode]', sanMode))
+
+        let id = this.selector
+        if (id.includes('|')) { // Two different IDs for community and custody
+            const ids = id.split('|')
+            id = sanMode == 'community' ? ids[0] : ids[1]
+        } else {
+            id = id.replace('[sanMode]', sanMode)
+        }
+        return this.page.locator(id)
     }
 
     async setValue(value: T) {

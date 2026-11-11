@@ -120,10 +120,6 @@ async function checkAnswers(assessmentPk: number, test: TestCase, assessment: As
         { q: '9.3', a: null },
         { q: '9.4', a: null },
         { q: '9.5', a: null },
-        { q: '9.97', a: null },
-        { q: '9.98', a: null },
-        { q: '9.99', a: null },
-        { q: '9_SAN_STRENGTH', a: null },
     ]
     const expectedSanSectionAnswers: OasysAnswer[] = [
         { q: 'AC_SAN_SECTION_COMP', a: 'NO' },

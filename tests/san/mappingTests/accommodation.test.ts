@@ -69,6 +69,8 @@ test('Mapping test V1: accommodation', async ({ oasys, user, offender, assessmen
 
     // Complete everything needed for PA
     await san.gotoSan('Accommodation', true)
+    await san.accommodation.backToStart()
+    await san.accommodation.saveAndContinue()
     await san.accommodation.page2.livingWith.setValue(['alone'])
     await san.accommodation.page2.wantChanges.setValue('madeChanges')
     await san.accommodation.saveAndContinue()

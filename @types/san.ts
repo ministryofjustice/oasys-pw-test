@@ -30,6 +30,7 @@ declare type SanSignificantSomeNoUnknown = 'significant' | 'some' | 'no' | 'unkn
 declare type SanExperience = 'positive' | 'mostlyPositive' | 'positiveNegative' | 'mostlyNegative' | 'negative' | 'unknown'
 declare type SanPositiveMixedNegative = 'positive' | 'mixed' | 'negative'
 declare type SanPositiveMixedNegativeUnknown = 'positive' | 'mixed' | 'negative' | 'unknown'
+declare type SanGoodToBad = 'good' | 'fairlyGood'  | 'fairlyBad' | 'bad'
 declare type SanWantChanges = 'madeChanges' | 'makingChanges' | 'wantToChange' | 'needHelp' | 'thinking' | 'notWanted' | 'notAnswering' | 'notPresent' | 'notApplicable'
 
 // Accommodation
@@ -56,7 +57,6 @@ declare type SanDifficulties = 'reading' | 'writing' | 'numeracy' | 'none'
 // Finance
 declare type IncomeSource = 'carersAllowance' | 'disabilityBenefits' | 'employment' | 'family' | 'offending' | 'pension' | 'studentLoan' | 'undeclared' | 'workBenefits' | 'other' | 'unknown' | 'noMoney'
 declare type IncomeSourceInCustody = 'employment' | 'family' |  'pension' | 'unemploymentPay' | 'other' | 'unknown' | 'noMoney'
-declare type HowGoodManaging = 'ableStrength' | 'able' | 'unable' | 'unableProblems'
 
 // Health
 declare type MentalHealthCondition = 'diagnosedEvidenceOfImpact' | 'diagnosedNoEvidence' | 'past' | 'undiagnosed'

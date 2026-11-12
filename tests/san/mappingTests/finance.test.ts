@@ -2,7 +2,7 @@ import { test, Assessment, San } from 'fixtures'
 import { getMappingTestOffender } from './mappingTestOffender'
 import { paTest } from './practitionerAnalysis'
 
-type TestCase = { ref: number, incomeSource: IncomeSource[], overReliant: SanYesNoUnknown, anyIssues: SanYesNo, howGoodManaging: HowGoodManaging }
+type TestCase = { ref: number, incomeSource: IncomeSource[], overReliant: SanYesNoUnknown, anyIssues: SanYesNo, howGoodManaging: SanGoodToBad }
 
 test.describe.configure({ retries: 1 })
 
@@ -36,18 +36,18 @@ for (const mode of ['community', 'custody']) {
 
         const testCases: TestCase[] = [
             { ref: 1, incomeSource: null, overReliant: null, anyIssues: null, howGoodManaging: null },
-            { ref: 2, incomeSource: ['offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'ableStrength' },
-            { ref: 3, incomeSource: ['offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
-            { ref: 4, incomeSource: ['carersAllowance', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
-            { ref: 5, incomeSource: ['disabilityBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
-            { ref: 6, incomeSource: ['employment', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'ableStrength' },
-            { ref: 7, incomeSource: ['family', 'offending'], overReliant: 'yes', anyIssues: 'yes', howGoodManaging: 'able' },
-            { ref: 8, incomeSource: ['pension', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
-            { ref: 9, incomeSource: ['studentLoan', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
-            { ref: 10, incomeSource: ['undeclared', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'ableStrength' },
-            { ref: 11, incomeSource: ['workBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'able' },
-            { ref: 12, incomeSource: ['other', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unable' },
-            { ref: 13, incomeSource: ['pension'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'unableProblems' },
+            { ref: 2, incomeSource: ['offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'good' },
+            { ref: 3, incomeSource: ['offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'fairlyGood' },
+            { ref: 4, incomeSource: ['carersAllowance', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'fairlyBad' },
+            { ref: 5, incomeSource: ['disabilityBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'bad' },
+            { ref: 6, incomeSource: ['employment', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'good' },
+            { ref: 7, incomeSource: ['family', 'offending'], overReliant: 'yes', anyIssues: 'yes', howGoodManaging: 'fairlyGood' },
+            { ref: 8, incomeSource: ['pension', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'fairlyBad' },
+            { ref: 9, incomeSource: ['studentLoan', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'bad' },
+            { ref: 10, incomeSource: ['undeclared', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'good' },
+            { ref: 11, incomeSource: ['workBenefits', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'fairlyGood' },
+            { ref: 12, incomeSource: ['other', 'offending'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'fairlyBad' },
+            { ref: 13, incomeSource: ['pension'], overReliant: null, anyIssues: 'yes', howGoodManaging: 'bad' },
             { ref: 14, incomeSource: ['noMoney'], overReliant: null, anyIssues: 'no', howGoodManaging: null },
             { ref: 15, incomeSource: ['family', 'offending'], overReliant: 'no', anyIssues: 'no', howGoodManaging: null },
             { ref: 16, incomeSource: ['unknown'], overReliant: null, anyIssues: 'no', howGoodManaging: null },
@@ -83,10 +83,10 @@ for (const mode of ['community', 'custody']) {
         await san.gotoSan('finance', true)
         await san.finance.backToStart()
         await san.finance.page1.incomeSource.setValue(['carersAllowance'])
-        if (sanMode == 'custody') {
-            await san.finance.page1.custodyIncomeSource.setValue(['employment'])
-        }
         await san.finance.saveAndContinue()
+        if (sanMode == 'custody') {
+            await san.finance.page3.incomeSourceInCustody.setValue('employment')
+        }
         await san.finance.page3.anyIssues.setValue('no')
         await san.finance.saveAndContinue()
         await san.returnToOASys()
@@ -151,12 +151,12 @@ function mapping5_3(test: TestCase): string {
         return '0'
     }
     switch (test.howGoodManaging) {
-        case 'ableStrength':
-        case 'able':
+        case 'good':
+        case 'fairlyGood':
             return '0'
-        case 'unable':
+        case 'fairlyBad':
             return '1'
-        case 'unableProblems':
+        case 'bad':
             return '2'
         default:
             return null
@@ -200,7 +200,7 @@ function mapping5_6(test: TestCase): string {
     if (test.anyIssues == 'no') {
         return '0'
     }
-    if (test.howGoodManaging == 'able' || test.howGoodManaging == 'ableStrength') {
+    if (test.howGoodManaging == 'fairlyGood' || test.howGoodManaging == 'good') {
         return '0'
     }
     return null
@@ -209,12 +209,12 @@ function mapping5_6(test: TestCase): string {
 function mappingSc8(test: TestCase): string {
 
     switch (test.howGoodManaging) {
-        case 'ableStrength':
+        case 'good':
             return 'YES'
-        case 'able':
+        case 'fairlyGood':
             return 'SOMETIMES'
-        case 'unable':
-        case 'unableProblems':
+        case 'fairlyBad':
+        case 'bad':
             return 'NOTCONFIDENT'
         default:
             return null

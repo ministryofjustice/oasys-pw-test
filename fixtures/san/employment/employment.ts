@@ -53,7 +53,7 @@ export class Employment extends BaseSanSection {
 
         await this.page1.employmentStatus.setValue('unemployed')
         await this.saveAndContinue()
-        await this.page2.employedBefore.setValue('yes')
+        await this.page2.unemployedEverHadAJob.setValue('yes')
         await this.saveAndContinue()
         await this.page3.employmentHistory.setValue('unstable')
         await this.page3.additionalCommitments.setValue(['none'])

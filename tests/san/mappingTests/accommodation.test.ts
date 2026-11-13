@@ -49,7 +49,7 @@ test('Mapping test AAP: accommodation', async ({ oasys, user, offender, assessme
         { ref: 13, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['family', 'friends', 'other'], locationSuitable: 'yes', accommodationSuitable: 'yesWithConcerns' } },
         { ref: 14, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['alone'], locationSuitable: 'no', accommodationSuitable: 'yesWithConcerns' } },
         { ref: 15, page1: { currentAccommodation: 'settled', temporaryAccommodation: null }, page2: { livingWith: ['partner', 'other'], locationSuitable: 'no', accommodationSuitable: 'yes' } },
-        { ref: 16, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: { livingWith: null, locationSuitable: 'yes', accommodationSuitable: 'yes' } },
+        { ref: 16, page1: { currentAccommodation: 'temporary', temporaryAccommodation: 'shortTerm' }, page2: { livingWith: ['alone'], locationSuitable: 'yes', accommodationSuitable: 'yes' } },
     ]
 
 
@@ -95,7 +95,7 @@ async function scenario(test: TestCase, san: San) {
     }
     await san.accommodation.saveAndContinue()
     if (test.page2) {
-        if (test.page1.currentAccommodation == 'settled') {
+        if (test.page1.currentAccommodation != 'noAccommodation') {
             await san.accommodation.page2.livingWith.setValue(test.page2.livingWith)
         }
         await san.accommodation.page2.accommodationSuitable.setValue(test.page2.accommodationSuitable)

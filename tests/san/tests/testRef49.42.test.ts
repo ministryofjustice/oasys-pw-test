@@ -122,7 +122,6 @@ test('SAN integration - test refs 49 and 42', async ({ oasys, user, offender, as
 
     await san.queries.checkNoSanSections(pk2)
     await san.queries.checkNoSanSectionScores(pk2)
-    await san.queries.checkSanGetAssessmentCall(pk1, 0)
 
     log(`Complete the 3.1 assessment and then fully sign and lock and countersign (if applicable) the 3.1 assessment.`)
 

@@ -68,12 +68,7 @@ export class OasysDateTime {
             return null
         }
         const dateDiff = secondDate.since(firstDate, { smallestUnit: unit, largestUnit: unit })
-        let diff = unit == 'day' ? dateDiff.days : unit == 'month' ? dateDiff.months : dateDiff.years
-
-        // Leap-year fix - if dob = 29/2, 28/2 is not a birthday on a non-leap year; the calculation doesn't work like that
-        if (unit == 'year' && firstDate.day == 29 && firstDate.month == 1 && secondDate.day == 28 && secondDate.month == 1 && !secondDate.inLeapYear) {
-            diff--
-        }
+        let diff = unit == 'day' ? dateDiff.days : unit == 'month' ? oracleMonthsBetween(firstDate, secondDate) : dateDiff.years
 
         if (ofm) {
             return diff < 0 ? 0 : diff > 36 ? 36 : diff
@@ -81,6 +76,7 @@ export class OasysDateTime {
             return diff >= 0 ? diff : null
         }
     }
+
 
     timestampDiffString(firstDate: string, secondDate: string): number {
 
@@ -183,6 +179,23 @@ export class OasysDateTime {
         const testDate = typeof date == 'string' ? this.stringToTimestamp(date) : date
         return versionDate ? Temporal.PlainDateTime.compare(testDate, versionDate) == 1 : null
     }
+}
+
+function oracleMonthsBetween(d1: Temporal.PlainDate, d2: Temporal.PlainDate): number {
+    // Rule 1 & 2: Same day of the month OR both are the last day of their months
+    const isLastDayD1 = d1.day === d1.daysInMonth
+    const isLastDayD2 = d2.day === d2.daysInMonth
+
+    if (d1.day === d2.day || (isLastDayD1 && isLastDayD2)) {
+        // Return pure calendar month difference
+        return (d2.year - d1.year) * 12 + (d2.month - d1.month)
+    }
+
+    // Rule 3: Mix of different days/non-endings (Fractional based on fixed 31 days)
+    const monthDiff = (d2.year - d1.year) * 12 + (d2.month - d1.month)
+    const dayDiff = d2.day - d1.day
+
+    return Math.trunc(monthDiff + (dayDiff / 31))
 }
 
 const versionLookup = {

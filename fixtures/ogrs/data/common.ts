@@ -15,7 +15,7 @@ export function addCalculatedInputParameters(p: OgrsInputParams) {
     p.onceViolent = p.TOTAL_VIOLENT_SANCTIONS == 1
     p.male = p.GENDER == 'M'
     p.female = p.GENDER == 'F'
-    p.out5Years = oasysDateTime.dateDiff(p.COMMUNITY_DATE, p.ASSESSMENT_DATE, 'year') >= 5
+    p.out5Years = oasysDateTime.dateDiff(p.effectiveAssessmentDate, p.ASSESSMENT_DATE, 'year') >= 5
 
     const offenceInLast5Years = oasysDateTime.dateDiff(p.MOST_RECENT_OFFENCE, p.ASSESSMENT_DATE, 'year')
     p.offenceInLast5Years = offenceInLast5Years == null ? false : offenceInLast5Years < 5

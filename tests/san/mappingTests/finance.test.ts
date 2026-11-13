@@ -85,7 +85,7 @@ for (const mode of ['community', 'custody']) {
         await san.finance.page1.incomeSource.setValue(['carersAllowance'])
         await san.finance.saveAndContinue()
         if (sanMode == 'custody') {
-            await san.finance.page3.incomeSourceInCustody.setValue('employment')
+            await san.finance.page3.incomeSourceInCustody.setValue(['employment'])
         }
         await san.finance.page3.anyIssues.setValue('no')
         await san.finance.saveAndContinue()

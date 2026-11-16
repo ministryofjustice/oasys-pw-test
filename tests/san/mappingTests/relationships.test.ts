@@ -141,14 +141,14 @@ async function scenario(test: TestCase, san: San) {
     await san.relationships.page1.anyChildren.setValue(test.page1.anyChildren)
     await san.relationships.saveAndContinue()
     if (test.page2) {
+        if (sanMode == 'custody') {
+            await san.relationships.page2.childrenVisitingInCustody.setValue('no')
+        }
         await san.relationships.page2.parentingResponsibilities.setValue(test.page2.parentingResponsibilities)
         await san.relationships.saveAndContinue()
     }
     if (test.page3) {
         await san.relationships.page3.manageParenting.setValue(test.page3.manageParenting)
-        // if (sanMode == 'custody') {  // TODO add back in for custody
-        //     await san.relationships.page2.childrenVisiting.setValue('no')
-        // }
         await san.relationships.page3.currentFamilyRelationship.setValue(test.page3.currentFamilyRelationship)
         await san.relationships.page3.childhoodExperience.setValue(test.page3.childhoodExperience)
         await san.relationships.page3.behaviouralProblems.setValue(test.page3.behaviouralProblems)

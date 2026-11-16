@@ -15,7 +15,7 @@ export class Page1 extends BaseSanEditPage {
     violence = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#thinking_behaviours_attitudes_violence_controlling_behaviour', sanNoSometimesYesOptions)
     impulse = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#thinking_behaviours_attitudes_impulsive_behaviour', sanNoSometimesYesOptions)
     hostileOrientation = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#thinking_behaviours_attitudes_hostile_orientation', sanNoSometimesYesOptions)
-    acceptSupervision = new Element.Radiogroup<SanYesUnsureNo>(this.page, '#[sanMode]_thinking_behaviours_attitudes_supervision', sanYesUnsureNoOptions)
+    acceptSupervision = new Element.Radiogroup<SanYesUnsureNo>(this.page, '#thinking_behaviours_attitudes_supervision', sanYesUnsureNoOptions)
     supportCriminalBehaviour = new Element.Radiogroup<SanYesSometimesNo>(this.page, '#thinking_behaviours_attitudes_criminal_behaviour', sanNoSometimesYesOptions)
 
 

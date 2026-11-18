@@ -1,5 +1,6 @@
 import { BaseSanSection } from '../sanSection'
 import { Page1 } from './page1'
+import { Page1a } from './page1a'
 import { Page2 } from './page2'
 import { Page3 } from './page3'
 import { Page4 } from './page4'
@@ -14,6 +15,7 @@ export class Drugs extends BaseSanSection {
     override readonly paPrefix = 'drug_use'
 
     readonly page1 = new Page1(this.page)
+    readonly page1a = new Page1a(this.page)
     readonly page2 = new Page2(this.page)
     readonly page3 = new Page3(this.page)
     readonly page4 = new Page4(this.page)
@@ -35,6 +37,11 @@ export class Drugs extends BaseSanSection {
         await this.goto()
         await this.page1.everUsed.setValue('yes')
         await this.saveAndContinue()
+        if (sanMode == 'custody') {
+            await this.page1a.usedInCustody.setValue('yes')
+            await this.page1a.usedInCustodyYesDetails.setValue('Details')
+            await this.saveAndContinue()
+        }
         await this.page2.drugType.setValue(['amphetamines', 'other'])
         await this.saveAndContinue()
         await this.page3.amphetaminesWhenUsed.setValue('lastSix')
@@ -64,6 +71,11 @@ export class Drugs extends BaseSanSection {
 
         await this.page1.everUsed.setValue('yes')
         await this.saveAndContinue()
+        if (sanMode == 'custody') {
+            await this.page1a.usedInCustody.setValue('yes')
+            await this.page1a.usedInCustodyYesDetails.setValue('Details')
+            await this.saveAndContinue()
+        }
         await this.page2.drugType.setValue(['heroin'])
         await this.saveAndContinue()
         await this.page3.heroinWhenUsed.setValue('lastSix')

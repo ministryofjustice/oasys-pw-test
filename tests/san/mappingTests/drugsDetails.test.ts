@@ -1,7 +1,7 @@
 import { test, Oasys, User, Offender, Assessment, San } from 'fixtures'
 import { getMappingTestOffender } from './mappingTestOffender'
 
-type TestCase = { ref: number, whenUsed: DrugsWhenUsed, frequency: DrugsFrequency, whenInjected: DrugsWhenUsed[] }
+type TestCase = { ref: number, usedInCustody: SanYesNo, whenUsed: DrugsWhenUsed, frequency: DrugsFrequency, whenInjected: DrugsWhenUsed[] }
 
 
 // Template response data for these tests
@@ -127,38 +127,70 @@ for (const mode of ['community', 'custody']) {
 
         const testCases: TestCase[] =
             [
-                { ref: 1, whenUsed: 'lastSix', frequency: 'daily', whenInjected: null },
-                { ref: 2, whenUsed: 'lastSix', frequency: 'weekly', whenInjected: null },
-                { ref: 3, whenUsed: 'lastSix', frequency: 'monthly', whenInjected: null },
-                { ref: 4, whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: null },
-                { ref: 5, whenUsed: 'lastSix', frequency: 'daily', whenInjected: ['lastSix'] },
-                { ref: 6, whenUsed: 'lastSix', frequency: 'weekly', whenInjected: ['lastSix'] },
-                { ref: 7, whenUsed: 'lastSix', frequency: 'monthly', whenInjected: ['lastSix'] },
-                { ref: 8, whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: ['lastSix'] },
-                { ref: 9, whenUsed: 'lastSix', frequency: 'daily', whenInjected: ['moreThanSix'] },
-                { ref: 10, whenUsed: 'lastSix', frequency: 'weekly', whenInjected: ['moreThanSix'] },
-                { ref: 11, whenUsed: 'lastSix', frequency: 'monthly', whenInjected: ['moreThanSix'] },
-                { ref: 12, whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: ['moreThanSix'] },
-                { ref: 13, whenUsed: 'lastSix', frequency: 'daily', whenInjected: ['lastSix', 'moreThanSix'] },
-                { ref: 14, whenUsed: 'lastSix', frequency: 'weekly', whenInjected: ['lastSix', 'moreThanSix'] },
-                { ref: 15, whenUsed: 'lastSix', frequency: 'monthly', whenInjected: ['lastSix', 'moreThanSix'] },
-                { ref: 16, whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: ['lastSix', 'moreThanSix'] },
-                { ref: 17, whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: null },
-                { ref: 18, whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: null },
-                { ref: 19, whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: null },
-                { ref: 20, whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: null },
-                { ref: 21, whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: ['lastSix'] },
-                { ref: 22, whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: ['lastSix'] },
-                { ref: 23, whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: ['lastSix'] },
-                { ref: 24, whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: ['lastSix'] },
-                { ref: 25, whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: ['moreThanSix'] },
-                { ref: 26, whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: ['moreThanSix'] },
-                { ref: 27, whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: ['moreThanSix'] },
-                { ref: 28, whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: ['moreThanSix'] },
-                { ref: 29, whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: ['lastSix', 'moreThanSix'] },
-                { ref: 30, whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: ['lastSix', 'moreThanSix'] },
-                { ref: 31, whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: ['lastSix', 'moreThanSix'] },
-                { ref: 32, whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 1, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'daily', whenInjected: null },
+                { ref: 2, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'weekly', whenInjected: null },
+                { ref: 3, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'monthly', whenInjected: null },
+                { ref: 4, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: null },
+                { ref: 5, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'daily', whenInjected: ['lastSix'] },
+                { ref: 6, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'weekly', whenInjected: ['lastSix'] },
+                { ref: 7, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'monthly', whenInjected: ['lastSix'] },
+                { ref: 8, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: ['lastSix'] },
+                { ref: 9, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'daily', whenInjected: ['moreThanSix'] },
+                { ref: 10, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'weekly', whenInjected: ['moreThanSix'] },
+                { ref: 11, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'monthly', whenInjected: ['moreThanSix'] },
+                { ref: 12, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: ['moreThanSix'] },
+                { ref: 13, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'daily', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 14, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'weekly', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 15, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'monthly', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 16, usedInCustody: 'no', whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 17, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: null },
+                { ref: 18, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: null },
+                { ref: 19, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: null },
+                { ref: 20, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: null },
+                { ref: 21, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: ['lastSix'] },
+                { ref: 22, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: ['lastSix'] },
+                { ref: 23, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: ['lastSix'] },
+                { ref: 24, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: ['lastSix'] },
+                { ref: 25, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: ['moreThanSix'] },
+                { ref: 26, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: ['moreThanSix'] },
+                { ref: 27, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: ['moreThanSix'] },
+                { ref: 28, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: ['moreThanSix'] },
+                { ref: 29, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 30, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 31, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 32, usedInCustody: 'no', whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 33, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'daily', whenInjected: null },
+                { ref: 34, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'weekly', whenInjected: null },
+                { ref: 35, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'monthly', whenInjected: null },
+                { ref: 36, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: null },
+                { ref: 37, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'daily', whenInjected: ['lastSix'] },
+                { ref: 38, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'weekly', whenInjected: ['lastSix'] },
+                { ref: 39, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'monthly', whenInjected: ['lastSix'] },
+                { ref: 40, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: ['lastSix'] },
+                { ref: 41, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'daily', whenInjected: ['moreThanSix'] },
+                { ref: 42, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'weekly', whenInjected: ['moreThanSix'] },
+                { ref: 43, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'monthly', whenInjected: ['moreThanSix'] },
+                { ref: 44, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: ['moreThanSix'] },
+                { ref: 45, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'daily', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 46, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'weekly', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 47, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'monthly', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 48, usedInCustody: 'yes', whenUsed: 'lastSix', frequency: 'occasionally', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 49, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: null },
+                { ref: 50, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: null },
+                { ref: 51, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: null },
+                { ref: 52, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: null },
+                { ref: 53, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: ['lastSix'] },
+                { ref: 54, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: ['lastSix'] },
+                { ref: 55, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: ['lastSix'] },
+                { ref: 56, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: ['lastSix'] },
+                { ref: 57, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: ['moreThanSix'] },
+                { ref: 58, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: ['moreThanSix'] },
+                { ref: 59, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: ['moreThanSix'] },
+                { ref: 60, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: ['moreThanSix'] },
+                { ref: 61, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'daily', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 62, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'weekly', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 63, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'monthly', whenInjected: ['lastSix', 'moreThanSix'] },
+                { ref: 64, usedInCustody: 'yes', whenUsed: 'moreThanSix', frequency: 'occasionally', whenInjected: ['lastSix', 'moreThanSix'] },
             ]
 
         console.log(`Testing ${drugType}`)
@@ -167,22 +199,25 @@ for (const mode of ['community', 'custody']) {
 
         for (const test of testCases) {
 
-            if (injectableDrug(drugType) || test.whenInjected == null) {  // skip injection tests for non-injectable drugs
-                // Get to the right starting screen
-                await san.gotoSan('drugs', true)
-                await san.drugs.backToStart()
-                // Set values on SAN, return to OASys and check the results
-                await scenario(drugType, test, san)
-                await san.returnToOASys()
-                await oasys.clickButton('Previous', true)
-                await oasys.clickButton('Next', true)
+            if (sanMode == 'custody' || test.usedInCustody == 'no') {  // usedInCustody tests are only run in custody mode
 
-                log('', JSON.stringify(test))
-                const scenarioFailed = await checkAnswers(assessmentPk, drugType, test, assessment)
-                if (scenarioFailed) {
-                    failed = true
+                if (injectableDrug(drugType) || test.whenInjected == null) {  // skip injection tests for non-injectable drugs
+                    // Get to the right starting screen
+                    await san.gotoSan('drugs', true)
+                    await san.drugs.backToStart()
+                    // Set values on SAN, return to OASys and check the results
+                    await scenario(drugType, test, san)
+                    await san.returnToOASys()
+                    await oasys.clickButton('Previous', true)
+                    await oasys.clickButton('Next', true)
+
+                    log('', JSON.stringify(test))
+                    const scenarioFailed = await checkAnswers(assessmentPk, drugType, test, assessment)
+                    if (scenarioFailed) {
+                        failed = true
+                    }
+                    console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
                 }
-                console.log(`Ref ${test.ref} ${scenarioFailed ? 'FAILED' : 'Passed'}`)
             }
         }
 
@@ -194,25 +229,36 @@ async function scenario(drugType: DrugType, test: TestCase, san: San) {
 
     await san.drugs.page1.everUsed.setValue('yes')
     await san.drugs.saveAndContinue()
-    await san.drugs.page2.drugType.setValue([drugType])
-    if (drugType == 'other') {
-        await san.drugs.page3.otherDrugName.setValue(otherDrugName)
+    if (sanMode == 'custody') {
+        await san.drugs.page1a.usedInCustody.setValue(test.usedInCustody)
+        if (test.usedInCustody == 'yes') {
+            await san.drugs.page1a.usedInCustodyYesDetails.setValue('Details')
+        }
+        await san.drugs.saveAndContinue()
     }
-    await san.drugs.page3[`${drugType}WhenUsed`].setValue(test.whenUsed)
+
+    // use the 'BeforeCustody' element variants if sanMode is custody but No to 'drugs used in custody'
+    const elementSuffix = (sanMode == 'custody' && test.usedInCustody == 'no') ? 'BeforeCustody' : ''
+
+    await san.drugs.page2[`drugType${elementSuffix}`].setValue([drugType])
+    if (drugType == 'other') {
+        await san.drugs.page3[`otherDrugName${elementSuffix}`].setValue(otherDrugName)
+    }
+    await san.drugs.page3[`${drugType}WhenUsed${elementSuffix}`].setValue(test.whenUsed)
     await san.drugs.saveAndContinue()
     if (test.whenUsed == 'lastSix' && test.frequency != null) {
-        await san.drugs.page4[`${drugType}Frequency`].setValue(test.frequency)
+        await san.drugs.page4[`${drugType}Frequency${elementSuffix}`].setValue(test.frequency)
         await san.drugs.saveAndContinue()
     } else if (test.whenUsed == 'moreThanSix' && test.frequency != null) {
-        await san.drugs.page4[`${drugType}FrequencyPast`].setValue(test.frequency)
+        await san.drugs.page4[`${drugType}FrequencyPast${elementSuffix}`].setValue(test.frequency)
         await san.drugs.saveAndContinue()
     }
     if (injectableDrug(drugType)) {
         if (test.whenInjected == null) {
-            await san.drugs.page5.injected.setValue(['none'])
+            await san.drugs.page5[`injected${elementSuffix}`].setValue(['none'])
         } else {
-            await san.drugs.page5.injected.setValue([drugType as InjectableDrugType])
-            await san.drugs.page5[`${drugType as InjectableDrugType}WhenInjected`].setValue(test.whenInjected)
+            await san.drugs.page5[`injected${elementSuffix}`].setValue([drugType as InjectableDrugType])
+            await san.drugs.page5[`${drugType as InjectableDrugType}WhenInjected${elementSuffix}`].setValue(test.whenInjected)
         }
         await san.drugs.saveAndContinue()
     }

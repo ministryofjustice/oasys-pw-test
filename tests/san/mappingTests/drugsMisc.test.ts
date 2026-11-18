@@ -61,7 +61,7 @@ for (const mode of ['community', 'custody']) {
         ]
         const result = await assessment.queries.checkSectionAnswers(assessmentPk, '8', expectedAnswers, true)
         expect(result).toBeFalsy()
-        
+
         for (const test of testCases) {
 
             // Get to the right starting screen
@@ -69,6 +69,11 @@ for (const mode of ['community', 'custody']) {
             if (test.ref == 1) {
                 await san.drugs.page1.everUsed.setValue('yes')
                 await san.drugs.saveAndContinue()
+                if (sanMode == 'custody') {
+                    await san.drugs.page1a.usedInCustody.setValue('yes')
+                    await san.drugs.page1a.usedInCustodyYesDetails.setValue('Details')
+                    await san.drugs.saveAndContinue()
+                }
                 await san.drugs.page2.drugType.setValue(['cannabis'])
                 await san.drugs.saveAndContinue()
                 await san.drugs.page3.cannabisWhenUsed.setValue('lastSix')

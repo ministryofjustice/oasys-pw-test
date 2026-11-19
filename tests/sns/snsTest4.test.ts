@@ -29,7 +29,7 @@ test('Create assessments and check SNS messages - SAN assessment, no countersign
 
     // Sign assessment, then check SNS messages
     await signing.signAndLock({ page: 'spService' })
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR', 'TierRiskFlag'])
 
     // Create another assessment (cloning from the one above), this one with OPD override
     await oasys.history(offender1)
@@ -41,7 +41,7 @@ test('Create assessments and check SNS messages - SAN assessment, no countersign
 
     // Sign assessment, then check SNS messages again
     await signing.signAndLock({ page: 'spService' })
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'OPD'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR', 'OPD'])
 
     await user.logout()
 })

@@ -78,7 +78,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     log(`Check the correct SNS messages have been created, OGRS3, RSR and an ASSSUMMSAN (maybe OPD, depends on the data entered)
         Check the assessments tab for the offender - this latest completed PSR assessment shows an icon of SP against it (meaning it includes an ARNS sentence plan)`, 'Test step')
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR', 'TierRiskFlag'])
     await oasys.history(offender1)
     const sanIcons = await assessment.assessmentsTab.assessments.san.getValues()
     expect(sanIcons[0]).toBe('Includes Sentence Plan Service')
@@ -181,7 +181,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     expect(spVersion2).not.toBe(spVersion1)
     const sanVersion1 = await oasysDb.getSingleNumericValue(`select SAN_ASSESSMENT_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk2}`)
     expect(sanVersion1).toBe('')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
 
     log(`Open up the START assessment - now all read only
         Check the database and ensure there are NO fields populated for the ISP section questions and answers
@@ -276,7 +276,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
 
     await signing.signAndLock()
     await san.queries.checkSanSigningCall(pk3, user.prob.probHeadPdu, 'SELF')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
 
     const spVersion3 = await oasysDb.getSingleNumericValue(`select SSP_PLAN_VERSION_NO from eor.oasys_set where oasys_set_pk = ${pk3}`)
     expect(spVersion3).not.toBe(spVersion2)

@@ -291,8 +291,8 @@ test('SAN integration - test ref 17', async ({ page, oasys, user, offender, asse
 
     await signing.countersign({ page: 'spService', comment: 'Countersigning test ref 17' })
     // TODO restore OPD check (needs IOM stub) 
-    // await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OPD'])    // Others checked at signing
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    // await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OPD'])    // Others checked at signing
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
 
     await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanPo, 'COUNTERSIGNED')
 

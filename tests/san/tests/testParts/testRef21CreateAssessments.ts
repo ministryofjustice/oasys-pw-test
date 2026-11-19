@@ -17,7 +17,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         offender1Pks.push(offender1Pk1)
         await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No' })
         await signing.signAndLock()
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         await user.logout()
 
@@ -47,7 +47,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         await assessment.populateMinimal({ layer: 'Layer 1', sentencePlan: 'spService' })
         await signing.signAndLock()
-        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         // Create and complete assessment 2 (layer 3 v1)
         await oasys.history(offender2)
@@ -57,7 +57,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await sections.sections2To13NoIssues({ populate6_11: 'No' })
         await sections.selfAssessmentForm.populateMinimal()
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
 
         // Create and complete assessment 3 (layer 3 v2)
         await oasys.history(offender2)
@@ -67,7 +67,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
 
         // await risk.setRationaleText()
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
         await user.logout()
 
         // Transfer to Bedfordshire
@@ -89,7 +89,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await sections.sections2To13NoIssues()
         await sections.selfAssessmentForm.populateMinimal()
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
         await user.logout()
 
         // Transfer back to Durham
@@ -116,7 +116,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await san.finance.markAsComplete()
         await san.returnToOASys()
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
 
         // Create and complete assessment 6 (layer 3 v2)
         await oasys.history(offender2)
@@ -130,7 +130,7 @@ export function testRef21CreateAssessments(offender1: OffenderDef, offender2: Of
         await san.finance.markAsComplete()
         await san.returnToOASys()
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender2.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
 
         await user.logout()
 

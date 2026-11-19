@@ -123,7 +123,7 @@ export function testRef3(offender1: OffenderDef, pks: { [key: number]: number })
         await risk.screeningSection2to4.rationale.setValue('Because')
 
         await signing.signAndLock({ page: 'rmp', expectCsrpScore: true, csrpScoreMessage: '2.94% (Medium)' })
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
 
         log(`Check that there is a record in the new table 'PREDICTOR_FEATURE_LINES' for this OASYS_SET_PK and it has stored ALL the fields coming back from the new Predictor calculator as at the last time it run
         Check the OASYS_SET record has the OGRS 3 yr1 and yr2 fields set and the existing OSP-DC, OSP-IIC, RSR and new predictor fields set correctly

@@ -31,7 +31,7 @@ test('Create assessments and check SNS messages - SAN assessment, countersigning
     await assessment.openLatest()
     await signing.countersign({ page: 'spService', comment: 'Test comment' })
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
     await user.logout()
 
     // Create another assessment, this one with OPD override and RSR
@@ -58,7 +58,7 @@ test('Create assessments and check SNS messages - SAN assessment, countersigning
     await user.prob.probSanHeadPdu.login()
     await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OPD'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OPD'])
     await user.logout()
 
 })

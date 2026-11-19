@@ -15,7 +15,7 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
 
         // Sign assessment, then check SNS messages
         await signing.signAndLock()
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR', 'TierRiskFlag'])
 
         // Create another assessment (cloning from the one above), this one with OPD override and RSR
         await oasys.history(offender1)
@@ -31,7 +31,15 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
 
         // Sign assessment, then check SNS messages again
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'OPD'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR', 'OPD'])
+
+        // Create another then lock incomplete
+        await oasys.history(offender1)
+        await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)' })
+        await oasys.clickButton('Close')
+        await assessment.lockIncomplete()
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+
         await user.logout()
 
     })
@@ -62,7 +70,7 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         await user.prob.probHeadPdu.login()
         await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
         await user.logout()
 
         // Create another assessment, this one with OPD override and RSR
@@ -89,7 +97,14 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         await user.prob.probHeadPdu.login()
         await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OPD'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OPD'])
+        
+        // Create another then lock incomplete
+        await oasys.history(offender1)
+        await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)' })
+        await oasys.clickButton('Close')
+        await assessment.lockIncomplete()
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
         await user.logout()
 
     })

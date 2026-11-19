@@ -113,7 +113,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     // Countersign the assessment
     await signing.countersign({ page: 'spService', comment: 'Test 37 part 2 countersigning' })
     await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'TierRiskFlag'])
     await user.logout()
 
     log('Roll back the assessment and check API calls and assessment status, then sign again', 'Test step')
@@ -215,7 +215,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     // Countersign the assessment
     await signing.countersign({ page: 'spService', comment: 'Test 37 part 4 countersign again' })
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
     await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
     await user.logout()
 
@@ -418,7 +418,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await signing.countersign({ page: 'spService', comment: 'Countersigning for the third time' })
 
     await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
 
     // Check the signing history
     await oasys.history()

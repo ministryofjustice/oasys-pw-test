@@ -15,7 +15,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
 
         // First RoSHA
         await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' })
-        await assessment.populateMinimal({ layer: 'Layer 1V2', populate1_38: { days: -5 } })
+        await assessment.populateMinimal({ layer: 'Layer 1V2' })
 
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'TierRiskFlag'])
@@ -42,7 +42,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         // Second RoSHA
         await oasys.history(offender1)
         await assessment.createProb({ purposeOfAssessment: 'Risk of Harm Assessment' }, 'Yes')
-        await sections.roshaPredictors.populateMinimal({ populate1_38: { days: -1 }, probationCrn: offender1.probationCrn }, false)
+        await sections.roshaPredictors.populateMinimal({ probationCrn: offender1.probationCrn }, false)
 
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])

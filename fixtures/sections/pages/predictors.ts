@@ -63,9 +63,7 @@ export class Predictors extends BaseAssessmentPage {
         await this.o1_40.setValue(0)
         await this.o1_29.setValue({ months: -3 })
         await this.o1_30.setValue('No')
-        if (params?.populate1_38) {
-            await this.o1_38.setValue(params.populate1_38)
-        }
+        await this.o1_38.setValue(params.provider == 'pris' ? { days: 100 } : { days: -5 })
     }
 
 
@@ -88,9 +86,8 @@ export class Predictors extends BaseAssessmentPage {
         await this.o1_34.setValue(1)
         await this.o1_45.setValue(1)
         await this.o1_46.setValue(1)
-        if (params?.populate1_38) {
-            await this.o1_38.setValue(params.populate1_38)
-        }
+        
+        await this.o1_38.setValue(params.provider == 'pris' ? { days: 100 } : { days: -5 })
         await this.o1_37.setValue(1)
         if (params.provider != 'pris') {
             await this.o1_43.setValue({ days: -5 })

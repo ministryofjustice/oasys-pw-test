@@ -19,6 +19,9 @@ export class SnsMessage {
             case 'AssSumm':
                 this.messageData = new AssSummMessageData(assessment, crn)
                 break
+            case 'AssCompleted':
+                this.messageData = new AssCompletedMessageData(assessment, crn)
+                break
             case 'OGRS':
                 this.messageData = new OgrsMessageData(assessment, crn)
                 break
@@ -67,6 +70,20 @@ export class AssSummMessageData extends SnsMessageData {
         this.description = 'Assessment Summary has been produced'
         const endPoint = assessment.sanIndicator == 'Y' || assessment.spIndicator == 'Y' ? 'asssummsan' : 'asssumm'
         this.detailUrl = `${baseUrl}/${endPoint}/${crn}/ALLOW/${assessment.pk}/${assessment.status}`
+        delete this.additionalInformation
+    }
+}
+
+export class AssCompletedMessageData extends SnsMessageData {
+
+    constructor(assessment: DbAssessmentOrRsr, crn: string) {
+
+        const baseUrl = testEnvironment.name.includes('T2') ? 'https://t2-b.oasys.service.justice.gov.uk/eor/oasys/ass' : 'https://ords.justice.gov.uk/ords'
+
+        super(crn)
+        this.eventType = 'oasys.offender.assessment.completed'
+        this.description = 'Assessment completed.'
+        this.detailUrl = `${baseUrl}/asssummsan/${crn}/ALLOW/${assessment.pk}/${assessment.status}`
         delete this.additionalInformation
     }
 }

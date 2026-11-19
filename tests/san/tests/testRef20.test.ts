@@ -252,7 +252,7 @@ test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment
             that would have been by the initial assessor signing again	
         Ensure an 'AssSumm' SNS Message has been created containing a ULR link for 'asssummsan'	`, 'Test step')
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
 
     await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {

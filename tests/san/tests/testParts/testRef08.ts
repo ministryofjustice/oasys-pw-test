@@ -82,7 +82,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
 
         const sectionCount1 = await san.queries.getSanSectionsCount(pk1)
         expect(sectionCount1).toBe(1)   // expect SSP but not SAN
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'TierRiskFlag'])
         await user.logout()
 
         // Test 8 part 2
@@ -359,7 +359,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         await san.checkSanEditMode(false)
         await san.returnToOASys()
         await signing.countersign({ page: 'spService', comment: 'Test comment' })
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])  // Note AssSumm only at this stage, as others were sent on signing
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])  // Note AssSumm only at this stage, as others were sent on signing
         await tasks.taskManager.checkCurrent()
 
         await san.queries.checkSanCountersigningCall(pk2, user.prob.probSanHeadPdu, 'COUNTERSIGNED')

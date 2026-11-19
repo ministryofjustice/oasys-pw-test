@@ -84,7 +84,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
     await san.queries.checkSanCountersigningCall(pk1, user.prob.probSanHeadPdu, 'COUNTERSIGNED')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'TierRiskFlag'])
     await user.logout()
 
     await user.prob.probSanUnappr.login()

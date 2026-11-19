@@ -18,7 +18,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         await assessment.populateMinimal({ layer: 'Layer 1V2', populate1_38: { days: -5 } })
 
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'TierRiskFlag'])
 
         // First L1
         await oasys.history(offender1)
@@ -37,7 +37,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         await sections.selfAssessmentForm.populateMinimal()
 
         await signing.signAndLock({ page: 'spService' })
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
 
         // Second RoSHA
         await oasys.history(offender1)
@@ -45,7 +45,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
         await sections.roshaPredictors.populateMinimal({ populate1_38: { days: -1 }, probationCrn: offender1.probationCrn }, false)
 
         await signing.signAndLock({ page: 'riskScreening', expectCsrpScore: true })
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
 
         // Second L1
         await oasys.history(offender1)
@@ -68,7 +68,7 @@ test.describe('Create assessments and check SNS messages - layer 1', () => {
 
         await sentencePlan.populateMinimal()
         await signing.signAndLock()
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
     })
 
 })
@@ -94,7 +94,7 @@ test('Countersigning required', async ({ oasys, user, offender, assessment, sns,
     await user.prob.probHeadPdu.login()
     await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
     await user.logout()
 
     await user.prob.probPso.login()
@@ -113,6 +113,6 @@ test('Countersigning required', async ({ oasys, user, offender, assessment, sns,
     await user.prob.probHeadPdu.login()
     await signing.countersign({ offender: offender1, comment: 'Test comment' })
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
     await user.logout()
 })

@@ -26,6 +26,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     await san.queries.getSanApiTimeAndCheckDbValues(pk1, 'Y', null)
     await oasys.clickButton('Close')
     await assessment.lockIncomplete()
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
 
     log(`A Lock API has been sent to the SAN Service - parameters of OASYS_SET_PK, user ID and name - a 200 response has been received back
         Check that the OASYS_SET record has the field 'SAN_ASSESSMENT_VERSION_NO' and 'SSP_PLAN_VERSION_NO' populated by the return API response
@@ -41,7 +42,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     const part1SectionCount = await san.queries.getSanSectionsCount(pk1)
     expect(part1SectionCount).toBe(2)
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
 
     const part1Questions1 = await san.queries.getLatestQuestionUpdateTime(pk1)
 
@@ -89,6 +90,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     await san.queries.checkSanRollbackCall(pk1, user.admin)
     await oasys.clickButton('Close')
     await assessment.lockIncomplete()
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
     await san.queries.checkSanLockIncompleteCall(pk1, user.admin)
 
     // Delete assessment in preparation for the next part
@@ -153,7 +155,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
 
     const sectionCount2 = await san.queries.getSanSectionsCount(pk2)
     expect(sectionCount2).toBe(2)
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
 
     log(`Open up the now read only assessment, navigate to the 'Strengths and Needs' screen
         Click on the 'Open Strengths and Needs' button
@@ -242,7 +244,7 @@ test('SAN integration - test ref 27 part 1', async ({ oasys, user, offender, ass
     const part3Sections = await san.queries.getSanSectionsCount(pk3)
     expect(part3Sections).toBe(2)
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
     await user.logout()
 
     log(`Log back in as a user from the probation area of the offender

@@ -141,7 +141,7 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, as
 
     await signing.signAndLock({ page: 'spService' })
     await san.queries.checkSanSigningCall(pk1, user.prob.probSanHeadPdu, 'SELF')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'TierRiskFlag'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'TierRiskFlag'])
 
     log(`Still logged in as the Assessor open up the SAN Assessment from the offender records 'Open S&N' button.
         This should have invoked a new version of the SAN Assessment in their database - Change some of the data and set a couple of the section
@@ -221,7 +221,7 @@ test('SAN integration - test refs 23 and 33', async ({ oasys, user, offender, as
         Ensure an 'AssSumm' SNS Message has been created containing a ULR link for 'asssummsan'`, 'Test step')
 
     await san.queries.checkSanSigningCall(pk1, user.prob.probSanHeadPdu, 'SELF')
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
 
     log(`Go to Create a new Assessment
         Check that the 'Purpose of Assessment' field does NOT include 'Fast Review' in the drop downs because the last assessment is SAN`, 'Test step')

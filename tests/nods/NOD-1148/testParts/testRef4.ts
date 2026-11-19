@@ -129,7 +129,7 @@ export function testRef4(offender1: OffenderDef, pks: { [key: number]: number })
                 RSR msg - ensure the MESSAGE_DATA field is not including the new fields as per the specification	
                 AssSumm msg - MESSAGE_DATA field remains as is providing the 'detailUrl'`, 'Test step')
 
-        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+        await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
 
         log(`Check that there is a record in the new table 'PREDICTOR_FEATURE_LINES' for this OASYS_SET_PK and it has stored ALL the fields coming back from the new
                 Predictor calculator as at the last time it run		

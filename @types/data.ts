@@ -1,6 +1,6 @@
 declare type DbResponse = { data: number | string | string[] | string[][], error: string }
 
-declare type SnsMessageType = 'AssSumm' | 'OGRS' | 'OPD' | 'RSR' | 'TierRiskFlag' | 'TierPredictors'
+declare type SnsMessageType = 'AssSumm' | 'AssCompleted' | 'OGRS' | 'OPD' | 'RSR' | 'TierRiskFlag' | 'TierPredictors'
 declare type AssessmentOrCsrp = 'assessment' | 'csrp'
 
 declare type EndpointStat = { endpoint: Endpoint | 'database', responseTime: number }

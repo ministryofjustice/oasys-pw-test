@@ -196,6 +196,9 @@ export class Sns {
         if (assessment.type == 'assessment' && assessment.completedDate != null && !excludedAssessmentTypes.includes(assessment.purposeOfAssessment)) {
             expectedSnsMessages.push(new SnsMessage(assessment, crn, 'AssSumm'))
         }
+        if (assessment.type == 'assessment' && assessment.completedDate != null  && assessment.status != 'LOCKED_INCOMPLETE' && !excludedAssessmentTypes.includes(assessment.purposeOfAssessment)) {
+            expectedSnsMessages.push(new SnsMessage(assessment, crn, 'AssCompleted'))
+        }
         if (assessment.ogrs1yr != null && (assessment.status == 'SIGNED' || assessment.countersignedDate == null)) {  // OGRS message on signing or completion if no countersigning required
             expectedSnsMessages.push(new SnsMessage(assessment, crn, 'OGRS'))
         }

@@ -11,7 +11,7 @@ test('Example test - create a probation offender and a layer 3 assessment - mini
     await assessment.populateMinimal({ layer: 'Layer 3', populate6_11: 'No', probationCrn: offender1.probationCrn })
     await signing.signAndLock()
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR', 'TierRiskFlag'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR', 'TierRiskFlag'])
     const failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, true)
     expect(failed).toBeFalsy()
     await ogrs.checkOgrsInOasysSet(pk1)
@@ -30,7 +30,7 @@ test('Example test - create a probation offender and a layer 3 assessment - full
     await assessment.populateFull({ layer: 'Layer 3', probationCrn: offender1.probationCrn })
     await signing.signAndLock()
 
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'OGRS', 'RSR'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OGRS', 'RSR'])
     const failed = await api.testOneOffender(offender1.probationCrn, 'prob', false, false)
     expect(failed).toBeFalsy()
     await ogrs.checkOgrsInOasysSet(pk1)

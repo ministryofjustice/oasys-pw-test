@@ -13,7 +13,7 @@ export class RoshaPredictors extends BaseAssessmentPage {
     offenceLOV = new Element.Link(this.page, "//Element[='P5_CT_OFFENCE_CODE_TEXT']/following::a/img")
     subcodeLOV = new Element.Link(this.page, "//Element[='P5_CT_OFFENCE_SUBCODE_TEXT']/following::a/img")
     dateFirstSanction = new Element.Textbox<OasysDate>(this.page, '#P5_QU_1_8_2', true)
-    ageFirstSanction = new Element.Textbox(this.page, '#P5_QU_1_8')
+    ageFirstSanction = new Element.Text(this.page, '#P5_QU_1_8')
     o1_24 = new Element.Textbox<number>(this.page, '#P5_QU_1_24')
     o1_32 = new Element.Textbox(this.page, '#P5_QU_1_32')
     o1_26 = new Element.Textbox<number>(this.page, '#P5_QU_1_26')

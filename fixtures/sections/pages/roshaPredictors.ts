@@ -147,9 +147,8 @@ export class RoshaPredictors extends BaseAssessmentPage {
         await this.o1_40.setValue(0)
         await this.o1_29.setValue({ days: -7 })
         await this.o1_30.setValue('No')
-        if (params?.populate1_38) {
-            await this.o1_38.setValue(params.populate1_38)
-        }
+        
+        await this.o1_38.setValue(params.provider == 'pris' ? { days: 100 } : { days: -5 })
     }
 
     async populateFull(params?: PopulateAssessmentParams, withDateFirstSanction = true) {
@@ -170,9 +169,7 @@ export class RoshaPredictors extends BaseAssessmentPage {
         await this.o1_45.setValue('0')
         await this.o1_46.setValue('0')
         await this.o1_37.setValue('2')
-        if (params?.populate1_38) {
-            await this.o1_38.setValue({ months: -6 })
-        }
+        await this.o1_38.setValue(params.provider == 'pris' ? { days: 100 } : { months: -6 })
         await this.o1_39.setValue('Yes')
         await this.o2_2Weapon.setValue('Yes')
         await this.o2_2SpecifyWeapon.setValue('A knife')

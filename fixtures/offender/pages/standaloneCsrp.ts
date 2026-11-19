@@ -24,7 +24,7 @@ export class StandaloneCsrp extends OasysPage {
     /**
      *  Age at first conviction (calculated from 1.8)
      */
-    ageFirstSanction = new Element.Textbox<string>(this.page, '#P5_QU_1_8')
+    ageFirstSanction = new Element.Text(this.page, '#P5_QU_1_8')
     /**
      *  Number of sanctions for all offences
      */

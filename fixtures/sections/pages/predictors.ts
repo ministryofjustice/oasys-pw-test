@@ -8,7 +8,7 @@ export class Predictors extends BaseAssessmentPage {
 
     scoresChanged = new Element.Text(this.page, "p:contains('The following scores have now changed i.e.   OGRS3-1YEAR OGRS3 - 2YEAR')")
     dateFirstSanction = new Element.Textbox<OasysDate>(this.page, '#itm_1_8_2', true)
-    ageFirstSanction = new Element.Textbox<string>(this.page, '#itm_1_8')
+    ageFirstSanction = new Element.Text(this.page, '#itm_1_8')
     /** Total number of sanctions */
     o1_32 = new Element.Textbox<number>(this.page, '#itm_1_32')
     /** Number of sanctions involving violent offences */

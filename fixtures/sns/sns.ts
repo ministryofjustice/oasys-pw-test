@@ -196,16 +196,16 @@ export class Sns {
         if (assessment.type == 'assessment' && assessment.completedDate != null && !excludedAssessmentTypes.includes(assessment.purposeOfAssessment)) {
             expectedSnsMessages.push(new SnsMessage(assessment, crn, 'AssSumm'))
         }
-        if (assessment.type == 'assessment' && assessment.completedDate != null  && assessment.status != 'LOCKED_INCOMPLETE' && !excludedAssessmentTypes.includes(assessment.purposeOfAssessment)) {
+        if (assessment.type == 'assessment' && assessment.completedDate != null && assessment.status != 'LOCKED_INCOMPLETE' && !excludedAssessmentTypes.includes(assessment.purposeOfAssessment)) {
             expectedSnsMessages.push(new SnsMessage(assessment, crn, 'AssCompleted'))
         }
-        if (assessment.ogrs1yr != null && (assessment.status == 'SIGNED' || assessment.countersignedDate == null)) {  // OGRS message on signing or completion if no countersigning required
+        if (assessment.ogrs1yr != null && (assessment.status == 'SIGNED' || (assessment.countersignedDate == null && assessment.status == 'COMPLETE'))) {  // OGRS message on signing or completion if no countersigning required
             expectedSnsMessages.push(new SnsMessage(assessment, crn, 'OGRS'))
         }
         if (assessment.type == 'assessment' && assessment.status == 'COMPLETE' && (assessment.opdResult == 'SCREEN IN' || (assessment.opdResult == 'SCREEN OUT' && assessment.opdOverride == 'YES'))) {
             expectedSnsMessages.push(new SnsMessage(assessment, crn, 'OPD'))
         }
-        if (assessment.rsrScore != null && (assessment.status == 'SIGNED' || assessment.countersignedDate == null)) {  // RSR message on signing or completion if no countersigning required
+        if (assessment.rsrScore != null && (assessment.status == 'SIGNED' || (assessment.countersignedDate == null && assessment.status == 'COMPLETE'))) {  // RSR message on signing or completion if no countersigning required
             expectedSnsMessages.push(new SnsMessage(assessment, crn, 'RSR'))
         }
         if (expectingMessages?.includes('TierRiskFlag')) {

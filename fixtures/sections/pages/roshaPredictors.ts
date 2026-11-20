@@ -169,7 +169,7 @@ export class RoshaPredictors extends BaseAssessmentPage {
         await this.o1_45.setValue('0')
         await this.o1_46.setValue('0')
         await this.o1_37.setValue('2')
-        await this.o1_38.setValue(params.provider == 'pris' ? { days: 100 } : { months: -6 })
+        await this.o1_38.setValue(params?.provider == 'pris' ? { days: 100 } : { months: -6 })
         await this.o1_39.setValue('Yes')
         await this.o2_2Weapon.setValue('Yes')
         await this.o2_2SpecifyWeapon.setValue('A knife')

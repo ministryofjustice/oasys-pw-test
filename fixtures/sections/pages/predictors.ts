@@ -8,7 +8,7 @@ export class Predictors extends BaseAssessmentPage {
 
     scoresChanged = new Element.Text(this.page, "p:contains('The following scores have now changed i.e.   OGRS3-1YEAR OGRS3 - 2YEAR')")
     dateFirstSanction = new Element.Textbox<OasysDate>(this.page, '#itm_1_8_2', true)
-    ageFirstSanction = new Element.Text(this.page, '#itm_1_8')
+    ageFirstSanction = new Element.Textbox(this.page, '#itm_1_8')
     /** Total number of sanctions */
     o1_32 = new Element.Textbox<number>(this.page, '#itm_1_32')
     /** Number of sanctions involving violent offences */
@@ -63,7 +63,7 @@ export class Predictors extends BaseAssessmentPage {
         await this.o1_40.setValue(0)
         await this.o1_29.setValue({ months: -3 })
         await this.o1_30.setValue('No')
-        await this.o1_38.setValue(params.provider == 'pris' ? { days: 100 } : { days: -5 })
+        // await this.o1_38.setValue(params?.provider == 'pris' ? { days: 100 } : { days: -5 })
     }
 
 
@@ -87,7 +87,7 @@ export class Predictors extends BaseAssessmentPage {
         await this.o1_45.setValue(1)
         await this.o1_46.setValue(1)
         
-        await this.o1_38.setValue(params.provider == 'pris' ? { days: 100 } : { days: -5 })
+        await this.o1_38.setValue(params?.provider == 'pris' ? { days: 100 } : { days: -5 })
         await this.o1_37.setValue(1)
         if (params.provider != 'pris') {
             await this.o1_43.setValue({ days: -5 })

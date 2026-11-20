@@ -51,7 +51,7 @@ test('OGRS regression test ref 9', async ({ oasys, user, offender, assessment, s
     log(`Complete data entry of the RoSHA without invoking a full analysis								
         Sign & Lock the RoSHA - no errors occur, ensure you don't get a warning for The OGRS score cannot be calculated when the Gender selected for the offender is not 'Male' or 'Female'.`, 'Test step')
 
-    await assessment.populateMinimal({ layer: 'Layer 1V2' })
+    await assessment.populateMinimal({ layer: 'Layer 1V2', provider: 'pris' })
     await signing.signAndLock({ page: 'riskScreening' })
 
     log(`Check that no SNS messages have been sent.

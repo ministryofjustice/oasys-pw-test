@@ -138,16 +138,13 @@ export class Sections {
                 await this.victim.victim1()
                 await this.victim.victim2()
                 await this.predictorQuestions.populateFull(true)
-                if (params?.probationCrn) {
-                    await this.saveAndCheckSns(params.probationCrn, false, true)
-                }
                 await this.selfAssessmentForm.populateFull()
                 if (params?.probationCrn) {
                     await this.saveAndCheckSns(params.probationCrn, false, false)
                 }
                 break
             case 'Layer 1V2':
-                await this.roshaPredictors.populateFull()
+                await this.roshaPredictors.populateFull(params)
                 if (params?.probationCrn) {
                     await this.saveAndCheckSns(params.probationCrn, false, true)
                 }

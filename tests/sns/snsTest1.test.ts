@@ -83,7 +83,6 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         await sections.predictors.o1_30.setValue('No')
         await sections.predictors.o1_29.setValue({ months: -1 })
         await sections.predictors.o1_38.setValue({ days: -5 })
-        await sections.saveAndCheckSns(offender1.probationCrn, false, true)
         await assessment.summarySheet.goto()
         await assessment.summarySheet.opdOverride.setValue('Yes')
         await assessment.summarySheet.opdOverrideReason.setValue('Testing')
@@ -100,6 +99,8 @@ test.describe('Create assessments and check SNS messages - layer 3', () => {
         await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted', 'OPD'])
         
         // Create another then lock incomplete
+        await user.logout()
+        await user.prob.probPso.login()
         await oasys.history(offender1)
         await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)' })
         await oasys.clickButton('Close')

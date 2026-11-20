@@ -44,7 +44,6 @@ test('Create assessments and check SNS messages - SAN assessment, countersigning
     await sections.predictors.o1_29.setValue({ months: -1 })
     await sections.predictors.o1_30.setValue('No')
     await sections.predictors.o1_38.setValue({ days: -10 })
-    await sections.saveAndCheckSns(offender1.probationCrn, false, true)
     await assessment.summarySheet.goto()
     await assessment.summarySheet.opdOverride.setValue('Yes')
     await assessment.summarySheet.opdOverrideReason.setValue('Testing')

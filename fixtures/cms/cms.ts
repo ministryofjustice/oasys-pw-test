@@ -167,10 +167,10 @@ export class Cms {
      */
     async openStubByNomisId(nomisId: string) {
 
-        this.cmsStub.goto(true)
-        this.cmsStub.nomisId.setValue(nomisId)
-        this.cmsStub.search.click()
-        this.cmsStub.nomisIdColumn.clickFirstRow()
+        await this.cmsStub.goto(true)
+        await this.cmsStub.nomisId.setValue(nomisId)
+        await this.cmsStub.search.click()
+        await this.cmsStub.nomisIdColumn.clickFirstRow()
 
         log(`Opened stub record for ${nomisId}`)
     }

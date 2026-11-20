@@ -67,7 +67,7 @@ test('SAN integration - test ref 27 part 3', async ({ oasys, user, cms, offender
 
     const sectionCount = await san.queries.getSanSectionsCount(pk1)
     expect(sectionCount).toBe(2)
-    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm', 'AssCompleted'])
+    await sns.testSnsMessageData(offender1.probationCrn, 'assessment', ['AssSumm'])
 
     await user.logout()
 

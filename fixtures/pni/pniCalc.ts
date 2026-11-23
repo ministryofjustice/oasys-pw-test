@@ -1,21 +1,10 @@
+import { PniCalcResult } from './data/pniCalcResult'
+import { PniParams } from './data/pniParams'
+
 export function pniCalc(pniParams: PniParams): PniCalcResult {
 
-    const result: PniCalcResult = {
-        sexDomainLevel: null,
-        sexDomainScore: 0,
-        thinkingDomainLevel: null,
-        thinkingDomainScore: 0,
-        relationshipDomainLevel: null,
-        relationshipDomainScore: 0,
-        selfManagementDomainLevel: null,
-        selfManagementDomainScore: 0,
-        totalDomainScore: 0,
-        overallNeedLevel: null,
-        riskLevel: 'O',
-        pniCalculation: 'O',
-        missingFields: [],
-        partResult: null,
-    }
+    const result = new PniCalcResult()
+    const missingFields: string[] = []
 
     // First just calculate domains scores rather than look for trump conditions
     // The domain levels have to be reported
@@ -23,14 +12,14 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
     let sexDomainScore = 0
     let sexDomainProject = 0
 
-    if (pniParams.s1_30 == null && pniParams.s6_11 == 'No') {
+    if (pniParams.s1_30 == null && (pniParams.s6_11 == 'No' || pniParams.s6_11 == null)) {
         sexDomainProject = 6 // Project the max if it had been answered.  6 to project highest domain score(of 2)
-        result.missingFields.push('1.30 Have they ever committed a sexual or sexually motivated offence?') // 1.9 added && removed below
+        missingFields.push('1.30 Have they ever committed a sexual or sexually motivated offence?') // 1.9 added && removed below
 
     } else if (pniParams.s1_30 == 'Yes' || pniParams.s6_11 == 'Yes') { // We can continue to look at the sex domain scores
         if (pniParams.s11_12 == null) { // Offence related sexual interest has not been answered
             sexDomainProject = 6
-            result.missingFields.push('11.12 Offence Related Sexual Interests')
+            missingFields.push('11.12 Offence Related Sexual Interests')
         } else if (pniParams.s11_12 == 2) {
             sexDomainScore = 6 // 6 DUE TO TRUMP
             sexDomainProject = 6
@@ -41,7 +30,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
         if (pniParams.s11_11 == null) {
             sexDomainProject += 2 // Project the max as not answered
-            result.missingFields.push('11.11 Sexual Pre-Occupation')
+            missingFields.push('11.11 Sexual Pre-Occupation')
         } else {
             sexDomainScore += pniParams.s11_11
             sexDomainProject += pniParams.s11_11
@@ -49,7 +38,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
         if (pniParams.s6_12 == null) {
             sexDomainProject += 2 // Project the max as not answered
-            result.missingFields.push('6.12 Emotional Congruence with Children/ Feeling Closer to Children than Adults')
+            missingFields.push('6.12 Emotional Congruence with Children/ Feeling Closer to Children than Adults')
         } else {
             sexDomainScore += pniParams.s6_12
             sexDomainProject += pniParams.s6_12
@@ -66,7 +55,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.s12_1 == null) {
         thinkingDomainProject = 4 // Project trump condition
-        result.missingFields.push('12.1 Pro-criminal attitudes')
+        missingFields.push('12.1 Pro-criminal attitudes')
     } else if (pniParams.s12_1 == 2) {
         thinkingDomainScore = 4 // Trump Condition
         thinkingDomainProject = 4
@@ -78,7 +67,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
     if (pniParams.s12_1 != 2) { // There is no trump
         if (pniParams.s12_9 == null) {
             thinkingDomainProject = thinkingDomainProject + 2
-            result.missingFields.push('12.9 Hostile orientation')
+            missingFields.push('12.9 Hostile orientation')
         } else {
             thinkingDomainScore = thinkingDomainScore + pniParams.s12_9
             thinkingDomainProject = thinkingDomainProject + pniParams.s12_9
@@ -95,7 +84,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.s6_1 == null) {
         relationshipDomainScoreProject = 2
-        result.missingFields.push('6.1 Current relationship with close family member')
+        missingFields.push('6.1 Current relationship with close family member')
     } else {
         relationshipsDomainScore = pniParams.s6_1
         relationshipDomainScoreProject = pniParams.s6_1
@@ -103,7 +92,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.s6_6 == null) {
         relationshipDomainScoreProject = relationshipDomainScoreProject + 2
-        result.missingFields.push('6.6 Previous experience of close relationships')
+        missingFields.push('6.6 Previous experience of close relationships')
     } else {
         relationshipsDomainScore = relationshipsDomainScore + pniParams.s6_6
         relationshipDomainScoreProject = relationshipDomainScoreProject + pniParams.s6_6
@@ -111,7 +100,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.s7_3 == null) {
         relationshipDomainScoreProject = relationshipDomainScoreProject + 2
-        result.missingFields.push('7.3 Easily influenced by criminal associates')
+        missingFields.push('7.3 Easily influenced by criminal associates')
     } else {
         relationshipsDomainScore = relationshipsDomainScore + pniParams.s7_3
         relationshipDomainScoreProject = relationshipDomainScoreProject + pniParams.s7_3
@@ -119,7 +108,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.s11_3 == null) {
         relationshipDomainScoreProject = relationshipDomainScoreProject + 2
-        result.missingFields.push('11.3 Aggressive controlling behaviour')
+        missingFields.push('11.3 Aggressive controlling behaviour')
     } else {
         relationshipsDomainScore = relationshipsDomainScore + pniParams.s11_3
         relationshipDomainScoreProject = relationshipDomainScoreProject + pniParams.s11_3
@@ -135,7 +124,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.s11_2 == null) {
         selfManagementDomainScoreProject = 2
-        result.missingFields.push('11.2 Impulsivity')
+        missingFields.push('11.2 Impulsivity')
     } else {
         selfManagementDomainScore = pniParams.s11_2
         selfManagementDomainScoreProject = pniParams.s11_2
@@ -143,7 +132,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.s11_4 == null) {
         selfManagementDomainScoreProject = selfManagementDomainScoreProject + 2
-        result.missingFields.push('11.4 Temper Control')
+        missingFields.push('11.4 Temper Control')
     } else {
         selfManagementDomainScore = selfManagementDomainScore + pniParams.s11_4
         selfManagementDomainScoreProject = selfManagementDomainScoreProject + pniParams.s11_4
@@ -151,7 +140,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.s11_6 == null) {
         selfManagementDomainScoreProject = selfManagementDomainScoreProject + 2
-        result.missingFields.push('11.6 Problem solving skills')
+        missingFields.push('11.6 Problem solving skills')
     } else {
         selfManagementDomainScore = selfManagementDomainScore + pniParams.s11_6
         selfManagementDomainScoreProject = selfManagementDomainScoreProject + pniParams.s11_6
@@ -159,7 +148,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.s10_1 == null) {
         selfManagementDomainScoreProject = selfManagementDomainScoreProject + 2
-        result.missingFields.push('10.1 Difficulties coping')
+        missingFields.push('10.1 Difficulties coping')
     } else {
         selfManagementDomainScore = selfManagementDomainScore + pniParams.s10_1
         selfManagementDomainScoreProject = selfManagementDomainScoreProject + pniParams.s10_1
@@ -185,35 +174,35 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
 
     if (pniParams.arpBand == null) {
         riskLevelProject = 'H'
-        result.missingFields.push('ARP')
+        missingFields.push('ARP')
     }
     if (pniParams.vrpBand == null) {
         riskLevelProject = 'H'
-        result.missingFields.push('VRP')
+        missingFields.push('VRP')
     }
     if (pniParams.ospDc == null) {
         riskLevelProject = 'H'
-        result.missingFields.push('OSP-DC')
+        missingFields.push('OSP-DC')
     }
     if (pniParams.ospIic == null) {
         riskLevelProject = 'H'
-        result.missingFields.push('OSP-IIC')
+        missingFields.push('OSP-IIC')
     }
     if (pniParams.ospDc == 'NA' && pniParams.ospIic == 'NA' && rsrRiskLevel == null) {
         riskLevelProject = 'H'
-        result.missingFields.push('CSRP')
+        missingFields.push('CSRP')
     }
 
     let saraTrump = false
     if (pniParams.saraRiskPartner == null) {
         riskLevelProject = 'H'
         saraTrump = true
-        result.missingFields.push('SARA risk to partner')
+        missingFields.push('SARA risk to partner')
     }
     if (pniParams.saraRiskOther == null) {
         riskLevelProject = 'H'
         saraTrump = true
-        result.missingFields.push('SARA risk to other')
+        missingFields.push('SARA risk to other')
     }
 
     // Now calculate the risk domain
@@ -299,7 +288,7 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
         } else if (result.overallNeedLevel != overallNeedLevelProject || result.riskLevel != riskLevelProject) { // There is a difference
             omission = true
         }
-        // SARA mising && community case with alternative pathway
+        // SARA missing && community case with alternative pathway
         if (pniParams.community && interimResult == 'A' && (pniParams.saraRiskPartner == null || pniParams.saraRiskOther == null)) {
             omission = true
         }
@@ -315,5 +304,10 @@ export function pniCalc(pniParams: PniParams): PniCalcResult {
         result.pniCalculation = interimResult
     }
 
+    result.missingFields = result.pniCalculation == 'O' ? missingFields.join('\n') : ''
+    if (result.missingFields && missingFields[0] != '1.30 Have they ever committed a sexual or sexually motivated offence?') {
+        result.missingFields = `\n${result.missingFields}`
+    }
+    result.apiMissingFields = result.pniCalculation == 'O' ? missingFields : null
     return result
 }

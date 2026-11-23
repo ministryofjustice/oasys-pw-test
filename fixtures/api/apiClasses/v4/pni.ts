@@ -5,6 +5,7 @@ import * as env from '../../endpointUrls'
 import { QaData } from 'fixtures/api/data/qaData'
 import { pniCalc } from 'fixtures/pni/pniCalc'
 import { NewActuarialPredictors } from '../riskScoreClasses'
+import { PniParams } from 'fixtures/pni/data/pniParams'
 
 export function getExpectedResponse(offenderData: dbClasses.DbOffenderWithAssessments, parameters: EndpointParams) {
 
@@ -212,35 +213,11 @@ class PniCalc {
         }
 
         // Set up the parameters and call the calculator
-        // const pniCalcResult = pniCalc(dbAssessment, community, this.saraRiskLevelToPartner, this.saraRiskLevelToOther)
-        const after649 = oasysDateTime.checkIfAfter('6.49', dbAssessment.initiationDate)
         const after77 = oasysDateTime.checkIfAfter('7.7', dbAssessment.initiationDate)
 
-        const pniParams: PniParams = {
-            s1_30: dbAssessment.qaData.getString('1.30'),
-            s6_1: dbAssessment.qaData.getOasysScore('6.1'),
-            s6_6: dbAssessment.qaData.getOasysScore('6.6'),
-            s6_11: dbAssessment.qaData.getString('6.11') ?? 'No',
-            s6_12: dbAssessment.qaData.getOasysScore('6.12'),
-            s7_3: dbAssessment.qaData.getOasysScore('7.3'),
-            s10_1: dbAssessment.qaData.getOasysScore('10.1'),
-            s11_11: dbAssessment.qaData.getOasysScore('11.11'),
-            s11_12: dbAssessment.qaData.getOasysScore('11.12'),
-            s11_3: dbAssessment.qaData.getOasysScore('11.3'),
-            s11_2: dbAssessment.qaData.getOasysScore('11.2'),
-            s11_4: dbAssessment.qaData.getOasysScore('11.4'),
-            s11_6: dbAssessment.qaData.getOasysScore('11.6'),
-            s12_1: dbAssessment.qaData.getOasysScore('12.1'),
-            s12_9: dbAssessment.qaData.getOasysScore('12.9'),
-            arpBand: dbAssessment.riskDetails.ogp2Risk ?? dbAssessment.riskDetails.ogrs4gRisk,
-            vrpBand: dbAssessment.riskDetails.ovp2Risk ?? dbAssessment.riskDetails.ogrs4vRisk,
-            ospDc: after649 ? dbAssessment.riskDetails.ospDcRisk : dbAssessment.riskDetails.ospCRisk,
-            ospIic: after649 ? dbAssessment.riskDetails.ospIicRisk : dbAssessment.riskDetails.ospIRisk,
-            rsrPercentageScore: dbAssessment.riskDetails.rsrPercentageScore,
-            community: community,
-            saraRiskPartner: this.saraRiskLevelToPartner,
-            saraRiskOther: this.saraRiskLevelToOther,
-        }
+        const pniParams = new PniParams()
+        pniParams.populateForApiTest(dbAssessment, community, this.saraRiskLevelToPartner, this.saraRiskLevelToOther)
+
         if (!after77) {  // Old assessments use the OGRS3 bands
             pniParams.arpBand = dbAssessment.riskDetails.ogrs3RiskRecon
             pniParams.vrpBand = dbAssessment.riskDetails.ovpRisk
@@ -248,9 +225,9 @@ class PniCalc {
 
         const pniCalcResult = pniCalc(pniParams)
 
-        let missingFields: string[] = pniCalcResult.missingFields ? [] : null
-        if (pniCalcResult.missingFields) {
-            for (const missingField of pniCalcResult.missingFields) {
+        let missingFields: string[] = pniCalcResult.apiMissingFields ? [] : null
+        if (pniCalcResult.apiMissingFields) {
+            for (const missingField of pniCalcResult.apiMissingFields) {
                 missingFields.push(after77 ? missingField : missingField?.replaceAll('ARP', 'OGRS')?.replaceAll('VRP', 'OVP')?.replaceAll('CSRP', 'RSR'))
             }
         }

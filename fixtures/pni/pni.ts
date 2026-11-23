@@ -3,6 +3,7 @@ import { Data } from './data/data'
 import { pniCalc } from './pniCalc'
 import { connectCalc } from './connectCalc'
 import { ConnectCalcResult } from './data/connectCalcResult'
+import { PniCalcResult } from './data/pniCalcResult'
 
 export class Pni {
 
@@ -23,7 +24,7 @@ export class Pni {
         await this.assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk}`, {
             pni_func_proc: 'Y',
             pni_calculation: pniResult.pniCalculation,
-            pni_missing_fields_txt: pniResult.missingFields ? `\n${pniResult.missingFields.join('\n')}` : null,
+            pni_missing_fields_txt: pniResult.missingFields ? `\n${pniResult.missingFields}` : null,
         })
 
         // Connect
@@ -41,7 +42,7 @@ export class Pni {
 
     async testCalculators(probationCrn: string, offenderPk: number, reportPasses: boolean): Promise<{ count: number, failed: number }> {
 
-        const assessmentQuery = `select os.oasys_set_pk from oasys_set os, oasys_assessment_group og
+        const assessmentQuery = `select os.oasys_set_pk from eor.oasys_set os, eor.oasys_assessment_group og
                                     where og.offender_pk = ${offenderPk} 
                                     and og.oasys_assessment_group_pk = os.oasys_assessment_group_pk 
                                     and os.deleted_date is null
@@ -66,38 +67,77 @@ export class Pni {
 
             // Building choices
             const pniResult = pniCalc(testParams.pniParams)
+            const pniFunctionCall = testParams.pniParams.oracleFunctionCall()
+            const oraclePniResponse = await this.oasysDb.callFunction(pniFunctionCall)
+            const oraclePniResult = new PniCalcResult()
+            oraclePniResult.loadOracleOutputValues(oraclePniResponse.split('|'))
 
-            // TODO call PNI calculator in Oracle
+            const pniFailed = comparePniResults(pniResult, oraclePniResult)
 
-            // if (pniFailed) {
-            //     failed++
-            //     log(`Params:  ${JSON.stringify(testParams.connectParams)}.  Expected ${JSON.stringify(pniResult)}, got ${JSON.stringify(oasysResult)}`,
-            //         `CRN: ${probationCrn}, Offender PK: ${offenderPk}, Assessment PK: ${assessmentPk} PNI **** FAILED ****`)
-            // } else if (reportPasses) {
-            //     log(`Params:  ${JSON.stringify(testParams.connectParams)}.  Expected ${pniResult.pniCalculation} ${pniResult.missingFields?.join()}, got ${JSON.stringify(oasysResult)}`,
-            //         `CRN: ${probationCrn}, PK: ${assessmentPk} PNI PASSED`)
-            // }
-
-            // Connect
-            const connectResult = connectCalc(testParams.connectParams)
-            const functionCall = testParams.connectParams.oracleFunctionCall()
-            const oracleResponse = await this.oasysDb.callFunction(functionCall)
-            const oracleResult = new ConnectCalcResult()
-            oracleResult.loadOracleOutputValues(oracleResponse.split('|'))
-
-            const connectFailed = compareConnectResults(connectResult, oracleResult)
-            if (connectFailed) {
+            if (pniFailed) {
                 failed++
-                log(`Params:  ${JSON.stringify(testParams.connectParams)}.  Expected ${JSON.stringify(connectResult)}, got ${JSON.stringify(oracleResult)}`,
-                    `CRN: ${probationCrn}, Offender PK: ${offenderPk}, Assessment PK: ${assessmentPk} Connect **** FAILED ****`)
+                log(`Params:  ${JSON.stringify(testParams.pniParams)}.  Expected ${JSON.stringify(pniResult)}, got ${JSON.stringify(oraclePniResult)}`,
+                    `CRN: ${probationCrn}, Offender PK: ${offenderPk}, Assessment PK: ${assessmentPk} PNI **** FAILED ****`)
             } else if (reportPasses) {
-                log(`Params:  ${JSON.stringify(testParams.connectParams)}.  Expected ${JSON.stringify(connectResult)}, got ${JSON.stringify(oracleResult)}`,
-                    `CRN: ${probationCrn}, PK: ${assessmentPk} Connect PASSED`)
+                log(`Params:  ${JSON.stringify(testParams.pniParams)}.  Expected ${pniResult.pniCalculation} ${pniResult.missingFields}, got ${JSON.stringify(oraclePniResult)}`,
+                    `CRN: ${probationCrn}, PK: ${assessmentPk} PNI PASSED`)
             }
+
+            if (testParams.oasysSetValues.pniFuncProc && testParams.oasysSetValues.assessmentStatus == 'COMPLETE' && oasysDateTime.checkIfAfter('7.7', testParams.oasysSetValues.initiationDate)) {
+                // Check against the assessment values if there is a calculation and the assessment is recent (avoid data/formatting issues)
+                const pnioOasysSetCheckFailed = await this.assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${assessmentPk}`, {
+                    pni_func_proc: 'Y',
+                    pni_calculation: pniResult.pniCalculation,
+                    pni_missing_fields_txt: pniResult.missingFields ? pniResult.missingFields : null,
+                }, true)
+
+                if (pnioOasysSetCheckFailed) {
+                    failed++
+                    log('**** FAILED ****')
+                }
+            }
+
+            // Connect  // TODO add this when NOD-1393 is implemented
+            // const connectResult = connectCalc(testParams.connectParams)
+            // const connectFunctionCall = testParams.connectParams.oracleFunctionCall()
+            // const oracleConnectResponse = await this.oasysDb.callFunction(connectFunctionCall)
+            // const oracleConnectResult = new ConnectCalcResult()
+            // oracleConnectResult.loadOracleOutputValues(oracleConnectResponse.split('|'))
+
+            // const connectFailed = compareConnectResults(connectResult, oracleConnectResult)
+            // if (connectFailed) {
+            //     failed++
+            //     log(`Params:  ${JSON.stringify(testParams.connectParams)}.  Expected ${JSON.stringify(connectResult)}, got ${JSON.stringify(oracleConnectResult)}`,
+            //         `CRN: ${probationCrn}, Offender PK: ${offenderPk}, Assessment PK: ${assessmentPk} Connect **** FAILED ****`)
+            // } else if (reportPasses) {
+            //     log(`Params:  ${JSON.stringify(testParams.connectParams)}.  Expected ${JSON.stringify(connectResult)}, got ${JSON.stringify(oracleConnectResult)}`,
+            //         `CRN: ${probationCrn}, PK: ${assessmentPk} Connect PASSED`)
+            // }
         }
         return { count: count, failed: failed }
     }
 
+}
+
+function comparePniResults(pw: PniCalcResult, oracle: PniCalcResult): boolean {
+
+    let failed = false
+
+    failed = pw.sexDomainLevel != oracle.sexDomainLevel || failed
+    failed = pw.sexDomainScore != oracle.sexDomainScore || failed
+    failed = pw.thinkingDomainLevel != oracle.thinkingDomainLevel || failed
+    failed = pw.thinkingDomainScore != oracle.thinkingDomainScore || failed
+    failed = pw.relationshipDomainLevel != oracle.relationshipDomainLevel || failed
+    failed = pw.relationshipDomainScore != oracle.relationshipDomainScore || failed
+    failed = pw.selfManagementDomainLevel != oracle.selfManagementDomainLevel || failed
+    failed = pw.selfManagementDomainScore != oracle.selfManagementDomainScore || failed
+    failed = pw.totalDomainScore != oracle.totalDomainScore || failed
+    failed = pw.overallNeedLevel != oracle.overallNeedLevel || failed
+    failed = pw.riskLevel != oracle.riskLevel || failed
+    failed = pw.pniCalculation != oracle.pniCalculation || failed
+    failed = pw.missingFields != oracle.missingFields || failed
+
+    return failed
 }
 
 function compareConnectResults(pw: ConnectCalcResult, oracle: ConnectCalcResult): boolean {

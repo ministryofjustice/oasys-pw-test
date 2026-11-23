@@ -202,7 +202,7 @@ export class Queries {
      * 
      * Fails if more than one row is returned.
      */
-    async checkDbValues(table: string, where: string, values: { [keys: string]: string | Temporal.PlainDateTime }) {
+    async checkDbValues(table: string, where: string, values: { [keys: string]: string | Temporal.PlainDateTime }, returnResult = false): Promise<boolean> {
 
         var query = 'select '
         var firstCol = true
@@ -254,7 +254,11 @@ export class Queries {
             }
         }
 
-        expect(failed).toBeFalsy()
+        if (returnResult) {
+            return failed
+        } else {
+            expect(failed).toBeFalsy()
+        }
     }
 
     /**

@@ -50,11 +50,17 @@ for (let i = 0; i < dateConditions.length; i++) {
 test(`PNI and Connect calculator tests - specific offenders`, async ({ pni }) => {
 
     const offenderDetails = [
-        ['N628778', '1387261912'],
-        ['E679327', '1397167628'],
+
+        // T2_B
+        ['ZYRRRUB', '8275076'],
+        ['ZQDCTEQ', '8265821'],
+
+        // Pre-prod
+        // ['N628778', '1387261912'],
+        // ['E679327', '1397167628'],
     ]
 
-    const failed = await runTest([['N628778', '1387261912']], pni, true)
+    const failed = await runTest(offenderDetails, pni, true)
     expect(failed).toBe(0)
 })
 

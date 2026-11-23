@@ -342,50 +342,8 @@ declare type Sentence =
     `Youth Custody Consecutive` |
     `Youth Rehabilitation Order`
 
-declare type PniParams = {
-
-    s1_30: string,
-    s6_1: number,
-    s6_6: number,
-    s6_11: string,
-    s6_12: number,
-    s7_3: number,
-    s10_1: number,
-    s11_11: number,
-    s11_12: number,
-    s11_3: number,
-    s11_2: number,
-    s11_4: number,
-    s11_6: number,
-    s12_1: number,
-    s12_9: number,
-    arpBand: string,
-    vrpBand: string,
-    ospDc: string,
-    ospIic: string,
-    rsrPercentageScore: number,
-    community: boolean,
-    saraRiskPartner: number,
-    saraRiskOther: number,
-}
-
-declare type PniCalcResult = {
-    sexDomainLevel: string,
-    sexDomainScore: number,
-    thinkingDomainLevel: string,
-    thinkingDomainScore: number,
-    relationshipDomainLevel: string,
-    relationshipDomainScore: number,
-    selfManagementDomainLevel: string,
-    selfManagementDomainScore: number,
-    totalDomainScore: number,
-    overallNeedLevel: string,
-    riskLevel: string,
-    pniCalculation: string,
-    missingFields: string[],
-    partResult: string,
-}
 
 // PNI and Connect
 declare type DomainResult = 'L' | 'M' | 'H'
 declare type ConnectResult = 'PP' | 'PF' | 'CP' | 'CF' | 'M'
+declare type SaraParams = { saraRiskLevelToPartner: number, saraRiskLevelToOther: number }

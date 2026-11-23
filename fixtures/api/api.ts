@@ -184,8 +184,8 @@ export class Api {
 
             }
 
-            // Add PNI - only if initiated after 2021 to avoid incompatible data
-            const pniRelevantAssessments = offenderData.assessments.filter(rest.V4Common.pni.pniFilter).filter((ass) => ass.initiationDate > '2021')
+            // Add PNI - only if initiated after 2022 to avoid incompatible data
+            const pniRelevantAssessments = offenderData.assessments.filter(rest.V4Common.pni.pniFilter).filter((ass) => ass.initiationDate > '2022')
             if (pniRelevantAssessments.length > 0) {
                 const v4PniParams: EndpointParams = {
                     endpoint: 'pni',

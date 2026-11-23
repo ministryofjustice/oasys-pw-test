@@ -50,7 +50,7 @@ export class ConnectParams {
 
         let result: string[] = []
 
-        result.push(`eor.CONNECT_CALCULATOR(${this.community ? `'N'` : `'Y'`}`)
+        result.push(`eor.CONNECT_CALCULATOR(${this.community ? `'YES'` : `'NO'`}`)
         result.push(utils.stringParameterToString(this.s1_30).toUpperCase())
         result.push(utils.stringParameterToString(this.s6_11).toUpperCase())
         result.push(utils.numericParameterToString(this.s11_11))

@@ -12,6 +12,19 @@ type OasysSetSanData = {
     spVersion: number,
 }
 
+type CreateAssessmentCallParams = {
+    pk: number,
+    previousSanPk: number,
+    previousSpPk: number,
+    expectedUser: TestUser,
+    expectedProvider: string,
+    expectedPlanType: 'INITIAL' | 'REVIEW' | 'UPW' | 'PSR_OUTLINE',
+    spOnly?: boolean,
+    newPeriodOfSupervision?: 'Y' | 'N',
+    oasysData?: {},
+}
+
+
 export class Queries {
 
     constructor(private readonly oasysDb: OasysDb) { }
@@ -127,14 +140,15 @@ export class Queries {
      *  - expectedVersion: version number that should be returned by SAN
      *  - expectedSpVersion: version number that should be returned by SAN for the Sentence Plan
      */
-    async checkSanCreateAssessmentCall(pk: number, previousSanPk: number, previousSpPk: number,
-        expectedUser: TestUser, expectedProvider: string, expectedPlanType: 'INITIAL' | 'REVIEW' | 'UPW' | 'PSR_OUTLINE', spOnly = false, newPeriodOfSupervision: 'Y' | 'N' = null) {
+    // async checkSanCreateAssessmentCall(pk: number, previousSanPk: number, previousSpPk: number,
+    //     expectedUser: TestUser, expectedProvider: string, expectedPlanType: 'INITIAL' | 'REVIEW' | 'UPW' | 'PSR_OUTLINE', spOnly = false, newPeriodOfSupervision: 'Y' | 'N' = null) {
+    async checkSanCreateAssessmentCall(params: CreateAssessmentCallParams) {
 
-        log('', `Check CreateAssessment API call for ${pk}, previous SAN: ${previousSanPk}, previous SP: ${previousSpPk}`)
-        const query = `select log_text from eor.clog where log_source like '%${pk}%SAN_CREATE%' order by time_stamp desc`
+        log('', `Check CreateAssessment API call for ${params.pk}, previous SAN: ${params.previousSanPk}, previous SP: ${params.previousSpPk}`)
+        const query = `select log_text from eor.clog where log_source like '%${params.pk}%SAN_CREATE%' order by time_stamp desc`
         const clogData = await this.oasysDb.getData(query)
         let failed = false
-        const type = spOnly ? 'SP' : 'SAN_SP'
+        const type = params.spOnly ? 'SP' : 'SAN_SP'
 
         if (clogData.length != 2) {
             log(`Expected 2 rows in CLog, found ${clogData.length}`)
@@ -146,38 +160,45 @@ export class Queries {
                 failed = true
             }
             const callData = JSON.parse(call[3].substring(16))
-            if (callData['previousOasysSanPk'] != previousSanPk) {
-                log(`Expected previous SAN PK: ${previousSanPk}, found ${callData['previousOasysSanPk']}`)
+            if (callData['previousOasysSanPk'] != params.previousSanPk) {
+                log(`Expected previous SAN PK: ${params.previousSanPk}, found ${callData['previousOasysSanPk']}`)
                 failed = true
             }
-            if (callData['previousOasysSpPk'] != previousSpPk) {
-                log(`Expected previous SP PK: ${previousSpPk}, found ${callData['previousOasysSpPk']}`)
+            if (callData['previousOasysSpPk'] != params.previousSpPk) {
+                log(`Expected previous SP PK: ${params.previousSpPk}, found ${callData['previousOasysSpPk']}`)
                 failed = true
             }
-            if (callData['regionPrisonCode'] != expectedProvider) {
-                log(`Expected provider: ${expectedProvider}, found ${callData['regionPrisonCode']}`)
+            if (callData['regionPrisonCode'] != params.expectedProvider) {
+                log(`Expected provider: ${params.expectedProvider}, found ${callData['regionPrisonCode']}`)
                 failed = true
             }
-            if (callData['userDetails']['id'] != expectedUser.username) {
-                log(`Expected user ID: ${expectedUser.username}, found ${callData['userDetails']['id']}`)
+            if (callData['userDetails']['id'] != params.expectedUser.username) {
+                log(`Expected user ID: ${params.expectedUser.username}, found ${callData['userDetails']['id']}`)
                 failed = true
             }
-            if (callData['userDetails']['name'] != expectedUser.forenameSurname) {
-                log(`Expected user name: ${expectedUser.forenameSurname}, found ${callData['userDetails']['name']}`)
+            if (callData['userDetails']['name'] != params.expectedUser.forenameSurname) {
+                log(`Expected user name: ${params.expectedUser.forenameSurname}, found ${callData['userDetails']['name']}`)
                 failed = true
             }
-            if (callData['planType'] != expectedPlanType) {
-                log(`Expected sentence plan type: ${expectedPlanType}, found ${callData['planType']}`)
+            if (callData['planType'] != params.expectedPlanType) {
+                log(`Expected sentence plan type: ${params.expectedPlanType}, found ${callData['planType']}`)
                 failed = true
             }
             if (callData['assessmentType'] != type) {
-                log(`Expected assessment type: ${expectedPlanType}, found ${callData['assessmentType']}`)
+                log(`Expected assessment type: ${params.expectedPlanType}, found ${callData['assessmentType']}`)
                 failed = true
             }
-            if (newPeriodOfSupervision && callData['newPeriodOfSupervision'] != newPeriodOfSupervision) {
-                log(`Expected new period of supervision: ${newPeriodOfSupervision}, found ${callData['newPeriodOfSupervision']}`)
+            if (params.newPeriodOfSupervision && callData['newPeriodOfSupervision'] != params.newPeriodOfSupervision) {
+                log(`Expected new period of supervision: ${params.newPeriodOfSupervision}, found ${callData['newPeriodOfSupervision']}`)
                 failed = true
             }
+            // TODO add this for release 7.13
+            const sanAssessmentType = params.spOnly ? null : sanMode.toUpperCase()
+            // if (callData['sanAssessmentType'] != sanAssessmentType) {
+            //     log(`Expected sanAssessmentType: ${sanAssessmentType}, found ${callData['sanAssessmentType']}`)
+            //     failed = true
+            // }
+
 
             const response = clogData[0][0].split('\n')
             if (response[2].substring(response[2].length - 3) != '201') {
@@ -212,7 +233,7 @@ export class Queries {
      *  - expectedVersion: version number that should be returned by SAN
      *  - expectedSpVersion: version number for the sentence plan that should be returned by SAN
      */
-    async  checkSanSigningCall(pk: number, expectedUser: TestUser, signingType: 'SELF' | 'COUNTERSIGN') {
+    async checkSanSigningCall(pk: number, expectedUser: TestUser, signingType: 'SELF' | 'COUNTERSIGN') {
 
         await this.checkSanCall('Signing', 'SIGN', 'sign', pk, expectedUser, { signingType: signingType })
     }

@@ -18,7 +18,9 @@ export function testRef10(offender1: OffenderDef, pks: number[]) {
         const pk = await assessment.createProb({ purposeOfAssessment: 'Review' })  // Assume SAN defaults to 'Yes'
         pks.push(pk)
         const prevPk = pks[1]
-        await san.queries.checkSanCreateAssessmentCall(pk, prevPk, prevPk, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
+        await san.queries.checkSanCreateAssessmentCall({
+            pk: pk, previousSanPk: prevPk, previousSpPk: prevPk, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW'
+        })
 
         await assessment.queries.checkCloning(pk, prevPk, [
             '2', '7', '8', '9', '10', '11', '12', '13',

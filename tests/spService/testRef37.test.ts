@@ -27,7 +27,10 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
 
     await oasys.history(offender1)
     const pk2 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'No' })
-    await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, user.prob.probSanHeadPdu, providers.prob.sanCode, 'REVIEW', true, 'N')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk2, previousSanPk: null, previousSpPk: pk1, expectedUser: user.prob.probSanHeadPdu, expectedProvider: providers.prob.sanCode,
+        expectedPlanType: 'REVIEW', spOnly: true, newPeriodOfSupervision: 'N'
+    })
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk2}`, {
         SSP_TYPE_ELM: 'REVIEW',
         ARNS_SP_ONLY_LINKED_IND: 'Y',
@@ -48,7 +51,10 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
 
     await oasys.history(offender1)
     const pk3 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
-    await san.queries.checkSanCreateAssessmentCall(pk3, pk1, pk2, user.prob.probSanHeadPdu, providers.prob.sanCode, 'REVIEW', false, 'N')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk3, previousSanPk: pk1, previousSpPk: pk2, expectedUser: user.prob.probSanHeadPdu, expectedProvider: providers.prob.sanCode,
+        expectedPlanType: 'REVIEW', newPeriodOfSupervision: 'N'
+    })
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk3}`, {
         SSP_TYPE_ELM: 'REVIEW',
         ARNS_SP_ONLY_LINKED_IND: 'N',
@@ -68,7 +74,10 @@ test('NOD-1156 regression test ref 37', async ({ oasysDb, oasys, user, offender,
 
     await oasys.history(offender1)
     const pk4 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
-    await san.queries.checkSanCreateAssessmentCall(pk4, pk3, pk3, user.prob.probSanHeadPdu, providers.prob.sanCode, 'REVIEW', false, 'N')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk4, previousSanPk: pk3, previousSpPk: pk3, expectedUser: user.prob.probSanHeadPdu, expectedProvider: providers.prob.sanCode,
+        expectedPlanType: 'REVIEW', newPeriodOfSupervision: 'N'
+    })
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk4}`, {
         SSP_TYPE_ELM: 'REVIEW',
         ARNS_SP_ONLY_LINKED_IND: 'N',

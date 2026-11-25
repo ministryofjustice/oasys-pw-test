@@ -24,7 +24,10 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     await user.prob.probHeadPdu.login()
     const offender1 = await offender.createProbFromStandardOffender()
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'PSR - SDR', assessmentLayer: 'Full (Layer 3)', sentencePlanType: 'PSR Outline', includeCourtReportTemplate: 'SDR' })
-    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probHeadPdu, providers.prob.nonSanCode, 'PSR_OUTLINE', true, 'Y')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probHeadPdu, expectedProvider: providers.prob.nonSanCode,
+        expectedPlanType: 'PSR_OUTLINE', spOnly: true, newPeriodOfSupervision: 'Y'
+    })
 
     log(`Check that OASYS_SET_SSP_TYPE_ELM = 'PSR_OUTLINE', OASYS_SET.ARNS_SP_ONLY_LINKED_IND = 'Y' and OASYS_SET.SAN_ASSESSMENT_LINKED_IND is NULL 
         Complete the OASys part of the assessment with whatever data you want but do NOT invoke a full analysis`, 'Test step')
@@ -105,7 +108,10 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check that OASYS_SET_SSP_TYPE_ELM = 'INITIAL', OASYS_SET.ARNS_SP_ONLY_LINKED_IND = 'Y' and OASYS_SET.SAN_ASSESSMENT_LINKED_IND is 'N'`, 'Test step')
 
     const pk2 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', sentencePlanType: 'Initial' })
-    await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, user.prob.probHeadPdu, providers.prob.nonSanCode, 'INITIAL', true, 'N')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk2, previousSanPk: null, previousSpPk: pk1, expectedUser: user.prob.probHeadPdu, expectedProvider: providers.prob.nonSanCode,
+        expectedPlanType: 'INITIAL', spOnly: true, newPeriodOfSupervision: 'N'
+    })
 
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk2}`, {
         SSP_TYPE_ELM: 'INITIAL',
@@ -239,7 +245,10 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
         Check that OASYS_SET_SSP_TYPE_ELM = 'REVIEW', OASYS_SET.ARNS_SP_ONLY_LINKED_IND = 'Y' and OASYS_SET.SAN_ASSESSMENT_LINKED_IND is 'N'`, 'Test step')
 
     const pk3 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)' })
-    await san.queries.checkSanCreateAssessmentCall(pk3, null, pk2, user.prob.probHeadPdu, providers.prob.nonSanCode, 'REVIEW', true, 'N')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk3, previousSanPk: null, previousSpPk: pk2, expectedUser: user.prob.probHeadPdu, expectedProvider: providers.prob.nonSanCode,
+        expectedPlanType: 'REVIEW', spOnly: true, newPeriodOfSupervision: 'N'
+    })  
 
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk3}`, {
         SSP_TYPE_ELM: 'REVIEW',

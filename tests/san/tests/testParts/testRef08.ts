@@ -132,7 +132,9 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
         None of the navigation menu options have ticks against them`, 'Test step')
 
         await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', null)
-        await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'INITIAL')
+        await san.queries.checkSanCreateAssessmentCall({
+            pk: pk2, previousSanPk: null, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL'
+        })
 
         await san.queries.checkNoQuestionsCreated(pk2)
         await san.queries.checkNoIspQuestions1Or2(pk2)

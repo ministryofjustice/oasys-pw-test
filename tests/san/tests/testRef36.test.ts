@@ -22,7 +22,9 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await san.queries.getSanApiTimeAndCheckDbValues(pk1, 'Y', null)
 
     // Check Create call
-    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probSanUnappr, providers.prob.sanCode, 'INITIAL')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL'
+    })
     await san.queries.checkSanGetAssessmentCall(pk1)
 
     // Complete section 1
@@ -97,7 +99,9 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     // Check OASYS_SET and API calls
     await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', pk1)
 
-    await san.queries.checkSanCreateAssessmentCall(pk2, pk1, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk2, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW'
+    })
     await san.queries.checkSanGetAssessmentCall(pk2)
     await assessment.queries.checkCloning(pk2, pk1, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13',
         'SAQ', 'ROSH', 'ROSHFULL', 'RMP', 'SKILLSCHECKER', 'SAN',])
@@ -185,7 +189,9 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
 
     await san.queries.getSanApiTimeAndCheckDbValues(pk3, 'Y', pk1)
 
-    await san.queries.checkSanCreateAssessmentCall(pk3, pk1, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk3, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW'
+    })
     await san.queries.checkSanGetAssessmentCall(pk3)
 
     // Check cloning from first assessment to second (non-deleted)

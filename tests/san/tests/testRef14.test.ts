@@ -108,7 +108,9 @@ test('SAN integration - test ref 14', async ({ oasys, user, offender, assessment
 
     const pk2 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' }, 'No')
 
-    await san.queries.checkSanCreateAssessmentCall(pk2, null, pk1, user.prob.probSanHeadPdu, providers.prob.sanCode, 'INITIAL')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk2, previousSanPk: null, previousSpPk: pk1, expectedUser: user.prob.probSanHeadPdu, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL'
+    })
     // Check values in OASYS_SET
     await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', null)
 

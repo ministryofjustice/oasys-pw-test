@@ -28,7 +28,9 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await san.queries.getSanApiTimeAndCheckDbValues(pk1, 'Y', null)
 
     // Check Create call
-    await san.queries.checkSanCreateAssessmentCall(pk1, null, null, user.prob.probSanUnappr, providers.prob.sanCode, 'INITIAL')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL'
+    })
     await san.queries.checkSanGetAssessmentCall(pk1)
 
     // Complete section 1
@@ -230,7 +232,9 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
     await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', pk1)
 
     // Check Create call
-    await san.queries.checkSanCreateAssessmentCall(pk2, pk1, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
+    await san.queries.checkSanCreateAssessmentCall({
+        pk: pk2, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW'
+    })
     await san.queries.checkSanGetAssessmentCall(pk2)
 
     // Tweak section 1

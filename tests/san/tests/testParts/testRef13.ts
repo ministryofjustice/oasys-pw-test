@@ -70,7 +70,9 @@ export function testRef13(offender1: OffenderDef, pks: number[]) {
 
         const pk2 = await assessment.createProb({ purposeOfAssessment: 'Review', includeSanSections: 'Yes' }, 'Yes')
 
-        await san.queries.checkSanCreateAssessmentCall(pk2, pk1, pk1, user.prob.probSanUnappr, providers.prob.sanCode, 'REVIEW')
+        await san.queries.checkSanCreateAssessmentCall({
+            pk: pk2, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW'
+        })
 
         log(`Check Section 1 of the assessment - ONLY 1.8 has cloned through.  
             The offence will not have cloned through unless it has been setup on the CMS stub and it gets copied from there.

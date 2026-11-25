@@ -23,7 +23,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
 
     // Check Create call
     await san.queries.checkSanCreateAssessmentCall({
-        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL'
+        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL', expectPrepop: false
     })
     await san.queries.checkSanGetAssessmentCall(pk1)
 
@@ -100,7 +100,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', pk1)
 
     await san.queries.checkSanCreateAssessmentCall({
-        pk: pk2, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW'
+        pk: pk2, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW', expectPrepop: false
     })
     await san.queries.checkSanGetAssessmentCall(pk2)
     await assessment.queries.checkCloning(pk2, pk1, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13',
@@ -190,7 +190,7 @@ test('SAN integration - test ref 36', async ({ oasys, user, offender, assessment
     await san.queries.getSanApiTimeAndCheckDbValues(pk3, 'Y', pk1)
 
     await san.queries.checkSanCreateAssessmentCall({
-        pk: pk3, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW'
+        pk: pk3, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW', expectPrepop: false
     })
     await san.queries.checkSanGetAssessmentCall(pk3)
 

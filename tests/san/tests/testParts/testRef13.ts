@@ -71,7 +71,7 @@ export function testRef13(offender1: OffenderDef, pks: number[]) {
         const pk2 = await assessment.createProb({ purposeOfAssessment: 'Review', includeSanSections: 'Yes' }, 'Yes')
 
         await san.queries.checkSanCreateAssessmentCall({
-            pk: pk2, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW'
+            pk: pk2, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW', expectPrepop: false
         })
 
         log(`Check Section 1 of the assessment - ONLY 1.8 has cloned through.  

@@ -28,7 +28,7 @@ test('SAN integration - test ref 20', async ({ oasys, user, offender, assessment
 
     // Check Create call
     await san.queries.checkSanCreateAssessmentCall({
-        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanPo, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL'
+        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanPo, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL', expectPrepop: false
     })
     await san.queries.checkSanGetAssessmentCall(pk1)
 

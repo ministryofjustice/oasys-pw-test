@@ -29,7 +29,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
 
     // Check Create call
     await san.queries.checkSanCreateAssessmentCall({
-        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL'
+        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL', expectPrepop: false
     })
     await san.queries.checkSanGetAssessmentCall(pk1)
 
@@ -233,7 +233,7 @@ test('SAN integration - test ref 37/38', async ({ oasys, user, offender, assessm
 
     // Check Create call
     await san.queries.checkSanCreateAssessmentCall({
-        pk: pk2, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW'
+        pk: pk2, previousSanPk: pk1, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW', expectPrepop: false
     })
     await san.queries.checkSanGetAssessmentCall(pk2)
 

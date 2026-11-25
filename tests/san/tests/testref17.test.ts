@@ -23,7 +23,7 @@ test('SAN integration - test ref 17', async ({ page, oasys, user, offender, asse
     await san.checkLayer3Menu(true, sections)
 
     await san.queries.checkSanCreateAssessmentCall({
-        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanPso, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL'
+        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanPso, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL', expectPrepop: false
     })
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk1}`, {
         SAN_ASSESSMENT_LINKED_IND: 'Y',

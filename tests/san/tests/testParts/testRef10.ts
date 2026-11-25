@@ -19,7 +19,7 @@ export function testRef10(offender1: OffenderDef, pks: number[]) {
         pks.push(pk)
         const prevPk = pks[1]
         await san.queries.checkSanCreateAssessmentCall({
-            pk: pk, previousSanPk: prevPk, previousSpPk: prevPk, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW'
+            pk: pk, previousSanPk: prevPk, previousSpPk: prevPk, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'REVIEW', expectPrepop: false
         })
 
         await assessment.queries.checkCloning(pk, prevPk, [

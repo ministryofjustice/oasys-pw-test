@@ -30,7 +30,7 @@ test('SAN integration - test ref 24', async ({ oasys, user, offender, assessment
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', assessmentLayer: 'Full (Layer 3)', includeSanSections: 'Yes' })
 
     await san.queries.checkSanCreateAssessmentCall({
-        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanHeadPdu, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL'
+        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probSanHeadPdu, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL', expectPrepop: false
     })
     await oasys.clickButton('Close')
     await offender.offenderDetails.openSan.checkStatus('enabled')

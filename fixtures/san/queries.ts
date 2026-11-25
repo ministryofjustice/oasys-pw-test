@@ -3,6 +3,8 @@ import { Temporal } from '@js-temporal/polyfill'
 import { TestUser } from 'fixtures/user/testUsers'
 import { OasysDb } from 'fixtures'
 import { Queries as AssessmentQueries } from 'fixtures/assessment/queries'
+import { OasysData } from './oasysData'
+
 
 type OasysSetSanData = {
     sanIndicator: string,
@@ -21,7 +23,7 @@ type CreateAssessmentCallParams = {
     expectedPlanType: 'INITIAL' | 'REVIEW' | 'UPW' | 'PSR_OUTLINE',
     spOnly?: boolean,
     newPeriodOfSupervision?: 'Y' | 'N',
-    oasysData?: {},
+    expectPrepop: boolean,
 }
 
 
@@ -29,6 +31,7 @@ export class Queries {
 
     constructor(private readonly oasysDb: OasysDb) { }
 
+    readonly oasysData = new OasysData()
 
     async getOasysSetSanData(pk: number): Promise<OasysSetSanData> {
 
@@ -192,13 +195,24 @@ export class Queries {
                 log(`Expected new period of supervision: ${params.newPeriodOfSupervision}, found ${callData['newPeriodOfSupervision']}`)
                 failed = true
             }
-            // TODO add this for release 7.13
+            // TODO add this for release 7.13 (NOD-1374/1342)
             const sanAssessmentType = params.spOnly ? null : sanMode.toUpperCase()
             // if (callData['sanAssessmentType'] != sanAssessmentType) {
             //     log(`Expected sanAssessmentType: ${sanAssessmentType}, found ${callData['sanAssessmentType']}`)
             //     failed = true
             // }
-
+            // if (params.expectPrepop) {
+            //     await this.oasysData.getOasysData(params.pk, this.oasysDb)
+            //     Object.keys(this.oasysData).forEach((key) => {
+            //         if (callData['oasysData'][key] != this.oasysData[key as keyof OasysData]) {
+            //             log(`Expected value for ${key}: ${this.oasysData[key as keyof OasysData]}, found ${callData['oasysData'][key]}`)
+            //             failed = true
+            //         }
+            //     })
+            // } else if (callData['oasysData'] != null) {
+            //     log(`SAN createAssessment pre-prop data not expected, found found ${callData['oasysData']}`)
+            //     failed = true
+            // }
 
             const response = clogData[0][0].split('\n')
             if (response[2].substring(response[2].length - 3) != '201') {

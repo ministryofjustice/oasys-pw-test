@@ -27,7 +27,7 @@ test('SAN integration - test ref 15', async ({ oasys, user, offender, assessment
     await san.checkLayer3Menu(true, sections)
 
     await san.queries.checkSanCreateAssessmentCall({
-        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.pris.prisSanCAdm, expectedProvider: providers.pris.sanCode, expectedPlanType: 'INITIAL'
+        pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.pris.prisSanCAdm, expectedProvider: providers.pris.sanCode, expectedPlanType: 'INITIAL', expectPrepop: false
     })
     await san.queries.checkSanGetAssessmentCall(pk1)
 

@@ -26,7 +26,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     const pk1 = await assessment.createProb({ purposeOfAssessment: 'PSR - SDR', assessmentLayer: 'Full (Layer 3)', sentencePlanType: 'PSR Outline', includeCourtReportTemplate: 'SDR' })
     await san.queries.checkSanCreateAssessmentCall({
         pk: pk1, previousSanPk: null, previousSpPk: null, expectedUser: user.prob.probHeadPdu, expectedProvider: providers.prob.nonSanCode,
-        expectedPlanType: 'PSR_OUTLINE', spOnly: true, newPeriodOfSupervision: 'Y'
+        expectedPlanType: 'PSR_OUTLINE', spOnly: true, newPeriodOfSupervision: 'Y', expectPrepop: false
     })
 
     log(`Check that OASYS_SET_SSP_TYPE_ELM = 'PSR_OUTLINE', OASYS_SET.ARNS_SP_ONLY_LINKED_IND = 'Y' and OASYS_SET.SAN_ASSESSMENT_LINKED_IND is NULL 
@@ -110,7 +110,7 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     const pk2 = await assessment.createProb({ purposeOfAssessment: 'Start of Community Order', sentencePlanType: 'Initial' })
     await san.queries.checkSanCreateAssessmentCall({
         pk: pk2, previousSanPk: null, previousSpPk: pk1, expectedUser: user.prob.probHeadPdu, expectedProvider: providers.prob.nonSanCode,
-        expectedPlanType: 'INITIAL', spOnly: true, newPeriodOfSupervision: 'N'
+        expectedPlanType: 'INITIAL', spOnly: true, newPeriodOfSupervision: 'N', expectPrepop: false
     })
 
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk2}`, {
@@ -247,8 +247,8 @@ test('NOD-1156 regression test ref 2, 3, 4', async ({ oasysDb, oasys, user, offe
     const pk3 = await assessment.createProb({ purposeOfAssessment: 'Review', assessmentLayer: 'Full (Layer 3)' })
     await san.queries.checkSanCreateAssessmentCall({
         pk: pk3, previousSanPk: null, previousSpPk: pk2, expectedUser: user.prob.probHeadPdu, expectedProvider: providers.prob.nonSanCode,
-        expectedPlanType: 'REVIEW', spOnly: true, newPeriodOfSupervision: 'N'
-    })  
+        expectedPlanType: 'REVIEW', spOnly: true, newPeriodOfSupervision: 'N', expectPrepop: false
+    })
 
     await assessment.queries.checkDbValues('oasys_set', `oasys_set_pk = ${pk3}`, {
         SSP_TYPE_ELM: 'REVIEW',

@@ -133,7 +133,7 @@ export function testRef8(offender1: OffenderDef, pks: number[]) {
 
         await san.queries.getSanApiTimeAndCheckDbValues(pk2, 'Y', null)
         await san.queries.checkSanCreateAssessmentCall({
-            pk: pk2, previousSanPk: null, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL'
+            pk: pk2, previousSanPk: null, previousSpPk: pk1, expectedUser: user.prob.probSanUnappr, expectedProvider: providers.prob.sanCode, expectedPlanType: 'INITIAL', expectPrepop: true
         })
 
         await san.queries.checkNoQuestionsCreated(pk2)

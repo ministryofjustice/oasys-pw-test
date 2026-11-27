@@ -9,6 +9,8 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
     const after6_30 = oasysDateTime.checkIfAfter('6.30', assessment.initiationDate)
     const after6_35 = oasysDateTime.checkIfAfter('6.35', assessment.initiationDate)
     const after6_49 = oasysDateTime.checkIfAfter('6.49', assessment.initiationDate)
+    const after7_10 = oasysDateTime.checkIfAfter('7.10', assessment.initiationDate)
+    const after7_12 = oasysDateTime.checkIfAfter('7.12', assessment.initiationDate)
 
     const drugs = getDrugsUsage(assessment.qaData)
     const q81 = utils.lookupString('8.1', assessment.qaData)
@@ -47,7 +49,7 @@ export function createAssessmentInputParams(assessment: OgrsAssessment, datePara
         DATE_RECENT_SEXUAL_OFFENCE: oasysDateTime.stringToDate(utils.lookupString('1.33', assessment.qaData)),
         CURR_SEX_OFF_MOTIVATION: q141(utils.lookupString('1.30', assessment.qaData), utils.lookupString(after6_26 ? '1.41' : '1.31', assessment.qaData, utils.yesNoToYNLookup), assessment.offence, assessment.additionalOffences),
         MOST_RECENT_OFFENCE: oasysDateTime.stringToDate(utils.lookupString('1.43', assessment.qaData)),
-        COMMUNITY_DATE: assessment.prisonInd == 'C'
+        COMMUNITY_DATE: assessment.prisonInd == 'C' && after7_10 && !after7_12
             ? oasysDateTime.testStartDate
             : oasysDateTime.stringToDate(utils.lookupString('1.38', assessment.qaData)),
         ONE_POINT_THIRTY: utils.lookupString('1.30', assessment.qaData, utils.yesNoToYNLookup),

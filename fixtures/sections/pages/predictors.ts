@@ -63,7 +63,7 @@ export class Predictors extends BaseAssessmentPage {
         await this.o1_40.setValue(0)
         await this.o1_29.setValue({ months: -3 })
         await this.o1_30.setValue('No')
-        // await this.o1_38.setValue(params?.provider == 'pris' ? { days: 100 } : { days: -5 })
+        await this.o1_38.setValue(params?.provider == 'pris' ? { days: 100 } : { days: -5 })
     }
 
 

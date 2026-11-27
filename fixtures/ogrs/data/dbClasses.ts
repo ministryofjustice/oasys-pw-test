@@ -24,6 +24,7 @@ osp_iic_missing_questions
 const csrpColumns: Columns = {
     pk: { name: 'offender_rsr_scores_pk', type: 'integer' },
     status: { name: 'rsr_status', type: 'string' },
+    createDate: { name: 'create_date', type: 'date' },
     dob: { name: 'date_of_birth', type: 'date' },
     gender: { name: 'gender_elm', type: 'string' },
     offence: { name: 'offence_code || offence_subcode', type: 'string' },
@@ -107,6 +108,7 @@ export class OgrsRsr {
 
     pk: number
     status: string
+    createDate: string
     dob: Temporal.PlainDate
     gender: string
     offence: string

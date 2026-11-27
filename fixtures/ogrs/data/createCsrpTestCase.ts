@@ -3,6 +3,9 @@ import { OgrsRsr as OgrsCsrp } from './dbClasses'
 import { addCalculatedInputParameters, q141, q88 } from './common'
 
 export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
+    
+    const after7_10 = oasysDateTime.checkIfAfter('7.10', csrp.createDate)
+    const after7_12 = oasysDateTime.checkIfAfter('7.12', csrp.createDate)
 
     const p: OgrsInputParams = {
         ASSESSMENT_DATE: oasysDateTime.testStartDate,
@@ -22,7 +25,7 @@ export function createCsrpInputParams(csrp: OgrsCsrp): OgrsInputParams {
         DATE_RECENT_SEXUAL_OFFENCE: csrp.s1_33_date_recent_sex_offence,
         CURR_SEX_OFF_MOTIVATION: q141(csrp.s1_30_sexual_element, csrp.s1_41_current_sexual_mot, csrp.offence),
         MOST_RECENT_OFFENCE: csrp.s1_43_last_offence_date,
-        COMMUNITY_DATE: csrp.prisonInd == 'C'
+        COMMUNITY_DATE: csrp.prisonInd == 'C' && after7_10 && !after7_12
             ? oasysDateTime.testStartDate
             : csrp.s1_38_community_date,
         ONE_POINT_THIRTY: lookupValue(csrp.s1_30_sexual_element, utils.yesNoToYNLookup),

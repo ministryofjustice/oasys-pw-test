@@ -14,6 +14,7 @@ const dateConditions = [
     { date: `2023-${randomMonth()}-${randomDay()}`, count: offenderCount },
     { date: `2024-${randomMonth()}-${randomDay()}`, count: offenderCount },
     { date: `2025-${randomMonth()}-${randomDay()}`, count: offenderCount },
+    { date: `2026-09-01`, count: offenderCount },
     { date: 'today', count: offenderCount },
 ]
 
